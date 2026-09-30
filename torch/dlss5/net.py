@@ -12,7 +12,7 @@ import torch
 
 from . import layout as Lay
 from .blocks import Block39, FinalHead, Split16, Swin, SwinDown, SwinUp, ViT, _Base
-from .ops import act, bilinear, catmull_rom5, cos_norm, f16, noise, q8, unwindows, windows
+from .ops import EXP16, act, bilinear, catmull_rom5, cos_norm, exp_bits, f16, inv_sum, noise, q8, unwindows, windows
 from .weights import Records
 
 LEVEL = {"1h": (32, 192, 320), "2h": (64, 96, 160), "4h": (128, 48, 80), "8h": (256, 24, 40)}
@@ -66,7 +66,7 @@ class PreBlock(_Base):
         return torch.cat([(c - 0.5) * 0.125, (h - 0.5) * 0.125, nz, one], -1).view(-1, 10)
 
     def __call__(self, color, hist, mv, frame):
-        a = q8(f16(self.inputs(color, hist, mv, frame) @ self.A))[:, self.fi]
+        a = q8(f16(f16(self.inputs(color, hist, mv, frame)) @ self.A))[:, self.fi]   # 适配器是 f16 mma: 输入先舍入到 f16
         y0 = self.swin(a, GRID_H, GRID_W, (0, 0))                # skip (全分辨率 tin 片段序)
         img = q8(f16(y0[:, self.swin.ci].view(192, 2, 320, 2, 32).mean((1, 3)).reshape(-1, 32)))
         return img, y0
@@ -101,8 +101,9 @@ class PostBlock(_Base):
         Yw, meta = windows(Yq, GRID_H, GRID_W, (-4, -4))
         q, k, v = f16(Yw @ b.Wq), f16(Yw @ b.Wk), f16(Yw @ b.Wv)
         L = f16(q8(cos_norm(q) * b.tau) @ q8(cos_norm(k)).transpose(-1, -2) + b.bias)
-        o = f16(q8(torch.softmax(L, -1)) @ q8(v))
-        y = f16(b.c2 * Y + unwindows(o, meta, GRID_H, GRID_W) @ b.Wp)     # 不量化，直接进 f16 输出卷积
+        p = exp_bits(L, *EXP16)
+        o = f16(q8(f16(p * inv_sum(p))) @ q8(v))
+        y = f16(b.c2 * Y + q8(unwindows(o, meta, GRID_H, GRID_W)) @ b.Wp)   # 1h 规则: O 量化、残差用 f16；y 不量化直接进 f16 输出卷积
         return f16(y @ self.Wo).view(GRID_H, GRID_W, 4)
 
     def __call__(self, x69, skip, color, hist, mv):
@@ -192,3 +193,32 @@ class DLSS5:
                 img_out = k == "pre" or (k == "swin" and st["variant"] in ("ds", "outview")) or                     (k == "split16" and st["tail"] == "outview")
                 trace[i] = x if img_out else cur                     # 跨级的图像格式输出 / 级内的 tin 输出
         return out
+
+    def graph(self, H=360, W=640, history=True):
+        """把整帧前向捕获成 CUDA Graph，返回 run(color, hist=None, mv=None, frame=0) -> 输出 (静态缓冲，下次调用会被覆盖)。
+        history=False 捕获重置帧 (无历史) 的图。输入尺寸固定为 H x W。"""
+        dev = self.dev
+        sc = torch.zeros(H, W, 3, device=dev)
+        sh = torch.zeros(H, W, 3, device=dev) if history else None
+        sm = torch.zeros(H, W, 2, device=dev)
+        sf = torch.zeros((), dtype=torch.int64, device=dev)
+        s = torch.cuda.Stream()
+        s.wait_stream(torch.cuda.current_stream())
+        with torch.cuda.stream(s):
+            for _ in range(2):                                     # 预热 (分配缓存、cuBLAS 句柄)
+                self(sc, sh, sm, sf)
+        torch.cuda.current_stream().wait_stream(s)
+        g = torch.cuda.CUDAGraph()
+        with torch.cuda.graph(g):
+            out = self(sc, sh, sm, sf)
+
+        def run(color, hist=None, mv=None, frame=0):
+            sc.copy_(torch.as_tensor(color, device=dev))
+            if history:
+                sh.copy_(torch.as_tensor(hist, device=dev))
+            sm.copy_(torch.as_tensor(mv, device=dev)) if mv is not None else sm.zero_()
+            sf.fill_(int(frame))
+            g.replay()
+            return out
+        return run
+

@@ -18,6 +18,11 @@ def img(path, C, H, W):
     return v.reshape(C // 16, H, W, 16).transpose(1, 2, 0, 3).reshape(H * W, C)
 
 
+def slope(r, k):
+    """kernel ≈ a·torch 的最小二乘斜率 (幅度比)"""
+    return float((r * k).sum() / (r * r).sum())
+
+
 def find(seq, C, H, W):
     for d in ("tapsnet", "taps8t"):
         dd = os.path.join(R, d)
@@ -45,4 +50,5 @@ if __name__ == "__main__":
     for i, (seq, C, H, W) in CHECK.items():
         k = img(find(seq, C, H, W), C, H, W)
         r = tr[i].cpu().numpy()
-        print(f"step{i:2d} (seq{seq}) {C}ch {H}x{W}: 相关 {np.corrcoef(r.ravel(), k.ravel())[0, 1]:.5f}  逐值精确 {(r == k).mean():.4f}")
+        print(f"step{i:2d} (seq{seq}) {C}ch {H}x{W}: 相关 {np.corrcoef(r.ravel(), k.ravel())[0, 1]:.5f}  逐值精确 {(r == k).mean():.4f}"
+              f"  幅度比 kernel/torch {slope(r, k):.4f}  std {k.std():.3f}/{r.std():.3f}")

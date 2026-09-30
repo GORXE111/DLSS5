@@ -4,7 +4,7 @@
 
 1. **RTX 30 系移植** —— 把只支持 sm_120 (RTX 50) 的 kernel 重写为 sm_86 (FP8 mma / TMA 等指令的软件模拟)，在 RTX 3060 上端到端运行 (1080p 约 45 ms)。
 2. **网络结构完整还原** —— 71 个块逐一用探针 + 显存抓取解出，并写成可运行的参考实现：
-   `torch/` 的 GPU 版与 nr-lab 在 3060 上的真实输出相关 0.9991 (平均差 2.4/255)。
+   `torch/` 的 GPU 版与 nr-lab 在 3060 上的真实输出相关 0.9993-0.9994 (平均差约 2/255，含多帧时域累积)。
 
 > 本仓库**不包含**任何 NVIDIA 的二进制或数据：没有 dll、没有权重 (`WEIGHTS_HT.bin`)、没有从 dll 抽出的 fatbin/PTX/cubin、
 > 没有补丁后的 dll，也没有显存抓取数据。要运行需要你自己合法持有的 `nvngx_dlssnr.dll` 310.8.0 (sha256 `e16bcf15…fc8e`)。
@@ -14,7 +14,7 @@
 
 | 路径 | 内容 |
 |---|---|
-| `torch/` | **DLSS5 的 PyTorch 参考实现** (GPU，一帧约 250 ms)，见 [torch/README.md](torch/README.md) |
+| `torch/` | **DLSS5 的 PyTorch 参考实现** (GPU，一帧约 260-290 ms)，见 [torch/README.md](torch/README.md) |
 | `research/` | 逐块逆向用的 numpy 参考、探针与对照脚本；`net_ref.py` 是整网 numpy 参考 |
 | `tools/notes.jsonl` | 研究日志: 每条结论的证据、精度与更正 |
 | `tools/dllq/` | DLL / fatbin / PTX / 权重资源的结构化检索工具 (提取 `WEIGHTS_HT.bin`) |

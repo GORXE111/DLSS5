@@ -30,6 +30,7 @@ class Swin(_Base):
     def __init__(self, w, W, device):
         super().__init__(device)
         self.W, self.heads = W, W // 32
+        self.bit_exp, self.q_res, self.q_O = self.NUMERICS[W]
         ci = Lay.canon_index(W)
         self.ci, self.fi = self.I(ci), self.I(np.argsort(ci))
         if W == 32:
@@ -86,6 +87,11 @@ class Swin(_Base):
             return Hh @ self.W2
         return q8(Hh @ self.W2) @ self.D
 
+    # 注意力数值细节 (torch/check_numerics.py 逐块扫描实测，取逐值一致率最高者):
+    #   全部级别的 softmax 分子都是位运算 exp；
+    #   1h: 残差用 f16 的 y、投影前 O 量化；2h: 残差读 fp8 的 y、O 量化；4h/8h: 残差读 fp8 的 y、O 不量化 (与量化几乎相同)
+    NUMERICS = {32: (True, False, True), 64: (True, True, True), 128: (True, True, False), 256: (True, True, False)}
+
     def attn(self, Yf, H, W, shift):
         """余弦窗口注意力 + 投影 + c2 残差"""
         Y = q8(Yf[:, self.ci])
@@ -95,10 +101,17 @@ class Swin(_Base):
         q, k, v = sp(f16(Yw @ self.Wq)), sp(f16(Yw @ self.Wk)), sp(f16(Yw @ self.Wv))
         qn = cos_norm(q) * self.tau.view(1, nh, 1, 1)
         L = f16(q8(qn) @ q8(cos_norm(k)).transpose(-1, -2) + self.bias[None])
-        P = torch.softmax(L, -1)
-        o = f16(q8(P) @ q8(v)).transpose(1, 2).reshape(-1, 64, nh * 32)
+        if self.bit_exp:
+            p = exp_bits(L, *EXP16)                               # 位运算 exp (logit 截断 [-6,6])，先归一化再乘 V
+            P = q8(f16(p * inv_sum(p)))
+        else:
+            P = q8(torch.softmax(L, -1))
+        o = f16(P @ q8(v)).transpose(1, 2).reshape(-1, 64, nh * 32)
         O = unwindows(o, meta, H, W)
-        return q8(f16(self.c2 * Yf + O @ self.Wp))
+        if self.q_O:
+            O = q8(O)                                             # 投影是 fp8 mma: O 先量化
+        res = q8(Yf) if self.q_res else Yf                        # 残差读存进共享内存的 fp8 y
+        return q8(f16(self.c2 * res + O @ self.Wp))
 
     def __call__(self, Xf, H, W, shift):
         return self.attn(f16(self.c1 * Xf + self.ffn(Xf)), H, W, shift)

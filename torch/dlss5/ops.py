@@ -44,11 +44,15 @@ def unwindows(O, meta, H, W):
 
 
 # ------------------------------------------------------------------ 位运算 exp (16h / ViT softmax 分子)
+def _h(x):
+    """Python 标量预先舍入到 f16 (与 kernel 里 cvt.rn.f16.f32 的常数一致)"""
+    return float(torch.tensor(x, dtype=torch.float16))
+
+
 def exp_bits(L, mul, add, lo, hi, shift, addc):
-    """y = clamp(f16(f16(L)*mul + add), lo, hi)；结果 = f16 位 ((y_bits << shift) + addc) 的低 16 位"""
-    h = torch.float16
-    y = (L.to(h) * torch.tensor(mul, dtype=h, device=L.device) + torch.tensor(add, dtype=h, device=L.device))
-    y = y.clamp(float(torch.tensor(lo, dtype=h)), float(torch.tensor(hi, dtype=h)))
+    """y = clamp(f16(f16(L)*mul + add), lo, hi)；结果 = f16 位 ((y_bits << shift) + addc) 的低 16 位。
+    常数先舍入到 f16；half 张量乘/加 Python 标量时按 f32 计算后舍入到 f16 (= 两次 f16 运算)，不产生主机->显存拷贝"""
+    y = (L.half() * _h(mul) + _h(add)).clamp(_h(lo), _h(hi))
     bits = ((y.view(torch.int16).int() & 0xFFFF) << shift) + (addc & 0xFFFF)
     bits = bits & 0xFFFF
     bits = torch.where(bits >= 32768, bits - 65536, bits).to(torch.int16)
@@ -113,7 +117,8 @@ def _rxs(s):
 
 
 def noise(H, W, frame, device):
-    """(3, H, W) 个 N(0,1)。seed = x*0x8DA6B343 ^ frame*0x9E3779B9 ^ y*0xD8163841 ^ 0x243F6A88"""
+    """(3, H, W) 个 N(0,1)。seed = x*0x8DA6B343 ^ frame*0x9E3779B9 ^ y*0xD8163841 ^ 0x243F6A88。
+    frame 可以是 int 或 int64 标量张量 (CUDA Graph 下帧号由张量传入)"""
     y, x = torch.meshgrid(torch.arange(H, device=device, dtype=torch.int64),
                           torch.arange(W, device=device, dtype=torch.int64), indexing="ij")
     seed = _mul(x, 0x8DA6B343) ^ ((frame * 0x9E3779B9) & _M32) ^ _mul(y, 0xD8163841) ^ 0x243F6A88

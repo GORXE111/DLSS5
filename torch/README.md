@@ -1,7 +1,7 @@
 # DLSS5 PyTorch 参考实现
 
 `nvngx_dlssnr.dll` 310.8.0 (DLSS5 NR) 的完整前向，逐块由逆向得到，并与 kernel 的真实数据核对过。
-在 GPU 上一帧约 250 ms（RTX 3060，640x360），数值上复刻 kernel 的 FP8/f16 舍入位置。
+在 GPU 上一帧约 290 ms（RTX 3060，640x360；`net.graph()` 捕获 CUDA Graph 后约 260 ms），数值上复刻 kernel 的 FP8/f16 舍入位置。
 
 ```python
 import sys; sys.path.insert(0, "torch")
@@ -12,21 +12,32 @@ out = net(color)                               # 重置帧: color (360, 640, 3) 
 out = net(color, hist=out, mv=mv, frame=1)     # 带历史: hist = 上一帧输出, mv (360, 640, 2) 像素位移
 ```
 
+```python
+run = net.graph(history=True)                  # 可选: CUDA Graph (输入尺寸固定)，输出为静态缓冲
+out = run(color, hist=prev, mv=mv, frame=5)
 ```
-python check.py          # 端到端: nr-lab 第 0 帧合成输入 -> 与 3060 上 nr-lab 的实际输出比较 + 计时
-python check_levels.py   # 逐级: 以抓取的 pre_block 输出为起点，各级出口与 kernel 抓取比较
+
+```
+python check.py           # 端到端: nr-lab 第 0 帧合成输入 -> 与 3060 上 nr-lab 的实际输出比较 + 计时
+python check_frames.py    # 多帧时域累积: 连跑 4 帧与 nr-lab 逐帧比较 (需要 research/out_f0..3.ppm)
+python check_levels.py    # 逐级: 以抓取的 pre_block 输出为起点，各级出口与 kernel 抓取比较 (含幅度比)
+python check_blocks.py    # 逐块隔离: 每块以 kernel 的上一块输出为输入
+python check_numerics.py  # 注意力数值选项 (位运算 exp / 残差量化 / O 量化) 的逐级组合扫描
+python bench.py           # 按块类型计时
 ```
 
 ## 验收结果
 
 | 对照 | 相关 | 平均差 |
 |---|---|---|
-| torch vs nr-lab 实际输出 (第 0 帧) | 0.99912 | 2.4/255 |
-| torch vs numpy 参考 (research/net_ref.py) | 0.99960 | 1.4/255 |
-| 网络改动量 (输出 - 输入) vs nr-lab | 0.990 | |
+| torch vs nr-lab 实际输出 (第 0 帧) | 0.99930 | 2.0/255 |
+| torch vs nr-lab (第 1-3 帧，带历史) | 0.99943-0.99945 | 1.7-1.9/255 |
+| 网络改动量 (输出 - 输入) vs nr-lab | 0.992-0.995 | |
 
-逐级出口 (起点为抓取的 pre 输出): 编码 1h→8h 0.9985 → 0.990，16h 0.984，解码 8h→1h 0.976 → 0.993。
-误差来自逐块 fp8 舍入的累积 (求和顺序不同导致个别值落到相邻的 fp8 格点)，不是结构差异。
+逐块 (以 kernel 上一块输出为输入): 1h-8h 每块相关 0.9994-0.9998、逐值一致 66-89%；16h 块 0.99997；ViT 块 0.99965。
+逐级出口 (起点为抓取的 pre 输出): 编码 1h→8h 0.9987 → 0.994，16h 入口 0.990，解码 16h→1h 0.985 → 0.996。
+剩余误差来自逐块 fp8 舍入的累积，不是结构差异。torch 版比 research/net_ref.py (numpy) 更贴近 kernel，
+差别见下面"容易写错的地方"。
 
 ## 结构
 
@@ -48,11 +59,13 @@ post_block  s1⊙上采样(x) + s2⊙skip(pre) -> 全分辨率 1h swin -> 32->4 
 | `dlss5/net.py` | PreBlock、PostBlock、按 `data/schedule.json` 执行 71 步的 DLSS5 |
 | `dlss5/data/` | `schedule.json` (块类型/记录/窗口平移，由 `research/gen_schedule.py` 从执行轨迹导出)、`exec_order.json`、`adapter_map.json`、`maps_block1.json` |
 
-几个与常见实现不同、容易写错的地方 (都已实测):
+容易写错的地方 (都已实测):
 
-- 余弦注意力 `q̂ = τ·q/|q|` (τ 只乘 Q)，相对位置偏置作为 QK 累加器初值；1h-8h 用真 softmax。
-- 16h 与 ViT 的 softmax 分子是**位运算近似 exp**，不减行最大值，logit 分别被截断在 [-6,6] / [-3,3]；
-  16h 先归一化再乘 V，ViT 先乘 V 再归一化。
+- 余弦注意力 `q̂ = τ·q/|q|` (τ 只乘 Q)，相对位置偏置作为 QK 累加器初值。
+- **所有级别**的 softmax 分子都是位运算近似 exp (PTX 里没有 ex2)，不减行最大值：1h-16h 截断在 [-6,6] 且先归一化再乘 V，
+  ViT 截断在 [-3,3] 且先乘 V 再归一化。
+- 残差与投影输入的量化按级别不同 (`blocks.Swin.NUMERICS`)：1h 残差用 f16 的 y、投影前 O 量化到 fp8；
+  2h-8h 残差读的是存进共享内存的 fp8 y。pre_block 适配器的输入先舍入到 f16。
 - 16h 的 FFN 是分组低秩的 (8 组，每组 512->64->256->64)。
 - 整网在补齐到 384x640 的网格上运行，补齐行按 `y' = 718 - y` 镜像取样；重置帧以颜色充当历史。
 
