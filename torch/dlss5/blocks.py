@@ -164,8 +164,9 @@ class SwinUp(_Base):
     def __call__(self, low_img, skip_f, H, W, shift):
         h, w = H // 2, W // 2
         U = f16(low_img @ self.Wu).view(h, 1, w, 1, self.W).expand(h, 2, w, 2, self.W).reshape(H * W, self.W)
-        z = f16(f16(self.c * skip_f) + U)
-        y = f16(f16(self.s * z) + self.block.ffn(z))
+        z = f16(self.c * skip_f + U)
+        zq = q8(z)                                                # FFN 第一层是 fp8 mma: z 先量化
+        y = f16(self.s * (zq if self.block.q_res else z) + self.block.ffn(zq))   # 残差量化规则同该级普通块
         return self.block.attn(y, H, W, shift)
 
 

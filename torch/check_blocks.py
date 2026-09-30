@@ -18,7 +18,7 @@ E4M3 = torch.arange(256, dtype=torch.uint8).view(torch.float8_e4m3fn).float().nu
 def raw(seq, size):
     """第 seq 次发射后抓取的、大小不小于 size 的缓冲 (取最接近的一个，截到 size)"""
     best = None
-    for d in ("tapsblk", "tapsnet", "taps8t", "taps"):
+    for d in ("tapsblk", "tapsdecb", "tapsnet", "taps8t", "taps"):
         dd = os.path.join(R, d)
         for f in sorted(os.listdir(dd)):
             n = os.path.getsize(os.path.join(dd, f))
@@ -75,5 +75,47 @@ def run(net, levels=("4h", "8h")):
     return res
 
 
+def seq_of_records():
+    """权重记录名 -> kernel 序号 (exec_order.json)"""
+    import json
+    E = json.load(open(os.path.join(HERE, "dlss5", "data", "exec_order.json")))["launches"]
+    return {w: L["seq"] for L in E for w in L["weights"]}
+
+
+SKIP_SEQ = {"1h": 5, "2h": 9, "4h": 15, "8h": 23}      # 编码出口 (跳连) 的 kernel 序号
+
+
+def run_decoder(net, levels=("8h", "4h", "2h", "1h")):
+    """解码段逐块: 上采样入口 = (低一级出口图像, 同级编码跳连)，其余以 kernel 上一块输出为输入"""
+    T = lambda a: torch.tensor(a, device="cuda")  # noqa: E731
+    sq = seq_of_records()
+    res = {}
+    for st, m in net.steps:
+        if st["kind"] != "swin" or st["level"] not in levels or st["variant"] not in ("up", "std", "outview"):
+            continue
+        seq = sq[st["record"]]
+        if seq < 100:
+            continue                                         # 编码段
+        W, H, Wd = LEVEL[st["level"]]
+        sh = tuple(st["shift"])
+        if st["variant"] == "up":
+            if raw(seq - 1, 2 * W * H * Wd // 4) is None or raw(SKIP_SEQ[st["level"]], W * H * Wd) is None:
+                continue
+            r = m(T(img(seq - 1, 2 * W, H // 2, Wd // 2)), T(tin(SKIP_SEQ[st["level"]], W, H, Wd)), H, Wd, sh)
+            k = tin(seq, W, H, Wd)
+        else:
+            if raw(seq - 1, W * H * Wd) is None or raw(seq, W * H * Wd) is None:
+                continue
+            r = m(T(tin(seq - 1, W, H, Wd)), H, Wd, sh)
+            if st["variant"] == "outview":
+                r, k = r[:, m.ci], img(seq, W, H, Wd)
+            else:
+                k = tin(seq, W, H, Wd)
+        res[seq] = report(f"seq{seq} {st['level']} {st['variant']:7s}", r, k)
+    return res
+
+
 if __name__ == "__main__":
-    run(DLSS5())
+    net = DLSS5()
+    run(net)
+    run_decoder(net)
