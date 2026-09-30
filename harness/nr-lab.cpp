@@ -330,6 +330,26 @@ static void InstallNgxDebugCapture(HMODULE module)
         ansi ? "hooked" : "not imported", wide ? "hooked" : "not imported");
 }
 
+// DLSS5_NGXLOG=1: the snippet's logger (sub_18000E690) only emits when one of its
+// sinks is configured. Sink RVA 0x1142740 is a void(const char*) function pointer
+// called with the formatted line; point it at our capture. RVA is specific to
+// 310.8.0 (and the sm_86 port, which only appends sections); the sink must be null.
+static void EnableNgxInternalLog(HMODULE module)
+{
+    char flag[8] = {};
+    if (GetEnvironmentVariableA("DLSS5_NGXLOG", flag, sizeof(flag)) == 0 || flag[0] != '1') return;
+    auto base = reinterpret_cast<uint8_t *>(module);
+    auto nt = reinterpret_cast<IMAGE_NT_HEADERS64 *>(base + reinterpret_cast<IMAGE_DOS_HEADER *>(base)->e_lfanew);
+    const DWORD size = nt->OptionalHeader.SizeOfImage;
+    void **sink = reinterpret_cast<void **>(base + 0x1142740);
+    if (size < 0x1142748 || (*sink != nullptr && *sink != &CaptureOutputDebugStringA)) {
+        Log("NGX internal log: unexpected image (SizeOfImage=0x%X sink=%p), not enabled", size, sink ? *sink : nullptr);
+        return;
+    }
+    *sink = reinterpret_cast<void *>(&CaptureOutputDebugStringA);
+    Log("NGX internal log: sink at %p enabled (SizeOfImage=0x%X)", sink, size);
+}
+
 #include "nvprof.h"
 
 static const char *ProfileName(ColorProfile profile)
@@ -719,6 +739,7 @@ static bool InitNgx()
     Log("NR snippet LoadLibraryEx = %p (error=%lu)", g_nr_module, g_nr_module ? 0 : GetLastError());
     if (g_nr_module == nullptr) return false;
     InstallNgxDebugCapture(g_nr_module);
+    EnableNgxInternalLog(g_nr_module);
     prof::Install(g_nr_module, &HookImportedFunction);
     auto set_runtime_params = reinterpret_cast<NgxSetRuntimeParamsCallback>(GetProcAddress(
         g_nr_module, "NVSDK_NGX_SetRuntimeParamsCallback"));
@@ -1193,6 +1214,46 @@ static std::vector<uint8_t> MakeSentinel(UINT width, UINT height, DXGI_FORMAT fo
     return data;
 }
 
+// DLSS5_DUMPLAYERS=1: after CreateFeature, find HNetCpp layer objects on the heap by
+// vtable (RVAs from RTTI, 310.8.0) and log each layer's name and shape fields. Used to
+// recover how CCNetwork::SetResolution (sub_18003C580) pads the network grid.
+static void DumpNetworkLayers(HMODULE module)
+{
+    char flag[8] = {};
+    if (GetEnvironmentVariableA("DLSS5_DUMPLAYERS", flag, sizeof(flag)) == 0 || flag[0] != '1') return;
+    static const struct { uint32_t rva; const char *name; } kClasses[] = {
+        {0xb1960, "CCNetwork"}, {0xb23a8, "CCSingleLayerBlock"}, {0xb2460, "CCSplitSwin16HBlock"},
+        {0xb2680, "CCVitBlock"}, {0xb27a0, "CCVit1DBlock"},
+        {0xb7d38, "PreBlockSwin1H"}, {0xb8108, "Swin1H"}, {0xb8950, "Swin2H"}, {0xb9168, "Swin4H"},
+        {0xb99a8, "Swin8H"}, {0xba348, "Split16HProjPool"}, {0xba3a0, "Split16HFinalHead"},
+        {0xbc2a8, "DecInputUpsample"}, {0xbc530, "PostBlockSwin1H"},
+    };
+    const uintptr_t base = reinterpret_cast<uintptr_t>(module);
+    MEMORY_BASIC_INFORMATION mbi = {};
+    for (uint8_t *p = nullptr; VirtualQuery(p, &mbi, sizeof(mbi)) == sizeof(mbi); p = static_cast<uint8_t *>(mbi.BaseAddress) + mbi.RegionSize) {
+        if (mbi.State != MEM_COMMIT || mbi.Type != MEM_PRIVATE || mbi.Protect != PAGE_READWRITE) continue;
+        auto q = static_cast<const uintptr_t *>(mbi.BaseAddress);
+        const size_t n = mbi.RegionSize / sizeof(uintptr_t);
+        for (size_t i = 0; i + 0x40 < n; ++i) {
+            for (const auto &c : kClasses) {
+                if (q[i] != base + c.rva) continue;
+                const uint8_t *obj = reinterpret_cast<const uint8_t *>(q + i);
+                // std::string name at +8 (MSVC: inline buffer when capacity < 16)
+                const size_t len = *reinterpret_cast<const size_t *>(obj + 0x18);
+                const size_t cap = *reinterpret_cast<const size_t *>(obj + 0x20);
+                const char *s = cap >= 16 ? *reinterpret_cast<const char *const *>(obj + 8) : reinterpret_cast<const char *>(obj + 8);
+                char name[96] = {};
+                if (len < sizeof(name) && s != nullptr && !IsBadReadPtr(s, len)) memcpy(name, s, len);
+                const int32_t *d = reinterpret_cast<const int32_t *>(obj);
+                Log("LAYER %p %-20s %-48s f58=%d,%d f170=%d,%d,%d,%d f180=%d,%d,%d,%d f278=%d,%d,%d,%d,%d,%d,%d,%d",
+                    obj, c.name, name, d[0x58 / 4], d[0x5c / 4], d[0x170 / 4], d[0x174 / 4], d[0x178 / 4], d[0x17c / 4],
+                    d[0x180 / 4], d[0x184 / 4], d[0x188 / 4], d[0x18c / 4],
+                    d[0x278 / 4], d[0x27c / 4], d[0x280 / 4], d[0x284 / 4], d[0x288 / 4], d[0x28c / 4], d[0x290 / 4], d[0x294 / 4]);
+            }
+        }
+    }
+}
+
 static NVSDK_NGX_Result SafeCreateFeature(DWORD *seh_code)
 {
     *seh_code = 0;
@@ -1380,6 +1441,7 @@ static bool CreateNrFeature(const Options &o, int flags)
     }
     if (!SubmitAndWait()) return false;
     Log("CreateFeature(feature=18) = 0x%08X (%s), handle=%p", static_cast<unsigned>(result), ResultName(result), g.feature);
+    DumpNetworkLayers(g_nr_module);
     if (NVSDK_NGX_FAILED(result) || g.feature == nullptr) return false;
     Log("PASS raw DLSS-NR feature 18 created with %ux%u -> %ux%u contract, model=%d profile=%s",
         o.input_w, o.input_h, o.output_w, o.output_h, o.model, ProfileName(o.profile));

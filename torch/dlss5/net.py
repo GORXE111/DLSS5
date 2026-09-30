@@ -23,18 +23,34 @@ def _up(v, m):
     return (v + m - 1) // m * m
 
 
-# DLL 为输入 (H, W) 选的补齐网格 (pre_block 参数 +240，nr-lab 实测)。规则同时依赖宽高 (如宽 1280: 720p 时补到 1344，800p 时不补)，
-# 尚未从 DLL 的 CPU 代码中解出；表外尺寸默认向上取到 64 的倍数 (只影响边缘窗口)，也可用 grid= 显式指定。
-KNOWN_GRID = {(360, 640): (384, 640), (396, 704): (448, 704), (540, 960): (576, 960), (576, 1024): (576, 1024),
-              (600, 800): (640, 832), (648, 1152): (768, 1152), (720, 1280): (768, 1344), (756, 1344): (768, 1344),
-              (768, 1366): (768, 1408), (800, 1280): (832, 1280), (900, 1600): (1024, 1600), (1080, 1440): (1152, 1472),
-              (1080, 1920): (1152, 1920), (1440, 2560): (1472, 2560)}
+def _n_down(x):
+    """CCNetwork::SetResolution (sub_18003C580) 对一维尺寸统计的"变小的层"数。逐层形状推导:
+    6 个 _ds 层 (pre, 1h, 2h, 4h, 8h, 16h 池化) 各输出 ceil4(ceil(x/2))；2h 的 _outview 层输出计算图记录的
+    形状 ceil8(x)/4 (图在输入端 constant_pad_nd 到 8 的倍数)，它比链上的值小时再计一次。"""
+    n, y, g2 = 0, x, _up(x, 8) // 4
+    for k in range(1, 7):
+        z = _up((y + 1) // 2, 4)
+        n, y = n + (z < y), z
+        if k == 2:
+            n, y = n + (g2 < y), g2
+    return n
+
+
+def grid_for(H, W):
+    """DLL 为输入 (H, W) 选的补齐网格 (sub_18003C580 反汇编，90 个实测尺寸全部吻合):
+    m = 2^下采样层数 (通常 64，2h 形状取整错位时 128)，各维向上取到 m 的倍数、至少 320；
+    两维都恰为 4m 的倍数时宽再加 m。"""
+    mH, mW = 1 << _n_down(H), 1 << _n_down(W)
+    GH, GW = max(_up(H, mH), 320), max(_up(W, mW), 320)
+    if GH % (4 * mH) == 0 and GW % (4 * mW) == 0:
+        GW += mW
+    return GH, GW
 
 
 def dims(H, W, grid=None):
-    """输入 H x W -> 各级网格。grid: 全分辨率补齐网格 (默认查 KNOWN_GRID，否则向上取 64 的倍数)；
+    """输入 H x W -> 各级网格。grid: 全分辨率补齐网格 (默认按 DLL 规则 grid_for)；
     1h..8h = grid / 2..16；16h: 实际 grid/32，补到 4 的倍数；vit: 16h 补齐网格 /2 再补到 4 的倍数"""
-    GH, GW = grid or KNOWN_GRID.get((H, W)) or (_up(H, 64), _up(W, 64))
+    GH, GW = grid or grid_for(H, W)
     d = {"grid": (GH, GW), "1h": (GH // 2, GW // 2), "2h": (GH // 4, GW // 4), "4h": (GH // 8, GW // 8),
          "8h": (GH // 16, GW // 16), "16h_real": (GH // 32, GW // 32)}
     d["16h"] = (_up(GH // 32, 4), _up(GW // 32, 4))
@@ -51,27 +67,44 @@ def pad_rows_cols(x, src, dst):
     return out.view(-1, C)
 
 
+def control_inputs(tone=1.0, structure=1.0, skin=-1.0, auto_mask=True, style=0):
+    """DLSSNR 参数 -> pre_block 的 5 路控制输入 (每像素相同)。默认值即 DLL 默认值。
+    tone/structure/skin = DLSSNR.LocalToneStrength / LocalStructureStrength / SkinStructureStrength (skin<0: 跟随 structure)，
+    auto_mask = DLSSNR.UseAutoMask (提供 ControlMask 时 DLL 强制为 0)，style = DLSSNR.Style (0..2)。
+    DLL (sub_18001A700) 写 pre 参数 +172 tone, +176 structure, +180 style/128, +184 有效 skin, +188 有效 structure
+    (auto_mask 关时后两者为 -1)；kernel 再据此生成下面 5 路。"""
+    skin_eff = (skin if skin >= 0 else structure) if auto_mask else -1.0
+    struct_eff = structure if auto_mask else -1.0
+    on = max(skin_eff, struct_eff) >= 0
+    return {"LocalTone": tone, "StructureGate": 1.0 if on else structure,
+            "Skin": (skin_eff if skin_eff >= 0 else structure) if on else -1.0,
+            "Structure": (struct_eff if struct_eff >= 0 else structure) if on else -1.0,
+            "Style": min(max(int(style), 0), 2) / 128}
+
+
 # ================================================================== pre_block (block0)
 class PreBlock(_Base):
-    """每个全分辨率像素 10 路输入 -> 适配器 16->32 -> 全分辨率 1h swin (skip, 供 post_block) -> 2x2 平均 (进 block1)。
-    输入: 颜色 RGB 与重投影历史 RGB 各 (c-0.5)*0.125，3 路噪声，常数 1 (5 路合并)。补齐行/列按不重复边缘的镜像取样
-(360p: y' = 718 - y)。
-    历史缺失 (重置帧) 时以颜色充当历史。"""
+    """每个全分辨率像素 16 路输入 -> 适配器 16->32 -> 全分辨率 1h swin (skip, 供 post_block) -> 2x2 平均 (进 block1)。
+    输入: 颜色 RGB 与重投影历史 RGB 各 (c-0.5)*0.125，3 路噪声，常数 1，5 路控制量 (control_inputs)，1 路恒 0。
+    补齐行/列按不重复边缘的镜像取样 (360p: y' = 718 - y)。历史缺失 (重置帧) 时以颜色充当历史。"""
 
-    INPUTS = ["颜色R", "颜色G", "颜色B", "历史R", "历史G", "历史B", "噪声0", "噪声1", "噪声2", "常数"]
+    CONTROLS = ["LocalTone", "StructureGate", "Skin", "Structure", "Style"]
+    INPUTS = ["颜色R", "颜色G", "颜色B", "历史R", "历史G", "历史B", "噪声0", "噪声1", "噪声2", "常数"] + CONTROLS
     _LAB = {"颜色R": "颜色R", "颜色B": "颜色B", "历史G": "历史G", "历史B": "历史B",
-            "噪声/其他 (std 0.500)": "噪声0", "噪声/其他 (std 0.501)": "噪声1", "噪声/其他 (std 0.498)": "噪声2",
-            "常数 1.000": "常数"}
+            "噪声/其他 (std 0.500)": "噪声0", "噪声/其他 (std 0.501)": "噪声1", "噪声/其他 (std 0.498)": "噪声2"}
 
     def __init__(self, w, device):
         super().__init__(device)
-        amap = json.load(open(os.path.join(Lay.DATA, "adapter_map.json")))
+        amap = json.load(open(os.path.join(Lay.DATA, "adapter_map.json"), encoding="utf-8"))
+        cmap = json.load(open(os.path.join(Lay.DATA, "control_map.json"), encoding="utf-8"))   # research/control_map.py
         v = Lay.f16vec(w[8208:9232])
-        A = np.zeros((10, 32), np.float32)
+        A = np.zeros((len(self.INPUTS), 32), np.float32)
+        for e, (oc, nm) in cmap.items():                     # 常数与 5 路控制量 (默认参数下它们都是 1，adapter_map 分不开)
+            A[self.INPUTS.index(nm), oc] += v[int(e)]
         pairs = {}
         for e, (oc, nm) in amap.items():
             e = int(e)
-            if nm is None:
+            if nm is None or nm.startswith("常数"):
                 continue
             if nm == "历史R":                                  # 该标签混了颜色 G: 每个输出通道两个元素，下标小者 = 颜色 G
                 pairs.setdefault(oc, []).append(e)
@@ -85,7 +118,7 @@ class PreBlock(_Base):
         self.fi = self.I(np.argsort(Lay.canon_index(32)))
         self.swin = Swin(w[:8208] + w[9232:], 32, device)      # 去掉适配器 = 标准 1h 记录
 
-    def inputs(self, color, hist, mv, frame):
+    def inputs(self, color, hist, mv, frame, ctrl=None):
         Hi, Wi = color.shape[:2]
         GH, GW = dims(Hi, Wi)["grid"]
         y, x = torch.meshgrid(torch.arange(GH, device=self.dev, dtype=torch.float32),
@@ -97,12 +130,13 @@ class PreBlock(_Base):
         mvs = mv[y.long().clamp(0, Hi - 1), x.long().clamp(0, Wi - 1)]
         h = catmull_rom5(hist[..., :3], u + mvs[..., 0] / Wi, v + mvs[..., 1] / Hi)
         nz = noise(GH, GW, frame, self.dev).permute(1, 2, 0)
-        one = torch.ones(GH, GW, 1, device=self.dev)
-        return torch.cat([(c - 0.5) * 0.125, (h - 0.5) * 0.125, nz, one], -1).view(-1, 10)
+        ctrl = ctrl or control_inputs()
+        k = torch.tensor([1.0] + [ctrl[n] for n in self.CONTROLS], device=self.dev).expand(GH, GW, 1 + len(self.CONTROLS))
+        return torch.cat([(c - 0.5) * 0.125, (h - 0.5) * 0.125, nz, k], -1).view(-1, len(self.INPUTS))
 
-    def __call__(self, color, hist, mv, frame):
+    def __call__(self, color, hist, mv, frame, ctrl=None):
         GH, GW = dims(*color.shape[:2])["grid"]
-        a = q8(f16(f16(self.inputs(color, hist, mv, frame)) @ self.A))[:, self.fi]   # 适配器是 f16 mma: 输入先舍入到 f16
+        a = q8(f16(f16(self.inputs(color, hist, mv, frame, ctrl)) @ self.A))[:, self.fi]   # 适配器是 f16 mma: 输入先舍入到 f16
         y0 = self.swin(a, GH, GW, (0, 0))                        # skip (全分辨率 tin 片段序)
         img = q8(f16(y0[:, self.swin.ci].view(GH // 2, 2, GW // 2, 2, 32).mean((1, 3)).reshape(-1, 32)))
         return img, y0
@@ -185,8 +219,10 @@ class DLSS5:
             self.steps.append((st, m))
 
     @torch.no_grad()
-    def __call__(self, color, hist=None, mv=None, frame=0, trace=None):
+    def __call__(self, color, hist=None, mv=None, frame=0, trace=None, controls=None, intensity=1.0):
         """color/hist: (H, W, 3) float [0,1] (numpy 或 torch)；mv: (H, W, 2) 像素位移；hist=None 表示重置帧。
+        controls: control_inputs(...) 的结果 (默认 = DLL 默认参数)。
+        intensity: DLSSNR.Intensity，夹到 [0,1] 后在网络之外做 lerp(color, NR 输出, t)，与 DLL 的 PostProcess 一致。
         trace: 可选 dict，记录各级出口 (step 序号 -> 张量) 以便对照"""
         t = lambda a: None if a is None else torch.as_tensor(np.asarray(a) if not torch.is_tensor(a) else a,  # noqa: E731
                                                               dtype=torch.float32, device=self.dev)
@@ -198,7 +234,7 @@ class DLSS5:
         for i, (st, m) in enumerate(self.steps):
             k = st["kind"]
             if k == "pre":
-                x, pre_skip = m(color, color if hist is None else hist, mv, frame)
+                x, pre_skip = m(color, color if hist is None else hist, mv, frame, controls)
             elif k == "swin":
                 lv = st["level"]
                 H, Wd = D[lv]
@@ -235,11 +271,12 @@ class DLSS5:
                 img_out = k == "pre" or (k == "swin" and st["variant"] in ("ds", "outview")) or \
                     (k == "split16" and st["tail"] == "outview")
                 trace[i] = x if img_out else cur                     # 跨级的图像格式输出 / 级内的 tin 输出
-        return out
+        t = min(max(float(intensity), 0.0), 1.0)
+        return out if t == 1.0 else color[..., :3] + t * (out - color[..., :3])
 
-    def graph(self, H=360, W=640, history=True):
+    def graph(self, H=360, W=640, history=True, controls=None, intensity=1.0):
         """把整帧前向捕获成 CUDA Graph，返回 run(color, hist=None, mv=None, frame=0) -> 输出 (静态缓冲，下次调用会被覆盖)。
-        history=False 捕获重置帧 (无历史) 的图。输入尺寸固定为 H x W。"""
+        history=False 捕获重置帧 (无历史) 的图。输入尺寸、controls 与 intensity 在捕获时固定。"""
         dev = self.dev
         sc = torch.zeros(H, W, 3, device=dev)
         sh = torch.zeros(H, W, 3, device=dev) if history else None
@@ -249,11 +286,11 @@ class DLSS5:
         s.wait_stream(torch.cuda.current_stream())
         with torch.cuda.stream(s):
             for _ in range(2):                                     # 预热 (分配缓存、cuBLAS 句柄)
-                self(sc, sh, sm, sf)
+                self(sc, sh, sm, sf, controls=controls, intensity=intensity)
         torch.cuda.current_stream().wait_stream(s)
         g = torch.cuda.CUDAGraph()
         with torch.cuda.graph(g):
-            out = self(sc, sh, sm, sf)
+            out = self(sc, sh, sm, sf, controls=controls, intensity=intensity)
 
         def run(color, hist=None, mv=None, frame=0):
             sc.copy_(torch.as_tensor(color, device=dev))
