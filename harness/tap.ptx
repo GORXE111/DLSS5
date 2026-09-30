@@ -1,0 +1,33 @@
+// 显存窃听: 把 [src, src+n16*16) 复制到 [dst, ...)，每线程 16 字节，grid-stride。
+// 经 NvAPI_D3D12_CreateCuModule 加载，和 dll 的 kernel 在同一命令列表上发射，指针都是 D3D12 GPU VA。
+.version 8.0
+.target sm_86
+.address_size 64
+
+.visible .entry tap_copy(.param .u64 src, .param .u64 dst, .param .u32 n16)
+{
+  .reg .b32 %r<12>;
+  .reg .b64 %rd<8>;
+  .reg .pred %p;
+  ld.param.u64 %rd1, [src];
+  ld.param.u64 %rd2, [dst];
+  ld.param.u32 %r1, [n16];
+  mov.u32 %r2, %ctaid.x;
+  mov.u32 %r3, %ntid.x;
+  mov.u32 %r4, %tid.x;
+  mad.lo.u32 %r5, %r2, %r3, %r4;
+  mov.u32 %r6, %nctaid.x;
+  mul.lo.u32 %r6, %r6, %r3;
+LOOP:
+  setp.ge.u32 %p, %r5, %r1;
+  @%p bra DONE;
+  mul.wide.u32 %rd3, %r5, 16;
+  add.s64 %rd4, %rd1, %rd3;
+  add.s64 %rd5, %rd2, %rd3;
+  ld.global.v4.u32 {%r8, %r9, %r10, %r11}, [%rd4];
+  st.global.v4.u32 [%rd5], {%r8, %r9, %r10, %r11};
+  add.u32 %r5, %r5, %r6;
+  bra.uni LOOP;
+DONE:
+  ret;
+}

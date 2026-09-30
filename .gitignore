@@ -1,0 +1,41 @@
+# 白名单: 默认忽略一切，只放行我们自己写的源码与文档。
+# 绝不提交: NVIDIA 的 dll / 权重 (WEIGHTS_HT.bin) / 从 dll 抽出的 fatbin、PTX、cubin、补丁后的 dll、显存抓取数据、第三方 SDK。
+/*
+!/.gitignore
+!/.gitattributes
+!/README.md
+!/weights_map.json
+!/torch/
+!/research/
+!/tools/
+!/harness/
+!/plugin/
+
+# 二进制 / NVIDIA 衍生物 / 运行产物
+*.dll
+*.exe
+*.obj
+*.lib
+*.exp
+*.pdb
+*.cubin
+*.fatbin
+*.bin
+*.ptx
+!/harness/tap.ptx
+*.db
+*.npy
+*.npz
+*.ppm
+*.png
+*.tsv
+*.log
+*.txt
+!/plugin/src/*.txt
+__pycache__/
+*.pyc
+
+# 目录
+/harness/*/
+/plugin/dist/
+/research/taps*/

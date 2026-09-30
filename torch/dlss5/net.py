@@ -1,0 +1,194 @@
+"""DLSS5 整网 (GPU)。按 data/schedule.json 的 71 步执行: pre_block -> U-Net 编码 1h..8h -> 16h 分组 swin -> ViT-1d ->
+解码 16h..1h -> post_block (时域合成)。整网在补齐到 384x640 的网格上运行 (输入 640x360)。
+
+    net = DLSS5()                                   # 读 WEIGHTS_HT.bin，解码全部权重到 GPU
+    out = net(color, hist=None, mv=None, frame=0)   # color/hist: (360, 640, 3) [0,1]；mv: (360, 640, 2) 像素；返回 (360, 640, 3)
+"""
+import json
+import os
+
+import numpy as np
+import torch
+
+from . import layout as Lay
+from .blocks import Block39, FinalHead, Split16, Swin, SwinDown, SwinUp, ViT, _Base
+from .ops import act, bilinear, catmull_rom5, cos_norm, f16, noise, q8, unwindows, windows
+from .weights import Records
+
+LEVEL = {"1h": (32, 192, 320), "2h": (64, 96, 160), "4h": (128, 48, 80), "8h": (256, 24, 40)}
+GRID_H, GRID_W = 384, 640
+
+
+# ================================================================== pre_block (block0)
+class PreBlock(_Base):
+    """每个全分辨率像素 10 路输入 -> 适配器 16->32 -> 全分辨率 1h swin (skip, 供 post_block) -> 2x2 平均 (进 block1)。
+    输入: 颜色 RGB 与重投影历史 RGB 各 (c-0.5)*0.125，3 路噪声，常数 1 (5 路合并)。补齐行按 y' = 718 - y 镜像取样。
+    历史缺失 (重置帧) 时以颜色充当历史。"""
+
+    INPUTS = ["颜色R", "颜色G", "颜色B", "历史R", "历史G", "历史B", "噪声0", "噪声1", "噪声2", "常数"]
+    _LAB = {"颜色R": "颜色R", "颜色B": "颜色B", "历史G": "历史G", "历史B": "历史B",
+            "噪声/其他 (std 0.500)": "噪声0", "噪声/其他 (std 0.501)": "噪声1", "噪声/其他 (std 0.498)": "噪声2",
+            "常数 1.000": "常数"}
+
+    def __init__(self, w, device):
+        super().__init__(device)
+        amap = json.load(open(os.path.join(Lay.DATA, "adapter_map.json")))
+        v = Lay.f16vec(w[8208:9232])
+        A = np.zeros((10, 32), np.float32)
+        pairs = {}
+        for e, (oc, nm) in amap.items():
+            e = int(e)
+            if nm is None:
+                continue
+            if nm == "历史R":                                  # 该标签混了颜色 G: 每个输出通道两个元素，下标小者 = 颜色 G
+                pairs.setdefault(oc, []).append(e)
+            else:
+                A[self.INPUTS.index(self._LAB[nm]), oc] += v[e]
+        for oc, es in pairs.items():
+            es = sorted(es)
+            A[1, oc] += v[es[0]]
+            A[3, oc] += v[es[1]]
+        self.A = self.T(A)                                     # 输出为规范序
+        self.fi = self.I(np.argsort(Lay.canon_index(32)))
+        self.swin = Swin(w[:8208] + w[9232:], 32, device)      # 去掉适配器 = 标准 1h 记录
+
+    def inputs(self, color, hist, mv, frame):
+        Hi, Wi = color.shape[:2]
+        y, x = torch.meshgrid(torch.arange(GRID_H, device=self.dev, dtype=torch.float32),
+                              torch.arange(GRID_W, device=self.dev, dtype=torch.float32), indexing="ij")
+        y = torch.where(y >= Hi, 2 * (Hi - 1) - y, y)
+        u, v = (x + 0.5) / Wi, (y + 0.5) / Hi
+        c = bilinear(color, u, v)[..., :3]
+        mvs = mv[y.long().clamp(0, Hi - 1), x.long().clamp(0, Wi - 1)]
+        h = catmull_rom5(hist[..., :3], u + mvs[..., 0] / Wi, v + mvs[..., 1] / Hi)
+        nz = noise(GRID_H, GRID_W, frame, self.dev).permute(1, 2, 0)
+        one = torch.ones(GRID_H, GRID_W, 1, device=self.dev)
+        return torch.cat([(c - 0.5) * 0.125, (h - 0.5) * 0.125, nz, one], -1).view(-1, 10)
+
+    def __call__(self, color, hist, mv, frame):
+        a = q8(f16(self.inputs(color, hist, mv, frame) @ self.A))[:, self.fi]
+        y0 = self.swin(a, GRID_H, GRID_W, (0, 0))                # skip (全分辨率 tin 片段序)
+        img = q8(f16(y0[:, self.swin.ci].view(192, 2, 320, 2, 32).mean((1, 3)).reshape(-1, 32)))
+        return img, y0
+
+
+# ================================================================== post_block (block70)
+class PostBlock(_Base):
+    """m = s1⊙nn_up2x(block69) + s2⊙skip(pre) -> 全分辨率 1h swin -> f16 输出卷积 32->4 (RGB 残差 + 门控 logit)
+    -> cur = clamp(color + 0.25·rgb)，gate = clamp(sigmoid(a)·blend)，out = cur + gate·(CatmullRom(hist) - cur)"""
+
+    MX = [8 * (c % 4) + 2 * ((c % 16) // 4) + c // 16 for c in range(32)]    # 图像通道 c -> 片段位置
+
+    def __init__(self, w, blend_raw, device, scale=0.03125):
+        super().__init__(device)
+        SG = Lay.COLS32
+        f = lambda a, b: Lay.f16vec(w[a:b])                        # noqa: E731
+        self.s1, self.s2 = self.T(f(8272, 8336)[SG]), self.T(f(8336, 8400)[SG])
+        self.mxi = self.I(np.argsort(self.MX))
+        self.swin = Swin(w[:8272] + bytes(16) + w[8400:20784], 32, device)   # 插入 s1/s2 之外 = 标准 1h 记录
+        Wo = f(20784, 21808)
+        self.Wo = self.T([[Wo[256 * (j % 2) + 8 * ((j % 8) // 2) + j // 8 + 32 * o] for o in range(4)] for j in range(32)])
+        self.blend = float(Lay.f16vec(blend_raw)[0])
+        self.scale = scale                                          # kernel 参数 +48 (f32)
+
+    def net(self, x69, skip):
+        b = self.swin
+        Xf = x69.view(192, 1, 320, 1, 32).expand(192, 2, 320, 2, 32).reshape(-1, 32)[:, self.mxi]
+        M = f16(self.s1 * Xf + self.s2 * skip)
+        Hh = q8(act(f16(q8(M[:, b.ci]) @ b.W1)))                   # post 的 FFN 吃 q8(m)
+        Y = f16(b.c1 * M + Hh @ b.W2)
+        Yq = q8(Y[:, b.ci])
+        Yw, meta = windows(Yq, GRID_H, GRID_W, (-4, -4))
+        q, k, v = f16(Yw @ b.Wq), f16(Yw @ b.Wk), f16(Yw @ b.Wv)
+        L = f16(q8(cos_norm(q) * b.tau) @ q8(cos_norm(k)).transpose(-1, -2) + b.bias)
+        o = f16(q8(torch.softmax(L, -1)) @ q8(v))
+        y = f16(b.c2 * Y + unwindows(o, meta, GRID_H, GRID_W) @ b.Wp)     # 不量化，直接进 f16 输出卷积
+        return f16(y @ self.Wo).view(GRID_H, GRID_W, 4)
+
+    def __call__(self, x69, skip, color, hist, mv):
+        H, W = color.shape[:2]
+        n = self.net(x69, skip)[:H, :W]
+        cur = (color + 8 * self.scale * n[..., :3]).clamp(0, 1)
+        if hist is None:                                            # 重置帧: 无历史混合
+            return cur
+        gate = (torch.sigmoid(n[..., 3:]) * self.blend).clamp(0, 1)
+        y, x = torch.meshgrid(torch.arange(H, device=self.dev, dtype=torch.float32),
+                              torch.arange(W, device=self.dev, dtype=torch.float32), indexing="ij")
+        h = catmull_rom5(hist[..., :3], (x + 0.5 + mv[..., 0]) / W, (y + 0.5 + mv[..., 1]) / H)
+        return cur + gate * (h - cur)
+
+
+# ================================================================== 整网
+class DLSS5:
+    def __init__(self, device="cuda", records=None, schedule=None):
+        torch.backends.cuda.matmul.allow_tf32 = False             # 与参考一致的 f32 matmul
+        self.dev = device
+        R = records or Records()
+        sched = schedule or json.load(open(os.path.join(Lay.DATA, "schedule.json"), encoding="utf-8"))["steps"]
+        self.steps = []
+        for st in sched:
+            k = st["kind"]
+            if k == "pre":
+                m = PreBlock(R[st["record"]], device)
+            elif k == "post":
+                m = PostBlock(R[st["record"]], R[st["blend_record"]], device)
+            elif k == "swin":
+                W = LEVEL[st["level"]][0]
+                cls = {"ds": SwinDown, "up": SwinUp}.get(st["variant"], Swin)
+                m = cls(R[st["record"]], W, device)
+            elif k == "split16":
+                m = Split16([R[n] for n in st["records"]], device)
+                if st["tail"] == "pool":
+                    st = dict(st, head=FinalHead(R[st["head_record"]], device))
+            elif k == "vit":
+                m = ViT([R[n] for n in st["records"]], device)
+            elif k == "block39":
+                m = Block39(R[st["record"]], device)
+            self.steps.append((st, m))
+
+    @torch.no_grad()
+    def __call__(self, color, hist=None, mv=None, frame=0, trace=None):
+        """color/hist: (H, W, 3) float [0,1] (numpy 或 torch)；mv: (H, W, 2) 像素位移；hist=None 表示重置帧。
+        trace: 可选 dict，记录各级出口 (step 序号 -> 张量) 以便对照"""
+        t = lambda a: None if a is None else torch.as_tensor(np.asarray(a) if not torch.is_tensor(a) else a,  # noqa: E731
+                                                              dtype=torch.float32, device=self.dev)
+        color, hist, mv = t(color), t(hist), t(mv)
+        if mv is None:
+            mv = torch.zeros(*color.shape[:2], 2, device=self.dev)
+        skips, x, cur, pre_skip = {}, None, None, None
+        for i, (st, m) in enumerate(self.steps):
+            k = st["kind"]
+            if k == "pre":
+                x, pre_skip = m(color, color if hist is None else hist, mv, frame)
+            elif k == "swin":
+                lv = st["level"]
+                W, H, Wd = LEVEL[lv]
+                sh, var = tuple(st["shift"]), st["variant"]
+                if var == "inpview":
+                    cur = m(x[:, m.fi], H, Wd, sh)
+                elif var == "ds":
+                    cur, x = m(cur, H, Wd, sh)
+                    skips[lv] = cur
+                elif var == "up":
+                    cur = m(x, skips[lv], H, Wd, sh)
+                elif var == "outview":
+                    x = m(cur, H, Wd, sh)[:, m.ci]
+                else:
+                    cur = m(cur, H, Wd, sh)
+            elif k == "split16":
+                cur = m(x[:, m.fi] if st["inpview"] else cur, tuple(st["shift"]))
+                if st["tail"] == "pool":
+                    skips["16h"] = cur
+                    cur = st["head"](cur)
+                elif st["tail"] == "outview":
+                    x = cur[:, m.ci]
+            elif k == "vit":
+                cur = m(cur)
+            elif k == "block39":
+                cur = m(cur, skips["16h"])
+            elif k == "post":
+                out = m(x, pre_skip, color, hist, mv)
+            if trace is not None:
+                img_out = k == "pre" or (k == "swin" and st["variant"] in ("ds", "outview")) or                     (k == "split16" and st["tail"] == "outview")
+                trace[i] = x if img_out else cur                     # 跨级的图像格式输出 / 级内的 tin 输出
+        return out

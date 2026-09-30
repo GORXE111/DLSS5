@@ -1,0 +1,48 @@
+DLSS5 神经渲染 —— RTX 30/40 移植版
+====================================
+
+这是什么
+--------
+NVIDIA DLSS 5 的神经渲染模型 (nvngx_dlssnr.dll) 原本只能在 RTX 50 上运行。
+这个包里的 nvngx_dlssnr.dll 把模型的全部 GPU 程序重新编译到了 RTX 30 (Ampere)，
+RTX 40 也能用同一份 (向下兼容)；RTX 50 仍然走原版程序，不受影响。
+
+插件部分是开源的 OptiScaler + DLSS Neural Rendering (作者 Dagherbou，GPL-3，
+github.com/Dagherbou/OptiScaler_DLSSNR)。它截获游戏交给 DLSS/FSR/XeSS 的深度和
+运动矢量，在超分之后、画 UI 之前跑一遍 DLSS5。
+
+
+安装
+----
+1. 双击 "安装.bat"，选择游戏 exe 所在的文件夹
+   (Unreal 引擎游戏选 <项目名>\Binaries\Win64；赛博朋克 2077 选 bin\x64)
+2. 安装器会自动:
+   - 发现反作弊 (EAC / BattlEye 等) 时拒绝安装 —— 联网游戏注入 dll 可能封号
+   - 按显卡选默认模型分辨率 (RTX 3050/3060/3070: 50%，3080/3090: 60%，4060/4070: 60%，4080/4090: 75%)
+   - 选一个没被占用的注入文件名 (默认 dxgi.dll)
+   - 把会被覆盖的文件备份到游戏目录的 .dlss5_backup
+3. 进游戏，在图形设置里打开 DLSS (或 FSR / XeSS)
+4. 按 Insert 打开 OptiScaler 菜单 -> DLSS Neural Rendering，已默认开启
+
+
+调节
+----
+  Model resolution   模型工作分辨率。耗时大约按它的平方下降:
+                     RTX 3060 实测 (只算 DLSS5 本身):
+                       540p  约 17 ms   720p 约 25 ms   1080p 约 45 ms
+                     1080p 输出选 50% 就是 540p。帧数不够就往下调。
+  Detail strength    效果强度，0 = 完全关闭 (等于原画面)
+  Colour strength    0 = 保持游戏原本的色调，只取模型的明暗
+
+
+卸载
+----
+双击 "卸载.bat"，选择同一个游戏文件夹。装过的文件全部删除，被覆盖的文件全部还原。
+
+
+限制
+----
+- 游戏必须本身支持 DLSS / FSR2+ / XeSS 之一 (DLSS5 要从超分调用里拿深度和运动矢量)
+- RTX 20 系暂不支持
+- 30 系上的结果与 50 系原版在数值上有细微差异 (FP8 运算用 FP16 模拟，累加舍入不同)
+- nvngx_dlssnr.dll 是 NVIDIA 的程序，只供个人研究使用，请勿公开分发

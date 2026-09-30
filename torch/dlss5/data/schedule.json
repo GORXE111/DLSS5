@@ -1,0 +1,779 @@
+{
+ "source": "exec_order.json + tapsnet/nr-trace.tsv",
+ "steps": [
+  {
+   "kind": "pre",
+   "record": "block0.layer0.layer"
+  },
+  {
+   "kind": "swin",
+   "level": "1h",
+   "variant": "inpview",
+   "record": "block1.layer0.layer",
+   "shift": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "1h",
+   "variant": "std",
+   "record": "block2.layer0.layer",
+   "shift": [
+    -4,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "1h",
+   "variant": "std",
+   "record": "block3.layer0.layer",
+   "shift": [
+    0,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "1h",
+   "variant": "ds",
+   "record": "block4.layer0.layer",
+   "shift": [
+    -4,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "2h",
+   "variant": "inpview",
+   "record": "block5.layer0.layer",
+   "shift": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "2h",
+   "variant": "std",
+   "record": "block6.layer0.layer",
+   "shift": [
+    -4,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "2h",
+   "variant": "std",
+   "record": "block7.layer0.layer",
+   "shift": [
+    0,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "2h",
+   "variant": "ds",
+   "record": "block8.layer0.layer",
+   "shift": [
+    -4,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "inpview",
+   "record": "block9.layer0.layer",
+   "shift": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "std",
+   "record": "block10.layer0.layer",
+   "shift": [
+    -4,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "std",
+   "record": "block11.layer0.layer",
+   "shift": [
+    0,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "std",
+   "record": "block12.layer0.layer",
+   "shift": [
+    -4,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "std",
+   "record": "block13.layer0.layer",
+   "shift": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "ds",
+   "record": "block14.layer0.layer",
+   "shift": [
+    -4,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "inpview",
+   "record": "block15.layer0.layer",
+   "shift": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block16.layer0.layer",
+   "shift": [
+    -4,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block17.layer0.layer",
+   "shift": [
+    0,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block18.layer0.layer",
+   "shift": [
+    -4,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block19.layer0.layer",
+   "shift": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block20.layer0.layer",
+   "shift": [
+    -4,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block21.layer0.layer",
+   "shift": [
+    0,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "ds",
+   "record": "block22.layer0.layer",
+   "shift": [
+    -4,
+    0
+   ]
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block23.layer0.layer",
+    "block23.layer1.layer",
+    "block23.layer2.layer",
+    "block23.layer3.layer"
+   ],
+   "inpview": true,
+   "shift": [
+    0,
+    0
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block24.layer0.layer",
+    "block24.layer1.layer",
+    "block24.layer2.layer",
+    "block24.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    -4,
+    -4
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block25.layer0.layer",
+    "block25.layer1.layer",
+    "block25.layer2.layer",
+    "block25.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    0,
+    -4
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block26.layer0.layer",
+    "block26.layer1.layer",
+    "block26.layer2.layer",
+    "block26.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    -4,
+    0
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block27.layer0.layer",
+    "block27.layer1.layer",
+    "block27.layer2.layer",
+    "block27.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    0,
+    0
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block28.layer0.layer",
+    "block28.layer1.layer",
+    "block28.layer2.layer",
+    "block28.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    -4,
+    -4
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block29.layer0.layer",
+    "block29.layer1.layer",
+    "block29.layer2.layer",
+    "block29.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    0,
+    -4
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block30.layer0.layer",
+    "block30.layer1.layer",
+    "block30.layer2.layer",
+    "block30.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    -4,
+    0
+   ],
+   "tail": "pool",
+   "head_record": "block30.layer4.layer"
+  },
+  {
+   "kind": "vit",
+   "records": [
+    "block31.layer0.layer",
+    "block31.layer1.layer",
+    "block31.layer2.layer",
+    "block31.layer3.layer",
+    "block31.layer4.layer"
+   ]
+  },
+  {
+   "kind": "vit",
+   "records": [
+    "block32.layer0.layer",
+    "block32.layer1.layer",
+    "block32.layer2.layer",
+    "block32.layer3.layer",
+    "block32.layer4.layer"
+   ]
+  },
+  {
+   "kind": "vit",
+   "records": [
+    "block33.layer0.layer",
+    "block33.layer1.layer",
+    "block33.layer2.layer",
+    "block33.layer3.layer",
+    "block33.layer4.layer"
+   ]
+  },
+  {
+   "kind": "vit",
+   "records": [
+    "block34.layer0.layer",
+    "block34.layer1.layer",
+    "block34.layer2.layer",
+    "block34.layer3.layer",
+    "block34.layer4.layer"
+   ]
+  },
+  {
+   "kind": "vit",
+   "records": [
+    "block35.layer0.layer",
+    "block35.layer1.layer",
+    "block35.layer2.layer",
+    "block35.layer3.layer",
+    "block35.layer4.layer"
+   ]
+  },
+  {
+   "kind": "vit",
+   "records": [
+    "block36.layer0.layer",
+    "block36.layer1.layer",
+    "block36.layer2.layer",
+    "block36.layer3.layer",
+    "block36.layer4.layer"
+   ]
+  },
+  {
+   "kind": "vit",
+   "records": [
+    "block37.layer0.layer",
+    "block37.layer1.layer",
+    "block37.layer2.layer",
+    "block37.layer3.layer",
+    "block37.layer4.layer"
+   ]
+  },
+  {
+   "kind": "vit",
+   "records": [
+    "block38.layer0.layer",
+    "block38.layer1.layer",
+    "block38.layer2.layer",
+    "block38.layer3.layer",
+    "block38.layer4.layer"
+   ]
+  },
+  {
+   "kind": "block39",
+   "record": "block39.layer0.layer"
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block40.layer0.layer",
+    "block40.layer1.layer",
+    "block40.layer2.layer",
+    "block40.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    0,
+    0
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block41.layer0.layer",
+    "block41.layer1.layer",
+    "block41.layer2.layer",
+    "block41.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    -4,
+    -4
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block42.layer0.layer",
+    "block42.layer1.layer",
+    "block42.layer2.layer",
+    "block42.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    0,
+    -4
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block43.layer0.layer",
+    "block43.layer1.layer",
+    "block43.layer2.layer",
+    "block43.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    -4,
+    0
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block44.layer0.layer",
+    "block44.layer1.layer",
+    "block44.layer2.layer",
+    "block44.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    0,
+    0
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block45.layer0.layer",
+    "block45.layer1.layer",
+    "block45.layer2.layer",
+    "block45.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    -4,
+    -4
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block46.layer0.layer",
+    "block46.layer1.layer",
+    "block46.layer2.layer",
+    "block46.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    0,
+    -4
+   ],
+   "tail": null
+  },
+  {
+   "kind": "split16",
+   "records": [
+    "block47.layer0.layer",
+    "block47.layer1.layer",
+    "block47.layer2.layer",
+    "block47.layer3.layer"
+   ],
+   "inpview": false,
+   "shift": [
+    -4,
+    0
+   ],
+   "tail": "outview"
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "up",
+   "record": "block48.layer0.layer",
+   "shift": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block49.layer0.layer",
+   "shift": [
+    -4,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block50.layer0.layer",
+   "shift": [
+    0,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block51.layer0.layer",
+   "shift": [
+    -4,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block52.layer0.layer",
+   "shift": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block53.layer0.layer",
+   "shift": [
+    -4,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "std",
+   "record": "block54.layer0.layer",
+   "shift": [
+    0,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "8h",
+   "variant": "outview",
+   "record": "block55.layer0.layer",
+   "shift": [
+    -4,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "up",
+   "record": "block56.layer0.layer",
+   "shift": [
+    0,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "std",
+   "record": "block57.layer0.layer",
+   "shift": [
+    -4,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "std",
+   "record": "block58.layer0.layer",
+   "shift": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "std",
+   "record": "block59.layer0.layer",
+   "shift": [
+    -4,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "std",
+   "record": "block60.layer0.layer",
+   "shift": [
+    0,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "4h",
+   "variant": "outview",
+   "record": "block61.layer0.layer",
+   "shift": [
+    -4,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "2h",
+   "variant": "up",
+   "record": "block62.layer0.layer",
+   "shift": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "2h",
+   "variant": "std",
+   "record": "block63.layer0.layer",
+   "shift": [
+    -4,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "2h",
+   "variant": "std",
+   "record": "block64.layer0.layer",
+   "shift": [
+    0,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "2h",
+   "variant": "outview",
+   "record": "block65.layer0.layer",
+   "shift": [
+    -4,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "1h",
+   "variant": "up",
+   "record": "block66.layer0.layer",
+   "shift": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "1h",
+   "variant": "std",
+   "record": "block67.layer0.layer",
+   "shift": [
+    -4,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "1h",
+   "variant": "std",
+   "record": "block68.layer0.layer",
+   "shift": [
+    0,
+    -4
+   ]
+  },
+  {
+   "kind": "swin",
+   "level": "1h",
+   "variant": "outview",
+   "record": "block69.layer0.layer",
+   "shift": [
+    -4,
+    0
+   ]
+  },
+  {
+   "kind": "post",
+   "record": "block70.layer0.layer",
+   "blend_record": "block70.layer0.blend_scale"
+  }
+ ]
+}
