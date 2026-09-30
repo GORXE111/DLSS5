@@ -4,14 +4,28 @@ import math
 import torch
 
 EPS = 6.2e-05
+ARITH_Q8 = False      # True: f16/fp8 舍入改用纯算术实现 (torch.compile 用: triton 在 sm_86 上不支持 fp8 dtype，inductor 会省掉 half 往返)；与转换逐位一致
 
 
 def f16(x):
+    """舍入到 f16 (保持 f32 存储)"""
+    if ARITH_Q8:                                                          # torch.compile 下 inductor 会省掉 half 往返，改用算术舍入
+        e = (((x.view(torch.int32) >> 23) & 0xFF) - 127).clamp(min=-14)  # 低于 2^-14 按非规格化数的固定步长
+        s = torch.exp2((e - 10).float())                                  # f16: 10 位尾数 -> 步长 2^(e-10)
+        r = torch.round(x / s) * s
+        return torch.where(r.abs() > 65504.0, r.sign() * float("inf"), r)
     return x.half().float()
+
+
 
 
 def q8(x):
     """RNE 到 e4m3 (satfinite)"""
+    if ARITH_Q8:
+        x = x.clamp(-448.0, 448.0)
+        e = (((x.view(torch.int32) >> 23) & 0xFF) - 127).clamp(min=-6)   # 指数，低于 2^-6 按非规格化数的固定步长
+        s = torch.exp2((e - 3).float())                                   # e4m3: 3 位尾数 -> 量化步长 2^(e-3)
+        return torch.round(x / s) * s                                     # round 为四舍六入五成双 (= RNE)
     return x.clamp(-448.0, 448.0).to(torch.float8_e4m3fn).float()
 
 
@@ -52,7 +66,7 @@ def _h(x):
 def exp_bits(L, mul, add, lo, hi, shift, addc):
     """y = clamp(f16(f16(L)*mul + add), lo, hi)；结果 = f16 位 ((y_bits << shift) + addc) 的低 16 位。
     常数先舍入到 f16；half 张量乘/加 Python 标量时按 f32 计算后舍入到 f16 (= 两次 f16 运算)，不产生主机->显存拷贝"""
-    y = (L.half() * _h(mul) + _h(add)).clamp(_h(lo), _h(hi))
+    y = f16(f16(f16(L) * _h(mul)) + _h(add)).clamp(_h(lo), _h(hi)).half()   # 两次 f16 运算 (与 numpy 参考一致)
     bits = ((y.view(torch.int16).int() & 0xFFFF) << shift) + (addc & 0xFFFF)
     bits = bits & 0xFFFF
     bits = torch.where(bits >= 32768, bits - 65536, bits).to(torch.int16)

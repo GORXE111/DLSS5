@@ -1,5 +1,6 @@
 """DLSS5 整网 (GPU)。按 data/schedule.json 的 71 步执行: pre_block -> U-Net 编码 1h..8h -> 16h 分组 swin -> ViT-1d ->
-解码 16h..1h -> post_block (时域合成)。整网在补齐到 384x640 的网格上运行 (输入 640x360)。
+解码 16h..1h -> post_block (时域合成)。整网在补齐网格上运行: 宽高各向上取到 64 的倍数 (640x360 -> 640x384)，
+16h 与 ViT 两级再各自补到 4 的倍数 (见 dims())。支持任意输入尺寸。
 
     net = DLSS5()                                   # 读 WEIGHTS_HT.bin，解码全部权重到 GPU
     out = net(color, hist=None, mv=None, frame=0)   # color/hist: (360, 640, 3) [0,1]；mv: (360, 640, 2) 像素；返回 (360, 640, 3)
@@ -15,14 +16,46 @@ from .blocks import Block39, FinalHead, Split16, Swin, SwinDown, SwinUp, ViT, _B
 from .ops import EXP16, act, bilinear, catmull_rom5, cos_norm, exp_bits, f16, inv_sum, noise, q8, unwindows, windows
 from .weights import Records
 
-LEVEL = {"1h": (32, 192, 320), "2h": (64, 96, 160), "4h": (128, 48, 80), "8h": (256, 24, 40)}
-GRID_H, GRID_W = 384, 640
+LEVEL = {"1h": (32, 192, 320), "2h": (64, 96, 160), "4h": (128, 48, 80), "8h": (256, 24, 40)}   # 通道数 (及 640x360 时的尺寸)
+
+
+def _up(v, m):
+    return (v + m - 1) // m * m
+
+
+# DLL 为输入 (H, W) 选的补齐网格 (pre_block 参数 +240，nr-lab 实测)。规则同时依赖宽高 (如宽 1280: 720p 时补到 1344，800p 时不补)，
+# 尚未从 DLL 的 CPU 代码中解出；表外尺寸默认向上取到 64 的倍数 (只影响边缘窗口)，也可用 grid= 显式指定。
+KNOWN_GRID = {(360, 640): (384, 640), (396, 704): (448, 704), (540, 960): (576, 960), (576, 1024): (576, 1024),
+              (600, 800): (640, 832), (648, 1152): (768, 1152), (720, 1280): (768, 1344), (756, 1344): (768, 1344),
+              (768, 1366): (768, 1408), (800, 1280): (832, 1280), (900, 1600): (1024, 1600), (1080, 1440): (1152, 1472),
+              (1080, 1920): (1152, 1920), (1440, 2560): (1472, 2560)}
+
+
+def dims(H, W, grid=None):
+    """输入 H x W -> 各级网格。grid: 全分辨率补齐网格 (默认查 KNOWN_GRID，否则向上取 64 的倍数)；
+    1h..8h = grid / 2..16；16h: 实际 grid/32，补到 4 的倍数；vit: 16h 补齐网格 /2 再补到 4 的倍数"""
+    GH, GW = grid or KNOWN_GRID.get((H, W)) or (_up(H, 64), _up(W, 64))
+    d = {"grid": (GH, GW), "1h": (GH // 2, GW // 2), "2h": (GH // 4, GW // 4), "4h": (GH // 8, GW // 8),
+         "8h": (GH // 16, GW // 16), "16h_real": (GH // 32, GW // 32)}
+    d["16h"] = (_up(GH // 32, 4), _up(GW // 32, 4))
+    d["vit"] = (_up(d["16h"][0] // 2, 4), _up(d["16h"][1] // 2, 4))
+    return d
+
+
+def pad_rows_cols(x, src, dst):
+    """(src_h*src_w, C) -> (dst_h*dst_w, C)，多出的区域补 0，多余的裁掉"""
+    C = x.shape[1]
+    out = x.new_zeros(dst[0], dst[1], C)
+    h, w = min(src[0], dst[0]), min(src[1], dst[1])
+    out[:h, :w] = x.view(src[0], src[1], C)[:h, :w]
+    return out.view(-1, C)
 
 
 # ================================================================== pre_block (block0)
 class PreBlock(_Base):
     """每个全分辨率像素 10 路输入 -> 适配器 16->32 -> 全分辨率 1h swin (skip, 供 post_block) -> 2x2 平均 (进 block1)。
-    输入: 颜色 RGB 与重投影历史 RGB 各 (c-0.5)*0.125，3 路噪声，常数 1 (5 路合并)。补齐行按 y' = 718 - y 镜像取样。
+    输入: 颜色 RGB 与重投影历史 RGB 各 (c-0.5)*0.125，3 路噪声，常数 1 (5 路合并)。补齐行/列按不重复边缘的镜像取样
+(360p: y' = 718 - y)。
     历史缺失 (重置帧) 时以颜色充当历史。"""
 
     INPUTS = ["颜色R", "颜色G", "颜色B", "历史R", "历史G", "历史B", "噪声0", "噪声1", "噪声2", "常数"]
@@ -54,21 +87,24 @@ class PreBlock(_Base):
 
     def inputs(self, color, hist, mv, frame):
         Hi, Wi = color.shape[:2]
-        y, x = torch.meshgrid(torch.arange(GRID_H, device=self.dev, dtype=torch.float32),
-                              torch.arange(GRID_W, device=self.dev, dtype=torch.float32), indexing="ij")
+        GH, GW = dims(Hi, Wi)["grid"]
+        y, x = torch.meshgrid(torch.arange(GH, device=self.dev, dtype=torch.float32),
+                              torch.arange(GW, device=self.dev, dtype=torch.float32), indexing="ij")
         y = torch.where(y >= Hi, 2 * (Hi - 1) - y, y)
+        x = torch.where(x >= Wi, 2 * (Wi - 1) - x, x)
         u, v = (x + 0.5) / Wi, (y + 0.5) / Hi
         c = bilinear(color, u, v)[..., :3]
         mvs = mv[y.long().clamp(0, Hi - 1), x.long().clamp(0, Wi - 1)]
         h = catmull_rom5(hist[..., :3], u + mvs[..., 0] / Wi, v + mvs[..., 1] / Hi)
-        nz = noise(GRID_H, GRID_W, frame, self.dev).permute(1, 2, 0)
-        one = torch.ones(GRID_H, GRID_W, 1, device=self.dev)
+        nz = noise(GH, GW, frame, self.dev).permute(1, 2, 0)
+        one = torch.ones(GH, GW, 1, device=self.dev)
         return torch.cat([(c - 0.5) * 0.125, (h - 0.5) * 0.125, nz, one], -1).view(-1, 10)
 
     def __call__(self, color, hist, mv, frame):
+        GH, GW = dims(*color.shape[:2])["grid"]
         a = q8(f16(f16(self.inputs(color, hist, mv, frame)) @ self.A))[:, self.fi]   # 适配器是 f16 mma: 输入先舍入到 f16
-        y0 = self.swin(a, GRID_H, GRID_W, (0, 0))                # skip (全分辨率 tin 片段序)
-        img = q8(f16(y0[:, self.swin.ci].view(192, 2, 320, 2, 32).mean((1, 3)).reshape(-1, 32)))
+        y0 = self.swin(a, GH, GW, (0, 0))                        # skip (全分辨率 tin 片段序)
+        img = q8(f16(y0[:, self.swin.ci].view(GH // 2, 2, GW // 2, 2, 32).mean((1, 3)).reshape(-1, 32)))
         return img, y0
 
 
@@ -91,24 +127,25 @@ class PostBlock(_Base):
         self.blend = float(Lay.f16vec(blend_raw)[0])
         self.scale = scale                                          # kernel 参数 +48 (f32)
 
-    def net(self, x69, skip):
+    def net(self, x69, skip, GH, GW):
         b = self.swin
-        Xf = x69.view(192, 1, 320, 1, 32).expand(192, 2, 320, 2, 32).reshape(-1, 32)[:, self.mxi]
+        h, w = GH // 2, GW // 2
+        Xf = x69.view(h, 1, w, 1, 32).expand(h, 2, w, 2, 32).reshape(-1, 32)[:, self.mxi]
         M = f16(self.s1 * Xf + self.s2 * skip)
         Hh = q8(act(f16(q8(M[:, b.ci]) @ b.W1)))                   # post 的 FFN 吃 q8(m)
         Y = f16(b.c1 * M + Hh @ b.W2)
         Yq = q8(Y[:, b.ci])
-        Yw, meta = windows(Yq, GRID_H, GRID_W, (-4, -4))
+        Yw, meta = windows(Yq, GH, GW, (-4, -4))
         q, k, v = f16(Yw @ b.Wq), f16(Yw @ b.Wk), f16(Yw @ b.Wv)
         L = f16(q8(cos_norm(q) * b.tau) @ q8(cos_norm(k)).transpose(-1, -2) + b.bias)
         p = exp_bits(L, *EXP16)
         o = f16(q8(f16(p * inv_sum(p))) @ q8(v))
-        y = f16(b.c2 * Y + q8(unwindows(o, meta, GRID_H, GRID_W)) @ b.Wp)   # 1h 规则: O 量化、残差用 f16；y 不量化直接进 f16 输出卷积
-        return f16(y @ self.Wo).view(GRID_H, GRID_W, 4)
+        y = f16(b.c2 * Y + q8(unwindows(o, meta, GH, GW)) @ b.Wp)   # 1h 规则: O 量化、残差用 f16；y 不量化直接进 f16 输出卷积
+        return f16(y @ self.Wo).view(GH, GW, 4)
 
     def __call__(self, x69, skip, color, hist, mv):
         H, W = color.shape[:2]
-        n = self.net(x69, skip)[:H, :W]
+        n = self.net(x69, skip, *dims(H, W)["grid"])[:H, :W]
         cur = (color + 8 * self.scale * n[..., :3]).clamp(0, 1)
         if hist is None:                                            # 重置帧: 无历史混合
             return cur
@@ -157,13 +194,14 @@ class DLSS5:
         if mv is None:
             mv = torch.zeros(*color.shape[:2], 2, device=self.dev)
         skips, x, cur, pre_skip = {}, None, None, None
+        D = dims(*color.shape[:2])
         for i, (st, m) in enumerate(self.steps):
             k = st["kind"]
             if k == "pre":
                 x, pre_skip = m(color, color if hist is None else hist, mv, frame)
             elif k == "swin":
                 lv = st["level"]
-                W, H, Wd = LEVEL[lv]
+                H, Wd = D[lv]
                 sh, var = tuple(st["shift"]), st["variant"]
                 if var == "inpview":
                     cur = m(x[:, m.fi], H, Wd, sh)
@@ -171,26 +209,31 @@ class DLSS5:
                     cur, x = m(cur, H, Wd, sh)
                     skips[lv] = cur
                 elif var == "up":
+                    if lv == "8h":                                   # 16h 出口是补齐网格，8h 只读实际区域
+                        x = pad_rows_cols(x, D["16h"], D["16h_real"])
                     cur = m(x, skips[lv], H, Wd, sh)
                 elif var == "outview":
                     x = m(cur, H, Wd, sh)[:, m.ci]
                 else:
                     cur = m(cur, H, Wd, sh)
             elif k == "split16":
-                cur = m(x[:, m.fi] if st["inpview"] else cur, tuple(st["shift"]))
+                if st["inpview"]:                                    # 8h 下采样输出 (实际区域) 补 0 到 16h 补齐网格
+                    x = pad_rows_cols(x, D["16h_real"], D["16h"])
+                cur = m(x[:, m.fi] if st["inpview"] else cur, tuple(st["shift"]), *D["16h"])
                 if st["tail"] == "pool":
                     skips["16h"] = cur
-                    cur = st["head"](cur)
+                    cur = st["head"](cur, D["16h"], D["vit"])
                 elif st["tail"] == "outview":
                     x = cur[:, m.ci]
             elif k == "vit":
                 cur = m(cur)
             elif k == "block39":
-                cur = m(cur, skips["16h"])
+                cur = m(cur, skips["16h"], D["vit"], D["16h"])
             elif k == "post":
                 out = m(x, pre_skip, color, hist, mv)
             if trace is not None:
-                img_out = k == "pre" or (k == "swin" and st["variant"] in ("ds", "outview")) or                     (k == "split16" and st["tail"] == "outview")
+                img_out = k == "pre" or (k == "swin" and st["variant"] in ("ds", "outview")) or \
+                    (k == "split16" and st["tail"] == "outview")
                 trace[i] = x if img_out else cur                     # 跨级的图像格式输出 / 级内的 tin 输出
         return out
 
@@ -221,4 +264,3 @@ class DLSS5:
             g.replay()
             return out
         return run
-

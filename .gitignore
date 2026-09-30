@@ -39,3 +39,5 @@ __pycache__/
 /harness/*/
 /plugin/dist/
 /research/taps*/
+/research/res_study_out/
+/research/behavior_out/

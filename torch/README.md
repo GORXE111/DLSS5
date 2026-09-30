@@ -9,8 +9,10 @@ from dlss5 import DLSS5
 
 net = DLSS5()                                  # 读 WEIGHTS_HT.bin + weights_map.json，解码全部权重到 GPU (~5 s)
 out = net(color)                               # 重置帧: color (360, 640, 3) in [0,1]
-out = net(color, hist=out, mv=mv, frame=1)     # 带历史: hist = 上一帧输出, mv (360, 640, 2) 像素位移
+out = net(color, hist=out, mv=mv, frame=1)     # 带历史: hist = 上一帧输出, mv (H, W, 2) 像素位移
 ```
+
+任意输入尺寸 (H, W)。补齐网格按 DLL 的实测表 `net.KNOWN_GRID` (14 种常见分辨率)，表外默认向上取 64 的倍数。
 
 ```python
 run = net.graph(history=True)                  # 可选: CUDA Graph (输入尺寸固定)，输出为静态缓冲
@@ -19,6 +21,7 @@ out = run(color, hist=prev, mv=mv, frame=5)
 
 ```
 python check.py           # 端到端: nr-lab 第 0 帧合成输入 -> 与 3060 上 nr-lab 的实际输出比较 + 计时
+python check_res.py       # 多分辨率: 540p / 720p / 1080p 与 nr-lab 比较 (需要 research/out_f0_<W>x<H>.ppm)
 python check_frames.py    # 多帧时域累积: 连跑 4 帧与 nr-lab 逐帧比较 (需要 research/out_f0..3.ppm)
 python check_levels.py    # 逐级: 以抓取的 pre_block 输出为起点，各级出口与 kernel 抓取比较 (含幅度比)
 python check_blocks.py    # 逐块隔离: 每块以 kernel 的上一块输出为输入
@@ -32,6 +35,7 @@ python bench.py           # 按块类型计时
 |---|---|---|
 | torch vs nr-lab 实际输出 (第 0 帧) | 0.99930 | 2.0/255 |
 | torch vs nr-lab (第 1-3 帧，带历史) | 0.99943-0.99945 | 1.7-1.9/255 |
+| torch vs nr-lab (540p / 720p / 1080p，第 0 帧) | 0.9993-0.9994 | 1.8-1.9/255 |
 | 网络改动量 (输出 - 输入) vs nr-lab | 0.992-0.995 | |
 
 逐块 (以 kernel 上一块输出为输入): 1h-8h 每块相关 0.9994-0.9998、逐值一致 66-89%；16h 块 0.99997；ViT 块 0.99965。

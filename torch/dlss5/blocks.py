@@ -216,7 +216,7 @@ class Split16(_Base):
         mid = q8(act(f16(Hh @ self.Wa)))
         return q8(mid @ self.Wb)[:, self.cols]
 
-    def attn(self, y, shift, H=12, W=20):
+    def attn(self, y, shift, H, W):
         Y = q8(y[:, self.ci])
         Yw, meta = windows(Y, H, W, shift)
         sp = lambda t: t.view(t.shape[0], 64, 16, 32).transpose(1, 2)     # noqa: E731
@@ -228,9 +228,9 @@ class Split16(_Base):
         o = f16(q8(P) @ q8(v)).transpose(1, 2).reshape(-1, 64, 512)
         return q8(unwindows(o, meta, H, W))[:, self.cols]
 
-    def __call__(self, Xf, shift):
+    def __call__(self, Xf, shift, H=12, W=20):
         y = self.proj(self.ffwd(Xf), Xf, self.P1)
-        return self.proj(self.attn(y, shift), y, self.P3)
+        return self.proj(self.attn(y, shift, H, W), y, self.P3)
 
 
 class FinalHead(_Base):
@@ -242,10 +242,12 @@ class FinalHead(_Base):
         self.cols = self.I(Lay.group_map(Lay.COLS32, 1024))
         self.W = self.T(Lay.unswizzle(w[:524288], 512, 1024))
 
-    def __call__(self, x16):
-        pooled = x16.new_zeros(8, 12, 512)
-        pooled[:6, :10] = q8(f16(x16.view(6, 2, 10, 2, 512).mean((1, 3))))
-        return q8(f16(pooled.view(96, 512)[:, self.ci] @ self.W))[:, self.cols]
+    def __call__(self, x16, d16=(12, 20), dvit=(8, 12)):
+        """x16: 16h 补齐网格 d16 上的输出；池化到 d16/2 后补 0 到 ViT 网格 dvit"""
+        h, w = d16[0] // 2, d16[1] // 2
+        pooled = x16.new_zeros(dvit[0], dvit[1], 512)
+        pooled[:h, :w] = q8(f16(x16.view(h, 2, w, 2, 512).mean((1, 3))))
+        return q8(f16(pooled.view(-1, 512)[:, self.ci] @ self.W))[:, self.cols]
 
 
 # ================================================================== ViT-1d (1024 通道、32 头、96 token 全局注意力)
@@ -268,13 +270,14 @@ class ViT(_Base):
         Hh = q8(act(f16(X[:, self.ci] @ self.W1)))
         x1 = q8(f16(self.c1 * X + Hh @ self.W2))
         xc = x1[:, self.ci]
-        sp = lambda t: t.view(96, 32, 32).transpose(0, 1)          # noqa: E731  (头, token, 32)
+        n = X.shape[0]
+        sp = lambda t: t.view(n, 32, 32).transpose(0, 1)           # noqa: E731  (头, token, 32)
         q, k, v = sp(f16(xc @ self.Wq)), sp(f16(xc @ self.Wk)), sp(f16(xc @ self.Wv))
         Q = q8(f16(cos_norm(q) * self.tau.view(32, 1, 1) * np.sqrt(32)))
         L = f16(Q @ q8(cos_norm(k)).transpose(-1, -2))
         p = exp_bits(L, *EXPVIT)
         o = f16(f16(q8(p) @ q8(v)) * inv_sum(p))                  # ViT: 先乘 V 再乘 1/Σp
-        O = q8(o.transpose(0, 1).reshape(96, 1024))
+        O = q8(o.transpose(0, 1).reshape(n, 1024))
         return q8(f16(self.c2 * x1 + O @ self.Wp))
 
 
@@ -288,7 +291,8 @@ class Block39(_Base):
         self.W = self.T(Lay.unswizzle(w[:524288], 1024, 512)[:, cols])
         self.s = self.T(Lay.f16vec(w[524288:])[cols])
 
-    def __call__(self, low96, skip16):
-        L = low96.view(8, 12, 1024)[:6, :10].reshape(60, 1024)[:, self.ci]
-        U = f16(L @ self.W).view(6, 1, 10, 1, 512).expand(6, 2, 10, 2, 512).reshape(240, 512)
+    def __call__(self, low, skip16, dvit=(8, 12), d16=(12, 20)):
+        h, w = d16[0] // 2, d16[1] // 2
+        L = low.view(dvit[0], dvit[1], 1024)[:h, :w].reshape(-1, 1024)[:, self.ci]
+        U = f16(L @ self.W).view(h, 1, w, 1, 512).expand(h, 2, w, 2, 512).reshape(-1, 512)
         return q8(f16(self.s * skip16 + U))
