@@ -16,9 +16,10 @@ from dlss5 import DLSS5  # noqa: E402
 RESEARCH = os.path.join(HERE, "..", "research")
 
 
-def color_pattern(W=640, H=360):
-    """nr-lab 的合成输入 (MakeColorPattern, sRGB, R8G8B8A8_UNORM)"""
+def color_pattern(W=640, H=360, offset_x=0):
+    """nr-lab 的合成输入 (MakeColorPattern, sRGB, R8G8B8A8_UNORM)。offset_x: --temporal-shift 下第 f 帧 = f*shift，图案右移"""
     y, x = np.mgrid[0:H, 0:W]
+    x = (x - offset_x % W + W) % W
     checker = ((x // 12) ^ (y // 12)) & 1
     line = (x % 61 < 2) | (y % 47 < 2) | ((x + y) % 79 < 2)
     img = np.stack([np.where(line, 1.0, np.where(checker, 0.82, 0.06)),

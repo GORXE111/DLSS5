@@ -22,6 +22,7 @@ out = run(color, hist=prev, mv=mv, frame=5)
 ```
 python check.py           # 端到端: nr-lab 第 0 帧合成输入 -> 与 3060 上 nr-lab 的实际输出比较 + 计时
 python check_res.py       # 多分辨率: 540p / 720p / 1080p 与 nr-lab 比较 (需要 research/out_f0_<W>x<H>.ppm)
+python check_motion.py    # 运动画面: 图案逐帧平移 + 正确/错误运动矢量，与 nr-lab 逐帧比较
 python check_frames.py    # 多帧时域累积: 连跑 4 帧与 nr-lab 逐帧比较 (需要 research/out_f0..3.ppm)
 python check_levels.py    # 逐级: 以抓取的 pre_block 输出为起点，各级出口与 kernel 抓取比较 (含幅度比)
 python check_blocks.py    # 逐块隔离: 每块以 kernel 的上一块输出为输入
@@ -36,6 +37,7 @@ python bench.py           # 按块类型计时
 | torch vs nr-lab 实际输出 (第 0 帧) | 0.99930 | 2.0/255 |
 | torch vs nr-lab (第 1-3 帧，带历史) | 0.99943-0.99945 | 1.7-1.9/255 |
 | torch vs nr-lab (540p / 720p / 1080p，第 0 帧) | 0.9993-0.9994 | 1.8-1.9/255 |
+| torch vs nr-lab (运动画面，第 1-3 帧) | 0.9993-0.9995 | 1.6-2.0/255 |
 | 网络改动量 (输出 - 输入) vs nr-lab | 0.992-0.995 | |
 
 逐块 (以 kernel 上一块输出为输入): 1h-8h 每块相关 0.9994-0.9998、逐值一致 66-89%；16h 块 0.99997；ViT 块 0.99965。
