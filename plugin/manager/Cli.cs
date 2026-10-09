@@ -137,7 +137,7 @@ namespace Dlss5Manager
             sb.AppendLine("主程序    " + (p.Exe ?? "(没找到)"));
             sb.AppendLine("安装位置  " + p.ExeDir);
             sb.AppendLine("引擎      " + p.Engine);
-            sb.AppendLine("图形 API  " + (p.Apis.Count > 0 ? string.Join(" / ", p.Apis) : "未能从导入表判断"));
+            sb.AppendLine("图形 API  " + (p.Apis.Count > 0 ? string.Join(" / ", p.Apis) + (p.ApisGuessed ? " (从程序里的字符串推测)" : "") : "未能判断"));
             sb.AppendLine("超分      " + (p.Upscalers.Count > 0 ? string.Join(" / ", p.Upscalers) : "未发现"));
             sb.AppendLine("反作弊    " + (p.AntiCheat.Count > 0 ? "有" : "未发现"));
             sb.AppendLine("状态      " + (p.Installed != null ? "已安装，" + Modes.Label(p.Mode) + " (注入名 " + p.Installed.proxy + ")" : "未安装"));

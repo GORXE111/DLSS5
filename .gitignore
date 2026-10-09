@@ -46,3 +46,5 @@ __pycache__/
 /plugin/fallback/obj/
 /plugin/fallback/test/
 /plugin/fallback/fakegame/
+/plugin/fallback/godot_test/sponza/
+/plugin/fallback/godot_test/.godot/

@@ -227,6 +227,7 @@ namespace Dlss5Manager
         public List<string> AntiCheat = new List<string>();
         public Dictionary<string, string> ProxyOwners = new Dictionary<string, string>();   // 已存在的代理 dll -> 归属
         public Manifest Installed;
+        public bool ApisGuessed;   // 导入表里没有，是从程序里的字符串推测的 (运行时才加载图形库的引擎，如 Godot)
         public bool UnrealEngine { get { return Engine.StartsWith("Unreal"); } }
 
         // 没有超分、但能跑 DX12 的游戏默认走兜底模式；已安装的以安装记录为准
@@ -287,6 +288,14 @@ namespace Dlss5Manager
             if (imp.Contains("d3d12.dll") || File.Exists(Path.Combine(p.ExeDir, @"D3D12\D3D12Core.dll"))) p.Apis.Add("DX12");
             if (imp.Contains("d3d11.dll")) p.Apis.Add("DX11");
             if (imp.Contains("vulkan-1.dll")) p.Apis.Add("Vulkan");
+            if (p.Apis.Count == 0 && exe != null)
+            {
+                var found = FindAscii(exe, "D3D12CreateDevice", "D3D11CreateDevice", "vkCreateInstance");
+                if (found.Contains("D3D12CreateDevice")) p.Apis.Add("DX12");
+                if (found.Contains("D3D11CreateDevice")) p.Apis.Add("DX11");
+                if (found.Contains("vkCreateInstance")) p.Apis.Add("Vulkan");
+                p.ApisGuessed = p.Apis.Count > 0;
+            }
 
             // 超分
             foreach (string f in all)
@@ -321,6 +330,41 @@ namespace Dlss5Manager
                 else p.ProxyOwners[n] = Identify(f);
             }
             return p;
+        }
+
+        // 文件里出现了哪些 ASCII 串 (分块读，块间重叠，不整个读进内存)
+        static HashSet<string> FindAscii(string path, params string[] needles)
+        {
+            var found = new HashSet<string>();
+            int overlap = needles.Max(n => n.Length);
+            var buf = new byte[(1 << 22) + overlap];
+            var pats = needles.Select(n => Encoding.ASCII.GetBytes(n)).ToArray();
+            try
+            {
+                using (var f = File.OpenRead(path))
+                {
+                    int keep = 0, read;
+                    while (found.Count < needles.Length && (read = f.Read(buf, keep, buf.Length - keep)) > 0)
+                    {
+                        int len = keep + read;
+                        for (int k = 0; k < pats.Length; k++)
+                        {
+                            if (found.Contains(needles[k])) continue;
+                            byte[] p = pats[k];
+                            for (int i = Array.IndexOf(buf, p[0], 0, len); i >= 0 && i <= len - p.Length; i = Array.IndexOf(buf, p[0], i + 1, len - i - 1))
+                            {
+                                int j = 1;
+                                while (j < p.Length && buf[i + j] == p[j]) j++;
+                                if (j == p.Length) { found.Add(needles[k]); break; }
+                            }
+                        }
+                        keep = Math.Min(overlap, len);
+                        Buffer.BlockCopy(buf, len - keep, buf, 0, keep);
+                    }
+                }
+            }
+            catch { }
+            return found;
         }
 
         static string Identify(string dll)
@@ -367,6 +411,9 @@ namespace Dlss5Manager
                 if (Engine == "Unity" && Apis.Contains("DX11"))
                     list.Add("Unity 游戏常默认用 DX11，兜底模式需要 DX12: 在 Steam 启动选项里加 -force-d3d12");
                 if (Upscalers.Count > 0) list.Add("这个游戏自带超分，用 OptiScaler 方式效果更好 (有深度和运动矢量)");
+                if (ApisGuessed && Apis.Count > 1)
+                    list.Add("图形 API 是从程序里推测的，游戏可能支持多种: 必须以 DX12 运行兜底模式才生效 (Godot 游戏可加启动参数 --rendering-driver d3d12)；"
+                             + "装好后进一次游戏，dlss5fb.log 里出现 tracked 就说明挂上了");
             }
             else
             {

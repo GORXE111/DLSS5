@@ -380,7 +380,16 @@ struct Chain {
     UINT pend_W = 0, pend_H = 0;           // a new back buffer size waiting to settle (window being dragged)
     DWORD pend_since = 0;
     DXGI_FORMAT warned_format = DXGI_FORMAT_UNKNOWN;
+    unsigned skip_logged = 0;              // skip reasons already written to the log (bit per reason)
 };
+
+// a frame was passed through unchanged: log each reason the first time it happens
+static void Skip(Chain *c, unsigned bit, const char *why)
+{
+    if (c->skip_logged & bit) return;
+    c->skip_logged |= bit;
+    Log("frame %llu passed through: %s", c->frame, why);
+}
 
 static std::mutex g_chains_lock;
 static std::unordered_map<IUnknown *, Chain *> g_chains;
@@ -665,12 +674,13 @@ static void ProcessFrame(Chain *c)
         }
         c->key_down[i] = down;
     }
-    if (!c->cfg.enabled || c->broken) return;
-    if (c->color_space != DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709) return;
+    if (!c->cfg.enabled) { Skip(c, 1, "disabled (ini or F10)"); return; }
+    if (c->broken) return;
+    if (c->color_space != DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709) { Skip(c, 2, "HDR colour space"); return; }
 
     UINT index = c->swapchain->GetCurrentBackBufferIndex();
     ID3D12Resource *bb = nullptr;
-    if (FAILED(c->swapchain->GetBuffer(index, IID_PPV_ARGS(&bb)))) return;
+    if (FAILED(c->swapchain->GetBuffer(index, IID_PPV_ARGS(&bb)))) { Skip(c, 4, "GetBuffer failed"); return; }
     D3D12_RESOURCE_DESC desc = bb->GetDesc();
     if (!Supported(desc.Format) || desc.SampleDesc.Count != 1) {
         if (c->warned_format != desc.Format)
@@ -681,6 +691,7 @@ static void ProcessFrame(Chain *c)
     }
     const int sized = EnsureSized(c, desc);
     if (sized <= 0) {
+        if (sized == 0) Skip(c, 8, "back buffer size changing (waiting for it to settle)");
         if (sized < 0) {
             Log("FAIL creating resources / NR feature; fallback mode disabled");
             c->broken = true;
@@ -893,11 +904,21 @@ static PfnCreateSCCore o_create_sc_core;
 static PfnCreateSCComp o_create_sc_comp;
 static thread_local int t_depth;   // DXGI calls its own Present internally (Present -> Present1)
 
+// Present statistics for the log: total / nested (DXGI calling itself) / DXGI_PRESENT_TEST / untracked swap chain
+static std::atomic<unsigned long long> g_presents[4];
+static std::atomic<DWORD> g_stats_time;
+
 static void BeforePresent(IUnknown *sc, UINT flags)
 {
-    if (t_depth++ != 0 || (flags & DXGI_PRESENT_TEST)) return;
+    ++g_presents[0];
+    DWORD now = GetTickCount(), last = g_stats_time.load();
+    if (now - last > 10000 && g_stats_time.compare_exchange_strong(last, now))
+        Log("presents: %llu total, %llu nested, %llu test-only, %llu on untracked swap chains", g_presents[0].load(),
+            g_presents[1].load(), g_presents[2].load(), g_presents[3].load());
+    if (t_depth++ != 0) { ++g_presents[1]; return; }
+    if (flags & DXGI_PRESENT_TEST) { ++g_presents[2]; return; }
     Chain *c = FindChain(sc);
-    if (c == nullptr) return;
+    if (c == nullptr) { ++g_presents[3]; return; }
     std::lock_guard<std::mutex> lock(c->lock);
     ProcessFrame(c);
 }
@@ -984,6 +1005,36 @@ static HRESULT STDMETHODCALLTYPE HookSetColorSpace(IDXGISwapChain3 *sc, DXGI_COL
     return o_set_color_space(sc, cs);
 }
 
+static std::string ModuleOf(void *addr)
+{
+    HMODULE m = nullptr;
+    char name[MAX_PATH] = "?";
+    if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+            static_cast<LPCSTR>(addr), &m))
+        GetModuleFileNameA(m, name, MAX_PATH);
+    const char *base = strrchr(name, '\\');
+    return base ? base + 1 : name;
+}
+
+// diagnostics: report when someone else rewrites our swap chain vtable entries
+static void **g_sc_vtable;
+static DWORD WINAPI Watchdog(LPVOID)
+{
+    const int idx[2] = {8, 22};
+    void *const mine[2] = {reinterpret_cast<void *>(&HookPresent), reinterpret_cast<void *>(&HookPresent1)};
+    void *seen[2] = {mine[0], mine[1]};
+    for (;;) {
+        Sleep(500);
+        for (int i = 0; i < 2; ++i) {
+            void *now = g_sc_vtable[idx[i]];
+            if (now != seen[i]) {
+                Log("vtable[%d] changed: %p (%s) -> %p (%s)", idx[i], seen[i], ModuleOf(seen[i]).c_str(), now, ModuleOf(now).c_str());
+                seen[i] = now;
+            }
+        }
+    }
+}
+
 static void Track(IUnknown *device, IUnknown *swapchain)
 {
     if (device == nullptr || swapchain == nullptr) return;
@@ -1000,6 +1051,10 @@ static void Track(IUnknown *device, IUnknown *swapchain)
     Patch(vt, 22, reinterpret_cast<void *>(&HookPresent1), reinterpret_cast<void **>(&o_present1));
     Patch(vt, 38, reinterpret_cast<void *>(&HookSetColorSpace), reinterpret_cast<void **>(&o_set_color_space));
     Patch(vt, 39, reinterpret_cast<void *>(&HookResize1), reinterpret_cast<void **>(&o_resize1));
+    if (g_sc_vtable == nullptr) {
+        g_sc_vtable = vt;
+        CloseHandle(CreateThread(nullptr, 0, Watchdog, nullptr, 0, nullptr));
+    }
 
     auto *c = new Chain;
     c->swapchain = sc3;
