@@ -543,6 +543,10 @@ namespace Dlss5Manager
                 Help = "兜底模式: 打开后模型沿用上一帧 (运动矢量为 0)，静止画面更稳，运动时可能拖影；默认每帧独立" },
             new Setting { Key = "Compare", Label = "左右对比", Kind = "bool", Default = 0, Only = Modes.Fallback,
                 Help = "兜底模式: 左半屏原画面、右半屏 DLSS5 (游戏里按 F11 也能切换)" },
+            new Setting { Key = "Stabilize", Label = "输入死区", Kind = "float", Min = 0, Max = 4, Default = 1.5, Only = Modes.Fallback,
+                Help = "兜底模式: 像素变化小于这么多 (1/255 为单位) 时沿用上次送进模型的值，滤掉抖动、胶片颗粒造成的闪烁；0 = 关" },
+            new Setting { Key = "Smooth", Label = "时间平滑", Kind = "float", Min = 0.05, Max = 1, Default = 0.2, Only = Modes.Fallback,
+                Help = "兜底模式: 画面没变的地方，DLSS5 的改动每帧只跟进这么多 (越小越稳)；画面在变的地方立刻跟上，不拖影；1 = 关" },
         };
 
         public static IEnumerable<Setting> For(string mode) { return All.Where(s => s.AppliesTo(mode)); }

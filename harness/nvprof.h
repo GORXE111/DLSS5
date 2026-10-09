@@ -102,11 +102,12 @@ inline unsigned g_trace_seq, g_trace_chain;
 
 inline void TraceChain(const CuLaunch *k, unsigned n)
 {
-    if (g_trace_frame < 0 || g_frame_idx != unsigned(g_trace_frame)) return;
+    if (g_trace_frame == -1 || (g_trace_frame >= 0 && g_frame_idx != unsigned(g_trace_frame))) return;   // DLSS5_TRACE=-2: every frame
     if (!g_trace) fopen_s(&g_trace, "nr-trace.tsv", "w");
     if (!g_trace) return;
     for (unsigned i = 0; i < n; ++i) {
         const Kernel &kn = g_kernels[k[i].function];
+        if (g_trace_frame == -2) std::fprintf(g_trace, "f%u\t", g_frame_idx);
         std::fprintf(g_trace, "%u\t%u/%u/%u\t%s\t%u,%u,%u\t%u,%u,%u\t%u\t%u\t", g_trace_seq++, g_trace_chain, i, n,
             kn.name.c_str(), k[i].grid.x, k[i].grid.y, k[i].grid.z, k[i].block.x, k[i].block.y, k[i].block.z,
             k[i].dyn_smem, k[i].param_size);
@@ -266,12 +267,34 @@ inline void TapCollect()
     g_tap_used = 0;
 }
 
+// 谁写的参数 (DLSS5_WHO=子串): 名字含该子串的 kernel 每次发射时打印 参数块地址、+200 处的 u32 和 dll 内的调用栈 (RVA)
+inline const char *g_who;
+inline HMODULE g_module;
+
+inline void Who(const CuLaunch &k)
+{
+    const Kernel &kn = g_kernels[k.function];
+    if (!g_who || kn.name.find(g_who) == std::string::npos) return;
+    void *frames[24];
+    const USHORT n = CaptureStackBackTrace(0, 24, frames, nullptr);
+    const auto base = reinterpret_cast<uintptr_t>(g_module);
+    std::printf("[who] frame %u %s params=%p size=%u +200=%u stack:", g_frame_idx, kn.name.substr(0, 40).c_str(), k.params,
+        k.param_size, k.param_size >= 204 ? *reinterpret_cast<const unsigned *>(static_cast<const char *>(k.params) + 200) : 0);
+    for (USHORT i = 0; i < n; ++i) {
+        const auto a = reinterpret_cast<uintptr_t>(frames[i]);
+        if (a >= base && a < base + 0x2000000) std::printf(" +%llx", static_cast<unsigned long long>(a - base));
+    }
+    std::printf("\n");
+    std::fflush(stdout);
+}
+
 // 链拆成逐个发射，每个前后各一个时间戳 (同一命令列表内顺序不变)
 inline int __cdecl LaunchCuKernelChain(ID3D12GraphicsCommandList *list, const CuLaunch *k, unsigned n)
 {
     // 初始化时 dll 会以空命令列表调一次 (能力探测)，原样透传
     if (!g_on || list == nullptr || k == nullptr || !EnsureHeap(list)) return g_real_launch_chain(list, k, n);
     TraceChain(k, n);
+    for (unsigned i = 0; i < n; ++i) Who(k[i]);
     int r = 0;
     for (unsigned i = 0; i < n; ++i) {
         if (g_next + 2 > kMaxQueries) return g_real_launch_chain(list, k + i, n - i);
@@ -426,6 +449,8 @@ inline void Install(HMODULE module, bool (*hook)(HMODULE, const char *, const ch
     g_on = env && env[0] == '1';
     if (!g_on) return;
     if (const char *t = std::getenv("DLSS5_TRACE")) g_trace_frame = std::atoi(t);
+    g_who = std::getenv("DLSS5_WHO");
+    g_module = module;
     ParseTap();
     const bool ok = hook(module, "KERNEL32.dll", "GetProcAddress", reinterpret_cast<void *>(&GetProcAddressHook));
     std::printf("[prof] GetProcAddress hook %s\n", ok ? "installed" : "FAILED");
