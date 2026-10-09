@@ -13,8 +13,9 @@ import torch
 
 from . import layout as Lay
 from .blocks import Block39, FinalHead, Split16, Swin, SwinDown, SwinUp, ViT, _Base
+from . import ops
 from . import style as style_mod
-from .ops import EXP16, act, bilinear, catmull_rom5, cos_norm, exp_bits, f16, inv_sum, noise, q8, unwindows, windows
+from .ops import act, bilinear, catmull_rom5, f16, noise, q8, unwindows, windows
 from .weights import Records
 
 LEVEL = {"1h": (32, 192, 320), "2h": (64, 96, 160), "4h": (128, 48, 80), "8h": (256, 24, 40)}   # 通道数 (及 640x360 时的尺寸)
@@ -118,6 +119,7 @@ class PreBlock(_Base):
         self.A = self.T(A)                                     # 输出为规范序
         self.fi = self.I(np.argsort(Lay.canon_index(32)))
         self.swin = Swin(w[:8208] + w[9232:], 32, device)      # 去掉适配器 = 标准 1h 记录
+        self._kc = {}
 
     def inputs(self, color, hist, mv, frame, ctrl=None):
         Hi, Wi = color.shape[:2]
@@ -131,8 +133,10 @@ class PreBlock(_Base):
         mvs = mv[y.long().clamp(0, Hi - 1), x.long().clamp(0, Wi - 1)]
         h = catmull_rom5(hist[..., :3], u + mvs[..., 0] / Wi, v + mvs[..., 1] / Hi)
         nz = noise(GH, GW, frame, self.dev).permute(1, 2, 0)
-        ctrl = ctrl or control_inputs()
-        k = torch.tensor([1.0] + [ctrl[n] for n in self.CONTROLS], device=self.dev).expand(GH, GW, 1 + len(self.CONTROLS))
+        key = tuple((ctrl or control_inputs())[n] for n in self.CONTROLS)
+        if key not in self._kc:                              # 缓存: CUDA Graph 捕获期间不能做主机->显存拷贝
+            self._kc[key] = torch.tensor((1.0,) + key, device=self.dev)
+        k = self._kc[key].expand(GH, GW, 1 + len(self.CONTROLS))
         return torch.cat([(c - 0.5) * 0.125, (h - 0.5) * 0.125, nz, k], -1).view(-1, len(self.INPUTS))
 
     def __call__(self, color, hist, mv, frame, ctrl=None):
@@ -167,14 +171,10 @@ class PostBlock(_Base):
         h, w = GH // 2, GW // 2
         Xf = x69.view(h, 1, w, 1, 32).expand(h, 2, w, 2, 32).reshape(-1, 32)[:, self.mxi]
         M = f16(self.s1 * Xf + self.s2 * skip)
-        Hh = q8(act(f16(q8(M[:, b.ci]) @ b.W1)))                   # post 的 FFN 吃 q8(m)
-        Y = f16(b.c1 * M + Hh @ b.W2)
-        Yq = q8(Y[:, b.ci])
-        Yw, meta = windows(Yq, GH, GW, (-4, -4))
-        q, k, v = f16(Yw @ b.Wq), f16(Yw @ b.Wk), f16(Yw @ b.Wv)
-        L = f16(q8(cos_norm(q) * b.tau) @ q8(cos_norm(k)).transpose(-1, -2) + b.bias)
-        p = exp_bits(L, *EXP16)
-        o = f16(q8(f16(p * inv_sum(p))) @ q8(v))
+        ffn = lambda m: q8(act(f16(q8(m[:, b.ci]) @ b.W1))) @ b.W2     # noqa: E731  post 的 FFN 吃 q8(m)
+        Y = f16(b.c1 * M + torch.cat([ffn(m) for m in M.split(b.CHUNK)]))   # 分块: 全分辨率中间张量很大
+        Yw, meta = windows(q8(Y[:, b.ci]), GH, GW, (-4, -4))
+        o = torch.cat([b._window_attn(y) for y in Yw.split(b.CHUNK // 64)])
         y = f16(b.c2 * Y + q8(unwindows(o, meta, GH, GW)) @ b.Wp)   # 1h 规则: O 量化、残差用 f16；y 不量化直接进 f16 输出卷积
         return f16(y @ self.Wo).view(GH, GW, 4)
 
@@ -193,9 +193,15 @@ class PostBlock(_Base):
 
 # ================================================================== 整网
 class DLSS5:
-    def __init__(self, device="cuda", records=None, schedule=None):
+    def __init__(self, device="cuda", records=None, schedule=None, precise=False, half=None):
+        """precise=True: 逐处模拟 kernel 的 f16/fp8 舍入、f32 计算 (逐块对照用，慢)；
+        False (默认): 不模拟舍入、半精度计算 (autocast)。整帧与 kernel 的吻合度两者相同 (见 bench_modes.py)。
+        half: 是否用半精度 (默认 = not precise)"""
         torch.backends.cuda.matmul.allow_tf32 = False             # 与参考一致的 f32 matmul
+        torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False   # 半精度 matmul 用 f32 累加
         self.dev = device
+        self.precise = precise
+        self.half = (not precise) if half is None else half
         R = records or Records()
         sched = schedule or json.load(open(os.path.join(Lay.DATA, "schedule.json"), encoding="utf-8"))["steps"]
         self.steps = []
@@ -221,14 +227,25 @@ class DLSS5:
 
     @torch.no_grad()
     def __call__(self, color, hist=None, mv=None, frame=0, trace=None, controls=None, intensity=1.0):
-        """color/hist: (H, W, 3) float [0,1] (numpy 或 torch)；mv: (H, W, 2) 像素位移；hist=None 表示重置帧。
+        """color/hist: (H, W, 3) float [0,1] (numpy 或 torch)，输出 f32；mv: (H, W, 2) 像素位移；hist=None 表示重置帧。
         controls: control_inputs(...) 的结果 (默认 = DLL 默认参数)。
         intensity: DLSSNR.Intensity，夹到 [0,1] 后在网络之外做 lerp(color, NR 输出, t)，与 DLL 一致；
         Style 1/2 时再经 style.grade 调色 (cg2r_post_process_kernel)。
         trace: 可选 dict，记录各级出口 (step 序号 -> 张量) 以便对照"""
+        ops.PRECISE = self.precise
         t = lambda a: None if a is None else torch.as_tensor(np.asarray(a) if not torch.is_tensor(a) else a,  # noqa: E731
                                                               dtype=torch.float32, device=self.dev)
         color, hist, mv = t(color), t(hist), t(mv)
+        with torch.autocast("cuda", dtype=torch.float16, enabled=self.half, cache_enabled=False):
+            out = self._forward(color, hist, mv, frame, trace, controls).float()
+        style = (controls or {}).get("style", 0)                   # 网络之外的部分用 f32
+        if style:                                                  # Style 1/2: DLL 的调色后处理 (含 Intensity 混合)
+            return style_mod.apply(color[..., :3], out, style, intensity)
+        k = min(max(float(intensity), 0.0), 1.0)
+        return out if k == 1.0 else color[..., :3] + k * (out - color[..., :3])
+
+    def _forward(self, color, hist, mv, frame, trace, controls):
+        """网络本身 (pre -> 71 步 -> post)，快速模式下在 autocast 里运行"""
         if mv is None:
             mv = torch.zeros(*color.shape[:2], 2, device=self.dev)
         skips, x, cur, pre_skip = {}, None, None, None
@@ -273,11 +290,7 @@ class DLSS5:
                 img_out = k == "pre" or (k == "swin" and st["variant"] in ("ds", "outview")) or \
                     (k == "split16" and st["tail"] == "outview")
                 trace[i] = x if img_out else cur                     # 跨级的图像格式输出 / 级内的 tin 输出
-        style = (controls or {}).get("style", 0)
-        if style:                                                  # Style 1/2: DLL 的调色后处理 (含 Intensity 混合)
-            return style_mod.apply(color[..., :3], out, style, intensity)
-        t = min(max(float(intensity), 0.0), 1.0)
-        return out if t == 1.0 else color[..., :3] + t * (out - color[..., :3])
+        return out
 
     def graph(self, H=360, W=640, history=True, controls=None, intensity=1.0):
         """把整帧前向捕获成 CUDA Graph，返回 run(color, hist=None, mv=None, frame=0) -> 输出 (静态缓冲，下次调用会被覆盖)。

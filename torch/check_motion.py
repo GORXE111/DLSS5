@@ -16,7 +16,7 @@ R = os.path.join(HERE, "..", "research")
 SHIFT = 4
 
 if __name__ == "__main__":
-    net = DLSS5()
+    net = DLSS5(precise="--precise" in sys.argv, half=False if "--f32" in sys.argv else None)   # 默认快速模式
     outs = {}
     for case, mvx in (("mvok", -SHIFT), ("mv0", 0)):
         mv = torch.zeros(360, 640, 2, device="cuda")

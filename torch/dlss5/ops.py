@@ -4,11 +4,15 @@ import math
 import torch
 
 EPS = 6.2e-05
+PRECISE = False       # True: 逐处模拟 kernel 的 f16 与 fp8 舍入 (逐块对照用)；False: 只模拟 fp8 量化 (f16 舍入对整帧无影响，
+                      # fp8 量化则影响时域行为: 去掉后对运动矢量的响应弱 25%，见 torch/README.md)
 ARITH_Q8 = False      # True: f16/fp8 舍入改用纯算术实现 (torch.compile 用: triton 在 sm_86 上不支持 fp8 dtype，inductor 会省掉 half 往返)；与转换逐位一致
 
 
 def f16(x):
-    """舍入到 f16 (保持 f32 存储)"""
+    """舍入到 f16 (保持 f32 存储)。快速模式下不舍入"""
+    if not PRECISE:
+        return x
     if ARITH_Q8:                                                          # torch.compile 下 inductor 会省掉 half 往返，改用算术舍入
         e = (((x.view(torch.int32) >> 23) & 0xFF) - 127).clamp(min=-14)  # 低于 2^-14 按非规格化数的固定步长
         s = torch.exp2((e - 10).float())                                  # f16: 10 位尾数 -> 步长 2^(e-10)
@@ -20,13 +24,13 @@ def f16(x):
 
 
 def q8(x):
-    """RNE 到 e4m3 (satfinite)"""
+    """RNE 到 e4m3 (satfinite)，保持输入的 dtype (半精度下 e4m3 的值都能精确表示)"""
     if ARITH_Q8:
         x = x.clamp(-448.0, 448.0)
         e = (((x.view(torch.int32) >> 23) & 0xFF) - 127).clamp(min=-6)   # 指数，低于 2^-6 按非规格化数的固定步长
         s = torch.exp2((e - 3).float())                                   # e4m3: 3 位尾数 -> 量化步长 2^(e-3)
         return torch.round(x / s) * s                                     # round 为四舍六入五成双 (= RNE)
-    return x.clamp(-448.0, 448.0).to(torch.float8_e4m3fn).float()
+    return x.clamp(-448.0, 448.0).to(torch.float8_e4m3fn).to(x.dtype)
 
 
 def act(x):
@@ -36,7 +40,8 @@ def act(x):
 
 
 def cos_norm(x):
-    return x / torch.sqrt((x * x).sum(-1, keepdim=True).clamp_min(EPS))
+    xf = x.float()                                                       # 半精度下平方和会溢出 (448² > 65504)
+    return (xf / torch.sqrt((xf * xf).sum(-1, keepdim=True).clamp_min(EPS))).to(x.dtype)
 
 
 # ------------------------------------------------------------------ 8x8 窗口

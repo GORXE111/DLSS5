@@ -80,8 +80,12 @@ class Swin(_Base):
         self.c2 = self.T(Lay.f16vec(w[o["c2"]:o["c2"] + 2 * W])[cols])
 
     # ---------------------------------------------------------------
+    CHUNK = 1 << 18      # 一次处理的 token 数 (窗口数 x 64)。全分辨率 1h 的中间张量很大，分块让 1080p 的峰值显存降到 ~2 GB
+
     def ffn(self, Xf):
         """FFN 增量 (片段序)，不含残差"""
+        if Xf.shape[0] > self.CHUNK:
+            return torch.cat([self.ffn(x) for x in Xf.split(self.CHUNK)])
         Hh = q8(act(f16(Xf[:, self.ci] @ self.W1)))
         if self.D is None:
             return Hh @ self.W2
@@ -96,6 +100,16 @@ class Swin(_Base):
         """余弦窗口注意力 + 投影 + c2 残差"""
         Y = q8(Yf[:, self.ci])
         Yw, meta = windows(Y, H, W, shift)
+        n = self.CHUNK // 64
+        o = torch.cat([self._window_attn(y) for y in Yw.split(n)]) if Yw.shape[0] > n else self._window_attn(Yw)
+        O = unwindows(o, meta, H, W)
+        if self.q_O:
+            O = q8(O)                                             # 投影是 fp8 mma: O 先量化
+        res = q8(Yf) if self.q_res else Yf                        # 残差读存进共享内存的 fp8 y
+        return q8(f16(self.c2 * res + O @ self.Wp))
+
+    def _window_attn(self, Yw):
+        """(窗口, 64, C) -> (窗口, 64, C)：各头的余弦注意力，输出未投影"""
         nh = self.heads
         sp = lambda t: t.view(t.shape[0], 64, nh, 32).transpose(1, 2)     # noqa: E731  (窗口, 头, 64, 32)
         q, k, v = sp(f16(Yw @ self.Wq)), sp(f16(Yw @ self.Wk)), sp(f16(Yw @ self.Wv))
@@ -106,12 +120,7 @@ class Swin(_Base):
             P = q8(f16(p * inv_sum(p)))
         else:
             P = q8(torch.softmax(L, -1))
-        o = f16(P @ q8(v)).transpose(1, 2).reshape(-1, 64, nh * 32)
-        O = unwindows(o, meta, H, W)
-        if self.q_O:
-            O = q8(O)                                             # 投影是 fp8 mma: O 先量化
-        res = q8(Yf) if self.q_res else Yf                        # 残差读存进共享内存的 fp8 y
-        return q8(f16(self.c2 * res + O @ self.Wp))
+        return f16(P @ q8(v)).transpose(1, 2).reshape(-1, 64, nh * 32)
 
     def __call__(self, Xf, H, W, shift):
         return self.attn(f16(self.c1 * Xf + self.ffn(Xf)), H, W, shift)

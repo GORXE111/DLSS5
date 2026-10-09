@@ -7,7 +7,8 @@ import torch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from dlss5 import DLSS5  # noqa: E402
+from dlss5 import DLSS5, ops  # noqa: E402
+ops.PRECISE = True                     # 逐块对照: 模拟 kernel 的每处舍入
 
 R = os.path.join(HERE, "..", "research")
 E4M3 = torch.arange(256, dtype=torch.uint8).view(torch.float8_e4m3fn).float().numpy()
@@ -37,7 +38,7 @@ CHECK = {4: (5, 64, 96, 160), 8: (9, 128, 48, 80), 14: (15, 256, 24, 40), 22: (2
          55: (139, 256, 24, 40), 61: (145, 128, 48, 80), 65: (149, 64, 96, 160), 69: (153, 32, 192, 320)}
 
 if __name__ == "__main__":
-    net = DLSS5()
+    net = DLSS5(precise=True)
     pre = torch.tensor(img(find(1, 32, 192, 320), 32, 192, 320), device="cuda")
     st0, m0 = net.steps[0]
     net.steps[0] = (st0, lambda *a: (pre, None))              # 用抓取的 pre 输出替换 pre_block

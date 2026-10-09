@@ -1,13 +1,14 @@
 # DLSS5 PyTorch 参考实现
 
 `nvngx_dlssnr.dll` 310.8.0 (DLSS5 NR) 的完整前向，逐块由逆向得到，并与 kernel 的真实数据核对过。
-在 GPU 上一帧约 290 ms（RTX 3060，640x360；`net.graph()` 捕获 CUDA Graph 后约 260 ms），数值上复刻 kernel 的 FP8/f16 舍入位置。
+RTX 3060 上一帧 640x360 约 190 ms、1280x720 约 0.75 s、1920x1080 约 1.6 s (默认快速模式 + CUDA Graph)，峰值显存 1080p 3.4 GB。
 
 ```python
 import sys; sys.path.insert(0, "torch")
 from dlss5 import DLSS5
 
 net = DLSS5()                                  # 读 WEIGHTS_HT.bin + weights_map.json，解码全部权重到 GPU (~5 s)
+                                               # DLSS5(precise=True): 逐处模拟 f16 舍入、f32 计算 (逐块对照用，慢 1.7 倍)
 out = net(color)                               # 重置帧: color (360, 640, 3) in [0,1]
 out = net(color, hist=out, mv=mv, frame=1)     # 带历史: hist = 上一帧输出, mv (H, W, 2) 像素位移
 ```
@@ -37,14 +38,16 @@ python check_blocks.py    # 逐块隔离: 每块以 kernel 的上一块输出为
 python check_numerics.py  # 注意力数值选项 (位运算 exp / 残差量化 / O 量化) 的逐级组合扫描
 python check_controls.py  # 画面参数: 每组 DLSSNR 参数与 nr-lab 比较
 python bench.py           # 按块类型计时
+python bench_modes.py     # 精确 / 快速 / 快速+Graph 三种模式的耗时与吻合度
+python profile_ops.py     # torch.profiler 按算子统计
 ```
 
 ## 验收结果
 
 | 对照 | 相关 | 平均差 |
 |---|---|---|
-| torch vs nr-lab 实际输出 (第 0 帧) | 0.99930 | 2.0/255 |
-| torch vs nr-lab (第 1-3 帧，带历史) | 0.99943-0.99945 | 1.7-1.9/255 |
+| torch vs nr-lab 实际输出 (第 0 帧) | 0.99931 | 1.9/255 |
+| torch vs nr-lab (第 1-3 帧，带历史) | 0.99945-0.99947 | 1.6-1.7/255 |
 | torch vs nr-lab (540p / 720p / 1080p，第 0 帧) | 0.9993-0.9994 | 1.8-1.9/255 |
 | torch vs nr-lab (运动画面，第 1-3 帧) | 0.9993-0.9995 | 1.6-2.0/255 |
 | 网络改动量 (输出 - 输入) vs nr-lab | 0.992-0.995 | |
@@ -55,6 +58,19 @@ Style 1/2 的调色后处理 (`cg2r_post_process_kernel`) 在 `dlss5/style.py`�
 (Style 1: 曝光 -0.1 EV、对比度 -0.25、饱和度 -10%；Style 2: 饱和度 -15%)。与单独运行的 kernel 逐分支对照
 (`research/pp_check.py`) 最大差 < 0.001/255。该 kernel 另有一条"迁移"分支 (低分辨率结果在 OKLab 里迁移到高分辨率画面)，
 本仓库的用法里不触发，未复现。
+
+## 精度模式
+
+| 模式 | 360p | 1080p | 第 0 帧相关 | 正确/错误运动矢量的输出之差 (kernel 2.91 / 3.11 / 3.17) |
+|---|---|---|---|---|
+| 精确 `precise=True` (f32，模拟每处 f16 与 fp8 舍入) | 317 ms | 2.5 s | 0.99926 | 2.74 / 2.99 / 3.11 |
+| 快速 (默认: 半精度 autocast，只模拟 fp8 量化) | 187 ms | 1.6 s | 0.99931 | 2.72 / 3.14 / 3.00 |
+| (对照) 不模拟任何舍入 | — | — | 0.99929 | 2.02 / 2.20 / 2.34 |
+
+f16 舍入对结果没有可见影响，fp8 量化则不能省: 单帧看不出差别，但去掉后网络对运动矢量的响应弱 25%。
+快速模式在吻合度上不输精确模式 (半精度 matmul 以 f16 存结果，本来就接近 kernel)。逐块对照脚本 (check_blocks /
+check_levels / check_numerics) 使用精确模式。全分辨率 1h 级 (pre/post) 的 FFN 与注意力按 2^18 token 分块，
+1080p 峰值显存从 7 GB 降到 3.4 GB (之前 3060 上 1080p 会因显存换页慢到几十秒一帧)。
 
 逐块 (以 kernel 上一块输出为输入): 1h-8h 每块相关 0.9994-0.9998、逐值一致 66-89%；16h 块 0.99997；ViT 块 0.99965。
 逐级出口 (起点为抓取的 pre 输出): 编码 1h→8h 0.9987 → 0.994，16h 入口 0.990，解码 16h→1h 0.985 → 0.996。

@@ -5,10 +5,11 @@ import sys
 import numpy as np
 
 import check_blocks as CB
-from dlss5 import DLSS5
+from dlss5 import DLSS5, ops
+ops.PRECISE = True                     # 数值选项扫描: 模拟 kernel 的每处舍入
 from dlss5.blocks import Swin
 
-net = DLSS5()
+net = DLSS5(precise=True)
 levels = sys.argv[1:] or ["1h", "2h", "4h", "8h"]
 for lv in levels:
     for be, qr, qo in itertools.product((False, True), repeat=3):

@@ -8,7 +8,8 @@ import torch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from dlss5 import DLSS5  # noqa: E402
+from dlss5 import DLSS5, ops  # noqa: E402
+ops.PRECISE = True                     # 逐块对照: 模拟 kernel 的每处舍入
 from dlss5.net import LEVEL  # noqa: E402
 
 R = os.path.join(HERE, "..", "research")
@@ -116,6 +117,6 @@ def run_decoder(net, levels=("8h", "4h", "2h", "1h")):
 
 
 if __name__ == "__main__":
-    net = DLSS5()
+    net = DLSS5(precise=True)
     run(net)
     run_decoder(net)
