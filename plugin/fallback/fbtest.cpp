@@ -8,6 +8,7 @@
 //     --waitable                           FRAME_LATENCY_WAITABLE_OBJECT swap chain, wait on it every frame
 //     --chains 2                           two windows / swap chains presented alternately
 //     --fullscreen N                       at frame N enter fullscreen, leave again 30 frames later
+//     --pan N                              shift the image N pixels right every frame (wrapping, like nr-lab --temporal-shift)
 // The image is copied into the top-left corner of each back buffer (the rest is cleared to grey).
 // Put the proxy dxgi.dll (and its files) next to fbtest.exe; it links dxgi.dll by name, so the proxy loads first.
 
@@ -99,7 +100,7 @@ int main(int argc, char **argv)
     UINT W, H;
     std::vector<uint8_t> rgb;
     if (!ReadPpm(argv[1], &W, &H, &rgb)) { std::printf("cannot read %s\n", argv[1]); return 2; }
-    int frames = 60, resize_at = -1, recreate_at = -1, fullscreen_at = -1, chains = 1;
+    int frames = 60, resize_at = -1, recreate_at = -1, fullscreen_at = -1, chains = 1, pan = 0;
     bool present1 = false, resize1 = false, waitable = false;
     DXGI_FORMAT fmt = DXGI_FORMAT_R8G8B8A8_UNORM;
     for (int i = 2; i < argc; ++i) {
@@ -117,6 +118,7 @@ int main(int argc, char **argv)
         else if (a == "--waitable") waitable = true;
         else if (a == "--chains") chains = std::max(1, std::min(2, next()));
         else if (a == "--fullscreen") fullscreen_at = next();
+        else if (a == "--pan") pan = next();
         else if (a[0] != '-') frames = std::atoi(a.c_str());
         else { std::printf("unknown option %s\n", a.c_str()); return 2; }
     }
@@ -289,8 +291,16 @@ int main(int argc, char **argv)
             list->ResourceBarrier(1, &b);
             D3D12_TEXTURE_COPY_LOCATION to = {bb, D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX};
             D3D12_TEXTURE_COPY_LOCATION from = {tex, D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX};
-            D3D12_BOX box = {0, 0, 0, std::min(W, c.w), std::min(H, c.h), 1};
-            list->CopyTextureRegion(&to, 0, 0, 0, &from, &box);
+            if (pan != 0 && c.w == W && c.h == H) {
+                // frame i shows the image moved right by i*pan pixels, wrapping around
+                const UINT off = static_cast<UINT>((static_cast<long long>(i) * pan % W + W) % W);
+                D3D12_BOX right = {0, 0, 0, W - off, H, 1}, left = {W - off, 0, 0, W, H, 1};
+                list->CopyTextureRegion(&to, off, 0, 0, &from, &right);
+                if (off) list->CopyTextureRegion(&to, 0, 0, 0, &from, &left);
+            } else {
+                D3D12_BOX box = {0, 0, 0, std::min(W, c.w), std::min(H, c.h), 1};
+                list->CopyTextureRegion(&to, 0, 0, 0, &from, &box);
+            }
             b.Transition = {bb, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PRESENT};
             list->ResourceBarrier(1, &b);
             list->Close();

@@ -22,9 +22,9 @@ function Same-Pixels([string]$a, [string]$b) {
 }
 
 $cases = @(
-    @{ name = 'rgba8';        args = @();                            ini = "WorkingScale=1.0`nDumpFrame=5"; dump = $true }
-    @{ name = 'bgra8';        args = @('--format', 'bgra8');         ini = "WorkingScale=1.0`nDumpFrame=5"; dump = $true }
-    @{ name = 'rgb10';        args = @('--format', 'rgb10');         ini = "WorkingScale=1.0`nDumpFrame=5"; dump = $true }
+    @{ name = 'rgba8';        args = @();                            ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=5"; dump = $true }
+    @{ name = 'bgra8';        args = @('--format', 'bgra8');         ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=5"; dump = $true }
+    @{ name = 'rgb10';        args = @('--format', 'rgb10');         ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=5"; dump = $true }
     @{ name = 'rgba16f (HDR, pass through)'; args = @('--format', 'rgba16f'); ini = ''; expect = @('not supported') ; noProcess = $true }
     @{ name = 'Present1';     args = @('--present1');                ini = ''; expect = @('frame 1 processed') }
     @{ name = 'ResizeBuffers';  args = @('--resize', '100');         ini = ''; expect = @('NR 320x180', 'NR 240x135') }
@@ -33,6 +33,8 @@ $cases = @(
     @{ name = 'waitable';     args = @('--waitable');                ini = ''; expect = @('frame 1 processed') }
     @{ name = 'two chains';   args = @('--chains', '2');             ini = ''; expect = @('frame 1 processed'); tracked = 2 }
     @{ name = 'scale 0.5';    args = @();                            ini = 'WorkingScale=0.5'; expect = @('NR 320x180') }
+    @{ name = 'optical flow (moving)'; args = @('--pan', '4');       ini = 'WorkingScale=0.5'; expect = @('optical flow: 320x180') }
+    @{ name = 'exact MV = nr-lab mvok'; args = @('--pan', '4');      ini = "WorkingScale=1.0`nStabilize=0`nSmooth=1`nMvConstX=-4`nDumpFrame=1`nDumpCount=4"; mvok = $true }
 )
 if ($Fullscreen) { $cases += @{ name = 'fullscreen'; args = @('--fullscreen', '60'); ini = ''; expect = @('frame 1 processed') } }
 
@@ -52,6 +54,12 @@ try {
         foreach ($e in @($c.expect)) { if ($e -and $log -notmatch [regex]::Escape($e)) { $why += "log lacks '$e'" } }
         if ($c.tracked -and ([regex]::Matches($log, 'tracked')).Count -lt $c.tracked) { $why += "expected $($c.tracked) tracked swap chains" }
         if ($c.noProcess -and $log -match 'processed') { $why += 'HDR frame was processed' }
+        if ($c.mvok -and (Test-Path $ref)) {
+            foreach ($k in 1, 2, 3) {
+                $mv = Join-Path (Split-Path $ref) "out_mvok_f$k.ppm"
+                if (-not (Same-Pixels (Join-Path $test "dlss5fb_nr_$k.ppm") $mv)) { $why += "frame $k differs from nr-lab (correct MV)" }
+            }
+        }
         if ($c.dump) {
             if (-not (Test-Path dlss5fb_nr.ppm)) { $why += 'no dump' }
             elseif (Test-Path $ref) { if (-not (Same-Pixels (Join-Path $test dlss5fb_nr.ppm) $ref)) { $why += 'NR output differs from nr-lab' } }

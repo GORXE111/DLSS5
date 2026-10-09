@@ -6,9 +6,10 @@
 ## 做法
 
 ```
-游戏 Present ─┬─ 拷贝后缓冲 ──> 缩到 WorkingScale (计算着色器) ──> DLSS-NR (feature 18) ──┐
-              │                                                                        │
-              └─ 写回后缓冲:  原画面 + 放大(NR 输出 - NR 输入)   (WorkingScale = 1 时直接用 NR 输出) <┘
+游戏 Present ─┬─ 拷贝后缓冲 ──> 缩到 WorkingScale (计算着色器，同时写一张灰度图)
+              │      ──> 硬件光流 (这一帧灰度 vs 上一帧) ──> 运动矢量 (3x3 中值 + Lucas-Kanade 细化)
+              │      ──> DLSS-NR (feature 18，带历史帧) ──> 改动量的时间平滑
+              └─ 写回后缓冲:  原画面 + 放大(NR 输出 - NR 输入)
               ──> 真正的 Present
 ```
 
@@ -21,10 +22,18 @@
   不需要 `nvngx_dlss.dll` / `nvngx_dlssg.dll`。
 - 降采样用 `round(0.5/scale)²` 个双线性采样的盒滤波 (0.5 时正好是 2x2 平均)；只把模型的**改动量**放大回原分辨率，
   原画面的细节不会因为模型分辨率低而变糊。
-- 没有深度 (给全 0，DepthInverted) 和运动矢量 (全 0)。默认每帧 Reset (不用历史)；`Temporal=1` 时沿用历史。
+- 没有深度 (给全 0，DepthInverted)。**运动矢量来自显卡的硬件光流** (NVIDIA Optical Flow，驱动自带的 `nvofapi64.dll`)：
+  每帧把 NR 输入的灰度图交给光流引擎，与上一帧比较 (前向流 = 当前像素在上一帧的位置，正是 DLSS-NR 要的方向，
+  已用 nr-lab 的"正确运动矢量"参考验证)。光流引擎异步运行：第一张命令列表提交后 Signal，光流等它，
+  游戏队列再等光流的 fence，然后录第二张命令列表 (运动矢量、DLSS-NR、合成)。
+  - 光流输出 S10.5 定点 (每像素 32)。光流的 ABGR8 "彩色"输入不可用：D3D12 驱动把 RGBA8 的每个字节当成一个灰度像素
+    (水平流大 4 倍)，所以只用灰度。
+  - 硬件光流本身有 ±0.4 像素的平滑误差，DLSS-NR 对运动矢量很敏感，所以在其上做 2 轮 Lucas-Kanade 细化 (5x5 窗口)。
+  - 销毁顺序要跟 NVIDIA 示例一致 (注销 → 释放纹理 → 销毁会话)，先销毁会话会让 D3D12 驱动随后读到已释放的内存而崩溃。
+  - 没有光流 (非 NVIDIA 驱动 / 初始化失败) 时退回每帧重置。
 - **防闪烁**：网络对输入的微小扰动极其敏感，而且有全局注意力：游戏画面里 ±1/255 的去色带抖动、
   或者角落里一个 HUD 数字变化，都会让整幅输出明暗起伏 (静止镜头下帧间变化 1.40/255，见 `tools/notes.jsonl`)。
-  正常接入时历史帧会把它平均掉，兜底模式没有历史，所以加了两层：输入死区 (`Stabilize`) 让没变的像素送进模型的值完全不变
+  正常接入时历史帧会把它平均掉；兜底模式另外加了两层 (有了光流历史帧后仍然有益)：输入死区 (`Stabilize`) 让没变的像素送进模型的值完全不变
   (网络是确定性的，输入不变输出就不变)；改动量的时间平滑 (`Smooth`)，只在局部输入没变的地方生效，所以运动画面不拖影。
   静止镜头 40 帧：1.40 → 0.18/255，超过 8/255 的跳变从 0.9% 降到 0。
 - 只处理 SDR：R8G8B8A8 / B8G8R8A8 / R10G10B10A2 且色彩空间为 sRGB。HDR (scRGB 浮点、HDR10) 原样放过并写日志。
@@ -46,19 +55,26 @@
 | Enabled | 1 | 0 = 原样放过 |
 | WorkingScale | 0.5 | 模型分辨率占画面的比例 (0.25~1) |
 | Intensity / LocalTone / LocalStructure / SkinStructure / AutoMask / Style | 1 / 1 / 1 / -1 / 1 / 0 | DLSSNR 画面参数，含义见 `torch/README.md` |
-| Temporal | 0 | 1 = 保留历史帧 (运动矢量为 0：静止画面更稳，运动时可能拖影) |
+| Temporal | 1 | 1 = 历史帧 + 光流运动矢量；0 = 每帧重置 |
+| FlowPerf / FlowGrid / FlowRefine / FlowFilter | 5 / 2 / 2 / 1 | 光流质量 (5 最好、10 中、20 快)、每个矢量覆盖的像素、Lucas-Kanade 轮数、3x3 中值 |
 | Stabilize | 1.5 | 输入死区 (1/255 为单位)：像素变化小于它时沿用上次送进模型的值，0 = 关 |
 | Smooth | 0.2 | 画面没变的地方 DLSS5 改动每帧跟进的比例 (指数平均)；画面在变的地方立刻跟上；1 = 关 |
 | Compare | 0 | 1 = 左半屏原画面，右半屏 DLSS5 |
 | ToggleKey / CompareKey | 0x79 / 0x7A | 开关与对比的热键 (默认 F10 / F11，虚拟键码) |
-| DumpFrame | -1 | 测试用：第 N 帧把输入/NR 输出/结果存成 `dlss5fb_in/nr/out.ppm` (也可用环境变量 `DLSS5FB_DUMP`) |
+| DumpFrame / DumpCount | -1 / 1 | 测试用：从第 N 帧起连续存 `dlss5fb_in/nr/out(_k).ppm` 与光流 `dlss5fb_flow_k.bin` (也可用环境变量 `DLSS5FB_DUMP`) |
+| MvConstX / MvScale | 0 / 1 | 研究用：用常数水平运动矢量代替光流 / 缩放运动矢量 |
 
 ## 构建与测试
 
 ```
 plugin\fallback\build.bat     -> bin\dxgi.dll, bin\dlss5_nvngx.dll, bin\fbtest.exe
                                  (需要 DLSS SDK 头文件 oss\nvidia-dlss\include，不在本仓库里)
-fbtest.exe image.ppm [帧数]    最小的 D3D12 "游戏"：每帧把图片拷进后缓冲再 Present；与 dxgi.dll 等放在同一目录
+fbtest.exe image.ppm [帧数] [--pan N ...]   最小的 D3D12 "游戏"：每帧把图片拷进后缓冲再 Present (--pan: 每帧右移 N 像素)
+run_tests.ps1                 13 项回归 (格式、改大小、重建、多交换链、光流、精确运动矢量 = nr-lab)
+mv_check.ps1                  运动矢量校验: 与 nr-lab 的正确 / 零运动矢量参考比较
+motion_flicker.ps1            运动中的闪烁 (运动补偿后的帧间差)，各模式对比
+flicker.py                    静止镜头的帧间闪烁 (DumpCount 存的连续帧)
+godot_test/                   Godot 4 (DX12) 场景：Crytek Sponza (fetch_assets.ps1 取，不进仓库)
 ```
 
 RTX 3060 上的验证 (fbtest + nr-lab 的合成测试图)：
@@ -69,5 +85,18 @@ RTX 3060 上的验证 (fbtest + nr-lab 的合成测试图)：
 | 1920x1080，WorkingScale 1 | 与 nr-lab 的 1080p 输出逐字节一致；每帧多 40 ms |
 | 1920x1080，WorkingScale 0.5 | 每帧多 12 ms；改动量与全分辨率的相关 0.82、幅度 0.94 |
 | 运行中改 Style / Temporal | 约 1 秒内重读 ini 并重建 feature，不中断 |
+| 平移图案 + 常数精确运动矢量 (-4) | 第 1-3 帧与 nr-lab 的 `out_mvok_f*.ppm` **逐字节一致** (历史帧路径正确) |
 
-真实游戏还没测过。
+运动中的闪烁 (Sponza 截图每帧平移 4 像素，640x360 全分辨率，运动补偿后的帧间差):
+
+| 模式 | 帧间差 | 跳变 >8/255 |
+|---|---|---|
+| 每帧重置 (无历史) | 3.30/255 | 11.7% |
+| 历史 + 零运动矢量 | 2.66/255 | 6.2% |
+| 历史 + 光流 (中等，无细化) | 1.89/255 | 1.5% |
+| 历史 + 光流 (中等) + Lucas-Kanade | 1.13/255 | 1.4% |
+| **历史 + 光流 (最好) + Lucas-Kanade (默认)** | **0.74/255** | **0.4%** |
+| 历史 + 精确运动矢量 (上限) | 0.58/255 | 0% |
+
+Godot Sponza 1080p、模型分辨率 0.45：无 DLSS5 约 123 fps，每帧重置约 50 fps，光流历史约 42 fps (+3.7 ms)。
+静止镜头 40 帧帧间差 0.12/255 (输入本身 0.04)。真实游戏还没测过。

@@ -4,8 +4,9 @@
 // factory / swap chain vtables.  For each D3D12 swap chain it takes the finished
 // frame at Present, runs DLSS-NR (feature 18, through nvngx_dlssnr.dll) on a
 // downscaled copy, and writes  frame + upsample(NR(lo) - lo)  back into the
-// back buffer before the real Present.  No depth, no motion vectors, no history
-// by default (every frame is a reset frame), and the UI is processed with the scene.
+// back buffer before the real Present.  No depth; motion vectors come from the GPU's optical flow engine
+// (NVIDIA Optical Flow, nvofapi64.dll from the driver) so DLSS-NR can keep its history; the UI is processed
+// with the scene.
 //
 // NGX call sequence follows harness/nr-lab.cpp (derived from DLSS5 ReShade AIO,
 // Apache-2.0): driver core _nvngx.dll Init -> snippet Init_Ext through the
@@ -19,6 +20,7 @@
 #include <d3dcompiler.h>
 #include <nvsdk_ngx.h>
 #include <nvsdk_ngx_params.h>
+#include <nvOpticalFlowD3D12.h>
 
 #include <atomic>
 #include <cmath>
@@ -64,7 +66,13 @@ struct Config {
     float skin_structure = -1.0f;
     int auto_mask = 1;
     int style = 0;
-    int temporal = 0;              // 1: keep NR history (zero motion vectors) instead of resetting every frame
+    int temporal = 1;              // 1: keep NR history, motion vectors from optical flow (0: every frame is a reset frame)
+    int flow_perf = NV_OF_PERF_LEVEL_SLOW;     // optical flow quality: 5 slow/best (+1 ms vs medium at 540p, half the shimmer), 10 medium, 20 fast
+    int flow_grid = 2;
+    float mv_scale = 1.0f;         // research: multiplies the motion vectors
+    float mv_const_x = 0.0f;       // research: non-zero = use this constant horizontal motion instead of optical flow
+    int flow_filter = 1;           // 3x3 median of the flow vectors
+    int flow_refine = 2;           // Lucas-Kanade iterations on top of the hardware flow (sub-pixel accuracy)             // optical flow output grid (1, 2 or 4 pixels per vector, at NR resolution)
     float stabilize = 1.5f;        // NR input dead band in 1/255 steps: pixels that changed less keep their previous value
     float smooth = 0.2f;           // per-frame weight of a new NR change where the input did not change locally (1 = off)
     int compare = 0;               // 1: left half original, right half processed
@@ -106,6 +114,12 @@ static Config ReadConfig()
     c.auto_mask = IniInt(L"AutoMask", c.auto_mask);
     c.style = IniInt(L"Style", c.style);
     c.temporal = IniInt(L"Temporal", c.temporal);
+    c.flow_perf = IniInt(L"FlowPerf", c.flow_perf);
+    c.flow_grid = IniInt(L"FlowGrid", c.flow_grid);
+    c.mv_scale = IniFloat(L"MvScale", c.mv_scale);
+    c.mv_const_x = IniFloat(L"MvConstX", c.mv_const_x);
+    c.flow_filter = IniInt(L"FlowFilter", c.flow_filter);
+    c.flow_refine = IniInt(L"FlowRefine", c.flow_refine);
     c.stabilize = std::max(0.0f, IniFloat(L"Stabilize", c.stabilize));
     c.smooth = std::min(std::max(IniFloat(L"Smooth", c.smooth), 0.02f), 1.0f);
     c.compare = IniInt(L"Compare", c.compare);
@@ -281,6 +295,25 @@ static NVSDK_NGX_Result SehEvaluate(ID3D12GraphicsCommandList *list, NVSDK_NGX_H
     __except (EXCEPTION_EXECUTE_HANDLER) { *code = GetExceptionCode(); return static_cast<NVSDK_NGX_Result>(0x7fffffff); }
 }
 
+// ---------------------------------------------------------------- optical flow (motion vectors)
+
+static NV_OF_D3D12_API_FUNCTION_LIST g_of;
+
+static bool LoadOpticalFlow()
+{
+    static int state = 0;   // 0 untried, 1 ok, -1 unavailable
+    if (state) return state > 0;
+    state = -1;
+    HMODULE m = LoadLibraryW(L"nvofapi64.dll");
+    auto create = m ? reinterpret_cast<NV_OF_STATUS (NVOFAPI *)(uint32_t, NV_OF_D3D12_API_FUNCTION_LIST *)>(
+        GetProcAddress(m, "NvOFAPICreateInstanceD3D12")) : nullptr;
+    if (create == nullptr) { Log("optical flow: nvofapi64.dll not available; no motion vectors"); return false; }
+    NV_OF_STATUS st = create(NV_OF_API_VERSION, &g_of);
+    if (st != NV_OF_SUCCESS) { Log("optical flow: NvOFAPICreateInstanceD3D12 = %d", st); return false; }
+    state = 1;
+    return true;
+}
+
 // ---------------------------------------------------------------- shaders
 
 static const char kShader[] = R"(
@@ -288,13 +321,22 @@ Texture2D<float4> Src : register(t0);
 Texture2D<float4> Lo  : register(t1);
 Texture2D<float4> Nr  : register(t2);
 Texture2D<float4> DeltaT : register(t3);
+Texture2D<int2> Flow : register(t4);         // optical flow, S10.5 pixels, one vector per grid cell
+Texture2D<float> Gray0 : register(t5);       // grey frames (which one is current: curGray)
+Texture2D<float> Gray1 : register(t6);
 RWTexture2D<float4> Out : register(u0);
 RWTexture2D<float4> Stable : register(u1);   // rgb: last value fed to NR, a: how much it changed this frame
 RWTexture2D<float4> Delta : register(u2);    // smoothed NR change (NR output - NR input)
+// optical flow input (luma). ABGR8 "colour" input is not usable: the D3D12 driver path reads each byte of an RGBA8
+// texel as a separate grey pixel (flow comes back 4x too large horizontally), measured with fbtest --pan
+RWTexture2D<float> Gray : register(u3);
+RWTexture2D<float2> Motion : register(u4);   // motion vectors for DLSS-NR (pixels, current -> previous)
 SamplerState Lin : register(s0);
 cbuffer C : register(b0) {
     float2 loSize; float2 bbSize; float taps; float direct; float split; float band;
-    float smooth; float gain; float first; float pad;
+    float smooth; float gain; float first; float flowValid;
+    float grid; float mvScale; float mvConstX; float flowFilter;
+    float refine; float curGray; float2 pad2;
 };
 
 [numthreads(8, 8, 1)]
@@ -309,6 +351,7 @@ void Down(uint3 id : SV_DispatchThreadID)
         for (int i = 0; i < n; ++i)
             acc += Src.SampleLevel(Lin, base + (float2(i, j) + 0.5) * step, 0).rgb;
     float3 x = saturate(acc / (n * n));
+    Gray[id.xy] = dot(x, float3(0.299, 0.587, 0.114));
     // The network turns +-1/255 input noise (dither, film grain, GI noise) into visible flicker; without history
     // nothing averages it out. Feed the previous value while a pixel stays within the dead band.
     float3 s = Stable[id.xy].rgb;
@@ -333,6 +376,75 @@ void Smooth(uint3 id : SV_DispatchThreadID)
     float3 dn = Nr.Load(int3(id.xy, 0)).rgb - Lo.Load(int3(id.xy, 0)).rgb;
     float a = first > 0 ? 1 : saturate(smooth + m * gain);
     Delta[id.xy] = float4(lerp(Delta[id.xy].rgb, dn, a), 1);
+}
+
+float Median9(float v[9])
+{
+    // partial sorting network: min/max exchanges that leave the median in v[4]
+    float t;
+#define SX(a, b) t = min(v[a], v[b]); v[b] = max(v[a], v[b]); v[a] = t;
+    SX(1, 2) SX(4, 5) SX(7, 8) SX(0, 1) SX(3, 4) SX(6, 7) SX(1, 2) SX(4, 5) SX(7, 8)
+    SX(0, 3) SX(5, 8) SX(4, 7) SX(3, 6) SX(1, 4) SX(2, 5) SX(4, 7) SX(4, 2) SX(6, 4) SX(4, 2)
+#undef SX
+    return v[4];
+}
+
+// forward flow (current frame -> previous frame) is what DLSS-NR wants: history is sampled at pixel + mv.
+// The flow is S10.5 fixed point (32 per pixel) at the NR resolution, one vector per grid cell.
+[numthreads(8, 8, 1)]
+void ToMotion(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)loSize.x || id.y >= (uint)loSize.y) return;
+    if (mvConstX != 0) { Motion[id.xy] = float2(flowValid > 0 ? mvConstX : 0, 0); return; }
+    if (flowValid <= 0) { Motion[id.xy] = 0; return; }
+    int2 cell = int2(id.xy / (uint)grid);
+    float2 f = float2(Flow.Load(int3(cell, 0)));
+    if (flowFilter > 0) {
+        uint fw, fh;
+        Flow.GetDimensions(fw, fh);
+        float vx[9], vy[9];
+        for (int j = 0; j < 3; ++j)
+            for (int i = 0; i < 3; ++i) {
+                float2 q = float2(Flow.Load(int3(clamp(cell + int2(i - 1, j - 1), 0, int2(fw, fh) - 1), 0)));
+                vx[j * 3 + i] = q.x;
+                vy[j * 3 + i] = q.y;
+            }
+        f = float2(Median9(vx), Median9(vy));
+    }
+    float2 mv = f / 32.0;
+    // Lucas-Kanade: the hardware flow is off by a few tenths of a pixel, smoothly in space, which DLSS-NR turns into
+    // shimmer. Linearise the previous frame around x + mv and solve for the correction over a 5x5 window.
+    float2 inv = 1.0 / loSize;
+    for (int it = 0; it < (int)refine; ++it) {
+        float a11 = 0, a12 = 0, a22 = 0, b1 = 0, b2 = 0;
+        for (int wy = -2; wy <= 2; ++wy)
+            for (int wx = -2; wx <= 2; ++wx) {
+                float2 pc = float2(id.xy) + float2(wx, wy) + 0.5;
+                float2 pp = pc + mv;
+                float ic = curGray < 0.5 ? Gray0.SampleLevel(Lin, pc * inv, 0) : Gray1.SampleLevel(Lin, pc * inv, 0);
+                float ip, gx, gy;
+                if (curGray < 0.5) {
+                    ip = Gray1.SampleLevel(Lin, pp * inv, 0);
+                    gx = 0.5 * (Gray1.SampleLevel(Lin, (pp + float2(1, 0)) * inv, 0) - Gray1.SampleLevel(Lin, (pp - float2(1, 0)) * inv, 0));
+                    gy = 0.5 * (Gray1.SampleLevel(Lin, (pp + float2(0, 1)) * inv, 0) - Gray1.SampleLevel(Lin, (pp - float2(0, 1)) * inv, 0));
+                } else {
+                    ip = Gray0.SampleLevel(Lin, pp * inv, 0);
+                    gx = 0.5 * (Gray0.SampleLevel(Lin, (pp + float2(1, 0)) * inv, 0) - Gray0.SampleLevel(Lin, (pp - float2(1, 0)) * inv, 0));
+                    gy = 0.5 * (Gray0.SampleLevel(Lin, (pp + float2(0, 1)) * inv, 0) - Gray0.SampleLevel(Lin, (pp - float2(0, 1)) * inv, 0));
+                }
+                float r = ic - ip;
+                a11 += gx * gx; a12 += gx * gy; a22 += gy * gy;
+                b1 += gx * r; b2 += gy * r;
+            }
+        float det = a11 * a22 - a12 * a12;
+        float tr = a11 + a22;
+        // skip flat or one-directional (aperture) windows: smallest eigenvalue must be significant
+        float lmin = 0.5 * (tr - sqrt(max(tr * tr - 4 * det, 0)));
+        if (lmin < 1e-4) break;
+        float2 d = float2(a22 * b1 - a12 * b2, a11 * b2 - a12 * b1) / det;
+        mv += clamp(d, -1, 1);
+    }
+    Motion[id.xy] = mv * mvScale;
 }
 
 void VS(uint id : SV_VertexID, out float4 pos : SV_Position, out float2 uv : TEXCOORD0)
@@ -378,8 +490,10 @@ template <class T> static void SafeRelease(T *&p) { if (p) { p->Release(); p = n
 
 static const DXGI_FORMAT kLoFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 static const UINT kFrames = 3;
-static const UINT kConstants = 12;   // root constants (cbuffer C)
-static const UINT kSrv = 0, kUav = 4;  // descriptor heap: SRV copy/lo/nr/delta, UAV lo/stable/delta
+static const UINT kConstants = 20;   // root constants (cbuffer C)
+// descriptor heap: SRV copy/lo/nr/delta/flow, then two UAV tables lo/stable/delta/gray/motion that differ only in
+// which grey frame they write (the optical flow engine compares this frame's grey image with the previous one)
+static const UINT kSrv = 0, kUav = 7, kUavCount = 5;
 
 struct Chain {
     std::mutex lock;
@@ -389,15 +503,17 @@ struct Chain {
     bool broken = false;
     DXGI_COLOR_SPACE_TYPE color_space = DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709;
 
-    ID3D12CommandAllocator *alloc[kFrames] = {};
-    UINT64 alloc_fence[kFrames] = {};
-    ID3D12GraphicsCommandList *list = nullptr;
+    // slot i: first command list of frame i % kFrames; slot kFrames + i: the second one (after optical flow)
+    ID3D12CommandAllocator *alloc[2 * kFrames] = {};
+    UINT64 alloc_fence[2 * kFrames] = {};
+    ID3D12GraphicsCommandList *list = nullptr, *list2 = nullptr;
     ID3D12Fence *fence = nullptr;
     UINT64 fence_value = 0;
     HANDLE event = nullptr;
     ID3D12RootSignature *root = nullptr;
     ID3D12PipelineState *down = nullptr;
     ID3D12PipelineState *smooth = nullptr;
+    ID3D12PipelineState *to_motion = nullptr;
     ID3D12PipelineState *combine = nullptr;
     DXGI_FORMAT combine_format = DXGI_FORMAT_UNKNOWN;
     ID3D12DescriptorHeap *heap = nullptr;
@@ -407,6 +523,15 @@ struct Chain {
     DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
     ID3D12Resource *copy = nullptr, *lo = nullptr, *nr = nullptr, *depth = nullptr, *mv = nullptr, *stable = nullptr, *delta = nullptr;
     bool first_smooth = true;
+    // optical flow session at NR resolution: two grey frames (current / previous) and the forward flow
+    NvOFHandle of = nullptr;
+    ID3D12Resource *gray[2] = {}, *flow = nullptr;
+    NvOFGPUBufferHandle gray_h[2] = {}, flow_h = nullptr;
+    ID3D12Fence *of_in = nullptr, *of_out = nullptr;
+    UINT64 of_in_v = 0, of_out_v = 0;
+    UINT grid = 1;
+    int cur_gray = 0;
+    bool have_prev = false;
     NVSDK_NGX_Handle *feature = nullptr;
     int feature_style = -1;
 
@@ -451,8 +576,30 @@ static void WaitIdle(Chain *c)
     }
 }
 
+static void ReleaseFlow(Chain *c)
+{
+    // order as in NVIDIA's samples: unregister, release the textures, then destroy the session
+    // (destroying first made the D3D12 driver read freed memory a moment later)
+    if (c->of) {
+        for (NvOFGPUBufferHandle *h : {&c->gray_h[0], &c->gray_h[1], &c->flow_h}) {
+            if (*h == nullptr) continue;
+            NV_OF_UNREGISTER_RESOURCE_PARAMS_D3D12 u = {*h};
+            g_of.nvOFUnregisterResourceD3D12(&u);
+            *h = nullptr;
+        }
+    }
+    SafeRelease(c->gray[0]); SafeRelease(c->gray[1]); SafeRelease(c->flow);
+    if (c->of) {
+        g_of.nvOFDestroy(c->of);
+        c->of = nullptr;
+    }
+    SafeRelease(c->of_in); SafeRelease(c->of_out);
+    c->have_prev = false;
+}
+
 static void ReleaseSized(Chain *c)
 {
+    ReleaseFlow(c);
     if (c->feature) { ngx.b_release(ngx.release, c->feature); c->feature = nullptr; }
     SafeRelease(c->copy); SafeRelease(c->lo); SafeRelease(c->nr); SafeRelease(c->depth); SafeRelease(c->mv); SafeRelease(c->stable); SafeRelease(c->delta);
     c->W = c->H = c->w = c->h = 0;
@@ -463,7 +610,8 @@ static void DestroyChain(Chain *c)
     WaitIdle(c);
     ReleaseSized(c);
     for (auto &a : c->alloc) SafeRelease(a);
-    SafeRelease(c->list); SafeRelease(c->fence); SafeRelease(c->root); SafeRelease(c->down); SafeRelease(c->smooth); SafeRelease(c->combine);
+    SafeRelease(c->list); SafeRelease(c->list2); SafeRelease(c->fence); SafeRelease(c->root); SafeRelease(c->down); SafeRelease(c->smooth);
+    SafeRelease(c->to_motion); SafeRelease(c->combine);
     SafeRelease(c->heap); SafeRelease(c->rtv_heap); SafeRelease(c->queue); SafeRelease(c->device);
     if (c->event) CloseHandle(c->event);
     delete c;
@@ -493,14 +641,16 @@ static bool InitPipeline(Chain *c)
     ID3D12Device *d = c->device;
     for (auto &a : c->alloc)
         if (FAILED(d->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&a)))) return false;
-    if (FAILED(d->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, c->alloc[0], nullptr, IID_PPV_ARGS(&c->list))))
+    if (FAILED(d->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, c->alloc[0], nullptr, IID_PPV_ARGS(&c->list))) ||
+        FAILED(d->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, c->alloc[kFrames], nullptr, IID_PPV_ARGS(&c->list2))))
         return false;
     c->list->Close();
+    c->list2->Close();
     if (FAILED(d->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&c->fence)))) return false;
     c->event = CreateEventW(nullptr, FALSE, FALSE, nullptr);
 
-    D3D12_DESCRIPTOR_RANGE srv = {D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 4, 0, 0, 0};
-    D3D12_DESCRIPTOR_RANGE uav = {D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 3, 0, 0, 0};
+    D3D12_DESCRIPTOR_RANGE srv = {D3D12_DESCRIPTOR_RANGE_TYPE_SRV, kUav, 0, 0, 0};
+    D3D12_DESCRIPTOR_RANGE uav = {D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 5, 0, 0, 0};
     D3D12_ROOT_PARAMETER params[3] = {};
     params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
     params[0].DescriptorTable = {1, &srv};
@@ -537,8 +687,15 @@ static bool InitPipeline(Chain *c)
     hr = d->CreateComputePipelineState(&cp, IID_PPV_ARGS(&c->smooth));
     cs->Release();
     if (FAILED(hr)) return false;
+    cs = Compile("ToMotion", "cs_5_0");
+    if (cs == nullptr) return false;
+    cp.CS = {cs->GetBufferPointer(), cs->GetBufferSize()};
+    hr = d->CreateComputePipelineState(&cp, IID_PPV_ARGS(&c->to_motion));
+    cs->Release();
+    if (FAILED(hr)) return false;
 
-    D3D12_DESCRIPTOR_HEAP_DESC hd = {D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 7, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE};
+    D3D12_DESCRIPTOR_HEAP_DESC hd = {D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kUav + 2 * kUavCount,
+        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE};
     if (FAILED(d->CreateDescriptorHeap(&hd, IID_PPV_ARGS(&c->heap)))) return false;
     D3D12_DESCRIPTOR_HEAP_DESC rd = {D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 1};
     return SUCCEEDED(d->CreateDescriptorHeap(&rd, IID_PPV_ARGS(&c->rtv_heap)));
@@ -571,19 +728,21 @@ static bool InitCombine(Chain *c, DXGI_FORMAT format)
     return SUCCEEDED(hr);
 }
 
-static bool BeginList(Chain *c, UINT slot)
+static bool BeginList(Chain *c, UINT slot, ID3D12GraphicsCommandList *list = nullptr)
 {
+    if (list == nullptr) list = c->list;
     if (c->fence->GetCompletedValue() < c->alloc_fence[slot]) {
         c->fence->SetEventOnCompletion(c->alloc_fence[slot], c->event);
         WaitForSingleObject(c->event, 5000);
     }
-    return SUCCEEDED(c->alloc[slot]->Reset()) && SUCCEEDED(c->list->Reset(c->alloc[slot], nullptr));
+    return SUCCEEDED(c->alloc[slot]->Reset()) && SUCCEEDED(list->Reset(c->alloc[slot], nullptr));
 }
 
-static void Submit(Chain *c, UINT slot)
+static void Submit(Chain *c, UINT slot, ID3D12GraphicsCommandList *list = nullptr)
 {
-    c->list->Close();
-    ID3D12CommandList *lists[] = {c->list};
+    if (list == nullptr) list = c->list;
+    list->Close();
+    ID3D12CommandList *lists[] = {list};
     c->queue->ExecuteCommandLists(1, lists);
     c->alloc_fence[slot] = ++c->fence_value;
     c->queue->Signal(c->fence, c->fence_value);
@@ -630,6 +789,76 @@ static bool Supported(DXGI_FORMAT f)
         f == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
 }
 
+static bool RegisterOf(Chain *c, ID3D12Resource *r, NvOFGPUBufferHandle *h)
+{
+    NV_OF_REGISTER_RESOURCE_PARAMS_D3D12 rp = {};
+    rp.resource = r;
+    rp.inputFencePoint = {c->of_in, c->of_in_v};
+    rp.hOFGpuBuffer = h;
+    rp.outputFencePoint = {c->of_in, ++c->of_in_v};
+    if (g_of.nvOFRegisterResourceD3D12(c->of, &rp) != NV_OF_SUCCESS) return false;
+    c->of_in->SetEventOnCompletion(c->of_in_v, c->event);
+    WaitForSingleObject(c->event, 5000);
+    return true;
+}
+
+// optical flow at NR resolution; false = no motion vectors (every frame then is a reset frame)
+static bool CreateFlow(Chain *c)
+{
+    if (!c->cfg.temporal || !LoadOpticalFlow()) return false;
+    if (g_of.nvCreateOpticalFlowD3D12(c->device, &c->of) != NV_OF_SUCCESS || c->of == nullptr) {
+        Log("optical flow: session creation failed");
+        c->of = nullptr;
+        return false;
+    }
+    uint32_t n = 0;
+    std::vector<uint32_t> grids;
+    if (g_of.nvOFGetCaps(c->of, NV_OF_CAPS_SUPPORTED_OUTPUT_GRID_SIZES, nullptr, &n) == NV_OF_SUCCESS && n) {
+        grids.resize(n);
+        if (g_of.nvOFGetCaps(c->of, NV_OF_CAPS_SUPPORTED_OUTPUT_GRID_SIZES, grids.data(), &n) != NV_OF_SUCCESS) grids.clear();
+    }
+    c->grid = 0;
+    for (uint32_t g : grids)
+        if (g >= static_cast<uint32_t>(c->cfg.flow_grid) && (c->grid == 0 || g < c->grid)) c->grid = g;
+    if (c->grid == 0) c->grid = grids.empty() ? 4 : *std::max_element(grids.begin(), grids.end());
+    NV_OF_INIT_PARAMS init = {};
+    init.width = c->w;
+    init.height = c->h;
+    init.outGridSize = static_cast<NV_OF_OUTPUT_VECTOR_GRID_SIZE>(c->grid);
+    init.hintGridSize = NV_OF_HINT_VECTOR_GRID_SIZE_UNDEFINED;
+    init.mode = NV_OF_MODE_OPTICALFLOW;
+    init.perfLevel = static_cast<NV_OF_PERF_LEVEL>(c->cfg.flow_perf);
+    init.enableExternalHints = NV_OF_FALSE;
+    init.enableOutputCost = NV_OF_FALSE;
+    init.disparityRange = NV_OF_STEREO_DISPARITY_RANGE_UNDEFINED;
+    init.enableRoi = NV_OF_FALSE;
+    init.predDirection = NV_OF_PRED_DIRECTION_FORWARD;
+    init.enableGlobalFlow = NV_OF_FALSE;
+    init.inputBufferFormat = NV_OF_BUFFER_FORMAT_GRAYSCALE8;
+    NV_OF_STATUS st = g_of.nvOFInit(c->of, &init);
+    bool ok = st == NV_OF_SUCCESS &&
+        SUCCEEDED(c->device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&c->of_in))) &&
+        SUCCEEDED(c->device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&c->of_out)));
+    if (ok) {
+        c->of_in_v = c->of_out_v = 0;
+        for (int i = 0; i < 2; ++i)
+            c->gray[i] = MakeTexture(c->device, c->w, c->h, DXGI_FORMAT_R8_UNORM, true, D3D12_RESOURCE_STATE_COMMON);
+        c->flow = MakeTexture(c->device, (c->w + c->grid - 1) / c->grid, (c->h + c->grid - 1) / c->grid,
+            DXGI_FORMAT_R16G16_SINT, false, D3D12_RESOURCE_STATE_COMMON);
+        ok = c->gray[0] && c->gray[1] && c->flow && RegisterOf(c, c->gray[0], &c->gray_h[0]) &&
+            RegisterOf(c, c->gray[1], &c->gray_h[1]) && RegisterOf(c, c->flow, &c->flow_h);
+    }
+    if (!ok) {
+        Log("optical flow: init failed (%d); no motion vectors", st);
+        ReleaseFlow(c);
+        return false;
+    }
+    c->cur_gray = 0;
+    c->have_prev = false;
+    Log("optical flow: %ux%u, grid %u, perf level %d", c->w, c->h, c->grid, c->cfg.flow_perf);
+    return true;
+}
+
 // 1: ready, 0: skip this frame (size still changing), -1: failed
 static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
 {
@@ -654,11 +883,12 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
     c->lo = MakeTexture(c->device, w, h, kLoFormat, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     c->nr = MakeTexture(c->device, w, h, kLoFormat, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     c->depth = MakeTexture(c->device, w, h, DXGI_FORMAT_R32_FLOAT, false, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
-    c->mv = MakeTexture(c->device, w, h, DXGI_FORMAT_R16G16_FLOAT, false, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+    c->mv = MakeTexture(c->device, w, h, DXGI_FORMAT_R16G16_FLOAT, true, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
     c->stable = MakeTexture(c->device, w, h, DXGI_FORMAT_R16G16B16A16_FLOAT, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     c->delta = MakeTexture(c->device, w, h, DXGI_FORMAT_R16G16B16A16_FLOAT, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     c->first_smooth = true;
     if (!c->copy || !c->lo || !c->nr || !c->depth || !c->mv || !c->stable || !c->delta) return -1;
+    CreateFlow(c);
 
     UINT inc = c->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     D3D12_CPU_DESCRIPTOR_HANDLE h0 = c->heap->GetCPUDescriptorHandleForHeapStart();
@@ -673,13 +903,28 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
         sd.Texture2D.MipLevels = 1;
         c->device->CreateShaderResourceView(srvs[i], &sd, {h0.ptr + i * inc});
     }
-    D3D12_UNORDERED_ACCESS_VIEW_DESC ud = {};
-    ud.Format = kLoFormat;
-    ud.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
-    c->device->CreateUnorderedAccessView(c->lo, nullptr, &ud, {h0.ptr + (kUav + 0) * inc});
-    ud.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-    c->device->CreateUnorderedAccessView(c->stable, nullptr, &ud, {h0.ptr + (kUav + 1) * inc});
-    c->device->CreateUnorderedAccessView(c->delta, nullptr, &ud, {h0.ptr + (kUav + 2) * inc});
+    D3D12_SHADER_RESOURCE_VIEW_DESC fd = {};   // flow (a null view when there is no optical flow)
+    fd.Format = DXGI_FORMAT_R16G16_SINT;
+    fd.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    fd.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    fd.Texture2D.MipLevels = 1;
+    c->device->CreateShaderResourceView(c->flow, &fd, {h0.ptr + 4 * inc});
+    fd.Format = DXGI_FORMAT_R8_UNORM;   // grey frames for the Lucas-Kanade refinement
+    for (int t = 0; t < 2; ++t) c->device->CreateShaderResourceView(c->gray[t], &fd, {h0.ptr + (5 + t) * inc});
+    for (UINT t = 0; t < 2; ++t) {
+        const UINT u = kUav + t * kUavCount;
+        D3D12_UNORDERED_ACCESS_VIEW_DESC ud = {};
+        ud.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+        ud.Format = kLoFormat;
+        c->device->CreateUnorderedAccessView(c->lo, nullptr, &ud, {h0.ptr + (u + 0) * inc});
+        ud.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+        c->device->CreateUnorderedAccessView(c->stable, nullptr, &ud, {h0.ptr + (u + 1) * inc});
+        c->device->CreateUnorderedAccessView(c->delta, nullptr, &ud, {h0.ptr + (u + 2) * inc});
+        ud.Format = DXGI_FORMAT_R8_UNORM;
+        c->device->CreateUnorderedAccessView(c->gray[t], nullptr, &ud, {h0.ptr + (u + 3) * inc});
+        ud.Format = DXGI_FORMAT_R16G16_FLOAT;
+        c->device->CreateUnorderedAccessView(c->mv, nullptr, &ud, {h0.ptr + (u + 4) * inc});
+    }
     return InitCombine(c, bb.Format) && CreateFeature(c) ? 1 : -1;
 }
 
@@ -770,15 +1015,19 @@ static void ProcessFrame(Chain *c)
     const bool direct = c->w == c->W && c->h == c->H;
     float k[kConstants] = {float(c->w), float(c->h), float(c->W), float(c->H), direct ? 1.0f : taps,
         direct ? 1.0f : 0.0f, c->cfg.compare ? 1.0f : 0.0f, c->cfg.stabilize / 255.0f,
-        c->cfg.smooth, 255.0f / 3.0f, c->first_smooth ? 1.0f : 0.0f, 0};
+        c->cfg.smooth, 255.0f / 3.0f, c->first_smooth ? 1.0f : 0.0f, 0, float(c->grid), c->cfg.mv_scale, c->cfg.mv_const_x, c->cfg.flow_filter ? 1.0f : 0.0f,
+        float(c->cfg.flow_refine), float(c->cur_gray), 0, 0};
     c->first_smooth = false;
+    const int cur = c->cur_gray;
     UINT inc = c->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     D3D12_GPU_DESCRIPTOR_HANDLE g0 = c->heap->GetGPUDescriptorHandleForHeapStart();
+    const D3D12_GPU_DESCRIPTOR_HANDLE srv_table = {g0.ptr + kSrv * inc}, uav_table = {g0.ptr + (kUav + cur * kUavCount) * inc};
+    if (c->of) Barrier(l, c->gray[cur], D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     l->SetDescriptorHeaps(1, &c->heap);
     l->SetComputeRootSignature(c->root);
     l->SetPipelineState(c->down);
-    l->SetComputeRootDescriptorTable(0, {g0.ptr + kSrv * inc});
-    l->SetComputeRootDescriptorTable(1, {g0.ptr + kUav * inc});
+    l->SetComputeRootDescriptorTable(0, srv_table);
+    l->SetComputeRootDescriptorTable(1, uav_table);
     l->SetComputeRoot32BitConstants(2, kConstants, k, 0);
     l->Dispatch((c->w + 7) / 8, (c->h + 7) / 8, 1);
     D3D12_RESOURCE_BARRIER ub = {};
@@ -787,9 +1036,62 @@ static void ProcessFrame(Chain *c)
     l->ResourceBarrier(1, &ub);
     Barrier(l, c->lo, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, kRead);
 
+    // optical flow between this frame's grey image and the previous one: submit what we have, let the flow
+    // engine wait for it, make the queue wait for the flow, and record the rest into the second command list
+    UINT end_slot = slot;
+    bool flow_valid = false;
+    if (c->of) {
+        Barrier(l, c->gray[cur], D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON);
+        Submit(c, slot);
+        c->queue->Signal(c->of_in, ++c->of_in_v);
+        if (c->have_prev) {
+            NV_OF_FENCE_POINT in = {c->of_in, c->of_in_v}, out = {c->of_out, ++c->of_out_v};
+            NV_OF_EXECUTE_INPUT_PARAMS_D3D12 ip = {};
+            ip.inputFrame = c->gray_h[cur];
+            ip.referenceFrame = c->gray_h[1 - cur];
+            ip.numFencePoints = 1;
+            ip.fencePoint = &in;
+            NV_OF_EXECUTE_OUTPUT_PARAMS_D3D12 op = {};
+            op.outputBuffer = c->flow_h;
+            op.fencePoint = &out;
+            NV_OF_STATUS st = g_of.nvOFExecuteD3D12(c->of, &ip, &op);
+            if (st == NV_OF_SUCCESS) {
+                c->queue->Wait(c->of_out, c->of_out_v);
+                flow_valid = true;
+            } else {
+                Skip(c, 16, "optical flow execute failed (reset frames until it works)");
+            }
+        }
+        c->have_prev = true;
+        c->cur_gray = 1 - cur;
+        end_slot = kFrames + slot;
+        if (!BeginList(c, end_slot, c->list2)) {
+            Log("FAIL second command list reset; fallback mode disabled");
+            c->broken = true;
+            bb->Release();
+            return;
+        }
+        l = c->list2;
+    }
+    k[11] = flow_valid ? 1.0f : 0.0f;
+
+    // motion vectors for DLSS-NR (zeros without optical flow)
+    l->SetDescriptorHeaps(1, &c->heap);
+    l->SetComputeRootSignature(c->root);
+    l->SetPipelineState(c->to_motion);
+    l->SetComputeRootDescriptorTable(0, srv_table);
+    l->SetComputeRootDescriptorTable(1, uav_table);
+    l->SetComputeRoot32BitConstants(2, kConstants, k, 0);
+    if (flow_valid) Barrier(l, c->flow, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+    Barrier(l, c->mv, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+    l->Dispatch((c->w + 7) / 8, (c->h + 7) / 8, 1);
+    Barrier(l, c->mv, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+    if (flow_valid) Barrier(l, c->flow, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COMMON);
+
     // DLSS-NR
     NVSDK_NGX_Parameter *p = ngx.params;
-    const bool reset = !c->cfg.temporal || c->nr_frames == 0;
+    // history only with real motion vectors (zero vectors would smear every moving edge)
+    const bool reset = !c->cfg.temporal || !flow_valid;
     p->Set("Color", c->lo);
     p->Set("Output", c->nr);
     p->Set("Depth", c->depth);
@@ -835,8 +1137,8 @@ static void ProcessFrame(Chain *c)
     l->SetDescriptorHeaps(1, &c->heap);
     l->SetComputeRootSignature(c->root);
     l->SetPipelineState(c->smooth);
-    l->SetComputeRootDescriptorTable(0, {g0.ptr + kSrv * inc});
-    l->SetComputeRootDescriptorTable(1, {g0.ptr + kUav * inc});
+    l->SetComputeRootDescriptorTable(0, srv_table);
+    l->SetComputeRootDescriptorTable(1, uav_table);
     l->SetComputeRoot32BitConstants(2, kConstants, k, 0);
     l->Dispatch((c->w + 7) / 8, (c->h + 7) / 8, 1);
     Barrier(l, c->delta, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, kRead);
@@ -850,8 +1152,8 @@ static void ProcessFrame(Chain *c)
     l->SetDescriptorHeaps(1, &c->heap);
     l->SetGraphicsRootSignature(c->root);
     l->SetPipelineState(c->combine);
-    l->SetGraphicsRootDescriptorTable(0, {g0.ptr + kSrv * inc});
-    l->SetGraphicsRootDescriptorTable(1, {g0.ptr + kUav * inc});
+    l->SetGraphicsRootDescriptorTable(0, srv_table);
+    l->SetGraphicsRootDescriptorTable(1, uav_table);
     l->SetGraphicsRoot32BitConstants(2, kConstants, k, 0);
     l->OMSetRenderTargets(1, &rtv, FALSE, nullptr);
     D3D12_VIEWPORT vp = {0, 0, float(c->W), float(c->H), 0, 1};
@@ -866,7 +1168,7 @@ static void ProcessFrame(Chain *c)
     Barrier(l, c->lo, kRead, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     Barrier(l, c->nr, kRead, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     Barrier(l, c->delta, kRead, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-    Submit(c, slot);
+    Submit(c, end_slot, l);
 
     if (c->cfg.dump_frame >= 0 && c->frame == static_cast<UINT64>(c->cfg.dump_frame)) {
         WaitIdle(c);
@@ -886,6 +1188,12 @@ static void ProcessFrame(Chain *c)
         DumpPpm(c, c->lo, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, name);
         swprintf_s(name, L"dlss5fb_nr_%lld.ppm", dk);
         DumpPpm(c, c->nr, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, name);
+        if (c->flow) {
+            swprintf_s(name, L"dlss5fb_flow_%lld.bin", dk);
+            DumpPpm(c, c->flow, D3D12_RESOURCE_STATE_COMMON, name);
+            swprintf_s(name, L"dlss5fb_gray_%lld.bin", dk);
+            DumpPpm(c, c->gray[1 - c->cur_gray], D3D12_RESOURCE_STATE_COMMON, name);
+        }
     }
     if (c->frame == 1 || c->frame % 600 == 0) Log("frame %llu processed", c->frame);
     bb->Release();
@@ -893,6 +1201,7 @@ static void ProcessFrame(Chain *c)
 
 static void DumpPpm(Chain *c, ID3D12Resource *tex, D3D12_RESOURCE_STATES state, const wchar_t *name)
 {
+    const bool raw = wcsstr(name, L".bin") != nullptr;   // raw texels, rows tightly packed (research dumps)
     D3D12_RESOURCE_DESC d = tex->GetDesc();
     D3D12_PLACED_SUBRESOURCE_FOOTPRINT fp = {};
     UINT64 total = 0;
@@ -920,7 +1229,15 @@ static void DumpPpm(Chain *c, ID3D12Resource *tex, D3D12_RESOURCE_STATES state, 
     uint8_t *data = nullptr;
     buf->Map(0, nullptr, reinterpret_cast<void **>(&data));
     std::wstring path = std::wstring(g_dir) + name;
-    if (FILE *f = _wfopen(path.c_str(), L"wb")) {
+    if (raw) {
+        if (FILE *f = _wfopen(path.c_str(), L"wb")) {
+            const UINT bpp = d.Format == DXGI_FORMAT_R8_UNORM ? 1 : 4;
+            for (UINT y = 0; y < d.Height; ++y)
+                std::fwrite(data + fp.Offset + static_cast<size_t>(y) * fp.Footprint.RowPitch, 1, static_cast<size_t>(d.Width) * bpp, f);
+            std::fclose(f);
+            Log("dumped %ls (%llux%u fmt %d)", name, d.Width, d.Height, d.Format);
+        }
+    } else if (FILE *f = _wfopen(path.c_str(), L"wb")) {
         std::fprintf(f, "P6\n%u %u\n255\n", static_cast<UINT>(d.Width), d.Height);
         const bool bgra = d.Format == DXGI_FORMAT_B8G8R8A8_UNORM || d.Format == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
         const bool rgb10 = d.Format == DXGI_FORMAT_R10G10B10A2_UNORM;
@@ -1245,6 +1562,23 @@ extern "C" HRESULT WINAPI Proxy_CreateDXGIFactory2(UINT flags, REFIID riid, void
     return hr;
 }
 
+// diagnostics: log access violations (module + offset); the process then handles or crashes as it would anyway
+static LONG CALLBACK CrashLogger(EXCEPTION_POINTERS *e)
+{
+    static std::atomic<int> logged{0};
+    if (e->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION && logged++ < 3) {
+        void *at = e->ExceptionRecord->ExceptionAddress;
+        HMODULE m = nullptr;
+        GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+            static_cast<LPCSTR>(at), &m);
+        Log("access violation at %s+0x%llx (%s address %p), thread %lu", ModuleOf(at).c_str(),
+            static_cast<unsigned long long>(reinterpret_cast<uintptr_t>(at) - reinterpret_cast<uintptr_t>(m)),
+            e->ExceptionRecord->ExceptionInformation[0] ? "writing" : "reading",
+            reinterpret_cast<void *>(e->ExceptionRecord->ExceptionInformation[1]), GetCurrentThreadId());
+    }
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+
 BOOL WINAPI DllMain(HINSTANCE module, DWORD reason, LPVOID)
 {
     if (reason == DLL_PROCESS_ATTACH) {
@@ -1252,6 +1586,7 @@ BOOL WINAPI DllMain(HINSTANCE module, DWORD reason, LPVOID)
         GetModuleFileNameW(module, g_dir, MAX_PATH);
         if (wchar_t *slash = wcsrchr(g_dir, L'\\')) slash[1] = 0;
         LoadRealDxgi();
+        AddVectoredExceptionHandler(0, CrashLogger);
     }
     return TRUE;
 }
