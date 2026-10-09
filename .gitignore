@@ -41,3 +41,7 @@ __pycache__/
 /research/taps*/
 /research/res_study_out/
 /research/behavior_out/
+/plugin/fallback/bin/
+/plugin/fallback/obj/
+/plugin/fallback/test/
+/plugin/fallback/fakegame/

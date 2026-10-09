@@ -24,7 +24,9 @@ namespace Dlss5Manager
 选项:
   --preset 性能|均衡|画质            按显卡和屏幕分辨率选模型分辨率
   --set 名字=值                      设置任意参数，可重复 (例: --set LocalStructure=0.8)
-  --proxy dxgi.dll|winmm.dll|...     指定注入文件名 (默认自动选一个没被占用的)
+  --mode auto|optiscaler|fallback    注入方式: optiscaler = 借用游戏自带的超分 (DLSS/FSR/XeSS)；
+                                     fallback = 兜底模式，截取 DX12 游戏画面 (没超分的游戏)。默认按检测结果自动选
+  --proxy dxgi.dll|winmm.dll|...     指定注入文件名 (默认自动选一个没被占用的；兜底模式固定 dxgi.dll)
   --res 2560x1440                    输出分辨率 (预设估算用，默认取主显示器)
   --force                            跳过反作弊/显卡检查 —— 只在确认游戏离线运行、没有反作弊时使用";
 
@@ -39,7 +41,7 @@ namespace Dlss5Manager
                 switch (cmd)
                 {
                     case "scan": return Scan();
-                    case "info": return Info(Resolve(opt));
+                    case "info": return Info(Resolve(opt), opt);
                     case "install": return Install(Resolve(opt), opt);
                     case "config": return Config(Resolve(opt), opt);
                     case "uninstall": Installer.Uninstall(Resolve(opt).ExeDir, Console.WriteLine); return 0;
@@ -62,7 +64,7 @@ namespace Dlss5Manager
 
         class Options
         {
-            public string Target, Preset, Proxy;
+            public string Target, Preset, Proxy, Mode;
             public List<string> Sets = new List<string>();
             public bool Force;
             public int ResW, ResH;
@@ -78,6 +80,7 @@ namespace Dlss5Manager
                         case "--preset": o.Preset = next(); break;
                         case "--set": o.Sets.Add(next()); break;
                         case "--proxy": o.Proxy = next(); break;
+                        case "--mode": o.Mode = Modes.Parse(next()); break;
                         case "--force": o.Force = true; break;
                         case "--res":
                             var r = next().Split('x', 'X');
@@ -127,7 +130,8 @@ namespace Dlss5Manager
             return 0;
         }
 
-        public static string Describe(Probe p)
+        // mode: 未安装时要用的注入方式 (null = 自动)
+        public static string Describe(Probe p, string mode = null)
         {
             var sb = new StringBuilder();
             sb.AppendLine("主程序    " + (p.Exe ?? "(没找到)"));
@@ -136,17 +140,19 @@ namespace Dlss5Manager
             sb.AppendLine("图形 API  " + (p.Apis.Count > 0 ? string.Join(" / ", p.Apis) : "未能从导入表判断"));
             sb.AppendLine("超分      " + (p.Upscalers.Count > 0 ? string.Join(" / ", p.Upscalers) : "未发现"));
             sb.AppendLine("反作弊    " + (p.AntiCheat.Count > 0 ? "有" : "未发现"));
-            sb.AppendLine("状态      " + (p.Installed != null ? "已安装 (注入名 " + p.Installed.proxy + ")" : "未安装"));
-            var probs = p.Problems(false);
+            sb.AppendLine("状态      " + (p.Installed != null ? "已安装，" + Modes.Label(p.Mode) + " (注入名 " + p.Installed.proxy + ")" : "未安装"));
+            if (p.Installed == null) sb.AppendLine("注入方式  " + Modes.Label(mode ?? p.Mode) + (mode == null ? " (自动选择)" : ""));
+            var probs = p.Problems(false, mode);
             foreach (string s in probs) sb.AppendLine("  ✗ " + s);
-            foreach (string s in p.Warnings()) sb.AppendLine("  ! " + s);
-            if (probs.Count == 0) sb.AppendLine(p.Upscalers.Count > 0 ? "  ✓ 可以安装" : "  ✓ 可以安装 (但见上面关于超分的提醒)");
+            foreach (string s in p.Warnings(mode)) sb.AppendLine("  ! " + s);
+            if (probs.Count == 0)
+                sb.AppendLine((mode ?? p.Mode) == Modes.OptiScaler && p.Upscalers.Count == 0 ? "  ✓ 可以安装 (但见上面关于超分的提醒)" : "  ✓ 可以安装");
             return sb.ToString();
         }
 
-        static int Info(Probe p)
+        static int Info(Probe p, Options o)
         {
-            Console.Write(Describe(p));
+            Console.Write(Describe(p, o.Mode));
             if (p.Installed != null) PrintSettings(p.ExeDir);
             return 0;
         }
@@ -154,8 +160,9 @@ namespace Dlss5Manager
         static void PrintSettings(string dir)
         {
             var cur = Installer.ReadSettings(dir);
+            var m = Manifest.Load(dir);
             Console.WriteLine("当前参数 (" + Installer.IniPath(dir) + "):");
-            foreach (var s in Settings.All)
+            foreach (var s in Settings.For(m != null && m.mode == Modes.Fallback ? Modes.Fallback : Modes.OptiScaler))
             {
                 string raw;
                 cur.TryGetValue(s.Key, out raw);
@@ -165,14 +172,22 @@ namespace Dlss5Manager
 
         static int Install(Probe p, Options o)
         {
-            Console.Write(Describe(p));
+            string mode = o.Mode ?? p.SuggestedMode;
+            Console.Write(Describe(p, mode));
             var ch = o.Changes();
             if (!ch.ContainsKey("WorkingScale") && p.Installed == null)   // 首次安装且没指定: 用"均衡"
                 ch["WorkingScale"] = Settings.Format(Settings.Find("WorkingScale"), Presets.Scale("均衡", o.ResW, o.ResH));
-            Installer.Install(p, ch, o.Proxy, o.Force, Console.WriteLine);
+            Installer.Install(p, ch, o.Proxy, o.Force, Console.WriteLine, mode);
             PrintSettings(p.ExeDir);
-            Console.WriteLine("进游戏后在图形设置里打开 DLSS (或 FSR / XeSS)；按 Insert 打开 OptiScaler 菜单可实时调整。");
+            Console.WriteLine(Hint(mode));
             return 0;
+        }
+
+        public static string Hint(string mode)
+        {
+            return mode == Modes.Fallback
+                ? "直接启动游戏即可 (DX12)。F10 开关 DLSS5、F11 左右对比；改 dlss5fb.ini 后约 1 秒内生效，日志在 dlss5fb.log。"
+                : "进游戏后在图形设置里打开 DLSS (或 FSR / XeSS)；按 Insert 打开 OptiScaler 菜单可实时调整。";
         }
 
         static int Config(Probe p, Options o)
@@ -182,7 +197,8 @@ namespace Dlss5Manager
             if (ch.Count > 0)
             {
                 Installer.ApplySettings(p.ExeDir, ch, p);
-                Console.WriteLine("已写入 " + ch.Count + " 项。游戏运行中改的话需要重启游戏 (或在 OptiScaler 菜单里调)。");
+                Console.WriteLine("已写入 " + ch.Count + " 项。" + (p.Mode == Modes.Fallback ? "兜底模式运行中约 1 秒内生效。"
+                    : "游戏运行中改的话需要重启游戏 (或在 OptiScaler 菜单里调)。"));
             }
             PrintSettings(p.ExeDir);
             return 0;
@@ -206,8 +222,9 @@ namespace Dlss5Manager
         static int Params()
         {
             foreach (var s in Settings.All)
-                Console.WriteLine(string.Format(Const.Inv, "{0,-18}{1} ({2}，默认 {3})\n                  {4}", s.Key, s.Label,
-                    s.Kind == "bool" ? "true/false" : s.Min + "~" + s.Max, Settings.Format(s, s.Default), s.Help));
+                Console.WriteLine(string.Format(Const.Inv, "{0,-18}{1} ({2}，默认 {3}){5}\n                  {4}", s.Key, s.Label,
+                    s.Kind == "bool" ? "true/false" : s.Min + "~" + s.Max, Settings.Format(s, s.Default), s.Help,
+                    s.Only == null ? "" : " [仅" + (s.Only == Modes.Fallback ? "兜底模式" : "OptiScaler") + "]"));
             return 0;
         }
     }

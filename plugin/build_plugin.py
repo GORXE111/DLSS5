@@ -3,6 +3,7 @@
 python plugin/build_plugin.py [--opti _dl/opti_020] [--dll sm86_port/nvngx_dlssnr.dll]
 产物: plugin/dist/DLSS5-RTX30/
   payload/           原样拷进游戏目录的文件 (OptiScaler.dll 安装时再改名为代理 dll)
+  payload/fallback/  兜底模式的 dxgi.dll 代理与 NGX 调用桥 (只由管理工具安装)
   DLSS5Manager.exe   图形界面管理工具 (扫描游戏库、检测、安装/卸载、调参数；源码 plugin/manager/)
   dlss5.exe          同一工具的命令行版
   install.ps1        单游戏安装脚本 (旧版，保留)
@@ -99,6 +100,12 @@ def main():
     subprocess.run(["cmd", "/c", os.path.join(HERE, "manager", "build.bat")], check=True, stdout=subprocess.DEVNULL)
     for exe in ("DLSS5Manager.exe", "dlss5.exe"):
         shutil.copy2(os.path.join(HERE, "manager", "bin", exe), os.path.join(a.out, exe))
+
+    # 兜底模式 (dxgi.dll 代理 + NGX 调用桥；源码 plugin/fallback/)，与 OptiScaler 共用 payload 里的 nvngx_dlssnr.dll
+    subprocess.run(["cmd", "/c", os.path.join(HERE, "fallback", "build.bat")], check=True, stdout=subprocess.DEVNULL)
+    os.makedirs(os.path.join(payload, "fallback"))
+    for dll in ("dxgi.dll", "dlss5_nvngx.dll"):
+        shutil.copy2(os.path.join(HERE, "fallback", "bin", dll), os.path.join(payload, "fallback", dll))
 
     files = []
     for dirpath, _, names in os.walk(payload):

@@ -16,7 +16,7 @@ github.com/Dagherbou/OptiScaler_DLSSNR)。它截获游戏交给 DLSS/FSR/XeSS �
 -------------------------------
 双击 DLSS5Manager.exe:
   - 自动列出 Steam / Epic / GOG 里的游戏 (不在库里的用 "添加文件夹…")
-  - "状态" 一栏: 可安装 / 无超分? / 有反作弊 / 已安装
+  - "状态" 一栏: 可安装 / 可兜底 / 无超分? / 有反作弊 / 已安装
   - 选中游戏看检测结果 (主程序、引擎、DX11/DX12/Vulkan、自带的超分、反作弊、被占用的注入名)
   - 选预设 (性能 / 均衡 / 画质，按你的显卡和屏幕分辨率估算模型分辨率) 或逐项调参数
   - 安装 / 保存参数 / 卸载，卸载会把被覆盖的文件原样还原
@@ -28,6 +28,17 @@ github.com/Dagherbou/OptiScaler_DLSSNR)。它截获游戏交给 DLSS/FSR/XeSS �
   dlss5 config "Cyberpunk" --set Style=1
   dlss5 uninstall "Cyberpunk"
   dlss5 params        (全部参数说明)
+
+
+兜底模式 (没有超分的 DX12 游戏)
+------------------------------
+游戏不支持 DLSS/FSR/XeSS 时，管理工具会改用兜底模式 (也可在 "注入方式" 里手动选，
+命令行加 --mode fallback): 装一个自己的 dxgi.dll，每帧把游戏画面直接送进 DLSS5。
+  - 只支持 DX12。Unity 游戏常默认 DX11，需在 Steam 启动选项里加 -force-d3d12
+  - 没有深度、运动矢量和历史帧，效果不如 OptiScaler 方式，画面可能有轻微闪烁
+  - 游戏 UI (文字、血条) 也会被一起处理
+  - 进游戏后: F10 开关 DLSS5，F11 左右对比 (左原画面 / 右 DLSS5)
+  - 参数在游戏目录的 dlss5fb.ini，游戏运行中改了约 1 秒生效；日志在 dlss5fb.log
 
 
 手动安装 (旧方式)
@@ -60,7 +71,7 @@ github.com/Dagherbou/OptiScaler_DLSSNR)。它截获游戏交给 DLSS/FSR/XeSS �
 
 限制
 ----
-- 游戏必须本身支持 DLSS / FSR2+ / XeSS 之一 (DLSS5 要从超分调用里拿深度和运动矢量)
+- OptiScaler 方式要求游戏本身支持 DLSS / FSR2+ / XeSS 之一；不支持的 DX12 游戏可用兜底模式 (效果打折)
 - RTX 20 系暂不支持
 - 30 系上的结果与 50 系原版在数值上有细微差异 (FP8 运算用 FP16 模拟，累加舍入不同)
 - nvngx_dlssnr.dll 是 NVIDIA 的程序，只供个人研究使用，请勿公开分发

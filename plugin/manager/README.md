@@ -1,8 +1,13 @@
 # DLSS5 Manager
 
-给支持超分 (DLSS / FSR2+ / XeSS) 的游戏装上 DLSS5 神经渲染的管理工具：扫描游戏库、检测游戏、一键安装/卸载、调参数。
-注入与画面合成由 OptiScaler 的 DLSS Neural Rendering 分支完成 (GPL-3，github.com/Dagherbou/OptiScaler_DLSSNR)，
-本工具负责选游戏、选注入方式、写 `OptiScaler.ini` 的 `[DlssNr]` 节、备份与还原。
+给游戏装上 DLSS5 神经渲染的管理工具：扫描游戏库、检测游戏、一键安装/卸载、调参数。两种注入方式：
+
+- **OptiScaler** (游戏自带 DLSS / FSR2+ / XeSS)：注入与画面合成由 OptiScaler 的 DLSS Neural Rendering 分支完成
+  (GPL-3，github.com/Dagherbou/OptiScaler_DLSSNR)，本工具写 `OptiScaler.ini` 的 `[DlssNr]` 节。有深度、运动矢量与历史帧，效果最好。
+- **兜底模式** (没有超分的 DX12 游戏)：本仓库自己的 dxgi.dll 代理 (`plugin/fallback/`)，在 Present 时截取画面跑 DLSS-NR，
+  参数在 `dlss5fb.ini`。没有深度/运动矢量/历史帧，UI 也会被处理。
+
+没有超分、但有 DX12 的游戏默认选兜底模式，其余默认 OptiScaler；`--mode` / 界面的"注入方式"可以改。
 
 - `DLSS5Manager.exe`：图形界面；`dlss5.exe`：命令行 (`dlss5 help`)。
 - .NET Framework 4.8 (Windows 10/11 自带)，不需要另装运行库。
@@ -40,6 +45,5 @@ DX11 游戏只能经 dx11on12 跑 DLSS5，安装时会写 `[Upscalers] Dx11Upsca
 `dlss5 params` 列出全部参数。画面参数的含义来自逆向 (见 `torch/README.md` 与 `tools/notes.jsonl`)：
 LocalStructure / LocalTone / SkinStructure / AutoMask / Style 进网络的 pre_block，Intensity 是网络之外的线性混合。
 
-## 还没做
-
-- 不带超分的游戏 (兜底模式)：从交换链截取画面、无历史逐帧处理。需要自己的 present hook，不经 OptiScaler。
+兜底模式没有 OptiScaler 的合成参数 (TransferStrength / ColourStrength / MaxRatio)，另有 Temporal (保留历史帧) 与 Compare (左右对比)。
+它的 ini 在游戏运行中约 1 秒内重新读取，改参数不用重启游戏。原理与验证见 `plugin/fallback/README.md`。

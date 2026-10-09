@@ -1,4 +1,4 @@
-// 图形界面: 左侧游戏列表，右侧检测结果 + 参数 + 安装/保存/卸载
+// 图形界面: 左侧游戏列表，右侧检测结果 + 注入方式 + 参数 + 安装/保存/卸载
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,6 +18,9 @@ namespace Dlss5Manager
         readonly TextBox info = new TextBox();
         readonly TextBox log = new TextBox();
         readonly ComboBox preset = new ComboBox();
+        readonly ComboBox modeBox = new ComboBox();
+        readonly GroupBox group = new GroupBox();
+        readonly Dictionary<string, Control[]> rows = new Dictionary<string, Control[]>();
         readonly Label estimate = new Label();
         readonly Button btnInstall = new Button(), btnSave = new Button(), btnUninstall = new Button(), btnOpen = new Button();
         readonly Dictionary<string, Control> inputs = new Dictionary<string, Control>();
@@ -32,7 +35,7 @@ namespace Dlss5Manager
 
         public MainForm()
         {
-            Text = "DLSS5 管理工具 —— 给支持超分的游戏装上 DLSS5 神经渲染";
+            Text = "DLSS5 管理工具 —— 给游戏装上 DLSS5 神经渲染";
             Font = new Font("Microsoft YaHei UI", 9f);
             AutoScaleMode = AutoScaleMode.Dpi;
             Size = new Size(1180, 780);
@@ -77,7 +80,7 @@ namespace Dlss5Manager
             log.Multiline = true; log.ReadOnly = true; log.ScrollBars = ScrollBars.Vertical; log.Dock = DockStyle.Fill;
             log.BackColor = SystemColors.Window;
 
-            var group = new GroupBox { Text = "参数 (写入游戏目录的 OptiScaler.ini；进游戏后按 Insert 也能实时调)", Dock = DockStyle.Fill };
+            group.Dock = DockStyle.Fill;
             var grid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 3, AutoScroll = true };
             grid.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             grid.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
@@ -99,7 +102,14 @@ namespace Dlss5Manager
             var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, Margin = new Padding(0, 6, 0, 6) };
             btnInstall.Text = "安装"; btnSave.Text = "保存参数"; btnUninstall.Text = "卸载"; btnOpen.Text = "打开游戏文件夹";
             foreach (var b in new[] { btnInstall, btnSave, btnUninstall, btnOpen }) { b.AutoSize = true; b.Padding = new Padding(10, 2, 10, 2); b.Enabled = false; }
-            buttons.Controls.AddRange(new Control[] { btnInstall, btnSave, btnUninstall, btnOpen });
+            modeBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            modeBox.Items.AddRange(new object[] { "自动", Modes.Label(Modes.OptiScaler), Modes.Label(Modes.Fallback) });
+            modeBox.SelectedIndex = 0;
+            modeBox.Width = 190;
+            tips.SetToolTip(modeBox, "OptiScaler: 借用游戏自带的 DLSS/FSR/XeSS，有深度和运动矢量，效果最好\n" +
+                "兜底模式: 没有超分的 DX12 游戏，直接截取画面处理 (UI 也会被处理，没有历史帧)");
+            buttons.Controls.AddRange(new Control[] { new Label { Text = "注入方式", AutoSize = true, Margin = new Padding(3, 8, 3, 3) }, modeBox,
+                btnInstall, btnSave, btnUninstall, btnOpen });
 
             right.Controls.Add(title, 0, 0);
             right.Controls.Add(info, 0, 1);
@@ -120,6 +130,7 @@ namespace Dlss5Manager
             btnAdd.Click += (s, e) => AddFolder();
             search.TextChanged += (s, e) => Fill();
             list.SelectedIndexChanged += (s, e) => OnSelect();
+            modeBox.SelectedIndexChanged += (s, e) => OnMode();
             btnPreset.Click += (s, e) => SetValue("WorkingScale", Presets.Scale((string)preset.SelectedItem, screen[0], screen[1]));
             btnInstall.Click += (s, e) => DoInstall();
             btnSave.Click += (s, e) => DoSave();
@@ -132,6 +143,7 @@ namespace Dlss5Manager
             status.Text = string.Format("显卡: {0}{1}    屏幕: {2}x{3}    安装包: {4}",
                 Gpu.Name == "" ? "(未识别)" : Gpu.Name, Gpu.Supported ? "" : " (不支持，需要 RTX 30/40/50)", screen[0], screen[1], pp ?? "完整");
             LoadDefaults();
+            ShowRows(Modes.OptiScaler);
         }
 
         static void SetCue(TextBox t, string cue)
@@ -151,9 +163,11 @@ namespace Dlss5Manager
                 var c = new CheckBox { AutoSize = true, Anchor = AnchorStyles.Left };
                 c.CheckedChanged += (o, e) => OnChanged(s.Key);
                 input = c;
+                var help = new Label { Text = s.Help, AutoSize = true, Anchor = AnchorStyles.Left, ForeColor = SystemColors.GrayText };
                 grid.Controls.Add(label);
                 grid.Controls.Add(c);
-                grid.Controls.Add(new Label { Text = s.Help, AutoSize = true, Anchor = AnchorStyles.Left, ForeColor = SystemColors.GrayText });
+                grid.Controls.Add(help);
+                rows[s.Key] = new Control[] { label, c, help };
             }
             else
             {
@@ -180,6 +194,7 @@ namespace Dlss5Manager
                 grid.Controls.Add(label);
                 grid.Controls.Add(n);
                 grid.Controls.Add(t);
+                rows[s.Key] = new Control[] { label, n, t };
             }
             inputs[s.Key] = input;
         }
@@ -235,7 +250,34 @@ namespace Dlss5Manager
 
         Dictionary<string, string> Collect()
         {
-            return Settings.All.ToDictionary(s => s.Key, s => Settings.Format(s, GetValue(s.Key)));
+            return Settings.For(Mode).ToDictionary(s => s.Key, s => Settings.Format(s, GetValue(s.Key)));
+        }
+
+        // 下拉框选中的注入方式；"自动" = 已安装的方式或检测建议
+        string Mode
+        {
+            get
+            {
+                if (modeBox.SelectedIndex == 1) return Modes.OptiScaler;
+                if (modeBox.SelectedIndex == 2) return Modes.Fallback;
+                return probe != null ? probe.Mode : Modes.OptiScaler;
+            }
+        }
+
+        void ShowRows(string mode)
+        {
+            foreach (var s in Settings.All) foreach (Control c in rows[s.Key]) c.Visible = s.AppliesTo(mode);
+            group.Text = mode == Modes.Fallback ? "参数 (写入游戏目录的 dlss5fb.ini；游戏运行中修改约 1 秒内生效)"
+                                                : "参数 (写入游戏目录的 OptiScaler.ini；进游戏后按 Insert 也能实时调)";
+        }
+
+        void OnMode()
+        {
+            ShowRows(Mode);
+            if (probe == null) return;
+            info.Text = Cli.Describe(probe, probe.Installed == null ? (modeBox.SelectedIndex == 0 ? null : Mode) : null)
+                .Replace("\n", "\r\n").Replace("\r\r\n", "\r\n");
+            btnInstall.Enabled = probe.Problems(false, Mode).Count == 0 && Gpu.Supported;
         }
 
         // ---------------- 列表
@@ -293,7 +335,7 @@ namespace Dlss5Manager
         {
             if (p.Installed != null) return "已安装";
             if (p.Problems(false).Count > 0) return p.AntiCheat.Count > 0 ? "有反作弊" : "不可安装";
-            return p.Upscalers.Count > 0 ? "可安装" : "无超分?";
+            return p.Upscalers.Count > 0 ? "可安装" : p.Apis.Contains("DX12") ? "可兜底" : "无超分?";
         }
 
         void AddFolder()
@@ -330,11 +372,10 @@ namespace Dlss5Manager
         {
             probe = p;
             probes[g.Root] = p;
-            info.Text = Cli.Describe(p).Replace("\n", "\r\n").Replace("\r\r\n", "\r\n");
             foreach (ListViewItem it in list.Items) if (it.Tag == g) it.SubItems[2].Text = StateOf(p);
             bool installed = p.Installed != null;
             btnInstall.Text = installed ? "重新安装" : "安装";
-            btnInstall.Enabled = p.Problems(false).Count == 0 && Gpu.Supported;
+            if (modeBox.SelectedIndex != 0) modeBox.SelectedIndex = 0; else OnMode();   // 都会走 OnMode
             btnSave.Enabled = installed;
             btnUninstall.Enabled = installed;
             btnOpen.Enabled = true;
@@ -360,14 +401,15 @@ namespace Dlss5Manager
 
         void DoInstall()
         {
-            var warn = probe.Warnings().Where(w => !w.StartsWith("反作弊")).ToList();
+            string mode = Mode;
+            var warn = probe.Warnings(mode).Where(w => !w.StartsWith("反作弊")).ToList();
             if (warn.Count > 0 && MessageBox.Show(this, string.Join("\n\n", warn) + "\n\n继续安装？", "提醒", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) != DialogResult.OK)
                 return;
             Act("安装", () =>
             {
                 Log("安装到 " + probe.ExeDir);
-                Installer.Install(probe, Collect(), "auto", false, Log);
-                Log("进游戏后在图形设置里打开 DLSS (或 FSR / XeSS)，按 Insert 打开 OptiScaler 菜单。");
+                Installer.Install(probe, Collect(), "auto", false, Log, mode);
+                Log(Cli.Hint(mode));
             });
         }
 
@@ -376,7 +418,8 @@ namespace Dlss5Manager
             Act("保存", () =>
             {
                 Installer.ApplySettings(probe.ExeDir, Collect(), probe);
-                Log("参数已写入 " + Installer.IniPath(probe.ExeDir) + " (游戏运行中需重启游戏生效，或在 OptiScaler 菜单里调)");
+                Log("参数已写入 " + Installer.IniPath(probe.ExeDir) + (probe.Mode == Modes.Fallback ? " (游戏运行中约 1 秒内生效)"
+                    : " (游戏运行中需重启游戏生效，或在 OptiScaler 菜单里调)"));
             });
         }
 

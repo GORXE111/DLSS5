@@ -1,0 +1,23 @@
+; generated: same names and ordinals as the system dxgi.dll
+LIBRARY dxgi
+EXPORTS
+    ApplyCompatResolutionQuirking=Fwd0 @1
+    CompatString=Fwd1 @2
+    CompatValue=Fwd2 @3
+    CreateDXGIFactory=Proxy_CreateDXGIFactory @10
+    CreateDXGIFactory1=Proxy_CreateDXGIFactory1 @11
+    CreateDXGIFactory2=Proxy_CreateDXGIFactory2 @12
+    DXGID3D10CreateDevice=Fwd6 @13
+    DXGID3D10CreateLayeredDevice=Fwd7 @14
+    DXGID3D10GetLayeredDeviceSize=Fwd8 @15
+    DXGID3D10RegisterLayers=Fwd9 @16
+    DXGIDeclareAdapterRemovalSupport=Fwd10 @17
+    DXGIDisableVBlankVirtualization=Fwd11 @18
+    DXGIDumpJournal=Fwd12 @4
+    DXGIGetDebugInterface1=Fwd13 @19
+    DXGIReportAdapterConfiguration=Fwd14 @20
+    PIXBeginCapture=Fwd15 @5
+    PIXEndCapture=Fwd16 @6
+    PIXGetCaptureState=Fwd17 @7
+    SetAppCompatStringPointer=Fwd18 @8
+    UpdateHMDEmulationStatus=Fwd19 @9

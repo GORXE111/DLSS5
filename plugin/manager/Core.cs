@@ -1,4 +1,5 @@
-// DLSS5 Manager 核心: 游戏库扫描、游戏检测、显卡/预设、OptiScaler.ini 读写、安装/卸载。
+// DLSS5 Manager 核心: 游戏库扫描、游戏检测、显卡/预设、OptiScaler.ini / dlss5fb.ini 读写、安装/卸载。
+// 两种注入方式: OptiScaler (游戏自带超分，借用它的深度/运动矢量) 与兜底模式 (自带 dxgi.dll 代理，截取 DX12 画面)。
 // 图形界面 (Gui.cs) 与命令行 (Cli.cs) 共用。目标 .NET Framework 4.8 (Windows 10/11 自带)。
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,21 @@ namespace Dlss5Manager
         }
         public static string ExeDir { get { return AppDomain.CurrentDomain.BaseDirectory; } }
         public static string Payload { get { return Path.Combine(ExeDir, "payload"); } }
+        public const string FallbackDir = "fallback";   // payload 里兜底模式的文件 (dxgi.dll, dlss5_nvngx.dll)
+    }
+
+    // 注入方式
+    public static class Modes
+    {
+        public const string OptiScaler = "optiscaler", Fallback = "fallback";
+        public static string Label(string m) { return m == Fallback ? "兜底模式 (截取画面)" : "OptiScaler (游戏自带超分)"; }
+        public static string Parse(string s)
+        {
+            if (string.IsNullOrEmpty(s) || s == "auto") return null;
+            s = s.ToLowerInvariant();
+            if (s == OptiScaler || s == Fallback) return s;
+            throw new ArgumentException("注入方式只能是 auto / optiscaler / fallback");
+        }
     }
 
     // ------------------------------------------------------------------ 游戏库
@@ -213,9 +229,13 @@ namespace Dlss5Manager
         public Manifest Installed;
         public bool UnrealEngine { get { return Engine.StartsWith("Unreal"); } }
 
+        // 没有超分、但能跑 DX12 的游戏默认走兜底模式；已安装的以安装记录为准
+        public string SuggestedMode { get { return Upscalers.Count == 0 && Apis.Contains("DX12") ? Modes.Fallback : Modes.OptiScaler; } }
+        public string Mode { get { return Installed != null ? (Installed.mode ?? Modes.OptiScaler) : SuggestedMode; } }
+
         static readonly Regex SkipDir = new Regex(@"^(_CommonRedist|Redist|redist|DirectX|vcredist|EasyAntiCheat|BattlEye|Support|Installers?|__Installer|\.dlss5_backup|ThirdParty|Prerequisites|CrashReportClient)$", RegexOptions.IgnoreCase);
         static readonly Regex SkipExe = new Regex(@"^(unins|setup|vc_?redist|dxsetup|UnityCrashHandler|CrashReport|.*crash.*|.*launcher.*|.*helper.*|EasyAntiCheat.*|BEService.*|start_protected_game|.*_BE|.*_EAC|REDprelauncher|QuickSFV|dotnet.*|oalinst|PhysX.*)", RegexOptions.IgnoreCase);
-        static readonly Regex AcName = new Regex(@"^(EasyAntiCheat|EAC|BattlEye|BEService|xigncode|GameGuard|nProtect|vgk|mhyprot|ACE-|AntiCheatExpert|start_protected_game)|anti.?cheat", RegexOptions.IgnoreCase);
+        static readonly Regex AcName = new Regex(@"^(EasyAntiCheat|EAC(?![a-z])|BattlEye|BEService|xigncode|GameGuard|nProtect|vgk|mhyprot|ACE-|AntiCheatExpert|start_protected_game)|anti.?cheat", RegexOptions.IgnoreCase);
         static readonly Dictionary<string, string> UpscalerFiles = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             { "nvngx_dlss.dll", "DLSS" }, { "sl.dlss.dll", "DLSS (Streamline)" }, { "NVUnityPlugin.dll", "DLSS (Unity)" },
@@ -319,26 +339,47 @@ namespace Dlss5Manager
         }
 
         // 能否安装、以及要提醒用户的事
-        public List<string> Problems(bool force)
+        // mode: null = 按 Mode
+        public List<string> Problems(bool force, string mode = null)
         {
+            mode = mode ?? Mode;
             var list = new List<string>();
             if (Exe == null) list.Add("没找到游戏主程序 (.exe)");
             if (AntiCheat.Count > 0 && !force) list.Add("发现反作弊组件，注入 dll 可能导致封号，不安装");
             if (ProxyOwners.Values.Any(v => v.StartsWith("OptiScaler"))) list.Add("已有一份别人装的 OptiScaler，请先卸载它，避免两份冲突");
+            if (mode == Modes.Fallback)
+            {
+                if (!Apis.Contains("DX12")) list.Add("兜底模式只支持 DX12 游戏" + (Apis.Count > 0 ? " (这个游戏是 " + string.Join(" / ", Apis) + ")" : ""));
+                string owner;
+                if (ProxyOwners.TryGetValue("dxgi.dll", out owner) && owner != "本工具")
+                    list.Add("兜底模式必须以 dxgi.dll 注入，但它已被占用 (" + owner + ")");
+            }
             return list;
         }
 
-        public List<string> Warnings()
+        public List<string> Warnings(string mode = null)
         {
+            mode = mode ?? Mode;
             var list = new List<string>();
-            if (Upscalers.Count == 0)
-                list.Add(UnrealEngine ? "没找到超分的 dll；Unreal 游戏的 FSR/TSR 常常编进了主程序，能否生效要进游戏看 OptiScaler 菜单"
-                                      : "没找到 DLSS/FSR/XeSS。DLSS5 要从游戏的超分调用里拿深度和运动矢量，游戏不支持超分时不会生效");
-            if (Apis.Count > 0 && !Apis.Contains("DX12") && !Apis.Contains("Vulkan") && Apis.Contains("DX11"))
-                list.Add("DX11 游戏: 会把超分切到 dlss_12 (DX11-on-12)，这是 DX11 下唯一能跑 DLSS5 的方式");
+            if (mode == Modes.Fallback)
+            {
+                list.Add("兜底模式: 从游戏画面直接截取，没有深度、运动矢量和历史帧，UI 也会一起被处理；进游戏后 F10 开关、F11 左右对比");
+                if (Engine == "Unity" && Apis.Contains("DX11"))
+                    list.Add("Unity 游戏常默认用 DX11，兜底模式需要 DX12: 在 Steam 启动选项里加 -force-d3d12");
+                if (Upscalers.Count > 0) list.Add("这个游戏自带超分，用 OptiScaler 方式效果更好 (有深度和运动矢量)");
+            }
+            else
+            {
+                if (Upscalers.Count == 0)
+                    list.Add(UnrealEngine ? "没找到超分的 dll；Unreal 游戏的 FSR/TSR 常常编进了主程序，能否生效要进游戏看 OptiScaler 菜单"
+                                          : "没找到 DLSS/FSR/XeSS。OptiScaler 方式要从游戏的超分调用里拿深度和运动矢量，游戏不支持超分时不会生效"
+                                            + (Apis.Contains("DX12") ? "；可以改用兜底模式" : ""));
+                if (Apis.Count > 0 && !Apis.Contains("DX12") && !Apis.Contains("Vulkan") && Apis.Contains("DX11"))
+                    list.Add("DX11 游戏: 会把超分切到 dlss_12 (DX11-on-12)，这是 DX11 下唯一能跑 DLSS5 的方式");
+                foreach (var kv in ProxyOwners)
+                    if (kv.Value != "本工具") list.Add(kv.Key + " 已被占用 (" + kv.Value + ")，会换用别的注入文件名");
+            }
             if (AntiCheat.Count > 0) list.Add("反作弊: " + string.Join(", ", AntiCheat.Select(Path.GetFileName)));
-            foreach (var kv in ProxyOwners)
-                if (kv.Value != "本工具") list.Add(kv.Key + " 已被占用 (" + kv.Value + ")，会换用别的注入文件名");
             return list;
         }
     }
@@ -422,6 +463,8 @@ namespace Dlss5Manager
     {
         public string Key, Label, Help, Kind;   // Kind: bool / float / int / key
         public double Min, Max, Default;
+        public string Only;                     // null = 两种注入方式都有；否则只属于该方式
+        public bool AppliesTo(string mode) { return Only == null || Only == mode; }
     }
 
     public static class Settings
@@ -444,12 +487,18 @@ namespace Dlss5Manager
             new Setting { Key = "Style", Label = "风格", Kind = "int", Min = 0, Max = 2, Default = 0,
                 Help = "DLSSNR.Style 0/1/2: 1、2 会额外做一次调色后处理" },
             new Setting { Key = "TransferStrength", Label = "合成强度", Kind = "float", Min = 0, Max = 1.5, Default = 1,
-                Help = "OptiScaler 的合成: 画面向模型结果移动多少 (按亮度合成)，0 = 超分原输出" },
+                Help = "OptiScaler 的合成: 画面向模型结果移动多少 (按亮度合成)，0 = 超分原输出", Only = Modes.OptiScaler },
             new Setting { Key = "ColourStrength", Label = "颜色强度", Kind = "float", Min = 0, Max = 1, Default = 1,
-                Help = "0 = 保持游戏原本的色相，只取模型的明暗；1 = 连颜色一起取" },
+                Help = "0 = 保持游戏原本的色相，只取模型的明暗；1 = 连颜色一起取", Only = Modes.OptiScaler },
             new Setting { Key = "MaxRatio", Label = "最大增亮倍数", Kind = "float", Min = 1, Max = 4, Default = 2,
-                Help = "单个像素最多被提亮到原来的几倍，防止亮光源变成色块" },
+                Help = "单个像素最多被提亮到原来的几倍，防止亮光源变成色块", Only = Modes.OptiScaler },
+            new Setting { Key = "Temporal", Label = "保留历史帧", Kind = "bool", Default = 0, Only = Modes.Fallback,
+                Help = "兜底模式: 打开后模型沿用上一帧 (运动矢量为 0)，静止画面更稳，运动时可能拖影；默认每帧独立" },
+            new Setting { Key = "Compare", Label = "左右对比", Kind = "bool", Default = 0, Only = Modes.Fallback,
+                Help = "兜底模式: 左半屏原画面、右半屏 DLSS5 (游戏里按 F11 也能切换)" },
         };
+
+        public static IEnumerable<Setting> For(string mode) { return All.Where(s => s.AppliesTo(mode)); }
 
         public static Setting Find(string key)
         {
@@ -564,6 +613,7 @@ namespace Dlss5Manager
         public List<string> installed = new List<string>();
         public List<string> backups = new List<string>();
         public string proxy;
+        public string mode;     // null (旧记录) / optiscaler / fallback
         public double scale;
         public string gpu;
         public string date;
@@ -590,37 +640,58 @@ namespace Dlss5Manager
         [System.Runtime.InteropServices.DllImport("kernel32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         static extern bool DeleteFileW(string path);
 
-        public static string PayloadProblem()
+        static readonly string[] OptiFiles = { "OptiScaler.dll", "OptiScaler.ini", "nvngx.dll_dlssnr.dll", "nvngx_dlssnr.dll" };
+        static readonly string[] FallbackFiles = { Const.FallbackDir + @"\dxgi.dll", Const.FallbackDir + @"\dlss5_nvngx.dll", "nvngx_dlssnr.dll" };
+
+        // mode: null = 两种方式的文件都检查
+        public static string PayloadProblem(string mode = null)
         {
             if (!Directory.Exists(Const.Payload)) return "找不到 payload 文件夹 (应在本程序旁边): " + Const.Payload;
-            foreach (string f in new[] { "OptiScaler.dll", "OptiScaler.ini", "nvngx.dll_dlssnr.dll", "nvngx_dlssnr.dll" })
+            var need = mode == Modes.Fallback ? FallbackFiles : mode == Modes.OptiScaler ? OptiFiles : OptiFiles.Concat(FallbackFiles).Distinct();
+            foreach (string f in need)
                 if (!File.Exists(Path.Combine(Const.Payload, f)))
                     return "payload 缺少 " + f + (f == "nvngx_dlssnr.dll" ? " (NVIDIA 的模型文件，需自行放入，不随工具分发)" : "");
             return null;
         }
 
-        public static string IniPath(string exeDir) { return Path.Combine(exeDir, "OptiScaler.ini"); }
-
-        public static Dictionary<string, string> ReadSettings(string exeDir)
+        static string InstalledMode(string exeDir)
         {
-            return Ini.Read(IniPath(exeDir), "DlssNr");
+            Manifest m = Manifest.Load(exeDir);
+            return m != null && m.mode == Modes.Fallback ? Modes.Fallback : Modes.OptiScaler;
         }
 
-        public static void ApplySettings(string exeDir, Dictionary<string, string> dlssnr, Probe probe = null)
+        public static string IniPath(string exeDir, string mode = null)
         {
-            var changes = new Dictionary<string, Dictionary<string, string>> { { "DlssNr", dlssnr } };
+            return Path.Combine(exeDir, (mode ?? InstalledMode(exeDir)) == Modes.Fallback ? "dlss5fb.ini" : "OptiScaler.ini");
+        }
+
+        static string Section(string mode) { return mode == Modes.Fallback ? "DLSS5" : "DlssNr"; }
+
+        public static Dictionary<string, string> ReadSettings(string exeDir, string mode = null)
+        {
+            mode = mode ?? InstalledMode(exeDir);
+            return Ini.Read(IniPath(exeDir, mode), Section(mode));
+        }
+
+        // mode: null = 按安装记录
+        public static void ApplySettings(string exeDir, Dictionary<string, string> dlssnr, Probe probe = null, string mode = null)
+        {
+            mode = mode ?? InstalledMode(exeDir);
+            var own = dlssnr.Where(kv => Settings.Find(kv.Key) == null || Settings.Find(kv.Key).AppliesTo(mode)).ToDictionary(kv => kv.Key, kv => kv.Value);
+            var changes = new Dictionary<string, Dictionary<string, string>> { { Section(mode), own } };
             // DX11 游戏只能经 dx11on12 的 DLSS 跑 DLSS5
-            if (probe != null && probe.Apis.Contains("DX11") && !probe.Apis.Contains("DX12") && !probe.Apis.Contains("Vulkan"))
+            if (mode == Modes.OptiScaler && probe != null && probe.Apis.Contains("DX11") && !probe.Apis.Contains("DX12") && !probe.Apis.Contains("Vulkan"))
                 changes["Upscalers"] = new Dictionary<string, string> { { "Dx11Upscaler", "dlss_12" } };
-            Ini.Write(IniPath(exeDir), changes);
+            Ini.Write(IniPath(exeDir, mode), changes);
         }
 
-        // log: 进度输出 (界面与命令行各自显示)
-        public static void Install(Probe p, Dictionary<string, string> dlssnr, string proxy, bool force, Action<string> log)
+        // log: 进度输出 (界面与命令行各自显示)；mode: null = 按检测结果自动选
+        public static void Install(Probe p, Dictionary<string, string> dlssnr, string proxy, bool force, Action<string> log, string mode = null)
         {
-            string pp = PayloadProblem();
+            mode = mode ?? p.SuggestedMode;
+            string pp = PayloadProblem(mode);
             if (pp != null) throw new InvalidOperationException(pp);
-            var probs = p.Problems(force);
+            var probs = p.Problems(force, mode);
             if (probs.Count > 0) throw new InvalidOperationException(string.Join("；", probs));
             if (!Gpu.Supported && !force) throw new InvalidOperationException("显卡 " + Gpu.Name + " 不在支持范围 (需要 RTX 30/40/50)");
 
@@ -635,22 +706,33 @@ namespace Dlss5Manager
                 foreach (string n in Const.ProxyNames) if (File.Exists(Path.Combine(dir, n))) p.ProxyOwners[n] = "其他";
             }
 
-            if (string.IsNullOrEmpty(proxy) || proxy == "auto")
+            if (mode == Modes.Fallback)
+            {
+                if (!string.IsNullOrEmpty(proxy) && proxy != "auto" && !proxy.Equals("dxgi.dll", StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException("兜底模式只能以 dxgi.dll 注入");
+                proxy = "dxgi.dll";
+            }
+            else if (string.IsNullOrEmpty(proxy) || proxy == "auto")
             {
                 proxy = Const.ProxyNames.FirstOrDefault(n => !File.Exists(Path.Combine(dir, n)));
                 if (proxy == null) throw new InvalidOperationException("常用的注入文件名都被占用了，请手动指定一个");
             }
             else if (!Const.ProxyNames.Contains(proxy.ToLowerInvariant()))
                 throw new InvalidOperationException("不支持的注入文件名 " + proxy + "，可选: " + string.Join(", ", Const.ProxyNames));
-            log("注入方式: OptiScaler.dll -> " + proxy);
+            log(mode == Modes.Fallback ? "注入方式: 兜底模式 (dxgi.dll 代理)" : "注入方式: OptiScaler.dll -> " + proxy);
 
-            var m = new Manifest { proxy = proxy, gpu = Gpu.Name, date = DateTime.Now.ToString("s") };
+            var m = new Manifest { proxy = proxy, mode = mode, gpu = Gpu.Name, date = DateTime.Now.ToString("s") };
             string backup = Path.Combine(dir, Const.BackupDir);
             string payload = Const.Payload.TrimEnd('\\');
-            foreach (string src in Directory.GetFiles(payload, "*", SearchOption.AllDirectories))
+            string fbPrefix = Const.FallbackDir + "\\";
+            IEnumerable<string> sources = mode == Modes.Fallback
+                ? FallbackFiles.Select(f => Path.Combine(payload, f))
+                : Directory.GetFiles(payload, "*", SearchOption.AllDirectories).Where(f => !f.Substring(payload.Length + 1).StartsWith(fbPrefix, StringComparison.OrdinalIgnoreCase));
+            foreach (string src in sources)
             {
                 string rel = src.Substring(payload.Length + 1);
-                if (rel.Equals("OptiScaler.dll", StringComparison.OrdinalIgnoreCase)) rel = proxy;
+                if (rel.StartsWith(fbPrefix, StringComparison.OrdinalIgnoreCase)) rel = rel.Substring(fbPrefix.Length);
+                else if (rel.Equals("OptiScaler.dll", StringComparison.OrdinalIgnoreCase)) rel = proxy;
                 string dst = Path.Combine(dir, rel);
                 if (File.Exists(dst))
                 {
@@ -665,12 +747,14 @@ namespace Dlss5Manager
                 DeleteFileW(dst + ":Zone.Identifier");   // 去掉"来自网络"标记 (等同 Unblock-File)
                 m.installed.Add(rel);
             }
+            if (mode == Modes.Fallback) m.installed.AddRange(new[] { "dlss5fb.ini", "dlss5fb.log" });   // 运行时生成，卸载时一并删掉
             m.Save(dir);   // 先写清单: 后面出错也能卸载干净
 
-            var settings = new Dictionary<string, string> { { "Enabled", "true" }, { "AutoCapture", "false" } };
+            var settings = new Dictionary<string, string> { { "Enabled", "true" } };
+            if (mode == Modes.OptiScaler) settings["AutoCapture"] = "false";
             if (keep != null) foreach (var kv in keep) if (Settings.Find(kv.Key) != null) settings[kv.Key] = kv.Value;
             foreach (var kv in dlssnr) settings[kv.Key] = kv.Value;
-            ApplySettings(dir, settings, p);
+            ApplySettings(dir, settings, p, mode);
             double sc;
             string scs;
             if (settings.TryGetValue("WorkingScale", out scs) && double.TryParse(scs, NumberStyles.Float, Const.Inv, out sc)) { m.scale = sc; m.Save(dir); }

@@ -85,7 +85,7 @@ foreach ($i in 1..3) { $p = Split-Path $p -Parent; if ($p) { $roots += $p } }
 $acHits = @()
 foreach ($r in $roots) {
     $acHits += Get-ChildItem -LiteralPath $r -Force -ErrorAction SilentlyContinue | Where-Object {
-        $_.Name -match '^(EasyAntiCheat|EAC|BattlEye|BEService|xigncode|GameGuard|nProtect|vgk|mhyprot|ACE-|AntiCheatExpert)' -or
+        $_.Name -match '^(EasyAntiCheat|EAC(?![a-z])|BattlEye|BEService|xigncode|GameGuard|nProtect|vgk|mhyprot|ACE-|AntiCheatExpert)' -or
         $_.Name -match 'anti.?cheat'
     } | ForEach-Object { $_.FullName }
 }
@@ -151,6 +151,7 @@ $backups = @()
 $files = Get-ChildItem -LiteralPath $payload -Recurse -File
 foreach ($f in $files) {
     $rel = $f.FullName.Substring($payload.Length + 1)
+    if ($rel -like 'fallback\*') { continue }   # 兜底模式的文件只由 DLSS5Manager 安装
     if ($rel -eq 'OptiScaler.dll') { $rel = $Proxy }
     $dst = Join-Path $GameDir $rel
     if (Test-Path -LiteralPath $dst) {
