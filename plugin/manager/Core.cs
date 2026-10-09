@@ -536,7 +536,7 @@ namespace Dlss5Manager
             new Setting { Key = "TransferStrength", Label = "合成强度", Kind = "float", Min = 0, Max = 1.5, Default = 1,
                 Help = "OptiScaler 的合成: 画面向模型结果移动多少 (按亮度合成)，0 = 超分原输出", Only = Modes.OptiScaler },
             new Setting { Key = "ColourStrength", Label = "颜色强度", Kind = "float", Min = 0, Max = 1, Default = 1,
-                Help = "0 = 保持游戏原本的色相，只取模型的明暗；1 = 连颜色一起取", Only = Modes.OptiScaler },
+                Help = "0 = 保持游戏原本的色相，只取模型的明暗与细节；1 = 连颜色一起取 (模型会按画面内容让局部偏暖或偏冷)" },
             new Setting { Key = "MaxRatio", Label = "最大增亮倍数", Kind = "float", Min = 1, Max = 4, Default = 2,
                 Help = "单个像素最多被提亮到原来的几倍，防止亮光源变成色块", Only = Modes.OptiScaler },
             new Setting { Key = "Temporal", Label = "历史帧 + 光流", Kind = "bool", Default = 1, Only = Modes.Fallback,

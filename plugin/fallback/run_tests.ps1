@@ -8,7 +8,7 @@ $here = $PSScriptRoot
 $test = Join-Path $here 'test'
 $ref = Join-Path $here '..\..\research\out_f0.ppm'
 Copy-Item (Join-Path $here 'bin\*') $test -Force
-foreach ($f in 'nvngx_dlssnr.dll', 'pattern.ppm') {
+foreach ($f in 'nvngx_dlssnr.dll', 'pattern.ppm', 'sponza640.ppm') {
     if (-not (Test-Path (Join-Path $test $f))) { throw "test\$f 不存在" }
 }
 
@@ -34,6 +34,7 @@ $cases = @(
     @{ name = 'two chains';   args = @('--chains', '2');             ini = ''; expect = @('frame 1 processed'); tracked = 2 }
     @{ name = 'scale 0.5';    args = @();                            ini = 'WorkingScale=0.5'; expect = @('NR 320x180') }
     @{ name = 'optical flow (moving)'; args = @('--pan', '4');       ini = 'WorkingScale=0.5'; expect = @('optical flow: 320x180') }
+    @{ name = 'scene cut';    args = @('--cut', '100', 'sponza640.ppm'); ini = 'WorkingScale=0.5'; expect = @('scene cut: frame 101') }
     @{ name = 'exact MV = nr-lab mvok'; args = @('--pan', '4');      ini = "WorkingScale=1.0`nStabilize=0`nSmooth=1`nMvConstX=-4`nDumpFrame=1`nDumpCount=4"; mvok = $true }
 )
 if ($Fullscreen) { $cases += @{ name = 'fullscreen'; args = @('--fullscreen', '60'); ini = ''; expect = @('frame 1 processed') } }

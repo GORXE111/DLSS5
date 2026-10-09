@@ -31,6 +31,13 @@
   - 硬件光流本身有 ±0.4 像素的平滑误差，DLSS-NR 对运动矢量很敏感，所以在其上做 2 轮 Lucas-Kanade 细化 (5x5 窗口)。
   - 销毁顺序要跟 NVIDIA 示例一致 (注销 → 释放纹理 → 销毁会话)，先销毁会话会让 D3D12 驱动随后读到已释放的内存而崩溃。
   - 没有光流 (非 NVIDIA 驱动 / 初始化失败) 时退回每帧重置。
+- **场景切换**：光流之后用运动矢量把上一帧灰度图对齐到这一帧再比较，平均差超过 `CutThreshold` (0.08) 就判为切换。
+  DLSS-NR 自己的门控要晚一帧才丢掉旧历史 (切换后第一帧有旧场景的残影，与旧画面相关 0.27)，所以切换那一帧直接显示游戏原画面，
+  下一帧起立即恢复全部效果。全在 GPU 上判断，不需要 CPU 等 GPU。平移 24 像素/帧也不会误判。
+- **颜色**：模型会按画面内容做局部色调调整 (Sponza 各帧: 饱和度 x0.98~1.06，色相转 5~8°，有的帧偏暖、有的偏冷)。
+  `ColourStrength=0` 只取它的明暗与细节，保持游戏原本的颜色 (色相转动降到 1°，细节增强保留)。
+  曾怀疑模型要的是线性 HDR 输入：实测线性输入 (`Linear=1`，RGBA16F + IsHDR) 让细节增强几乎消失 (x1.003 vs sRGB 的 x1.03~1.07)，
+  所以默认送 sRGB 画面。
 - **防闪烁**：网络对输入的微小扰动极其敏感，而且有全局注意力：游戏画面里 ±1/255 的去色带抖动、
   或者角落里一个 HUD 数字变化，都会让整幅输出明暗起伏 (静止镜头下帧间变化 1.40/255，见 `tools/notes.jsonl`)。
   正常接入时历史帧会把它平均掉；兜底模式另外加了两层 (有了光流历史帧后仍然有益)：输入死区 (`Stabilize`) 让没变的像素送进模型的值完全不变
@@ -61,6 +68,9 @@
 | Smooth | 0.2 | 画面没变的地方 DLSS5 改动每帧跟进的比例 (指数平均)；画面在变的地方立刻跟上；1 = 关 |
 | Compare | 0 | 1 = 左半屏原画面，右半屏 DLSS5 |
 | ToggleKey / CompareKey | 0x79 / 0x7A | 开关与对比的热键 (默认 F10 / F11，虚拟键码) |
+| ColourStrength | 1 | 0 = 保持游戏原本的颜色，只取 DLSS5 的明暗与细节；1 = 连颜色一起取 |
+| CutThreshold | 0.08 | 场景切换判定 (运动补偿后的平均灰度差)，0 = 关 |
+| Linear | 0 | 研究用：1 = 送线性光 (RGBA16F + IsHDR) |
 | DumpFrame / DumpCount | -1 / 1 | 测试用：从第 N 帧起连续存 `dlss5fb_in/nr/out(_k).ppm` 与光流 `dlss5fb_flow_k.bin` (也可用环境变量 `DLSS5FB_DUMP`) |
 | MvConstX / MvScale | 0 / 1 | 研究用：用常数水平运动矢量代替光流 / 缩放运动矢量 |
 
@@ -70,10 +80,12 @@
 plugin\fallback\build.bat     -> bin\dxgi.dll, bin\dlss5_nvngx.dll, bin\fbtest.exe
                                  (需要 DLSS SDK 头文件 oss\nvidia-dlss\include，不在本仓库里)
 fbtest.exe image.ppm [帧数] [--pan N ...]   最小的 D3D12 "游戏"：每帧把图片拷进后缓冲再 Present (--pan: 每帧右移 N 像素)
-run_tests.ps1                 13 项回归 (格式、改大小、重建、多交换链、光流、精确运动矢量 = nr-lab)
+run_tests.ps1                 14 项回归 (格式、改大小、重建、多交换链、光流、场景切换、精确运动矢量 = nr-lab)
 mv_check.ps1                  运动矢量校验: 与 nr-lab 的正确 / 零运动矢量参考比较
 motion_flicker.ps1            运动中的闪烁 (运动补偿后的帧间差)，各模式对比
 flicker.py                    静止镜头的帧间闪烁 (DumpCount 存的连续帧)
+color_stats.py                DLSS5 对颜色的影响 (饱和度、Lab 彩度、色相、冷暖、细节)
+fbtest --cut N image2.ppm     第 N 帧起换成另一张图 (场景切换测试)
 godot_test/                   Godot 4 (DX12) 场景：Crytek Sponza (fetch_assets.ps1 取，不进仓库)
 ```
 

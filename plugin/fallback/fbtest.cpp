@@ -9,6 +9,7 @@
 //     --chains 2                           two windows / swap chains presented alternately
 //     --fullscreen N                       at frame N enter fullscreen, leave again 30 frames later
 //     --pan N                              shift the image N pixels right every frame (wrapping, like nr-lab --temporal-shift)
+//     --cut N image2.ppm                   from frame N on show image2 (same size): a hard scene cut
 // The image is copied into the top-left corner of each back buffer (the rest is cleared to grey).
 // Put the proxy dxgi.dll (and its files) next to fbtest.exe; it links dxgi.dll by name, so the proxy loads first.
 
@@ -100,7 +101,8 @@ int main(int argc, char **argv)
     UINT W, H;
     std::vector<uint8_t> rgb;
     if (!ReadPpm(argv[1], &W, &H, &rgb)) { std::printf("cannot read %s\n", argv[1]); return 2; }
-    int frames = 60, resize_at = -1, recreate_at = -1, fullscreen_at = -1, chains = 1, pan = 0;
+    int frames = 60, resize_at = -1, recreate_at = -1, fullscreen_at = -1, chains = 1, pan = 0, cut_at = -1;
+    const char *cut_image = nullptr;
     bool present1 = false, resize1 = false, waitable = false;
     DXGI_FORMAT fmt = DXGI_FORMAT_R8G8B8A8_UNORM;
     for (int i = 2; i < argc; ++i) {
@@ -119,6 +121,7 @@ int main(int argc, char **argv)
         else if (a == "--chains") chains = std::max(1, std::min(2, next()));
         else if (a == "--fullscreen") fullscreen_at = next();
         else if (a == "--pan") pan = next();
+        else if (a == "--cut" && i + 2 < argc) { cut_at = std::atoi(argv[++i]); cut_image = argv[++i]; }
         else if (a[0] != '-') frames = std::atoi(a.c_str());
         else { std::printf("unknown option %s\n", a.c_str()); return 2; }
     }
@@ -176,7 +179,7 @@ int main(int argc, char **argv)
     D3D12_RESOURCE_DESC td = {};
     td.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
     td.Width = W;
-    td.Height = H;
+    td.Height = H * (cut_image ? 2 : 1);
     td.DepthOrArraySize = 1;
     td.MipLevels = 1;
     td.Format = fmt;
@@ -195,10 +198,17 @@ int main(int argc, char **argv)
     bd.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
     CHECK(device->CreateCommittedResource(&uh, D3D12_HEAP_FLAG_NONE, &bd, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&upload)));
     UINT bpp = 4;
-    std::vector<uint8_t> texels = Encode(rgb, static_cast<size_t>(W) * H, fmt, &bpp);
+    if (cut_image) {
+        // the cut image goes into the lower half of a double-height texture: one upload, two copy sources
+        UINT W2, H2;
+        std::vector<uint8_t> rgb2;
+        if (!ReadPpm(cut_image, &W2, &H2, &rgb2) || W2 != W || H2 != H) { std::printf("cannot use %s\n", cut_image); return 2; }
+        rgb.insert(rgb.end(), rgb2.begin(), rgb2.end());
+    }
+    std::vector<uint8_t> texels = Encode(rgb, static_cast<size_t>(W) * H * (cut_image ? 2 : 1), fmt, &bpp);
     uint8_t *p = nullptr;
     upload->Map(0, nullptr, reinterpret_cast<void **>(&p));
-    for (UINT y = 0; y < H; ++y) std::memcpy(p + fp.Offset + y * fp.Footprint.RowPitch, &texels[static_cast<size_t>(y) * W * bpp], W * bpp);
+    for (UINT y = 0; y < td.Height; ++y) std::memcpy(p + fp.Offset + y * fp.Footprint.RowPitch, &texels[static_cast<size_t>(y) * W * bpp], W * bpp);
     upload->Unmap(0, nullptr);
 
     ID3D12CommandAllocator *alloc = nullptr;
@@ -291,14 +301,15 @@ int main(int argc, char **argv)
             list->ResourceBarrier(1, &b);
             D3D12_TEXTURE_COPY_LOCATION to = {bb, D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX};
             D3D12_TEXTURE_COPY_LOCATION from = {tex, D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX};
+            const UINT y0 = cut_image && i >= cut_at ? H : 0;   // source rows of the image shown this frame
             if (pan != 0 && c.w == W && c.h == H) {
                 // frame i shows the image moved right by i*pan pixels, wrapping around
                 const UINT off = static_cast<UINT>((static_cast<long long>(i) * pan % W + W) % W);
-                D3D12_BOX right = {0, 0, 0, W - off, H, 1}, left = {W - off, 0, 0, W, H, 1};
+                D3D12_BOX right = {0, y0, 0, W - off, y0 + H, 1}, left = {W - off, y0, 0, W, y0 + H, 1};
                 list->CopyTextureRegion(&to, off, 0, 0, &from, &right);
                 if (off) list->CopyTextureRegion(&to, 0, 0, 0, &from, &left);
             } else {
-                D3D12_BOX box = {0, 0, 0, std::min(W, c.w), std::min(H, c.h), 1};
+                D3D12_BOX box = {0, y0, 0, std::min(W, c.w), y0 + std::min(H, c.h), 1};
                 list->CopyTextureRegion(&to, 0, 0, 0, &from, &box);
             }
             b.Transition = {bb, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PRESENT};

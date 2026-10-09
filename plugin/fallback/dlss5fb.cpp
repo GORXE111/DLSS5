@@ -72,7 +72,10 @@ struct Config {
     float mv_scale = 1.0f;         // research: multiplies the motion vectors
     float mv_const_x = 0.0f;       // research: non-zero = use this constant horizontal motion instead of optical flow
     int flow_filter = 1;           // 3x3 median of the flow vectors
-    int flow_refine = 2;           // Lucas-Kanade iterations on top of the hardware flow (sub-pixel accuracy)             // optical flow output grid (1, 2 or 4 pixels per vector, at NR resolution)
+    int flow_refine = 2;           // Lucas-Kanade iterations on top of the hardware flow (sub-pixel accuracy)
+    int linear = 0;                // 1: feed DLSS-NR linear light (RGBA16F + IsHDR) instead of the sRGB picture
+    float colour = 1.0f;           // ColourStrength: 0 = keep the game's colours (only DLSS5's brightness/detail), 1 = full
+    float cut = 0.08f;             // scene cut: mean motion-compensated luma difference above this skips DLSS5 for that frame             // optical flow output grid (1, 2 or 4 pixels per vector, at NR resolution)
     float stabilize = 1.5f;        // NR input dead band in 1/255 steps: pixels that changed less keep their previous value
     float smooth = 0.2f;           // per-frame weight of a new NR change where the input did not change locally (1 = off)
     int compare = 0;               // 1: left half original, right half processed
@@ -120,6 +123,9 @@ static Config ReadConfig()
     c.mv_const_x = IniFloat(L"MvConstX", c.mv_const_x);
     c.flow_filter = IniInt(L"FlowFilter", c.flow_filter);
     c.flow_refine = IniInt(L"FlowRefine", c.flow_refine);
+    c.linear = IniInt(L"Linear", c.linear);
+    c.colour = std::min(std::max(IniFloat(L"ColourStrength", c.colour), 0.0f), 1.0f);
+    c.cut = IniFloat(L"CutThreshold", c.cut);
     c.stabilize = std::max(0.0f, IniFloat(L"Stabilize", c.stabilize));
     c.smooth = std::min(std::max(IniFloat(L"Smooth", c.smooth), 0.02f), 1.0f);
     c.compare = IniInt(L"Compare", c.compare);
@@ -331,13 +337,20 @@ RWTexture2D<float4> Delta : register(u2);    // smoothed NR change (NR output - 
 // texel as a separate grey pixel (flow comes back 4x too large horizontally), measured with fbtest --pan
 RWTexture2D<float> Gray : register(u3);
 RWTexture2D<float2> Motion : register(u4);   // motion vectors for DLSS-NR (pixels, current -> previous)
+RWBuffer<float> CutBuf : register(u5);       // [0] mean motion-compensated difference, [1] cut this frame, [2] cut last frame
 SamplerState Lin : register(s0);
 cbuffer C : register(b0) {
     float2 loSize; float2 bbSize; float taps; float direct; float split; float band;
     float smooth; float gain; float first; float flowValid;
     float grid; float mvScale; float mvConstX; float flowFilter;
-    float refine; float curGray; float2 pad2;
+    float refine; float curGray; float linearIO; float colour;
+    float cutThreshold; float3 pad3;
 };
+
+float3 ToLinear(float3 c) { return c <= 0.04045 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4); }
+float3 ToSrgb(float3 c) { c = max(c, 0); return c <= 0.0031308 ? c * 12.92 : 1.055 * pow(c, 1 / 2.4) - 0.055; }
+// NR input / output in the picture's own encoding (sRGB) or linear light (Linear=1)
+float3 Encode(float3 c) { return linearIO > 0 ? ToSrgb(c) : c; }
 
 [numthreads(8, 8, 1)]
 void Down(uint3 id : SV_DispatchThreadID)
@@ -359,7 +372,7 @@ void Down(uint3 id : SV_DispatchThreadID)
     float m = max(d.r, max(d.g, d.b));
     if (band > 0 && m <= band) { x = s; m = 0; }
     Stable[id.xy] = float4(x, m);
-    Out[id.xy] = float4(x, 1);
+    Out[id.xy] = float4(linearIO > 0 ? ToLinear(x) : x, 1);
 }
 
 // The network has global attention: a change anywhere (a HUD counter, one moving object) ripples through the
@@ -373,8 +386,11 @@ void Smooth(uint3 id : SV_DispatchThreadID)
     for (int dy = -1; dy <= 1; ++dy)
         for (int dx = -1; dx <= 1; ++dx)
             m = max(m, Stable[clamp(int2(id.xy) + int2(dx, dy), 0, int2(loSize) - 1)].a);
-    float3 dn = Nr.Load(int3(id.xy, 0)).rgb - Lo.Load(int3(id.xy, 0)).rgb;
-    float a = first > 0 ? 1 : saturate(smooth + m * gain);
+    float3 dn = Encode(Nr.Load(int3(id.xy, 0)).rgb) - Encode(Lo.Load(int3(id.xy, 0)).rgb);
+    // ColourStrength < 1: move towards the change's brightness part only, so the game keeps its own hues
+    dn = lerp(dot(dn, float3(0.299, 0.587, 0.114)).xxx, dn, colour);
+    float a = first > 0 || CutBuf[2] > 0 ? 1 : saturate(smooth + m * gain);   // right after a cut: no averaging
+    if (CutBuf[1] > 0) { Delta[id.xy] = 0; return; }   // scene cut: show the game's frame, restart the average
     Delta[id.xy] = float4(lerp(Delta[id.xy].rgb, dn, a), 1);
 }
 
@@ -447,6 +463,39 @@ void ToMotion(uint3 id : SV_DispatchThreadID)
     Motion[id.xy] = mv * mvScale;
 }
 
+// Scene cut: warp the previous grey frame with the motion vectors and compare with this one. Normal motion leaves a
+// small residual; after a cut nothing matches. DLSS-NR's own gate rejects the stale history only one frame late,
+// so on a cut this frame shows the game's picture unchanged (Smooth writes a zero change).
+groupshared float g_sum[256];
+[numthreads(256, 1, 1)]
+void Cut(uint3 tid : SV_GroupThreadID)
+{
+    uint n = (uint)loSize.x * (uint)loSize.y;
+    float sum = 0, cnt = 0;
+    float2 inv = 1.0 / loSize;
+    for (uint i = tid.x * 7; i < n; i += 256 * 7) {
+        uint2 p = uint2(i % (uint)loSize.x, i / (uint)loSize.x);
+        float2 pc = float2(p) + 0.5;
+        float2 pp = pc + (flowValid > 0 ? Motion[p] : 0);
+        float ic = curGray < 0.5 ? Gray0.SampleLevel(Lin, pc * inv, 0) : Gray1.SampleLevel(Lin, pc * inv, 0);
+        float ip = curGray < 0.5 ? Gray1.SampleLevel(Lin, pp * inv, 0) : Gray0.SampleLevel(Lin, pp * inv, 0);
+        sum += abs(ic - ip);
+        cnt += 1;
+    }
+    g_sum[tid.x] = sum / max(cnt, 1);
+    GroupMemoryBarrierWithGroupSync();
+    for (uint s = 128; s > 0; s >>= 1) {
+        if (tid.x < s) g_sum[tid.x] += g_sum[tid.x + s];
+        GroupMemoryBarrierWithGroupSync();
+    }
+    if (tid.x == 0) {
+        float mean = g_sum[0] / 256;
+        CutBuf[0] = mean;
+        CutBuf[2] = CutBuf[1];
+        CutBuf[1] = flowValid > 0 && cutThreshold > 0 && mean > cutThreshold ? 1 : 0;
+    }
+}
+
 void VS(uint id : SV_VertexID, out float4 pos : SV_Position, out float2 uv : TEXCOORD0)
 {
     uv = float2((id << 1) & 2, id & 2);
@@ -456,12 +505,14 @@ void VS(uint id : SV_VertexID, out float4 pos : SV_Position, out float2 uv : TEX
 float4 PS(float4 pos : SV_Position, float2 uv : TEXCOORD0) : SV_Target
 {
     float4 b = Src.Load(int3(pos.xy, 0));
+    if (CutBuf[1] > 0) return b;   // scene cut: this frame unchanged
     if (split > 0) {
         float mid = floor(bbSize.x * 0.5);
         if (abs(pos.x - 0.5 - mid) < 1) return float4(1, 1, 1, b.a);
         if (pos.x < mid) return b;
     }
-    float3 c = direct > 0 && smooth >= 1 ? Nr.SampleLevel(Lin, uv, 0).rgb : saturate(b.rgb + DeltaT.SampleLevel(Lin, uv, 0).rgb);
+    float3 c = direct > 0 && smooth >= 1 && colour >= 1 ? saturate(Encode(Nr.SampleLevel(Lin, uv, 0).rgb))
+                                         : saturate(b.rgb + DeltaT.SampleLevel(Lin, uv, 0).rgb);
     return float4(c, b.a);
 }
 )";
@@ -488,12 +539,12 @@ static ID3DBlob *Compile(const char *entry, const char *target)
 
 template <class T> static void SafeRelease(T *&p) { if (p) { p->Release(); p = nullptr; } }
 
-static const DXGI_FORMAT kLoFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+static DXGI_FORMAT LoFormat(bool linear) { return linear ? DXGI_FORMAT_R16G16B16A16_FLOAT : DXGI_FORMAT_R8G8B8A8_UNORM; }
 static const UINT kFrames = 3;
-static const UINT kConstants = 20;   // root constants (cbuffer C)
+static const UINT kConstants = 24;   // root constants (cbuffer C)
 // descriptor heap: SRV copy/lo/nr/delta/flow, then two UAV tables lo/stable/delta/gray/motion that differ only in
 // which grey frame they write (the optical flow engine compares this frame's grey image with the previous one)
-static const UINT kSrv = 0, kUav = 7, kUavCount = 5;
+static const UINT kSrv = 0, kUav = 7, kUavCount = 6;
 
 struct Chain {
     std::mutex lock;
@@ -514,6 +565,10 @@ struct Chain {
     ID3D12PipelineState *down = nullptr;
     ID3D12PipelineState *smooth = nullptr;
     ID3D12PipelineState *to_motion = nullptr;
+    ID3D12PipelineState *cut = nullptr;
+    ID3D12Resource *cut_buf = nullptr;                 // 2 floats on the GPU
+    ID3D12Resource *cut_rb[kFrames] = {};              // read back one frame late, for the log
+    UINT64 cuts = 0;
     ID3D12PipelineState *combine = nullptr;
     DXGI_FORMAT combine_format = DXGI_FORMAT_UNKNOWN;
     ID3D12DescriptorHeap *heap = nullptr;
@@ -534,6 +589,7 @@ struct Chain {
     bool have_prev = false;
     NVSDK_NGX_Handle *feature = nullptr;
     int feature_style = -1;
+    int feature_linear = -1;
 
     Config cfg;
     FILETIME ini_time = {};
@@ -611,7 +667,8 @@ static void DestroyChain(Chain *c)
     ReleaseSized(c);
     for (auto &a : c->alloc) SafeRelease(a);
     SafeRelease(c->list); SafeRelease(c->list2); SafeRelease(c->fence); SafeRelease(c->root); SafeRelease(c->down); SafeRelease(c->smooth);
-    SafeRelease(c->to_motion); SafeRelease(c->combine);
+    SafeRelease(c->to_motion); SafeRelease(c->cut); SafeRelease(c->combine); SafeRelease(c->cut_buf);
+    for (auto &r : c->cut_rb) SafeRelease(r);
     SafeRelease(c->heap); SafeRelease(c->rtv_heap); SafeRelease(c->queue); SafeRelease(c->device);
     if (c->event) CloseHandle(c->event);
     delete c;
@@ -650,7 +707,7 @@ static bool InitPipeline(Chain *c)
     c->event = CreateEventW(nullptr, FALSE, FALSE, nullptr);
 
     D3D12_DESCRIPTOR_RANGE srv = {D3D12_DESCRIPTOR_RANGE_TYPE_SRV, kUav, 0, 0, 0};
-    D3D12_DESCRIPTOR_RANGE uav = {D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 5, 0, 0, 0};
+    D3D12_DESCRIPTOR_RANGE uav = {D3D12_DESCRIPTOR_RANGE_TYPE_UAV, kUavCount, 0, 0, 0};
     D3D12_ROOT_PARAMETER params[3] = {};
     params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
     params[0].DescriptorTable = {1, &srv};
@@ -693,6 +750,28 @@ static bool InitPipeline(Chain *c)
     hr = d->CreateComputePipelineState(&cp, IID_PPV_ARGS(&c->to_motion));
     cs->Release();
     if (FAILED(hr)) return false;
+    cs = Compile("Cut", "cs_5_0");
+    if (cs == nullptr) return false;
+    cp.CS = {cs->GetBufferPointer(), cs->GetBufferSize()};
+    hr = d->CreateComputePipelineState(&cp, IID_PPV_ARGS(&c->cut));
+    cs->Release();
+    if (FAILED(hr)) return false;
+    {
+        D3D12_HEAP_PROPERTIES dh = {D3D12_HEAP_TYPE_DEFAULT}, rh = {D3D12_HEAP_TYPE_READBACK};
+        D3D12_RESOURCE_DESC bd = {};
+        bd.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+        bd.Width = 256;
+        bd.Height = bd.DepthOrArraySize = bd.MipLevels = 1;
+        bd.SampleDesc.Count = 1;
+        bd.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+        bd.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+        if (FAILED(d->CreateCommittedResource(&dh, D3D12_HEAP_FLAG_NONE, &bd, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, nullptr,
+                IID_PPV_ARGS(&c->cut_buf)))) return false;
+        bd.Flags = D3D12_RESOURCE_FLAG_NONE;
+        for (auto &r : c->cut_rb)
+            if (FAILED(d->CreateCommittedResource(&rh, D3D12_HEAP_FLAG_NONE, &bd, D3D12_RESOURCE_STATE_COPY_DEST, nullptr,
+                    IID_PPV_ARGS(&r)))) return false;
+    }
 
     D3D12_DESCRIPTOR_HEAP_DESC hd = {D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kUav + 2 * kUavCount,
         D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE};
@@ -763,7 +842,8 @@ static bool CreateFeature(Chain *c)
     ngx.params->Set("Output.Height", c->h);
     ngx.params->Set("PerfQualityValue", static_cast<int>(NVSDK_NGX_PerfQuality_Value_UltraQuality));
     ngx.params->Set("DLSS.Feature.Create.Flags", static_cast<int>(NVSDK_NGX_DLSS_Feature_Flags_MVLowRes |
-        NVSDK_NGX_DLSS_Feature_Flags_AutoExposure | NVSDK_NGX_DLSS_Feature_Flags_DepthInverted));
+        NVSDK_NGX_DLSS_Feature_Flags_AutoExposure | NVSDK_NGX_DLSS_Feature_Flags_DepthInverted |
+        (c->cfg.linear ? NVSDK_NGX_DLSS_Feature_Flags_IsHDR : 0)));
     ngx.params->Set("DLSS.Enable.Output.Subrects", 0);
     ngx.params->Set("DLSS.Denoise.Mode", 1);
     ngx.params->Set("DLSS.Roughness.Mode", 0u);
@@ -779,6 +859,7 @@ static bool CreateFeature(Chain *c)
     Log("CreateFeature(18) %ux%u style=%d = 0x%08X seh=0x%08X handle=%p", c->w, c->h, c->cfg.style,
         static_cast<unsigned>(r), code, c->feature);
     c->feature_style = c->cfg.style;
+    c->feature_linear = c->cfg.linear;
     return code == 0 && NVSDK_NGX_SUCCEED(r) && c->feature != nullptr;
 }
 
@@ -866,7 +947,7 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
     UINT w = std::max(64u, static_cast<UINT>(std::lround(W * c->cfg.scale)));
     UINT h = std::max(64u, static_cast<UINT>(std::lround(H * c->cfg.scale)));
     if (c->W == W && c->H == H && c->w == w && c->h == h && c->format == bb.Format && c->feature &&
-        c->feature_style == c->cfg.style)
+        c->feature_style == c->cfg.style && c->feature_linear == c->cfg.linear)
         return 1;
     // creating the NR feature takes 0.3-1 s: while a window is being resized, pass frames through until
     // the size has stayed the same for 250 ms
@@ -880,8 +961,9 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
     c->W = W; c->H = H; c->w = w; c->h = h; c->format = bb.Format;
     Log("resize: back buffer %ux%u fmt=%d -> NR %ux%u (scale %.3f)", W, H, bb.Format, w, h, c->cfg.scale);
     c->copy = MakeTexture(c->device, W, H, bb.Format, false, D3D12_RESOURCE_STATE_COPY_DEST);
-    c->lo = MakeTexture(c->device, w, h, kLoFormat, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-    c->nr = MakeTexture(c->device, w, h, kLoFormat, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+    const DXGI_FORMAT lo_format = LoFormat(c->cfg.linear != 0);
+    c->lo = MakeTexture(c->device, w, h, lo_format, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+    c->nr = MakeTexture(c->device, w, h, lo_format, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     c->depth = MakeTexture(c->device, w, h, DXGI_FORMAT_R32_FLOAT, false, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
     c->mv = MakeTexture(c->device, w, h, DXGI_FORMAT_R16G16_FLOAT, true, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
     c->stable = MakeTexture(c->device, w, h, DXGI_FORMAT_R16G16B16A16_FLOAT, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
@@ -895,7 +977,7 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
     ID3D12Resource *srvs[4] = {c->copy, c->lo, c->nr, c->delta};
     for (int i = 0; i < 4; ++i) {
         D3D12_SHADER_RESOURCE_VIEW_DESC sd = {};
-        sd.Format = i == 0 ? bb.Format : i == 3 ? DXGI_FORMAT_R16G16B16A16_FLOAT : kLoFormat;
+        sd.Format = i == 0 ? bb.Format : i == 3 ? DXGI_FORMAT_R16G16B16A16_FLOAT : lo_format;
         if (sd.Format == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB) sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         if (sd.Format == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB) sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
         sd.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
@@ -915,7 +997,7 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
         const UINT u = kUav + t * kUavCount;
         D3D12_UNORDERED_ACCESS_VIEW_DESC ud = {};
         ud.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
-        ud.Format = kLoFormat;
+        ud.Format = lo_format;
         c->device->CreateUnorderedAccessView(c->lo, nullptr, &ud, {h0.ptr + (u + 0) * inc});
         ud.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
         c->device->CreateUnorderedAccessView(c->stable, nullptr, &ud, {h0.ptr + (u + 1) * inc});
@@ -924,6 +1006,11 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
         c->device->CreateUnorderedAccessView(c->gray[t], nullptr, &ud, {h0.ptr + (u + 3) * inc});
         ud.Format = DXGI_FORMAT_R16G16_FLOAT;
         c->device->CreateUnorderedAccessView(c->mv, nullptr, &ud, {h0.ptr + (u + 4) * inc});
+        D3D12_UNORDERED_ACCESS_VIEW_DESC bd = {};
+        bd.Format = DXGI_FORMAT_R32_FLOAT;
+        bd.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+        bd.Buffer.NumElements = 3;
+        c->device->CreateUnorderedAccessView(c->cut_buf, nullptr, &bd, {h0.ptr + (u + 5) * inc});
     }
     return InitCombine(c, bb.Format) && CreateFeature(c) ? 1 : -1;
 }
@@ -1016,7 +1103,8 @@ static void ProcessFrame(Chain *c)
     float k[kConstants] = {float(c->w), float(c->h), float(c->W), float(c->H), direct ? 1.0f : taps,
         direct ? 1.0f : 0.0f, c->cfg.compare ? 1.0f : 0.0f, c->cfg.stabilize / 255.0f,
         c->cfg.smooth, 255.0f / 3.0f, c->first_smooth ? 1.0f : 0.0f, 0, float(c->grid), c->cfg.mv_scale, c->cfg.mv_const_x, c->cfg.flow_filter ? 1.0f : 0.0f,
-        float(c->cfg.flow_refine), float(c->cur_gray), 0, 0};
+        float(c->cfg.flow_refine), float(c->cur_gray), c->cfg.linear ? 1.0f : 0.0f, c->cfg.colour,
+        c->cfg.cut, 0, 0, 0};
     c->first_smooth = false;
     const int cur = c->cur_gray;
     UINT inc = c->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -1085,6 +1173,31 @@ static void ProcessFrame(Chain *c)
     if (flow_valid) Barrier(l, c->flow, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
     Barrier(l, c->mv, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     l->Dispatch((c->w + 7) / 8, (c->h + 7) / 8, 1);
+    {
+        D3D12_RESOURCE_BARRIER uv = {};
+        uv.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+        uv.UAV.pResource = c->mv;
+        l->ResourceBarrier(1, &uv);
+        // scene cut check (also clears the flag when there is no flow this frame)
+        l->SetPipelineState(c->cut);
+        l->Dispatch(1, 1, 1);
+        uv.UAV.pResource = c->cut_buf;
+        l->ResourceBarrier(1, &uv);
+        // log: read back what the GPU found the last time this slot was used (that frame has finished)
+        const float *v = nullptr;
+        D3D12_RANGE r = {0, 8};
+        if (c->frame > kFrames && SUCCEEDED(c->cut_rb[slot]->Map(0, &r, reinterpret_cast<void **>(const_cast<float **>(&v))))) {
+            if (v[1] > 0) {
+                ++c->cuts;
+                Log("scene cut: frame %llu, motion-compensated difference %.3f (DLSS5 skipped for that frame)", c->frame - kFrames, v[0]);
+            }
+            D3D12_RANGE none = {0, 0};
+            c->cut_rb[slot]->Unmap(0, &none);
+        }
+        Barrier(l, c->cut_buf, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE);
+        l->CopyBufferRegion(c->cut_rb[slot], 0, c->cut_buf, 0, 8);
+        Barrier(l, c->cut_buf, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+    }
     Barrier(l, c->mv, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
     if (flow_valid) Barrier(l, c->flow, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COMMON);
 
