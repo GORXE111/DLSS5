@@ -21,6 +21,8 @@ CASES = [   # (nr-lab 参数, control_inputs 参数, intensity)
     (["--intensity", "0.4"], {}, 0.4),
     (["--style", "1"], {"style": 1}, 1.0),
     (["--style", "2"], {"style": 2}, 1.0),
+    (["--style", "1", "--intensity", "0.5"], {"style": 1}, 0.5),
+    (["--style", "2", "--local-structure", "0.5"], {"style": 2, "structure": 0.5}, 1.0),
 ]
 
 

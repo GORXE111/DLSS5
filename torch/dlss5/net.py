@@ -13,6 +13,7 @@ import torch
 
 from . import layout as Lay
 from .blocks import Block39, FinalHead, Split16, Swin, SwinDown, SwinUp, ViT, _Base
+from . import style as style_mod
 from .ops import EXP16, act, bilinear, catmull_rom5, cos_norm, exp_bits, f16, inv_sum, noise, q8, unwindows, windows
 from .weights import Records
 
@@ -79,7 +80,7 @@ def control_inputs(tone=1.0, structure=1.0, skin=-1.0, auto_mask=True, style=0):
     return {"LocalTone": tone, "StructureGate": 1.0 if on else structure,
             "Skin": (skin_eff if skin_eff >= 0 else structure) if on else -1.0,
             "Structure": (struct_eff if struct_eff >= 0 else structure) if on else -1.0,
-            "Style": min(max(int(style), 0), 2) / 128}
+            "Style": min(max(int(style), 0), 2) / 128, "style": min(max(int(style), 0), 2)}
 
 
 # ================================================================== pre_block (block0)
@@ -222,7 +223,8 @@ class DLSS5:
     def __call__(self, color, hist=None, mv=None, frame=0, trace=None, controls=None, intensity=1.0):
         """color/hist: (H, W, 3) float [0,1] (numpy 或 torch)；mv: (H, W, 2) 像素位移；hist=None 表示重置帧。
         controls: control_inputs(...) 的结果 (默认 = DLL 默认参数)。
-        intensity: DLSSNR.Intensity，夹到 [0,1] 后在网络之外做 lerp(color, NR 输出, t)，与 DLL 的 PostProcess 一致。
+        intensity: DLSSNR.Intensity，夹到 [0,1] 后在网络之外做 lerp(color, NR 输出, t)，与 DLL 一致；
+        Style 1/2 时再经 style.grade 调色 (cg2r_post_process_kernel)。
         trace: 可选 dict，记录各级出口 (step 序号 -> 张量) 以便对照"""
         t = lambda a: None if a is None else torch.as_tensor(np.asarray(a) if not torch.is_tensor(a) else a,  # noqa: E731
                                                               dtype=torch.float32, device=self.dev)
@@ -271,6 +273,9 @@ class DLSS5:
                 img_out = k == "pre" or (k == "swin" and st["variant"] in ("ds", "outview")) or \
                     (k == "split16" and st["tail"] == "outview")
                 trace[i] = x if img_out else cur                     # 跨级的图像格式输出 / 级内的 tin 输出
+        style = (controls or {}).get("style", 0)
+        if style:                                                  # Style 1/2: DLL 的调色后处理 (含 Intensity 混合)
+            return style_mod.apply(color[..., :3], out, style, intensity)
         t = min(max(float(intensity), 0.0), 1.0)
         return out if t == 1.0 else color[..., :3] + t * (out - color[..., :3])
 

@@ -48,9 +48,13 @@ python bench.py           # 按块类型计时
 | torch vs nr-lab (540p / 720p / 1080p，第 0 帧) | 0.9993-0.9994 | 1.8-1.9/255 |
 | torch vs nr-lab (运动画面，第 1-3 帧) | 0.9993-0.9995 | 1.6-2.0/255 |
 | 网络改动量 (输出 - 输入) vs nr-lab | 0.992-0.995 | |
-| torch vs nr-lab (LocalTone/Structure/Skin/AutoMask/Intensity 各设定) | 0.9991-0.9999 | 0.8-2.2/255 |
+| torch vs nr-lab (LocalTone/Structure/Skin/AutoMask/Intensity/Style 各设定) | 0.9990-0.9999 | 0.8-2.2/255 |
 
-Style 1/2 还差 `cg2r_post_process_kernel` 的调色 (未复现)，目前只有网络输入那一路。
+Style 1/2 的调色后处理 (`cg2r_post_process_kernel`) 在 `dlss5/style.py`：黑白场 → 冷暖/色调 → 曝光 → 对比度 →
+5 段分区 gamma → gamma → HSL 饱和度 → vibrance，最后 `sat(输入 + Intensity·(调色(NR) - 输入))`。预设取自 DLL 常量区
+(Style 1: 曝光 -0.1 EV、对比度 -0.25、饱和度 -10%；Style 2: 饱和度 -15%)。与单独运行的 kernel 逐分支对照
+(`research/pp_check.py`) 最大差 < 0.001/255。该 kernel 另有一条"迁移"分支 (低分辨率结果在 OKLab 里迁移到高分辨率画面)，
+本仓库的用法里不触发，未复现。
 
 逐块 (以 kernel 上一块输出为输入): 1h-8h 每块相关 0.9994-0.9998、逐值一致 66-89%；16h 块 0.99997；ViT 块 0.99965。
 逐级出口 (起点为抓取的 pre 输出): 编码 1h→8h 0.9987 → 0.994，16h 入口 0.990，解码 16h→1h 0.985 → 0.996。
