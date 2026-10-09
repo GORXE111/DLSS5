@@ -10,13 +10,15 @@
 
 现在只验证了最简单的路径 (RGBA8、窗口、单交换链、Present)。真实游戏会遇到更多情况。
 
-- [ ] A1 `fbtest` 增加选项: 后缓冲格式 BGRA8 / RGB10A2 / RGBA16F，`Present1`，运行中改窗口大小 (ResizeBuffers / ResizeBuffers1)，
+- [x] A1 `fbtest` 增加选项: 后缓冲格式 BGRA8 / RGB10A2 / RGBA16F，`Present1`，运行中改窗口大小 (ResizeBuffers / ResizeBuffers1)，
       全屏切换，帧延迟等待对象 (FRAME_LATENCY_WAITABLE_OBJECT)，两个交换链同时存在，交换链销毁后重建
-- [ ] A2 钩子修正: 交换链释放时清掉记录 (现在是泄漏 + 地址复用风险)，设备移除 (DEVICE_REMOVED) 时停用而不是崩，
+- [x] A2 钩子修正: 交换链释放时清掉记录 (现在是泄漏 + 地址复用风险)，设备移除 (DEVICE_REMOVED) 时停用而不是崩，
       GPU 资源 / NGX feature 的释放顺序
-- [ ] A3 每种情况跑 300 帧以上: 不崩、日志无错误、DumpFrame 的输出与 nr-lab 一致 (格式换算后)
+- [x] A3 每种情况跑 300 帧以上: 不崩、日志无错误、DumpFrame 的输出与 nr-lab 一致 (格式换算后)
 
 验收: A1 全部情况通过；HDR 格式按设计"跳过并写日志"。
+
+**结果 (2026-10-09)**: `run_tests.ps1` 11/11 通过 (RGBA8 / BGRA8 / RGB10A2 的 NR 输出都与 nr-lab 逐字节一致；RGBA16F 原样放过；Present1、ResizeBuffers / ResizeBuffers1、销毁重建、等待对象、两个交换链、0.5 倍)。新增: 交换链最后一次 Release 时清理、设备移除时停用、改大小时等尺寸稳定 250 ms 再重建 (拖窗口不会反复建 feature)。独占全屏切换没跑 (会让你的显示器切模式)，留着 `-Fullscreen` 选项，进 Godot 测试时一起看。
 
 ## B. 真实引擎测试: Godot 4 (DX12)
 

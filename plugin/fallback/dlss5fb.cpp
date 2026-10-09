@@ -377,6 +377,9 @@ struct Chain {
     bool key_down[2] = {};
     UINT64 frame = 0;
     UINT64 nr_frames = 0;
+    UINT pend_W = 0, pend_H = 0;           // a new back buffer size waiting to settle (window being dragged)
+    DWORD pend_since = 0;
+    DXGI_FORMAT warned_format = DXGI_FORMAT_UNKNOWN;
 };
 
 static std::mutex g_chains_lock;
@@ -405,6 +408,17 @@ static void ReleaseSized(Chain *c)
     if (c->feature) { ngx.b_release(ngx.release, c->feature); c->feature = nullptr; }
     SafeRelease(c->copy); SafeRelease(c->lo); SafeRelease(c->nr); SafeRelease(c->depth); SafeRelease(c->mv);
     c->W = c->H = c->w = c->h = 0;
+}
+
+static void DestroyChain(Chain *c)
+{
+    WaitIdle(c);
+    ReleaseSized(c);
+    for (auto &a : c->alloc) SafeRelease(a);
+    SafeRelease(c->list); SafeRelease(c->fence); SafeRelease(c->root); SafeRelease(c->down); SafeRelease(c->combine);
+    SafeRelease(c->heap); SafeRelease(c->rtv_heap); SafeRelease(c->queue); SafeRelease(c->device);
+    if (c->event) CloseHandle(c->event);
+    delete c;
 }
 
 static ID3D12Resource *MakeTexture(ID3D12Device *device, UINT w, UINT h, DXGI_FORMAT format, bool uav,
@@ -562,14 +576,22 @@ static bool Supported(DXGI_FORMAT f)
         f == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
 }
 
-static bool EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
+// 1: ready, 0: skip this frame (size still changing), -1: failed
+static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
 {
     UINT W = static_cast<UINT>(bb.Width), H = bb.Height;
     UINT w = std::max(64u, static_cast<UINT>(std::lround(W * c->cfg.scale)));
     UINT h = std::max(64u, static_cast<UINT>(std::lround(H * c->cfg.scale)));
     if (c->W == W && c->H == H && c->w == w && c->h == h && c->format == bb.Format && c->feature &&
         c->feature_style == c->cfg.style)
-        return true;
+        return 1;
+    // creating the NR feature takes 0.3-1 s: while a window is being resized, pass frames through until
+    // the size has stayed the same for 250 ms
+    if (c->W != 0 && (c->W != W || c->H != H)) {
+        DWORD now = GetTickCount();
+        if (c->pend_W != W || c->pend_H != H) { c->pend_W = W; c->pend_H = H; c->pend_since = now; return 0; }
+        if (now - c->pend_since < 250) return 0;
+    }
     WaitIdle(c);
     ReleaseSized(c);
     c->W = W; c->H = H; c->w = w; c->h = h; c->format = bb.Format;
@@ -579,7 +601,7 @@ static bool EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
     c->nr = MakeTexture(c->device, w, h, kLoFormat, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     c->depth = MakeTexture(c->device, w, h, DXGI_FORMAT_R32_FLOAT, false, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
     c->mv = MakeTexture(c->device, w, h, DXGI_FORMAT_R16G16_FLOAT, false, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
-    if (!c->copy || !c->lo || !c->nr || !c->depth || !c->mv) return false;
+    if (!c->copy || !c->lo || !c->nr || !c->depth || !c->mv) return -1;
 
     UINT inc = c->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     D3D12_CPU_DESCRIPTOR_HANDLE h0 = c->heap->GetCPUDescriptorHandleForHeapStart();
@@ -598,7 +620,7 @@ static bool EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
     ud.Format = kLoFormat;
     ud.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
     c->device->CreateUnorderedAccessView(c->lo, nullptr, &ud, {h0.ptr + 3 * inc});
-    return InitCombine(c, bb.Format) && CreateFeature(c);
+    return InitCombine(c, bb.Format) && CreateFeature(c) ? 1 : -1;
 }
 
 static void Barrier(ID3D12GraphicsCommandList *list, ID3D12Resource *r, D3D12_RESOURCE_STATES a, D3D12_RESOURCE_STATES b)
@@ -651,20 +673,30 @@ static void ProcessFrame(Chain *c)
     if (FAILED(c->swapchain->GetBuffer(index, IID_PPV_ARGS(&bb)))) return;
     D3D12_RESOURCE_DESC desc = bb->GetDesc();
     if (!Supported(desc.Format) || desc.SampleDesc.Count != 1) {
-        Log("back buffer format %d / %u samples not supported; fallback mode disabled", desc.Format, desc.SampleDesc.Count);
-        c->broken = true;
+        if (c->warned_format != desc.Format)
+            Log("back buffer format %d / %u samples not supported (HDR or MSAA): frames passed through unchanged", desc.Format, desc.SampleDesc.Count);
+        c->warned_format = desc.Format;
         bb->Release();
         return;
     }
-    if (!EnsureSized(c, desc)) {
-        Log("FAIL creating resources / NR feature; fallback mode disabled");
-        c->broken = true;
+    const int sized = EnsureSized(c, desc);
+    if (sized <= 0) {
+        if (sized < 0) {
+            Log("FAIL creating resources / NR feature; fallback mode disabled");
+            c->broken = true;
+        }
         bb->Release();
         return;
     }
 
     const UINT slot = c->frame % kFrames;
-    if (!BeginList(c, slot)) { bb->Release(); return; }
+    if (!BeginList(c, slot)) {
+        Log("FAIL command list reset (device removed: 0x%08X); fallback mode disabled",
+            static_cast<unsigned>(c->device->GetDeviceRemovedReason()));
+        c->broken = true;
+        bb->Release();
+        return;
+    }
     ID3D12GraphicsCommandList *l = c->list;
     Barrier(l, bb, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_COPY_SOURCE);
     l->CopyResource(c->copy, bb);
@@ -807,7 +839,7 @@ static void DumpPpm(Chain *c, ID3D12Resource *tex, D3D12_RESOURCE_STATES state, 
                 uint8_t px[3];
                 if (rgb10) {
                     uint32_t v = reinterpret_cast<const uint32_t *>(s)[x];
-                    for (int k = 0; k < 3; ++k) px[k] = static_cast<uint8_t>(((v >> (10 * k)) & 1023) * 255 / 1023);
+                    for (int k = 0; k < 3; ++k) px[k] = static_cast<uint8_t>((((v >> (10 * k)) & 1023) * 255 + 511) / 1023);
                 } else {
                     px[0] = s[4 * x + (bgra ? 2 : 0)];
                     px[1] = s[4 * x + 1];
@@ -870,11 +902,22 @@ static void BeforePresent(IUnknown *sc, UINT flags)
     ProcessFrame(c);
 }
 
+static void AfterPresent(IUnknown *sc, HRESULT hr)
+{
+    --t_depth;
+    if (hr != DXGI_ERROR_DEVICE_REMOVED && hr != DXGI_ERROR_DEVICE_RESET) return;
+    if (Chain *c = FindChain(sc)) {
+        std::lock_guard<std::mutex> lock(c->lock);
+        if (!c->broken) Log("device removed (0x%08X); fallback mode disabled", static_cast<unsigned>(hr));
+        c->broken = true;
+    }
+}
+
 static HRESULT STDMETHODCALLTYPE HookPresent(IDXGISwapChain *sc, UINT sync, UINT flags)
 {
     BeforePresent(sc, flags);
     HRESULT hr = o_present(sc, sync, flags);
-    --t_depth;
+    AfterPresent(sc, hr);
     return hr;
 }
 
@@ -882,17 +925,40 @@ static HRESULT STDMETHODCALLTYPE HookPresent1(IDXGISwapChain1 *sc, UINT sync, UI
 {
     BeforePresent(sc, flags);
     HRESULT hr = o_present1(sc, sync, flags, pp);
-    --t_depth;
+    AfterPresent(sc, hr);
     return hr;
 }
 
+// we hold no back buffer references, so ResizeBuffers only needs our queued work to finish;
+// the sized resources are rebuilt (debounced) on a later Present
 static void BeforeResize(IUnknown *sc)
 {
     if (Chain *c = FindChain(sc)) {
         std::lock_guard<std::mutex> lock(c->lock);
         WaitIdle(c);
-        ReleaseSized(c);
     }
+}
+
+using PfnUnkRelease = ULONG (STDMETHODCALLTYPE *)(IUnknown *);
+static PfnUnkRelease o_release;
+
+// last reference gone: drop our state for this swap chain (the address may be reused by the next one)
+static ULONG STDMETHODCALLTYPE HookRelease(IUnknown *sc)
+{
+    ULONG left = o_release(sc);
+    if (left == 0) {
+        Chain *c = nullptr;
+        {
+            std::lock_guard<std::mutex> lock(g_chains_lock);
+            auto it = g_chains.find(sc);
+            if (it != g_chains.end()) { c = it->second; g_chains.erase(it); }
+        }
+        if (c) {
+            Log("swap chain %p released (%llu frames)", sc, c->frame);
+            DestroyChain(c);
+        }
+    }
+    return left;
 }
 
 static HRESULT STDMETHODCALLTYPE HookResize(IDXGISwapChain *sc, UINT n, UINT w, UINT h, DXGI_FORMAT f, UINT flags)
@@ -928,6 +994,7 @@ static void Track(IUnknown *device, IUnknown *swapchain)
     sc3->Release();   // keep a weak pointer; the swap chain owns itself
 
     void **vt = *reinterpret_cast<void ***>(sc3);
+    Patch(vt, 2, reinterpret_cast<void *>(&HookRelease), reinterpret_cast<void **>(&o_release));
     Patch(vt, 8, reinterpret_cast<void *>(&HookPresent), reinterpret_cast<void **>(&o_present));
     Patch(vt, 13, reinterpret_cast<void *>(&HookResize), reinterpret_cast<void **>(&o_resize));
     Patch(vt, 22, reinterpret_cast<void *>(&HookPresent1), reinterpret_cast<void **>(&o_present1));
