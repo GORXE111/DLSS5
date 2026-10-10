@@ -107,7 +107,7 @@ namespace Dlss5Manager
             modeBox.SelectedIndex = 0;
             modeBox.Width = 190;
             tips.SetToolTip(modeBox, "OptiScaler: 借用游戏自带的 DLSS/FSR/XeSS，有深度和运动矢量，效果最好\n" +
-                "兜底模式: 没有超分的 DX12 / DX11 游戏，直接截取画面处理 (UI 也会被处理，没有历史帧)");
+                "兜底模式: 没有超分的 DX12 / DX11 游戏，直接截取画面处理 (没有深度，运动矢量靠光流估计；不变的界面会被保护)");
             buttons.Controls.AddRange(new Control[] { new Label { Text = "注入方式", AutoSize = true, Margin = new Padding(3, 8, 3, 3) }, modeBox,
                 btnInstall, btnSave, btnUninstall, btnOpen });
 
@@ -335,7 +335,7 @@ namespace Dlss5Manager
         {
             if (p.Installed != null) return "已安装";
             if (p.Problems(false).Count > 0) return p.AntiCheat.Count > 0 ? "有反作弊" : "不可安装";
-            return p.Upscalers.Count > 0 ? "可安装" : p.FallbackCapable ? "可兜底" : "无超分?";
+            return p.Is32Bit ? "32 位" : p.Upscalers.Count > 0 ? "可安装" : p.FallbackCapable ? "可兜底" : "无超分?";
         }
 
         void AddFolder()

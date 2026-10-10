@@ -5,7 +5,7 @@
 - **OptiScaler** (游戏自带 DLSS / FSR2+ / XeSS)：注入与画面合成由 OptiScaler 的 DLSS Neural Rendering 分支完成
   (GPL-3，github.com/Dagherbou/OptiScaler_DLSSNR)，本工具写 `OptiScaler.ini` 的 `[DlssNr]` 节。有深度、运动矢量与历史帧，效果最好。
 - **兜底模式** (没有超分的 DX12 / DX11 游戏)：本仓库自己的 dxgi.dll 代理 (`plugin/fallback/`)，在 Present 时截取画面跑 DLSS-NR，
-  参数在 `dlss5fb.ini`。没有深度/运动矢量/历史帧，UI 也会被处理。
+  参数在 `dlss5fb.ini`。没有深度；运动矢量来自硬件光流 (有历史帧)；画面运动时保持不变的界面 (HUD) 不处理。
 
 没有超分、但有 DX12 或 DX11 的游戏默认选兜底模式，其余默认 OptiScaler；`--mode` / 界面的"注入方式"可以改。
 
@@ -28,6 +28,7 @@ python plugin\build_plugin.py      -> plugin\dist\DLSS5-RTX30\ (含 payload 与�
 | 游戏库 | Steam `libraryfolders.vdf` + `appmanifest_*.acf`；Epic `Manifests/*.item` (只取 AppCategories 含 games)；GOG 注册表；手动添加的文件夹 |
 | 主程序 | Unreal 的 `*-Win64-Shipping.exe` > 商店记录的启动程序 > 最大的 exe (排除启动器、崩溃上报、安装程序等) |
 | 引擎 | Shipping exe / `Engine` 目录 → Unreal；`UnityPlayer.dll` → Unity；`REDprelauncher.exe` → REDengine |
+| 位数 | 主程序的 PE 头: 32 位游戏 → **拒绝安装** (DLSS5 的 dll 只有 64 位) |
 | 图形 API | 主程序 (Unity 看 UnityPlayer.dll) 的导入表与延迟导入表：d3d12 / d3d11 / vulkan-1；`D3D12\D3D12Core.dll` (Agility SDK) |
 | 超分 | `nvngx_dlss.dll`、`sl.dlss.dll`、`libxess*.dll`、`amd_fidelityfx_*.dll`、`ffx_fsr2_api_*.dll` 等；Unreal 的 DLSS 插件目录 |
 | 反作弊 | exe 目录及往上 3 层里 EasyAntiCheat / BattlEye / xigncode / GameGuard / vgk / ACE 等 → **拒绝安装** |

@@ -158,6 +158,24 @@ namespace Dlss5Manager
     // ------------------------------------------------------------------ PE 导入表 (判断图形 API)
     public static class Pe
     {
+        // 主程序是不是 32 位 (x86)。DLSS5 的 dll 只有 64 位，32 位进程加载不了。读不出来时按 64 位处理。
+        public static bool Is32Bit(string path)
+        {
+            try
+            {
+                using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var br = new BinaryReader(fs))
+                {
+                    fs.Position = 0x3C;
+                    int pe = br.ReadInt32();
+                    fs.Position = pe;
+                    if (br.ReadUInt32() != 0x00004550) return false;
+                    return br.ReadUInt16() == 0x014C;
+                }
+            }
+            catch (Exception) { return false; }
+        }
+
         // 返回导入与延迟导入的 dll 名 (小写)。只读文件头和导入段，大 exe 也很快。
         public static HashSet<string> Imports(string path)
         {
@@ -223,6 +241,7 @@ namespace Dlss5Manager
     {
         public string Root, ExeDir, Exe, Engine = "未知";
         public List<string> Apis = new List<string>();
+        public bool Is32Bit;       // 主程序是 32 位: DLSS5 只有 64 位，装不了
         public List<string> Upscalers = new List<string>();
         public List<string> AntiCheat = new List<string>();
         public Dictionary<string, string> ProxyOwners = new Dictionary<string, string>();   // 已存在的代理 dll -> 归属
@@ -284,6 +303,7 @@ namespace Dlss5Manager
 
             // 图形 API: 主程序 (Unity 看 UnityPlayer.dll) 的导入表 + Agility SDK
             var imp = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            p.Is32Bit = exe != null && Pe.Is32Bit(exe);
             if (exe != null) imp.UnionWith(Pe.Imports(exe));
             string up = Path.Combine(p.ExeDir, "UnityPlayer.dll");
             if (File.Exists(up)) imp.UnionWith(Pe.Imports(up));
@@ -401,6 +421,7 @@ namespace Dlss5Manager
             if (Exe == null) list.Add("没找到游戏主程序 (.exe)");
             if (AntiCheat.Count > 0 && !force) list.Add("发现反作弊组件，注入 dll 可能导致封号，不安装");
             if (ProxyOwners.Values.Any(v => v.StartsWith("OptiScaler"))) list.Add("已有一份别人装的 OptiScaler，请先卸载它，避免两份冲突");
+            if (Is32Bit) list.Add("这是 32 位游戏；DLSS5 的 dll 只有 64 位，32 位程序加载不了");
             if (mode == Modes.Fallback)
             {
                 if (!FallbackCapable) list.Add("兜底模式只支持 DX12 / DX11 游戏" + (Apis.Count > 0 ? " (这个游戏是 " + string.Join(" / ", Apis) + ")" : ""));
@@ -417,7 +438,7 @@ namespace Dlss5Manager
             var list = new List<string>();
             if (mode == Modes.Fallback)
             {
-                list.Add("兜底模式: 从游戏画面直接截取，没有深度、运动矢量和历史帧，UI 也会一起被处理；进游戏后 F10 开关、F11 左右对比");
+                list.Add("兜底模式: 从游戏画面直接截取，没有深度；运动矢量来自显卡的硬件光流，画面运动时保持不变的界面 (HUD) 不处理；进游戏后 F10 开关、F11 左右对比");
                 if (Upscalers.Count > 0) list.Add("这个游戏自带超分，用 OptiScaler 方式效果更好 (有深度和运动矢量)");
                 if (ApisGuessed && Apis.Count > 1)
                     list.Add("图形 API 是从程序里推测的，游戏可能支持多种: 以 DX12 或 DX11 运行兜底模式才生效，Vulkan 不行 (Godot 游戏可加启动参数 --rendering-driver d3d12)；"
