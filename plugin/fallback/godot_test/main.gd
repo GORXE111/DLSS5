@@ -2,7 +2,7 @@
 # with sun shadows, SDFGI bounce light, volumetric fog and a slow walk down the nave at eye height.
 # A small FPS label stays on screen so the HUD case is covered too. Quits after N seconds.
 #   godot --path godot_test --rendering-driver d3d12 [--position -4000,-4000] -- --seconds 30 [--still] [--no-ui]
-#        [--resize-at 10] [--fullscreen-at 15]
+#        [--resize-at 10] [--resize-every 7] [--fullscreen-at 15]
 extends Node3D
 
 const SCENE := "res://sponza/Sponza.gltf"
@@ -11,6 +11,10 @@ var seconds := 30.0
 var still := false
 var show_ui := true
 var resize_at := -1.0
+var resize_every := -1.0
+var next_resize := -1.0
+var resize_i := 0
+const SIZES := [Vector2i(1280, 720), Vector2i(1600, 900), Vector2i(1366, 768), Vector2i(1920, 1080)]
 var fullscreen_at := -1.0
 var shot_at := -1.0
 var shot_path := ""
@@ -32,6 +36,7 @@ func _ready() -> void:
 			"--still": still = true
 			"--no-ui": show_ui = false
 			"--resize-at": resize_at = float(args[i + 1])
+			"--resize-every": resize_every = float(args[i + 1]); next_resize = resize_every
 			"--fullscreen-at": fullscreen_at = float(args[i + 1])
 			"--shot": shot_at = float(args[i + 1]); shot_path = args[i + 2]
 
@@ -154,6 +159,12 @@ func _process(delta: float) -> void:
 		resize_at = -1
 		DisplayServer.window_set_size(Vector2i(1280, 720))
 		print("resized window to 1280x720")
+	if resize_every > 0 and t >= next_resize:
+		next_resize += resize_every
+		var sz: Vector2i = SIZES[resize_i % SIZES.size()]
+		resize_i += 1
+		DisplayServer.window_set_size(sz)
+		print("resized window to ", sz)
 	if fullscreen_at > 0 and t >= fullscreen_at:
 		fullscreen_at = -1
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
