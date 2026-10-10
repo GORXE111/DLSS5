@@ -296,6 +296,14 @@ namespace Dlss5Manager
                 if (found.Contains("vkCreateInstance")) p.Apis.Add("Vulkan");
                 p.ApisGuessed = p.Apis.Count > 0;
             }
+            if (!p.Apis.Contains("DX12") && File.Exists(up))
+            {
+                // Unity 运行时才加载图形库 (导入表里没有): 播放器支持 -force-d3d12 就能以 DX12 运行
+                var found = FindAscii(up, "force-d3d12", "force-d3d11", "force-vulkan");
+                if (found.Contains("force-d3d12")) { p.Apis.Add("DX12"); p.ApisGuessed = true; }
+                if (found.Contains("force-d3d11") && !p.Apis.Contains("DX11")) { p.Apis.Add("DX11"); p.ApisGuessed = true; }
+                if (found.Contains("force-vulkan") && !p.Apis.Contains("Vulkan")) { p.Apis.Add("Vulkan"); p.ApisGuessed = true; }
+            }
 
             // 超分
             foreach (string f in all)
