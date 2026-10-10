@@ -120,7 +120,13 @@ color_stats.py                DLSS5 对颜色的影响 (饱和度、Lab 彩度�
 fbtest --cut N image2.ppm     第 N 帧起换成另一张图 (场景切换测试)
 fbtest --hdr scrgb|hdr10      HDR 交换链 (--paper-white 尼特，--hdr-gain 倍数造高光)；HDR 的转储是 .f16 / .pq 原始数据
 godot_test/                   Godot 4 (DX12) 场景：Crytek Sponza (fetch_assets.ps1 取，不进仓库)
+superposition_test.py         真实 3D DX11 程序 (Unigine Superposition 1.1): 帧率、GPU 负载、长时间稳定性 (内存 / 句柄 / 显存)、存帧
+compare_frames.py             同一帧处理前后 (或两种设置) 的对比图与统计
 ```
+
+Superposition (1920x1080 中画质，RTX 3060): DLSS5 关 120 fps；`WorkingScale` 0.35 (模型 672x378) 48 fps、0.5 (960x540) 37 fps、
+1.0 (原生) 15 fps，GPU 都是满载。自由漫游 10 分钟 (33490 帧，56 fps): 私有内存 +1 MB、句柄 +0、本进程显存 -2 MB，日志无错误。
+同一帧上原生 1.0 的改动不比 0.35 档强 (三个场景平均改动 1.6 / 4.3 / 4.0 对 1.9 / 8.9 / 6.0，图样相同)。
 
 RTX 3060 上的验证 (fbtest + nr-lab 的合成测试图)：
 
