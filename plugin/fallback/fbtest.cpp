@@ -10,6 +10,9 @@
 //     --fullscreen N                       at frame N enter fullscreen, leave again 30 frames later
 //     --pan N                              shift the image N pixels right every frame (wrapping, like nr-lab --temporal-shift)
 //     --cut N image2.ppm                   from frame N on show image2 (same size): a hard scene cut
+//     --hdr scrgb|hdr10                    HDR swap chain: RGBA16F linear scRGB, or RGB10A2 PQ Rec.2020 (SetColorSpace1);
+//                                          the image is taken as sRGB, white = --paper-white nits (default 200),
+//                                          linear light multiplied by --hdr-gain (default 1; > 1 makes highlights above white)
 // The image is copied into the top-left corner of each back buffer (the rest is cleared to grey).
 // Put the proxy dxgi.dll (and its files) next to fbtest.exe; it links dxgi.dll by name, so the proxy loads first.
 
@@ -42,22 +45,55 @@ static bool ReadPpm(const char *path, UINT *w, UINT *h, std::vector<uint8_t> *rg
 
 static uint16_t Half(float v)
 {
-    // exact for the values used here (k/255 in [0,1])
+    // exact for k/255 in [0,1]; positive normal values otherwise (HDR test images)
     uint32_t x;
     std::memcpy(&x, &v, 4);
-    if (v == 0.0f) return 0;
+    if (v <= 0.0f) return 0;
     int e = static_cast<int>((x >> 23) & 255) - 127 + 15;
     uint32_t m = x & 0x7fffff;
-    if (e <= 0) return 0;   // not needed for k/255
+    if (e <= 0) return 0;   // below 6e-5: flushed
     uint32_t r = (static_cast<uint32_t>(e) << 10) | (m >> 13);
     if ((m >> 12) & 1) r += 1;   // round half up
     return static_cast<uint16_t>(r);
+}
+
+enum class Hdr { None, ScRgb, Hdr10 };
+static Hdr g_hdr = Hdr::None;
+static float g_paper_white = 200.0f, g_hdr_gain = 1.0f;
+
+static float SrgbToLinear(float c) { return c <= 0.04045f ? c / 12.92f : std::pow((c + 0.055f) / 1.055f, 2.4f); }
+static float LinearToPq(float y)   // 1.0 = 10000 nits
+{
+    const float p = std::pow(std::max(0.0f, std::min(y, 1.0f)), 0.1593017578125f);
+    return std::pow((0.8359375f + 18.8515625f * p) / (1.0f + 18.6875f * p), 78.84375f);
 }
 
 // RGB8 pixels -> one row-major texel array in the back buffer format
 static std::vector<uint8_t> Encode(const std::vector<uint8_t> &rgb, size_t n, DXGI_FORMAT fmt, UINT *bpp)
 {
     std::vector<uint8_t> out;
+    if (g_hdr != Hdr::None) {
+        *bpp = g_hdr == Hdr::ScRgb ? 8 : 4;
+        out.resize(n * *bpp);
+        for (size_t i = 0; i < n; ++i) {
+            float l[3];   // linear Rec.709, 1.0 = paper white
+            for (int k = 0; k < 3; ++k) l[k] = SrgbToLinear(rgb[3 * i + k] / 255.0f) * g_hdr_gain;
+            if (g_hdr == Hdr::ScRgb) {
+                const float s = g_paper_white / 80.0f;
+                uint16_t px[4] = {Half(l[0] * s), Half(l[1] * s), Half(l[2] * s), Half(1.0f)};
+                std::memcpy(&out[8 * i], px, 8);
+            } else {
+                const float c[3] = {0.627404f * l[0] + 0.329283f * l[1] + 0.043313f * l[2],
+                                    0.069097f * l[0] + 0.919540f * l[1] + 0.011362f * l[2],
+                                    0.016391f * l[0] + 0.088013f * l[1] + 0.895595f * l[2]};
+                uint32_t v = 3u << 30;
+                for (int k = 0; k < 3; ++k)
+                    v |= static_cast<uint32_t>(std::lround(LinearToPq(c[k] * g_paper_white / 10000.0f) * 1023.0f)) << (10 * k);
+                std::memcpy(&out[4 * i], &v, 4);
+            }
+        }
+        return out;
+    }
     if (fmt == DXGI_FORMAT_R16G16B16A16_FLOAT) {
         *bpp = 8;
         out.resize(n * 8);
@@ -122,6 +158,13 @@ int main(int argc, char **argv)
         else if (a == "--fullscreen") fullscreen_at = next();
         else if (a == "--pan") pan = next();
         else if (a == "--cut" && i + 2 < argc) { cut_at = std::atoi(argv[++i]); cut_image = argv[++i]; }
+        else if (a == "--hdr" && i + 1 < argc) {
+            std::string h = argv[++i];
+            g_hdr = h == "hdr10" ? Hdr::Hdr10 : Hdr::ScRgb;
+            fmt = g_hdr == Hdr::Hdr10 ? DXGI_FORMAT_R10G10B10A2_UNORM : DXGI_FORMAT_R16G16B16A16_FLOAT;
+        }
+        else if (a == "--paper-white" && i + 1 < argc) g_paper_white = static_cast<float>(std::atof(argv[++i]));
+        else if (a == "--hdr-gain" && i + 1 < argc) g_hdr_gain = static_cast<float>(std::atof(argv[++i]));
         else if (a[0] != '-') frames = std::atoi(a.c_str());
         else { std::printf("unknown option %s\n", a.c_str()); return 2; }
     }
@@ -166,6 +209,10 @@ int main(int argc, char **argv)
         if (FAILED(hr)) return hr;
         c.w = W;
         c.h = H;
+        if (g_hdr != Hdr::None) {
+            hr = c.sc->SetColorSpace1(g_hdr == Hdr::Hdr10 ? DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020 : DXGI_COLOR_SPACE_RGB_FULL_G10_NONE_P709);
+            if (FAILED(hr)) std::printf("SetColorSpace1 = 0x%08X\n", static_cast<unsigned>(hr));
+        }
         if (waitable) {
             c.sc->SetMaximumFrameLatency(1);
             c.waitable = c.sc->GetFrameLatencyWaitableObject();

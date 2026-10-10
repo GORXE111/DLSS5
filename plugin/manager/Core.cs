@@ -547,6 +547,8 @@ namespace Dlss5Manager
                 Help = "兜底模式: 像素变化小于这么多 (1/255 为单位) 时沿用上次送进模型的值，滤掉抖动、胶片颗粒造成的闪烁；0 = 关" },
             new Setting { Key = "Smooth", Label = "时间平滑", Kind = "float", Min = 0.05, Max = 1, Default = 0.2, Only = Modes.Fallback,
                 Help = "兜底模式: 画面没变的地方，DLSS5 的改动每帧只跟进这么多 (越小越稳)；画面在变的地方立刻跟上，不拖影；1 = 关" },
+            new Setting { Key = "HdrPaperWhite", Label = "HDR 白点 (尼特)", Kind = "int", Min = 80, Max = 1000, Default = 200, Only = Modes.Fallback,
+                Help = "兜底模式、HDR 游戏: 游戏里\"纸白\"的亮度，设成与游戏的 HDR 白点/界面亮度一致；比它亮的高光原样保留" },
         };
 
         public static IEnumerable<Setting> For(string mode) { return All.Where(s => s.AppliesTo(mode)); }

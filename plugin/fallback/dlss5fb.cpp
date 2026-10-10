@@ -75,7 +75,9 @@ struct Config {
     int flow_refine = 2;           // Lucas-Kanade iterations on top of the hardware flow (sub-pixel accuracy)
     int linear = 0;                // 1: feed DLSS-NR linear light (RGBA16F + IsHDR) instead of the sRGB picture
     float colour = 1.0f;           // ColourStrength: 0 = keep the game's colours (only DLSS5's brightness/detail), 1 = full
-    float cut = 0.08f;             // scene cut: mean motion-compensated luma difference above this skips DLSS5 for that frame             // optical flow output grid (1, 2 or 4 pixels per vector, at NR resolution)
+    float cut = 0.08f;             // scene cut: mean motion-compensated luma difference above this skips DLSS5 for that frame
+    float paper_white = 200.0f;    // HDR: brightness (nits) the game uses for white; it becomes 1.0 in the picture DLSS5 sees
+    float knee = 0.8f;             // HDR: above this (paper white = 1) brightness is compressed smoothly into [knee, 1)
     float stabilize = 1.5f;        // NR input dead band in 1/255 steps: pixels that changed less keep their previous value
     float smooth = 0.2f;           // per-frame weight of a new NR change where the input did not change locally (1 = off)
     int compare = 0;               // 1: left half original, right half processed
@@ -126,6 +128,8 @@ static Config ReadConfig()
     c.linear = IniInt(L"Linear", c.linear);
     c.colour = std::min(std::max(IniFloat(L"ColourStrength", c.colour), 0.0f), 1.0f);
     c.cut = IniFloat(L"CutThreshold", c.cut);
+    c.paper_white = std::min(std::max(IniFloat(L"HdrPaperWhite", c.paper_white), 40.0f), 2000.0f);
+    c.knee = std::min(std::max(IniFloat(L"HdrKnee", c.knee), 0.2f), 0.95f);
     c.stabilize = std::max(0.0f, IniFloat(L"Stabilize", c.stabilize));
     c.smooth = std::min(std::max(IniFloat(L"Smooth", c.smooth), 0.02f), 1.0f);
     c.compare = IniInt(L"Compare", c.compare);
@@ -344,13 +348,39 @@ cbuffer C : register(b0) {
     float smooth; float gain; float first; float flowValid;
     float grid; float mvScale; float mvConstX; float flowFilter;
     float refine; float curGray; float linearIO; float colour;
-    float cutThreshold; float3 pad3;
+    float cutThreshold; float hdrMode; float hdrScale; float knee;
 };
 
 float3 ToLinear(float3 c) { return c <= 0.04045 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4); }
 float3 ToSrgb(float3 c) { c = max(c, 0); return c <= 0.0031308 ? c * 12.92 : 1.055 * pow(c, 1 / 2.4) - 0.055; }
 // NR input / output in the picture's own encoding (sRGB) or linear light (Linear=1)
 float3 Encode(float3 c) { return linearIO > 0 ? ToSrgb(c) : c; }
+
+// HDR swap chains. DLSS-NR clips its output to [0,1] even with the IsHDR flag, and on linear light its detail effect
+// is gone (both measured in nr-lab), so it gets an SDR-looking picture: the back buffer in "work" units (linear,
+// Rec.709 primaries, paper white = 1), highlights above the knee compressed smoothly into [knee, 1), sRGB encoded.
+// hdrMode 1: scRGB (linear, 1.0 = 80 nits), 2: HDR10 (PQ, Rec.2020). hdrScale: back buffer -> work units.
+static const float3x3 kTo709 = {1.660491, -0.587641, -0.072850, -0.124550, 1.132900, -0.008349, -0.018151, -0.100579, 1.118730};
+static const float3x3 kTo2020 = {0.627404, 0.329283, 0.043313, 0.069097, 0.919540, 0.011362, 0.016391, 0.088013, 0.895595};
+float3 PqToLinear(float3 e)   // SMPTE ST 2084, 1.0 = 10000 nits
+{
+    float3 p = pow(saturate(e), 1 / 78.84375);
+    return pow(max(p - 0.8359375, 0) / (18.8515625 - 18.6875 * p), 1 / 0.1593017578125);
+}
+float3 LinearToPq(float3 y)
+{
+    float3 p = pow(saturate(y), 0.1593017578125);
+    return pow((0.8359375 + 18.8515625 * p) / (1 + 18.6875 * p), 78.84375);
+}
+float3 ToWork(float3 v) { return hdrMode < 1.5 ? v * hdrScale : mul(kTo709, PqToLinear(v) * hdrScale); }
+float3 FromWork(float3 x) { return hdrMode < 1.5 ? x / hdrScale : LinearToPq(mul(kTo2020, x) / hdrScale); }
+float3 Knee(float3 x)
+{
+    float3 t = knee + (1 - knee) * (1 - exp(-(x - knee) / (1 - knee)));
+    return x <= knee ? x : t;
+}
+// the back buffer as DLSS-NR sees it (display-encoded, [0,1])
+float3 Picture(float3 v) { return hdrMode > 0 ? ToSrgb(Knee(max(ToWork(v), 0))) : v; }
 
 [numthreads(8, 8, 1)]
 void Down(uint3 id : SV_DispatchThreadID)
@@ -362,7 +392,7 @@ void Down(uint3 id : SV_DispatchThreadID)
     float3 acc = 0;
     for (int j = 0; j < n; ++j)
         for (int i = 0; i < n; ++i)
-            acc += Src.SampleLevel(Lin, base + (float2(i, j) + 0.5) * step, 0).rgb;
+            acc += Picture(Src.SampleLevel(Lin, base + (float2(i, j) + 0.5) * step, 0).rgb);
     float3 x = saturate(acc / (n * n));
     Gray[id.xy] = dot(x, float3(0.299, 0.587, 0.114));
     // The network turns +-1/255 input noise (dither, film grain, GI noise) into visible flicker; without history
@@ -511,8 +541,16 @@ float4 PS(float4 pos : SV_Position, float2 uv : TEXCOORD0) : SV_Target
         if (abs(pos.x - 0.5 - mid) < 1) return float4(1, 1, 1, b.a);
         if (pos.x < mid) return b;
     }
+    float3 d = DeltaT.SampleLevel(Lin, uv, 0).rgb;
+    if (hdrMode > 0) {
+        // apply the change measured in the knee domain to the original HDR value: below the knee this is exactly
+        // DLSS5's change; above it the change is not stretched by the inverse knee, so highlights stay as they were
+        float3 x = ToWork(b.rgb);
+        float3 e = ToSrgb(Knee(max(x, 0)));
+        return float4(FromWork(x + ToLinear(saturate(e + d)) - ToLinear(e)), b.a);
+    }
     float3 c = direct > 0 && smooth >= 1 && colour >= 1 ? saturate(Encode(Nr.SampleLevel(Lin, uv, 0).rgb))
-                                         : saturate(b.rgb + DeltaT.SampleLevel(Lin, uv, 0).rgb);
+                                         : saturate(b.rgb + d);
     return float4(c, b.a);
 }
 )";
@@ -553,6 +591,7 @@ struct Chain {
     ID3D12Device *device = nullptr;
     bool broken = false;
     DXGI_COLOR_SPACE_TYPE color_space = DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709;
+    int hdr = 0;                   // 0 SDR, 1 scRGB, 2 HDR10 (picked per frame from format + colour space)
 
     // slot i: first command list of frame i % kFrames; slot kFrames + i: the second one (after optical flow)
     ID3D12CommandAllocator *alloc[2 * kFrames] = {};
@@ -600,6 +639,7 @@ struct Chain {
     UINT pend_W = 0, pend_H = 0;           // a new back buffer size waiting to settle (window being dragged)
     DWORD pend_since = 0;
     DXGI_FORMAT warned_format = DXGI_FORMAT_UNKNOWN;
+    DXGI_COLOR_SPACE_TYPE warned_cs = DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709;
     unsigned skip_logged = 0;              // skip reasons already written to the log (bit per reason)
 };
 
@@ -863,11 +903,23 @@ static bool CreateFeature(Chain *c)
     return code == 0 && NVSDK_NGX_SUCCEED(r) && c->feature != nullptr;
 }
 
-static bool Supported(DXGI_FORMAT f)
+// 0 SDR, 1 scRGB, 2 HDR10, -1 not handled
+static int HdrMode(DXGI_FORMAT f, DXGI_COLOR_SPACE_TYPE cs)
 {
-    return f == DXGI_FORMAT_R8G8B8A8_UNORM || f == DXGI_FORMAT_B8G8R8A8_UNORM ||
-        f == DXGI_FORMAT_R10G10B10A2_UNORM || f == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB ||
-        f == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+    const bool sdr_cs = cs == DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709;
+    switch (f) {
+    case DXGI_FORMAT_R8G8B8A8_UNORM: case DXGI_FORMAT_B8G8R8A8_UNORM:
+    case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB: case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
+        return sdr_cs ? 0 : -1;
+    case DXGI_FORMAT_R10G10B10A2_UNORM:
+        return sdr_cs ? 0 : cs == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020 ? 2 : -1;
+    case DXGI_FORMAT_R16G16B16A16_FLOAT:
+        // FP16 swap chains are linear scRGB unless the game says otherwise (G22 is also what we assume when it never
+        // calls SetColorSpace1)
+        return sdr_cs || cs == DXGI_COLOR_SPACE_RGB_FULL_G10_NONE_P709 ? 1 : -1;
+    default:
+        return -1;
+    }
 }
 
 static bool RegisterOf(Chain *c, ID3D12Resource *r, NvOFGPUBufferHandle *h)
@@ -1059,18 +1111,26 @@ static void ProcessFrame(Chain *c)
     }
     if (!c->cfg.enabled) { Skip(c, 1, "disabled (ini or F10)"); return; }
     if (c->broken) return;
-    if (c->color_space != DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709) { Skip(c, 2, "HDR colour space"); return; }
 
     UINT index = c->swapchain->GetCurrentBackBufferIndex();
     ID3D12Resource *bb = nullptr;
     if (FAILED(c->swapchain->GetBuffer(index, IID_PPV_ARGS(&bb)))) { Skip(c, 4, "GetBuffer failed"); return; }
     D3D12_RESOURCE_DESC desc = bb->GetDesc();
-    if (!Supported(desc.Format) || desc.SampleDesc.Count != 1) {
-        if (c->warned_format != desc.Format)
-            Log("back buffer format %d / %u samples not supported (HDR or MSAA): frames passed through unchanged", desc.Format, desc.SampleDesc.Count);
+    const int hdr = HdrMode(desc.Format, c->color_space);
+    if (hdr < 0 || desc.SampleDesc.Count != 1) {
+        if (c->warned_format != desc.Format || c->warned_cs != c->color_space)
+            Log("back buffer format %d, colour space %d, %u samples not supported: frames passed through unchanged",
+                desc.Format, c->color_space, desc.SampleDesc.Count);
         c->warned_format = desc.Format;
+        c->warned_cs = c->color_space;
         bb->Release();
         return;
+    }
+    if (hdr != c->hdr) {
+        static const char *names[] = {"SDR", "scRGB (HDR)", "HDR10"};
+        Log("picture: %s%s", names[hdr], hdr ? " - DLSS5 sees it tone-compressed, highlights are kept" : "");
+        c->hdr = hdr;
+        c->first_smooth = true;   // the averaged change belongs to the old encoding
     }
     const int sized = EnsureSized(c, desc);
     if (sized <= 0) {
@@ -1104,7 +1164,7 @@ static void ProcessFrame(Chain *c)
         direct ? 1.0f : 0.0f, c->cfg.compare ? 1.0f : 0.0f, c->cfg.stabilize / 255.0f,
         c->cfg.smooth, 255.0f / 3.0f, c->first_smooth ? 1.0f : 0.0f, 0, float(c->grid), c->cfg.mv_scale, c->cfg.mv_const_x, c->cfg.flow_filter ? 1.0f : 0.0f,
         float(c->cfg.flow_refine), float(c->cur_gray), c->cfg.linear ? 1.0f : 0.0f, c->cfg.colour,
-        c->cfg.cut, 0, 0, 0};
+        c->cfg.cut, float(c->hdr), c->hdr == 1 ? 80.0f / c->cfg.paper_white : 10000.0f / c->cfg.paper_white, c->cfg.knee};
     c->first_smooth = false;
     const int cur = c->cur_gray;
     UINT inc = c->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -1314,8 +1374,14 @@ static void ProcessFrame(Chain *c)
 
 static void DumpPpm(Chain *c, ID3D12Resource *tex, D3D12_RESOURCE_STATES state, const wchar_t *name)
 {
-    const bool raw = wcsstr(name, L".bin") != nullptr;   // raw texels, rows tightly packed (research dumps)
     D3D12_RESOURCE_DESC d = tex->GetDesc();
+    // raw texels, rows tightly packed (research dumps; HDR back buffers: <name>.f16 / <name>.pq)
+    const bool hdr_tex = d.Format == DXGI_FORMAT_R16G16B16A16_FLOAT || (c->hdr == 2 && d.Format == DXGI_FORMAT_R10G10B10A2_UNORM);
+    const bool raw = wcsstr(name, L".bin") != nullptr || hdr_tex;
+    std::wstring raw_name = name;
+    if (hdr_tex && raw_name.size() > 4 && raw_name.compare(raw_name.size() - 4, 4, L".ppm") == 0)
+        raw_name.replace(raw_name.size() - 4, 4, d.Format == DXGI_FORMAT_R16G16B16A16_FLOAT ? L".f16" : L".pq");
+    name = raw_name.c_str();
     D3D12_PLACED_SUBRESOURCE_FOOTPRINT fp = {};
     UINT64 total = 0;
     c->device->GetCopyableFootprints(&d, 0, 1, 0, &fp, nullptr, nullptr, &total);
@@ -1344,7 +1410,7 @@ static void DumpPpm(Chain *c, ID3D12Resource *tex, D3D12_RESOURCE_STATES state, 
     std::wstring path = std::wstring(g_dir) + name;
     if (raw) {
         if (FILE *f = _wfopen(path.c_str(), L"wb")) {
-            const UINT bpp = d.Format == DXGI_FORMAT_R8_UNORM ? 1 : 4;
+            const UINT bpp = d.Format == DXGI_FORMAT_R8_UNORM ? 1 : d.Format == DXGI_FORMAT_R16G16B16A16_FLOAT ? 8 : 4;
             for (UINT y = 0; y < d.Height; ++y)
                 std::fwrite(data + fp.Offset + static_cast<size_t>(y) * fp.Footprint.RowPitch, 1, static_cast<size_t>(d.Width) * bpp, f);
             std::fclose(f);
@@ -1510,7 +1576,7 @@ static HRESULT STDMETHODCALLTYPE HookSetColorSpace(IDXGISwapChain3 *sc, DXGI_COL
 {
     if (Chain *c = FindChain(sc)) {
         std::lock_guard<std::mutex> lock(c->lock);
-        if (cs != c->color_space) Log("color space %d%s", cs, cs == DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709 ? "" : " (HDR: not processed)");
+        if (cs != c->color_space) Log("colour space %d", cs);
         c->color_space = cs;
     }
     return o_set_color_space(sc, cs);

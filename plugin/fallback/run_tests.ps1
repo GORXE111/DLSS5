@@ -25,7 +25,9 @@ $cases = @(
     @{ name = 'rgba8';        args = @();                            ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=5"; dump = $true }
     @{ name = 'bgra8';        args = @('--format', 'bgra8');         ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=5"; dump = $true }
     @{ name = 'rgb10';        args = @('--format', 'rgb10');         ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=5"; dump = $true }
-    @{ name = 'rgba16f (HDR, pass through)'; args = @('--format', 'rgba16f'); ini = ''; expect = @('not supported') ; noProcess = $true }
+    @{ name = 'rgba16f (= scRGB HDR)'; args = @('--format', 'rgba16f'); ini = ''; expect = @('picture: scRGB', 'frame 1 processed') }
+    @{ name = 'scRGB HDR, highlights x4'; args = @('--hdr', 'scrgb', '--hdr-gain', '4'); ini = ''; expect = @('colour space 1', 'picture: scRGB', 'frame 1 processed') }
+    @{ name = 'HDR10 (PQ, Rec.2020)'; args = @('--hdr', 'hdr10'); ini = ''; expect = @('colour space 12', 'picture: HDR10', 'frame 1 processed') }
     @{ name = 'Present1';     args = @('--present1');                ini = ''; expect = @('frame 1 processed') }
     @{ name = 'ResizeBuffers';  args = @('--resize', '100');         ini = ''; expect = @('NR 320x180', 'NR 240x135') }
     @{ name = 'ResizeBuffers1'; args = @('--resize1', '100');        ini = ''; expect = @('NR 320x180', 'NR 240x135') }
@@ -43,7 +45,7 @@ $pass = 0; $fail = 0
 Push-Location $test
 try {
     foreach ($c in $cases) {
-        Remove-Item dlss5fb_*.ppm, dlss5fb.log -ErrorAction SilentlyContinue
+        Remove-Item dlss5fb_*.ppm, dlss5fb_*.f16, dlss5fb_*.pq, dlss5fb.log -ErrorAction SilentlyContinue
         $ini = if ($c.ini) { $c.ini } else { 'WorkingScale=0.5' }
         "[DLSS5]`n$ini" | Set-Content -Encoding ascii dlss5fb.ini
         $out = & .\fbtest.exe pattern.ppm $Frames @($c.args) 2>&1 | Out-String
@@ -54,7 +56,6 @@ try {
         if ($log -match 'FAIL') { $why += 'FAIL in log' }
         foreach ($e in @($c.expect)) { if ($e -and $log -notmatch [regex]::Escape($e)) { $why += "log lacks '$e'" } }
         if ($c.tracked -and ([regex]::Matches($log, 'tracked')).Count -lt $c.tracked) { $why += "expected $($c.tracked) tracked swap chains" }
-        if ($c.noProcess -and $log -match 'processed') { $why += 'HDR frame was processed' }
         if ($c.mvok -and (Test-Path $ref)) {
             foreach ($k in 1, 2, 3) {
                 $mv = Join-Path (Split-Path $ref) "out_mvok_f$k.ppm"

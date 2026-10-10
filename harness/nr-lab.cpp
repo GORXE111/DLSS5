@@ -1139,6 +1139,8 @@ static bool UploadTexture(ID3D12Resource *texture, const std::vector<uint8_t> &s
     return ok;
 }
 
+static float g_hdr_scale = 2.0f;   // --hdr-scale: scRGB/HDR10 pattern = sRGB pattern values x this
+
 static std::vector<uint8_t> MakeColorPattern(UINT width, UINT height, DXGI_FORMAT format,
     ColorProfile profile, int offset_x = 0)
 {
@@ -1153,7 +1155,7 @@ static std::vector<uint8_t> MakeColorPattern(UINT width, UINT height, DXGI_FORMA
             float r = line ? 1.0f : (checker ? 0.82f : 0.06f);
             float gg = line ? 0.18f : (checker ? 0.11f : 0.68f);
             float b = line ? 0.04f : (checker ? 0.55f : 0.09f);
-            if (profile != ColorProfile::Srgb) { r *= 2.0f; gg *= 2.0f; b *= 2.0f; }
+            if (profile != ColorProfile::Srgb) { r *= g_hdr_scale; gg *= g_hdr_scale; b *= g_hdr_scale; }
             uint8_t *pixel = data.data() + (static_cast<size_t>(y) * width + x) * bpp;
             if (format == DXGI_FORMAT_R8G8B8A8_UNORM) {
                 pixel[0] = static_cast<uint8_t>(std::min(r, 1.0f) * 255.0f + 0.5f);
@@ -1830,6 +1832,14 @@ static bool SavePpm(const Options &o, DXGI_FORMAT format, const std::vector<uint
     }
     std::fclose(file);
     Log("wrote visual output: %s", path);
+    if (format != DXGI_FORMAT_R8G8B8A8_UNORM) {   // HDR: also the raw RGBA16F values (nothing clipped)
+        sprintf_s(path, "%snr-lab-output-model%d-raw.f16", g_dir, o.model);
+        if (fopen_s(&file, path, "wb") == 0 && file != nullptr) {
+            std::fwrite(pixels.data(), 1, static_cast<size_t>(o.output_w) * o.output_h * 8, file);
+            std::fclose(file);
+            Log("wrote raw output: %s", path);
+        }
+    }
     return true;
 }
 
@@ -2267,6 +2277,8 @@ int main(int argc, char **argv)
             options.optional_variant = atoi(argv[++i]);
         } else if (strcmp(arg, "--optional-value") == 0 && i + 1 < argc) {
             options.optional_value = static_cast<float>(atof(argv[++i]));
+        } else if (strcmp(arg, "--hdr-scale") == 0 && i + 1 < argc) {
+            g_hdr_scale = static_cast<float>(atof(argv[++i]));
         } else if (strcmp(arg, "--optional-rgba") == 0 && i + 1 < argc) {
             sscanf_s(argv[++i], "%f,%f,%f,%f", &g_channel_scale[0], &g_channel_scale[1], &g_channel_scale[2], &g_channel_scale[3]);
         } else if (strcmp(arg, "--ramp-channels") == 0 && i + 1 < argc) {
@@ -2307,6 +2319,7 @@ int main(int argc, char **argv)
                         "       [--optional none|control-mask|ui|ui-alpha|backbuffer|distortion|ui-bundle]\n"
                         "       [--optional-format r8|r16f|rgba8|rgb10a2|rg16f|rgba16f|r32f|rg32f|rgba32f]\n"
                         "       [--optional-variant 0|1|2|3] [--optional-value F] [--optional-channel all|r|g|b|a]\n"
+                        "       [--hdr-scale F (scRGB/HDR10 pattern = sRGB pattern x F, default 2)]\n"
                         "       [--optional-rgba r,g,b,a] [--ramp-channels mask]\n"
                         "       [--bundle 1..7 (1 UI, 2 UIAlpha, 4 Backbuffer)] [--bundle-backbuffer 0|1]\n"
                         "       [--auto-mask 0|1] [--ui-correction 0|1]\n"

@@ -91,11 +91,18 @@ UICorrection 可以直接用 (OptiScaler 那边的事)。
 - [x] E0 同一画面分别以 sRGB (现状) 与线性 HDR (+IsHDR) 送入，比较色彩变化；决定兜底模式送哪种
       → 结果: 线性输入让细节增强几乎消失 (x1.003)，sRGB 才是模型要的。"偏冷"是模型随内容的局部色调调整 (有的帧偏暖)，
         不是错误；加了 ColourStrength (0 = 保持游戏颜色)。另做了场景切换检测 (GPU 上运动补偿差，切换那帧显示原画面)。
-- [ ] E1 在 nr-lab 里确认 HDR 输入 (scRGB 浮点 + IsHDR 标志、HDR10) 的正确用法和输出范围
-- [ ] E2 兜底模式按交换链格式与色彩空间选择: 浮点 scRGB 直接送、HDR10 先转线性再送，结果转回
-- [ ] E3 fbtest 加 HDR 交换链验证
+- [x] E1 在 nr-lab 里确认 HDR 输入 (scRGB 浮点 + IsHDR 标志、HDR10) 的正确用法和输出范围
+- [x] E2 兜底模式按交换链格式与色彩空间选择: 浮点 scRGB 直接送、HDR10 先转线性再送，结果转回
+- [x] E3 fbtest 加 HDR 交换链验证
 
 验收: HDR 交换链被处理，亮部 (>1.0) 不被截断。
+
+**结果 (2026-10-10)**: E1 — DLSS-NR 没有真正的 HDR 路径: 开 IsHDR、scRGB 输入 x2/x4/x16 时输出最大值都是 1.0 (截断)，
+同样数值下 IsHDR 开/关只差 1.9/255，HDR10 输入与 scRGB 相同 (nr-lab 新增 `--hdr-scale` 与原始 f16 输出)。
+E2 — 兜底模式自己把 HDR 变成模型能用的画面: 线性 Rec.709、纸白 = 1 (HdrPaperWhite 默认 200 尼特)，0.8 以上平滑压缩，sRGB 编码；
+结果 = 原 HDR 值 + 压缩域里的改变量，再编回 scRGB / HDR10 (宽色域的负值原样保留)。FP16 交换链没设色彩空间时按 scRGB。
+E3 — fbtest `--hdr scrgb|hdr10 --hdr-gain`: x1 时与 SDR 结果相差 1.6/255 (拐点以下)、改变量 10.6 vs SDR 10.4/255；
+x4 时输入最高 4.0 → 输出 4.0，高光区平均变化 3%，无 NaN；run_tests 16/16 (SDR 的逐字节项不变)。管理器加 HdrPaperWhite。
 
 ## F. 移植版提速 (可选，研究性质)
 

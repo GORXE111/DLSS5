@@ -43,7 +43,12 @@
   正常接入时历史帧会把它平均掉；兜底模式另外加了两层 (有了光流历史帧后仍然有益)：输入死区 (`Stabilize`) 让没变的像素送进模型的值完全不变
   (网络是确定性的，输入不变输出就不变)；改动量的时间平滑 (`Smooth`)，只在局部输入没变的地方生效，所以运动画面不拖影。
   静止镜头 40 帧：1.40 → 0.18/255，超过 8/255 的跳变从 0.9% 降到 0。
-- 只处理 SDR：R8G8B8A8 / B8G8R8A8 / R10G10B10A2 且色彩空间为 sRGB。HDR (scRGB 浮点、HDR10) 原样放过并写日志。
+- 格式: SDR 的 R8G8B8A8 / B8G8R8A8 / R10G10B10A2 (sRGB 色彩空间)；HDR 的 scRGB (R16G16B16A16 浮点，线性) 与 HDR10
+  (R10G10B10A2 + PQ / Rec.2020)。其他组合与 MSAA 原样放过并写日志。
+- **HDR**：DLSS-NR 即使开 IsHDR 也把输出截到 [0,1]，线性输入又会让细节效果消失 (nr-lab 实测)，所以送给它的是"看起来像 SDR"的画面:
+  后缓冲换成线性 Rec.709、纸白 = 1 (`HdrPaperWhite` 尼特，scRGB 的 1.0 = 80 尼特)，高于 `HdrKnee` (0.8) 的亮度平滑压进 [0.8, 1)，
+  再按 sRGB 编码。结果: 原 HDR 值 + 模型在压缩域里的改变量 (低于拐点处 = 模型的原样改变；高光处不被反向放大)，再编回后缓冲格式。
+  fbtest (Sponza): HDR 亮度 x1 时与 SDR 结果相差 1.6/255 (拐点以下)；x4 时高光 (最高 4 倍纸白) 原样保留，高光区平均只变 3%。
 
 ## 文件 (装进游戏 exe 目录)
 
@@ -70,6 +75,8 @@
 | ToggleKey / CompareKey | 0x79 / 0x7A | 开关与对比的热键 (默认 F10 / F11，虚拟键码) |
 | ColourStrength | 1 | 0 = 保持游戏原本的颜色，只取 DLSS5 的明暗与细节；1 = 连颜色一起取 |
 | CutThreshold | 0.08 | 场景切换判定 (运动补偿后的平均灰度差)，0 = 关 |
+| HdrPaperWhite | 200 | HDR: 游戏的纸白亮度 (尼特)，对应模型看到的白 |
+| HdrKnee | 0.8 | HDR: 高于此亮度 (纸白 = 1) 平滑压缩，模型看到的高光不会被截断 |
 | Linear | 0 | 研究用：1 = 送线性光 (RGBA16F + IsHDR) |
 | DumpFrame / DumpCount | -1 / 1 | 测试用：从第 N 帧起连续存 `dlss5fb_in/nr/out(_k).ppm` 与光流 `dlss5fb_flow_k.bin` (也可用环境变量 `DLSS5FB_DUMP`) |
 | MvConstX / MvScale | 0 / 1 | 研究用：用常数水平运动矢量代替光流 / 缩放运动矢量 |
@@ -80,12 +87,13 @@
 plugin\fallback\build.bat     -> bin\dxgi.dll, bin\dlss5_nvngx.dll, bin\fbtest.exe
                                  (需要 DLSS SDK 头文件 oss\nvidia-dlss\include，不在本仓库里)
 fbtest.exe image.ppm [帧数] [--pan N ...]   最小的 D3D12 "游戏"：每帧把图片拷进后缓冲再 Present (--pan: 每帧右移 N 像素)
-run_tests.ps1                 14 项回归 (格式、改大小、重建、多交换链、光流、场景切换、精确运动矢量 = nr-lab)
+run_tests.ps1                 16 项回归 (格式、HDR scRGB / HDR10、改大小、重建、多交换链、光流、场景切换、精确运动矢量 = nr-lab)
 mv_check.ps1                  运动矢量校验: 与 nr-lab 的正确 / 零运动矢量参考比较
 motion_flicker.ps1            运动中的闪烁 (运动补偿后的帧间差)，各模式对比
 flicker.py                    静止镜头的帧间闪烁 (DumpCount 存的连续帧)
 color_stats.py                DLSS5 对颜色的影响 (饱和度、Lab 彩度、色相、冷暖、细节)
 fbtest --cut N image2.ppm     第 N 帧起换成另一张图 (场景切换测试)
+fbtest --hdr scrgb|hdr10      HDR 交换链 (--paper-white 尼特，--hdr-gain 倍数造高光)；HDR 的转储是 .f16 / .pq 原始数据
 godot_test/                   Godot 4 (DX12) 场景：Crytek Sponza (fetch_assets.ps1 取，不进仓库)
 ```
 
