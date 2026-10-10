@@ -60,6 +60,9 @@ struct Options {
     OptionalProbe optional_probe = OptionalProbe::None;
     DXGI_FORMAT optional_format = DXGI_FORMAT_UNKNOWN;
     int optional_variant = 1;
+    float optional_value = 1.0f;   // value written by variants 1..3
+    int bundle_members = 7;        // ui-bundle: 1 = UI, 2 = UIAlpha, 4 = Backbuffer
+    int bundle_backbuffer = 0;     // ui-bundle backbuffer: 0 = the colour input, 1 = green pattern (to tell it apart)
     int optional_channel = -1;
     int use_auto_mask = 1;
     int ui_correction = 0;
@@ -1022,6 +1025,10 @@ static DXGI_FORMAT DefaultOptionalFormat(const Options &o)
     }
 }
 
+static float g_optional_value = 1.0f;
+static float g_channel_scale[4] = {1.0f, 1.0f, 1.0f, 1.0f};   // --optional-rgba: per-channel multiplier
+static int g_ramp_channels = 15;                              // variant 3: channels that get the ramp (others constant)
+
 static std::vector<uint8_t> MakeOptionalPattern(UINT width, UINT height,
     DXGI_FORMAT format, int variant, int selected_channel)
 {
@@ -1031,10 +1038,13 @@ static std::vector<uint8_t> MakeOptionalPattern(UINT width, UINT height,
         for (UINT x = 0; x < width; ++x) {
             const bool center = x >= width / 4 && x < 3 * width / 4 &&
                 y >= height / 4 && y < 3 * height / 4;
-            const float value = variant == 0 ? 0.0f : variant == 1 ? 1.0f :
-                (center ? 1.0f : 0.0f);
+            // 0 = zero, 1 = value everywhere, 2 = value in the centre box, 3 = horizontal ramp 0..value
+            const float value = variant == 0 ? 0.0f : variant == 1 ? g_optional_value :
+                variant == 2 ? (center ? g_optional_value : 0.0f) :
+                g_optional_value * (static_cast<float>(x) + 0.5f) / static_cast<float>(width);
             const auto channel_value = [&](int channel) {
-                return selected_channel < 0 || selected_channel == channel ? value : 0.0f;
+                const float v = variant == 3 && !((g_ramp_channels >> channel) & 1) ? g_optional_value : value;
+                return selected_channel < 0 || selected_channel == channel ? v * g_channel_scale[channel] : 0.0f;
             };
             uint8_t *pixel = data.data() + (static_cast<size_t>(y) * width + x) * bpp;
             switch (format) {
@@ -1933,6 +1943,10 @@ static int Run(const Options &o)
         ProfileName(o.profile), flags);
     Log("tuning: intensity=%.3f localTone=%.3f localStructure=%.3f skinStructure=%.3f",
         o.intensity, o.local_tone, o.local_structure, o.skin_structure);
+    g_optional_value = o.optional_value;
+    Log("optional value=%.3f rgba=%.3f,%.3f,%.3f,%.3f ramp=%d bundle=%d bundleBackbuffer=%d", o.optional_value,
+        g_channel_scale[0], g_channel_scale[1], g_channel_scale[2], g_channel_scale[3], g_ramp_channels,
+        o.bundle_members, o.bundle_backbuffer);
     Log("optional contract: probe=%s format=%s variant=%d channel=%d autoMask=%d uiCorrection=%d",
         OptionalProbeName(o.optional_probe), FormatName(DefaultOptionalFormat(o)),
         o.optional_variant, o.optional_channel, o.use_auto_mask, o.ui_correction);
@@ -1966,9 +1980,9 @@ static int Run(const Options &o)
     else if (o.optional_probe == OptionalProbe::Distortion)
         optional.distortion = MakeTexture(o.input_w, o.input_h, optional_format, false);
     else if (o.optional_probe == OptionalProbe::UIBundle) {
-        optional.ui = MakeTexture(o.input_w, o.input_h, optional_format, false);
-        optional.ui_alpha = MakeTexture(o.input_w, o.input_h, DXGI_FORMAT_R8_UNORM, false);
-        optional.backbuffer = MakeTexture(o.input_w, o.input_h, optional_format, false);
+        if (o.bundle_members & 1) optional.ui = MakeTexture(o.input_w, o.input_h, optional_format, false);
+        if (o.bundle_members & 2) optional.ui_alpha = MakeTexture(o.input_w, o.input_h, DXGI_FORMAT_R8_UNORM, false);
+        if (o.bundle_members & 4) optional.backbuffer = MakeTexture(o.input_w, o.input_h, optional_format, false);
     }
     if (color == nullptr || std::any_of(frame_colors.begin(), frame_colors.end(),
             [](ID3D12Resource *resource) { return resource == nullptr; }) ||
@@ -1988,6 +2002,14 @@ static int Run(const Options &o)
     const auto upload_optional = [&](ID3D12Resource *resource) {
         if (resource == nullptr) return true;
         const D3D12_RESOURCE_DESC desc = resource->GetDesc();
+        if (o.optional_probe == OptionalProbe::UIBundle && resource == optional.backbuffer && o.bundle_backbuffer == 1) {
+            return UploadTexture(resource, MakeOptionalPattern(static_cast<UINT>(desc.Width), desc.Height,
+                desc.Format, 1, 1), D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+        }
+        if (o.optional_probe == OptionalProbe::UIBundle && resource == optional.ui_alpha) {
+            return UploadTexture(resource, MakeOptionalPattern(static_cast<UINT>(desc.Width), desc.Height,
+                desc.Format, o.optional_variant, -1), D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+        }
         if (o.optional_probe == OptionalProbe::UIBundle && resource == optional.backbuffer) {
             return UploadTexture(resource, MakeColorPattern(static_cast<UINT>(desc.Width), desc.Height,
                 desc.Format, o.profile), D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
@@ -2243,6 +2265,16 @@ int main(int argc, char **argv)
             }
         } else if (strcmp(arg, "--optional-variant") == 0 && i + 1 < argc) {
             options.optional_variant = atoi(argv[++i]);
+        } else if (strcmp(arg, "--optional-value") == 0 && i + 1 < argc) {
+            options.optional_value = static_cast<float>(atof(argv[++i]));
+        } else if (strcmp(arg, "--optional-rgba") == 0 && i + 1 < argc) {
+            sscanf_s(argv[++i], "%f,%f,%f,%f", &g_channel_scale[0], &g_channel_scale[1], &g_channel_scale[2], &g_channel_scale[3]);
+        } else if (strcmp(arg, "--ramp-channels") == 0 && i + 1 < argc) {
+            g_ramp_channels = atoi(argv[++i]);
+        } else if (strcmp(arg, "--bundle") == 0 && i + 1 < argc) {
+            options.bundle_members = atoi(argv[++i]);
+        } else if (strcmp(arg, "--bundle-backbuffer") == 0 && i + 1 < argc) {
+            options.bundle_backbuffer = atoi(argv[++i]);
         } else if (strcmp(arg, "--optional-channel") == 0 && i + 1 < argc) {
             const char *channel = argv[++i];
             if (_stricmp(channel, "all") == 0) options.optional_channel = -1;
@@ -2274,7 +2306,9 @@ int main(int argc, char **argv)
                         "       [--local-structure F] [--skin-structure F] [--nr-only] [--compact-nr] [--framegen]\n"
                         "       [--optional none|control-mask|ui|ui-alpha|backbuffer|distortion|ui-bundle]\n"
                         "       [--optional-format r8|r16f|rgba8|rgb10a2|rg16f|rgba16f|r32f|rg32f|rgba32f]\n"
-                        "       [--optional-variant 0|1|2] [--optional-channel all|r|g|b|a]\n"
+                        "       [--optional-variant 0|1|2|3] [--optional-value F] [--optional-channel all|r|g|b|a]\n"
+                        "       [--optional-rgba r,g,b,a] [--ramp-channels mask]\n"
+                        "       [--bundle 1..7 (1 UI, 2 UIAlpha, 4 Backbuffer)] [--bundle-backbuffer 0|1]\n"
                         "       [--auto-mask 0|1] [--ui-correction 0|1]\n"
                         "       [--temporal-shift pixels-per-frame] [--motion-x F] [--motion-y F]\n");
             return 0;
@@ -2285,13 +2319,13 @@ int main(int argc, char **argv)
     }
     if (options.model < 1 || options.model > 3 || options.style < -1 ||
         options.perf_quality < -1 || options.perf_quality > 5 ||
-        options.optional_variant < 0 || options.optional_variant > 2 ||
+        options.optional_variant < 0 || options.optional_variant > 3 ||
         options.optional_channel < -1 || options.optional_channel > 3 ||
         options.use_auto_mask < 0 || options.use_auto_mask > 1 ||
         options.ui_correction < 0 || options.ui_correction > 1 ||
         (options.runtime_scale != -1.0f && options.runtime_scale <= 0.0f) ||
         options.output_w < options.input_w || options.output_h < options.input_h) {
-        Log("invalid contract: model 1..3, style >= -1, quality -1..5, optional variant 0..2, switches 0..1, positive runtime scale or -1, and output >= input are required");
+        Log("invalid contract: model 1..3, style >= -1, quality -1..5, optional variant 0..3, switches 0..1, positive runtime scale or -1, and output >= input are required");
         return 64;
     }
     if (options.nr_only && options.compact_nr &&

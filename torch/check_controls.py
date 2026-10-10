@@ -24,6 +24,23 @@ CASES = [   # (nr-lab 参数, control_inputs 参数, intensity)
     (["--style", "1", "--intensity", "0.5"], {"style": 1}, 0.5),
     (["--style", "2", "--local-structure", "0.5"], {"style": 2, "structure": 0.5}, 1.0),
 ]
+# DLSSNR.ControlMask (RGBA16F): nr-lab 的图案 (--optional-variant 1 常数 / 2 中央方块 / 3 横向渐变) 与逐通道倍数
+CM = ["--optional", "control-mask", "--optional-format", "rgba16f"]
+MASKS = [   # (nr-lab 参数, 图案, 渐变通道位, RGBA 倍数, control_inputs 参数, intensity)
+    (CM + ["--optional-variant", "3", "--ramp-channels", "2"], 3, 2, (1, 1, 1, 1), {}, 1.0),
+    (CM + ["--optional-variant", "3", "--ramp-channels", "4", "--local-tone", "0.5"], 3, 4, (1, 1, 1, 1), {"tone": 0.5}, 1.0),
+    (CM + ["--optional-variant", "3", "--ramp-channels", "1", "--intensity", "0.7"], 3, 1, (1, 1, 1, 1), {}, 0.7),
+    (CM + ["--optional-variant", "2", "--optional-rgba", "1,0.5,1.5,1"], 2, 0, (1, 0.5, 1.5, 1), {}, 1.0),
+]
+
+
+def mask_pattern(variant, ramp_bits, rgba, W=640, H=360):
+    """nr-lab MakeOptionalPattern 的同款 (值 1)"""
+    y, x = np.mgrid[0:H, 0:W]
+    centre = (x >= W // 4) & (x < 3 * W // 4) & (y >= H // 4) & (y < 3 * H // 4)
+    shape = {1: np.ones((H, W)), 2: centre.astype(np.float64), 3: (x + 0.5) / W}[variant]
+    m = np.stack([(shape if variant != 3 or (ramp_bits >> c) & 1 else np.ones((H, W))) * rgba[c] for c in range(4)], -1)
+    return m.astype(np.float32)
 
 
 def nrlab(args):
@@ -42,6 +59,12 @@ def main():
         out = net(color, frame=0, controls=control_inputs(**ctl), intensity=inten).cpu().numpy()
         base = ref if base is None else base
         stats(f"{' '.join(args) or '默认':42s}", out, ref)
+        print(f"{'':44s}(nr-lab 相对默认的变化 {np.abs(ref - base).mean() * 255:.2f}/255)")
+    for args, variant, bits, rgba, ctl, inten in MASKS:
+        ref = nrlab(args)
+        out = net(color, frame=0, controls=control_inputs(auto_mask=False, **ctl), intensity=inten,
+                  control_mask=mask_pattern(variant, bits, rgba)).cpu().numpy()
+        stats(f"{' '.join(args[4:]):42s}", out, ref)
         print(f"{'':44s}(nr-lab 相对默认的变化 {np.abs(ref - base).mean() * 255:.2f}/255)")
 
 

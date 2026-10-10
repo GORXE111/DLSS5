@@ -137,6 +137,10 @@ class PreBlock(_Base):
         if key not in self._kc:                              # 缓存: CUDA Graph 捕获期间不能做主机->显存拷贝
             self._kc[key] = torch.tensor((1.0,) + key, device=self.dev)
         k = self._kc[key].expand(GH, GW, 1 + len(self.CONTROLS))
+        mask = (ctrl or {}).get("mask")
+        if mask is not None:                                 # DLSSNR.ControlMask: G、B 逐像素乘到 LocalTone、StructureGate
+            m = mask[y.long(), x.long()]
+            k = torch.cat([k[..., :1], k[..., 1:2] * m[..., 1:2], k[..., 2:3] * m[..., 2:3], k[..., 3:]], -1)
         return torch.cat([(c - 0.5) * 0.125, (h - 0.5) * 0.125, nz, k], -1).view(-1, len(self.INPUTS))
 
     def __call__(self, color, hist, mv, frame, ctrl=None):
@@ -226,22 +230,37 @@ class DLSS5:
             self.steps.append((st, m))
 
     @torch.no_grad()
-    def __call__(self, color, hist=None, mv=None, frame=0, trace=None, controls=None, intensity=1.0):
+    def __call__(self, color, hist=None, mv=None, frame=0, trace=None, controls=None, intensity=1.0, control_mask=None):
         """color/hist: (H, W, 3) float [0,1] (numpy 或 torch)，输出 f32；mv: (H, W, 2) 像素位移；hist=None 表示重置帧。
         controls: control_inputs(...) 的结果 (默认 = DLL 默认参数)。
         intensity: DLSSNR.Intensity，夹到 [0,1] 后在网络之外做 lerp(color, NR 输出, t)，与 DLL 一致；
         Style 1/2 时再经 style.grade 调色 (cg2r_post_process_kernel)。
+        control_mask: DLSSNR.ControlMask，(H, W, 4) [R, G, B, A]，逐像素乘到全局参数上 (与 DLL 逐字节一致):
+            R x Intensity (网络之外的混合)，G x LocalTone，B x LocalStructure (pre_block 的控制输入)，A 未使用。
+            提供时 DLL 强制 UseAutoMask=0，所以 controls 须为 control_inputs(auto_mask=False, ...) (默认即此)。
         trace: 可选 dict，记录各级出口 (step 序号 -> 张量) 以便对照"""
         ops.PRECISE = self.precise
         t = lambda a: None if a is None else torch.as_tensor(np.asarray(a) if not torch.is_tensor(a) else a,  # noqa: E731
                                                               dtype=torch.float32, device=self.dev)
         color, hist, mv = t(color), t(hist), t(mv)
+        if control_mask is not None:
+            if controls is None:
+                controls = control_inputs(auto_mask=False)
+            if controls["Skin"] != -1.0 or controls["Structure"] != -1.0:
+                raise ValueError("ControlMask forces UseAutoMask=0: use control_inputs(auto_mask=False, ...)")
+            if controls.get("style", 0):
+                raise NotImplementedError("ControlMask with Style 1/2 has not been checked against the DLL")
+            control_mask = t(control_mask)
+            controls = dict(controls, mask=control_mask)
         with torch.autocast("cuda", dtype=torch.float16, enabled=self.half, cache_enabled=False):
             out = self._forward(color, hist, mv, frame, trace, controls).float()
         style = (controls or {}).get("style", 0)                   # 网络之外的部分用 f32
         if style:                                                  # Style 1/2: DLL 的调色后处理 (含 Intensity 混合)
             return style_mod.apply(color[..., :3], out, style, intensity)
         k = min(max(float(intensity), 0.0), 1.0)
+        if control_mask is not None:                               # 逐像素 Intensity (post_block 的 control_mask 变体)
+            k = k * control_mask[..., :1]
+            return color[..., :3] + k * (out - color[..., :3])
         return out if k == 1.0 else color[..., :3] + k * (out - color[..., :3])
 
     def _forward(self, color, hist, mv, frame, trace, controls):

@@ -21,6 +21,8 @@ DLSSNR 的画面参数 (默认值与 DLL 相同):
 from dlss5.net import control_inputs
 ctl = control_inputs(tone=1.0, structure=1.0, skin=-1.0, auto_mask=True, style=0)   # LocalTone/LocalStructure/SkinStructure/UseAutoMask/Style
 out = net(color, controls=ctl, intensity=1.0)  # intensity: 夹到 [0,1]，lerp(color, NR, t)
+# DLSSNR.ControlMask (H, W, 4): R x Intensity, G x LocalTone, B x LocalStructure 逐像素相乘, A 未使用; 要求 auto_mask=False
+out = net(color, controls=control_inputs(auto_mask=False), control_mask=mask)
 ```
 
 ```python
@@ -52,6 +54,7 @@ python profile_ops.py     # torch.profiler 按算子统计
 | torch vs nr-lab (运动画面，第 1-3 帧) | 0.9993-0.9995 | 1.6-2.0/255 |
 | 网络改动量 (输出 - 输入) vs nr-lab | 0.992-0.995 | |
 | torch vs nr-lab (LocalTone/Structure/Skin/AutoMask/Intensity/Style 各设定) | 0.9990-0.9999 | 0.8-2.2/255 |
+| torch vs nr-lab (ControlMask: R/G/B 渐变、中央方块、倍数 0.5/1.5) | 0.9992-0.9999 | 0.5-1.9/255 |
 
 Style 1/2 的调色后处理 (`cg2r_post_process_kernel`) 在 `dlss5/style.py`：黑白场 → 冷暖/色调 → 曝光 → 对比度 →
 5 段分区 gamma → gamma → HSL 饱和度 → vibrance，最后 `sat(输入 + Intensity·(调色(NR) - 输入))`。预设取自 DLL 常量区

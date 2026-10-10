@@ -65,11 +65,26 @@
 
 DLSS-NR 有几个还没研究的可选输入: `UI`、`UIAlpha`、`UICorrection`、`ControlMask`、`Backbuffer`、`BidirectionalDistortionField`。
 
-- [ ] D1 用 nr-lab 的可选输入探针 (`--optional-probe` 已有) 加执行轨迹，查清每个输入进了哪个 kernel、在网络前还是网络后
-- [ ] D2 确定语义: 是否能让模型避开 / 还原 UI 区域，ControlMask 是否是逐像素的效果强度
-- [ ] D3 结论写进 `tools/notes.jsonl` 与 `torch/` (如果进网络就在 torch 版里复现)；判断兜底模式能不能用 (例如从画面估计 UI 遮罩)
+- [x] D1 用 nr-lab 的可选输入探针 (`--optional-probe` 已有) 加执行轨迹，查清每个输入进了哪个 kernel、在网络前还是网络后
+- [x] D2 确定语义: 是否能让模型避开 / 还原 UI 区域，ControlMask 是否是逐像素的效果强度
+- [x] D3 结论写进 `tools/notes.jsonl` 与 `torch/` (如果进网络就在 torch 版里复现)；判断兜底模式能不能用 (例如从画面估计 UI 遮罩)
 
 验收: 每个输入都有"用途 + 证据"；给出兜底模式用或不用的结论。
+
+**结果 (2026-10-10)**: nr-lab 加了 `--optional-value / --optional-rgba / --ramp-channels / --bundle / --bundle-backbuffer`
+(常数、方块、横向渐变，逐通道取值)，640x360 合成图逐项对比，并对比执行的 CUDA kernel:
+
+| 输入 | 用途 | 证据 |
+|---|---|---|
+| `ControlMask` (RGBA) | 逐像素画面参数，与全局参数**相乘**: R x Intensity (网络之后混合)，G x LocalTone，B x LocalStructure (进 pre_block 的控制输入)，A 未用。提供即强制 UseAutoMask=0 | 与相应全局参数逐字节一致 (G=0.5 ≡ LocalTone 0.5；G=0.5 且 LocalTone 0.5 ≡ LocalTone 0.25)；R 渐变线性；post_block 换成 `..._control_mask_full_rect` 变体；torch 版加 `control_mask=` 后与 nr-lab 吻合 0.5-1.9/255 |
+| `UICorrection` + `UIAlpha` (或 `UI` 的 alpha) + `Backbuffer` | 网络之后的合成: out = Backbuffer + (1 - α)·(NR - Color)；无 Backbuffer 时 = lerp(NR, Color, α)。UI 的 RGB 不用 | 公式与输出逐像素差 0.01/255；α=0.5 时在一半处；多跑 `cg2r_post_process_kernel` (Style 调色用的同一个)；网络输入不变 (其余区域变化 ≤0.07/255) |
+| `UI` / `UIAlpha` / `Backbuffer` 不开 UICorrection | 无作用 | 输出与不给逐字节相同 |
+| `BidirectionalDistortionField` | 此模型不用 | 每帧都读取参数，但常数/方块/值 8、带历史的 4 帧平移下输出逐字节不变，也没有多出的 kernel |
+
+兜底模式的结论: **不用**。UICorrection 就是兜底模式 Combine 已经在做的"原画面 + 变化量"，还需要游戏给出无 UI 画面和 UI 透明度；
+ControlMask 能让某些像素不受影响，但网络照样看到整张画面 (UI 变化引起的全局波动不会消失)，而且会关掉 AutoMask (默认画面变 2.5/255)。
+将来如果从画面估计出 HUD 区域，直接在 Combine 里按区域减弱变化量更便宜。OptiScaler 模式下如果游戏提供无 HUD 画面 + UI，
+UICorrection 可以直接用 (OptiScaler 那边的事)。
 
 ## E. 兜底模式支持 HDR
 
