@@ -1,7 +1,7 @@
 # DLSS5 兜底模式 (dxgi.dll 代理)
 
-给**没有超分**的 D3D12 游戏用的 DLSS5：不借助 OptiScaler，自己挂在交换链的 Present 上，每帧把游戏画面送进 DLSS-NR。
-由 DLSS5 Manager 安装 (`dlss5 install <游戏> --mode fallback`，没有超分的 DX12 游戏会自动选它)。
+给**没有超分**的 D3D12 / D3D11 游戏用的 DLSS5：不借助 OptiScaler，自己挂在交换链的 Present 上，每帧把游戏画面送进 DLSS-NR。
+由 DLSS5 Manager 安装 (`dlss5 install <游戏> --mode fallback`，没有超分的 DX12 / DX11 游戏会自动选它)。
 
 ## 做法
 
@@ -15,8 +15,13 @@
 
 - `dxgi.dll` 代理：20 个导出与系统 dxgi.dll 同名同序号，`CreateDXGIFactory*` 之外都用 jmp 转发 (`exports.asm`)。
   拿到工厂后改它的虚表 (CreateSwapChain / ForHwnd / ForCoreWindow / ForComposition)，从参数里拿到游戏的 D3D12 命令队列，
-  再改交换链的虚表 (Present / Present1 / ResizeBuffers / ResizeBuffers1 / SetColorSpace1)。D3D11 的交换链原样放过。
+  再改交换链的虚表 (Present / Present1 / ResizeBuffers / ResizeBuffers1 / SetColorSpace1)。
 - 所有处理录在自己的命令列表里，提交到游戏的同一个队列，排在游戏这一帧的渲染之后、Present 之前。
+- **D3D11 游戏**：`nvngx_dlssnr.dll` 虽然导出了 `NVSDK_NGX_D3D11_*`，但 `D3D11_Init_Ext` 检查完调用方就无条件返回
+  0xBAD00001 (不支持；`harness/nr11.cpp` 实测 + 反汇编)，所以不能直接走 D3D11。代理在游戏的适配器上自建一个 D3D12 设备和队列
+  (全进程一个，NGX 只认第一个设备)，再建一张两边共享的纹理：D3D11 把后缓冲拷进去 → 上面整条管线原样在这张纹理上跑 →
+  D3D11 拷回后缓冲。两个设备用共享 fence (`ID3D11DeviceContext4::Signal/Wait` 与队列的 `Wait/Signal`) 在 GPU 上排队，CPU 不等待。
+  翻转 / blt 交换链、`D3D11CreateDeviceAndSwapChain`、sRGB 后缓冲都测过；多重采样的后缓冲不处理。需要 Windows 10 1703+。
 - NGX 的调用顺序与 `harness/nr-lab.cpp` 相同：驱动的 `_nvngx.dll` Init → 经调用桥 `dlss5_nvngx.dll`
   (就是 `harness/nvngx-bridge.cpp`；NR 片段要求调用方模块名里含 "nvngx.dll") 调片段的 Init_Ext → CreateFeature(18)。
   不需要 `nvngx_dlss.dll` / `nvngx_dlssg.dll`。
@@ -84,10 +89,13 @@
 ## 构建与测试
 
 ```
-plugin\fallback\build.bat     -> bin\dxgi.dll, bin\dlss5_nvngx.dll, bin\fbtest.exe
+plugin\fallback\build.bat     -> bin\dxgi.dll, bin\dlss5_nvngx.dll, bin\fbtest.exe, bin\fbtest11.exe
                                  (需要 DLSS SDK 头文件 oss\nvidia-dlss\include，不在本仓库里)
 fbtest.exe image.ppm [帧数] [--pan N ...]   最小的 D3D12 "游戏"：每帧把图片拷进后缓冲再 Present (--pan: 每帧右移 N 像素)
-run_tests.ps1                 16 项回归 (格式、HDR scRGB / HDR10、改大小、重建、多交换链、光流、场景切换、精确运动矢量 = nr-lab)
+fbtest11.exe image.ppm [帧数] [--model flip|blt] [--legacy] [--readback out.ppm ...]   同样的 D3D11 "游戏"
+                              (--readback: 最后一次 Present 之后从 D3D11 这边读回后缓冲，确认处理结果真的拷回来了)
+run_tests.ps1                 25 项回归: D3D12 16 项 (格式、HDR scRGB / HDR10、改大小、重建、多交换链、光流、场景切换、
+                              精确运动矢量 = nr-lab) + D3D11 9 项 (blt / 翻转 / 老式创建、bgra8 / sRGB / rgb10、改大小、重建、光流)
 mv_check.ps1                  运动矢量校验: 与 nr-lab 的正确 / 零运动矢量参考比较
 motion_flicker.ps1            运动中的闪烁 (运动补偿后的帧间差)，各模式对比
 flicker.py                    静止镜头的帧间闪烁 (DumpCount 存的连续帧)

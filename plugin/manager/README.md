@@ -4,10 +4,10 @@
 
 - **OptiScaler** (游戏自带 DLSS / FSR2+ / XeSS)：注入与画面合成由 OptiScaler 的 DLSS Neural Rendering 分支完成
   (GPL-3，github.com/Dagherbou/OptiScaler_DLSSNR)，本工具写 `OptiScaler.ini` 的 `[DlssNr]` 节。有深度、运动矢量与历史帧，效果最好。
-- **兜底模式** (没有超分的 DX12 游戏)：本仓库自己的 dxgi.dll 代理 (`plugin/fallback/`)，在 Present 时截取画面跑 DLSS-NR，
+- **兜底模式** (没有超分的 DX12 / DX11 游戏)：本仓库自己的 dxgi.dll 代理 (`plugin/fallback/`)，在 Present 时截取画面跑 DLSS-NR，
   参数在 `dlss5fb.ini`。没有深度/运动矢量/历史帧，UI 也会被处理。
 
-没有超分、但有 DX12 的游戏默认选兜底模式，其余默认 OptiScaler；`--mode` / 界面的"注入方式"可以改。
+没有超分、但有 DX12 或 DX11 的游戏默认选兜底模式，其余默认 OptiScaler；`--mode` / 界面的"注入方式"可以改。
 
 - `DLSS5Manager.exe`：图形界面；`dlss5.exe`：命令行 (`dlss5 help`)。
 - .NET Framework 4.8 (Windows 10/11 自带)，不需要另装运行库。
@@ -33,7 +33,7 @@ python plugin\build_plugin.py      -> plugin\dist\DLSS5-RTX30\ (含 payload 与�
 | 反作弊 | exe 目录及往上 3 层里 EasyAntiCheat / BattlEye / xigncode / GameGuard / vgk / ACE 等 → **拒绝安装** |
 | 注入名 | dxgi / winmm / version / dbghelp / d3d12 / wininet / winhttp 中第一个没被占用的；识别已有的 ReShade、Special K、别人装的 OptiScaler |
 
-DX11 游戏只能经 dx11on12 跑 DLSS5，安装时会写 `[Upscalers] Dx11Upscaler=dlss_12`。
+OptiScaler 方式下 DX11 游戏只能经 dx11on12 跑 DLSS5，安装时会写 `[Upscalers] Dx11Upscaler=dlss_12`；兜底模式下 DX11 游戏的画面经共享纹理交给代理自建的 DX12 设备处理 (DLSS-NR 的 D3D11 入口是空壳)。
 
 ## 预设
 

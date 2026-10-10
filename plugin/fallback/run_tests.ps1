@@ -38,6 +38,17 @@ $cases = @(
     @{ name = 'optical flow (moving)'; args = @('--pan', '4');       ini = 'WorkingScale=0.5'; expect = @('optical flow: 320x180') }
     @{ name = 'scene cut';    args = @('--cut', '100', 'sponza640.ppm'); ini = 'WorkingScale=0.5'; expect = @('scene cut: frame 101') }
     @{ name = 'exact MV = nr-lab mvok'; args = @('--pan', '4');      ini = "WorkingScale=1.0`nStabilize=0`nSmooth=1`nMvConstX=-4`nDumpFrame=1`nDumpCount=4"; mvok = $true }
+    # D3D11 "games" (fbtest11): processed on our own D3D12 device through a shared texture. rb = the back buffer read
+    # back on the D3D11 side after the last Present must equal what the proxy wrote (blt model keeps its contents).
+    @{ name = 'D3D11 blt + readback';    exe = 'fbtest11.exe'; args = @('--model', 'blt', '--readback', 'rb11.ppm'); ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=$Frames"; dump = $true; rb = $true; expect = @('tracked (D3D11 device') }
+    @{ name = 'D3D11 legacy create';     exe = 'fbtest11.exe'; args = @('--legacy', '--readback', 'rb11.ppm');       ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=$Frames"; dump = $true; rb = $true; expect = @('tracked (D3D11 device') }
+    @{ name = 'D3D11 flip';              exe = 'fbtest11.exe'; args = @();                                ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=5"; dump = $true; expect = @('tracked (D3D11 device') }
+    @{ name = 'D3D11 bgra8';             exe = 'fbtest11.exe'; args = @('--format', 'bgra8', '--model', 'blt', '--readback', 'rb11.ppm'); ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=$Frames"; dump = $true; rb = $true }
+    @{ name = 'D3D11 rgba8 sRGB (blt)';  exe = 'fbtest11.exe'; args = @('--format', 'rgba8srgb', '--model', 'blt'); ini = ''; expect = @('shared texture 640x360 fmt=29', 'frame 1 processed') }
+    @{ name = 'D3D11 rgb10';             exe = 'fbtest11.exe'; args = @('--format', 'rgb10');             ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=5"; dump = $true }
+    @{ name = 'D3D11 ResizeBuffers';     exe = 'fbtest11.exe'; args = @('--resize', '100');               ini = ''; expect = @('NR 320x180', 'NR 240x135', 'shared texture 480x270') }
+    @{ name = 'D3D11 recreate';          exe = 'fbtest11.exe'; args = @('--recreate', '100');             ini = ''; expect = @('released', 'tracked'); tracked = 2 }
+    @{ name = 'D3D11 optical flow';      exe = 'fbtest11.exe'; args = @('--pan', '4');                    ini = 'WorkingScale=0.5'; expect = @('optical flow: 320x180') }
 )
 if ($Fullscreen) { $cases += @{ name = 'fullscreen'; args = @('--fullscreen', '60'); ini = ''; expect = @('frame 1 processed') } }
 
@@ -45,10 +56,11 @@ $pass = 0; $fail = 0
 Push-Location $test
 try {
     foreach ($c in $cases) {
-        Remove-Item dlss5fb_*.ppm, dlss5fb_*.f16, dlss5fb_*.pq, dlss5fb.log -ErrorAction SilentlyContinue
+        Remove-Item dlss5fb_*.ppm, dlss5fb_*.f16, dlss5fb_*.pq, dlss5fb.log, rb11.ppm -ErrorAction SilentlyContinue
         $ini = if ($c.ini) { $c.ini } else { 'WorkingScale=0.5' }
         "[DLSS5]`n$ini" | Set-Content -Encoding ascii dlss5fb.ini
-        $out = & .\fbtest.exe pattern.ppm $Frames @($c.args) 2>&1 | Out-String
+        $exe = if ($c.exe) { $c.exe } else { 'fbtest.exe' }
+        $out = & ".\$exe" pattern.ppm $Frames @($c.args) 2>&1 | Out-String
         $code = $LASTEXITCODE
         $log = if (Test-Path dlss5fb.log) { Get-Content dlss5fb.log -Raw } else { '' }
         $why = @()
@@ -66,6 +78,10 @@ try {
             if (-not (Test-Path dlss5fb_nr.ppm)) { $why += 'no dump' }
             elseif (Test-Path $ref) { if (-not (Same-Pixels (Join-Path $test dlss5fb_nr.ppm) $ref)) { $why += 'NR output differs from nr-lab' } }
             if ((Test-Path dlss5fb_in.ppm) -and -not (Same-Pixels (Join-Path $test dlss5fb_in.ppm) (Join-Path $test pattern.ppm))) { $why += 'captured input differs from the image' }
+        }
+        if ($c.rb) {
+            if (-not (Test-Path rb11.ppm) -or -not (Test-Path dlss5fb_out.ppm)) { $why += 'no read-back / output dump' }
+            elseif (-not (Same-Pixels (Join-Path $test rb11.ppm) (Join-Path $test dlss5fb_out.ppm))) { $why += 'D3D11 back buffer differs from the proxy output' }
         }
         $ms = if ($out -match '([\d.]+) ms/frame') { $Matches[1] } else { '?' }
         if ($why.Count -eq 0) { $pass++; Write-Host ("PASS  {0,-30} {1,7} ms/frame" -f $c.name, $ms) -ForegroundColor Green }

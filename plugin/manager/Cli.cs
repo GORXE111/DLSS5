@@ -25,7 +25,7 @@ namespace Dlss5Manager
   --preset 性能|均衡|画质            按显卡和屏幕分辨率选模型分辨率
   --set 名字=值                      设置任意参数，可重复 (例: --set LocalStructure=0.8)
   --mode auto|optiscaler|fallback    注入方式: optiscaler = 借用游戏自带的超分 (DLSS/FSR/XeSS)；
-                                     fallback = 兜底模式，截取 DX12 游戏画面 (没超分的游戏)。默认按检测结果自动选
+                                     fallback = 兜底模式，截取 DX12 / DX11 游戏画面 (没超分的游戏)。默认按检测结果自动选
   --proxy dxgi.dll|winmm.dll|...     指定注入文件名 (默认自动选一个没被占用的；兜底模式固定 dxgi.dll)
   --res 2560x1440                    输出分辨率 (预设估算用，默认取主显示器)
   --force                            跳过反作弊/显卡检查 —— 只在确认游戏离线运行、没有反作弊时使用";
@@ -186,7 +186,7 @@ namespace Dlss5Manager
         public static string Hint(string mode)
         {
             return mode == Modes.Fallback
-                ? "直接启动游戏即可 (DX12)。F10 开关 DLSS5、F11 左右对比；改 dlss5fb.ini 后约 1 秒内生效，日志在 dlss5fb.log。"
+                ? "直接启动游戏即可 (DX12 或 DX11)。F10 开关 DLSS5、F11 左右对比；改 dlss5fb.ini 后约 1 秒内生效，日志在 dlss5fb.log。"
                 : "进游戏后在图形设置里打开 DLSS (或 FSR / XeSS)；按 Insert 打开 OptiScaler 菜单可实时调整。";
         }
 

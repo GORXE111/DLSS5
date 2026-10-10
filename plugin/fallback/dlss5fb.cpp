@@ -1,4 +1,4 @@
-// DLSS5 fallback mode: a dxgi.dll proxy for D3D12 games that ship no upscaler.
+// DLSS5 fallback mode: a dxgi.dll proxy for D3D12 and D3D11 games that ship no upscaler.
 //
 // The proxy forwards every dxgi export to the system dxgi.dll and patches the
 // factory / swap chain vtables.  For each D3D12 swap chain it takes the finished
@@ -16,6 +16,7 @@
 #define NOMINMAX
 #include <windows.h>
 #include <d3d12.h>
+#include <d3d11_4.h>
 #include <dxgi1_6.h>
 #include <d3dcompiler.h>
 #include <nvsdk_ngx.h>
@@ -630,6 +631,21 @@ struct Chain {
     int feature_style = -1;
     int feature_linear = -1;
 
+    // D3D11 game: DLSS-NR has no D3D11 path (its Init_Ext returns "not supported"), so the pipeline runs on our own
+    // D3D12 device and queue, on a texture shared with the game's device. Each frame: D3D11 copies the back buffer
+    // into the shared texture, D3D12 processes it in place, D3D11 copies it back. A shared fence orders the two
+    // devices on the GPU; the CPU never waits.
+    ID3D11Device *d11 = nullptr;
+    ID3D11Device1 *d11_1 = nullptr;
+    ID3D11Device5 *d11_5 = nullptr;
+    ID3D11DeviceContext *ctx11 = nullptr;
+    ID3D11DeviceContext4 *ctx11_4 = nullptr;
+    ID3D12Resource *bridge12 = nullptr;
+    ID3D11Texture2D *bridge11 = nullptr;
+    ID3D12Fence *sync12 = nullptr;
+    ID3D11Fence *sync11 = nullptr;
+    UINT64 sync_value = 0;
+
     Config cfg;
     FILETIME ini_time = {};
     DWORD last_ini_check = 0;
@@ -705,6 +721,8 @@ static void DestroyChain(Chain *c)
 {
     WaitIdle(c);
     ReleaseSized(c);
+    SafeRelease(c->bridge11); SafeRelease(c->bridge12); SafeRelease(c->sync11); SafeRelease(c->sync12);
+    SafeRelease(c->ctx11_4); SafeRelease(c->ctx11); SafeRelease(c->d11_5); SafeRelease(c->d11_1); SafeRelease(c->d11);
     for (auto &a : c->alloc) SafeRelease(a);
     SafeRelease(c->list); SafeRelease(c->list2); SafeRelease(c->fence); SafeRelease(c->root); SafeRelease(c->down); SafeRelease(c->smooth);
     SafeRelease(c->to_motion); SafeRelease(c->cut); SafeRelease(c->combine); SafeRelease(c->cut_buf);
@@ -1080,6 +1098,118 @@ static void Barrier(ID3D12GraphicsCommandList *list, ID3D12Resource *r, D3D12_RE
 
 static void DumpPpm(Chain *c, ID3D12Resource *tex, D3D12_RESOURCE_STATES state, const wchar_t *name);
 
+// ---------------------------------------------------------------- D3D11 games (shared texture with our D3D12 device)
+
+// our own D3D12 device + queue on the game's adapter, and the fence both devices order themselves with
+static bool InitD3D11(Chain *c, ID3D11Device *d11)
+{
+    c->d11 = d11;
+    d11->AddRef();
+    d11->GetImmediateContext(&c->ctx11);
+    if (FAILED(d11->QueryInterface(IID_PPV_ARGS(&c->d11_1))) || FAILED(d11->QueryInterface(IID_PPV_ARGS(&c->d11_5))) ||
+        FAILED(c->ctx11->QueryInterface(IID_PPV_ARGS(&c->ctx11_4)))) {
+        Log("FAIL D3D11.4 interfaces missing (needs Windows 10 1703 or later)");
+        return false;
+    }
+    IDXGIDevice *dxgi_dev = nullptr;
+    IDXGIAdapter *adapter = nullptr;
+    if (FAILED(d11->QueryInterface(IID_PPV_ARGS(&dxgi_dev)))) return false;
+    HRESULT hr = dxgi_dev->GetAdapter(&adapter);
+    dxgi_dev->Release();
+    if (FAILED(hr)) return false;
+    // one D3D12 device for the whole process: NGX binds to the first device it is initialised with, and a game that
+    // recreates its swap chain must get the same one again
+    static ID3D12Device *shared_device = nullptr;
+    if (shared_device == nullptr) hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&shared_device));
+    adapter->Release();
+    if (FAILED(hr) || shared_device == nullptr) {
+        Log("FAIL D3D12CreateDevice for the D3D11 game's adapter: 0x%08X", static_cast<unsigned>(hr));
+        return false;
+    }
+    c->device = shared_device;
+    c->device->AddRef();
+    D3D12_COMMAND_QUEUE_DESC qd = {};
+    qd.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+    if (FAILED(c->device->CreateCommandQueue(&qd, IID_PPV_ARGS(&c->queue)))) return false;
+    HANDLE h = nullptr;
+    if (FAILED(c->device->CreateFence(0, D3D12_FENCE_FLAG_SHARED, IID_PPV_ARGS(&c->sync12))) ||
+        FAILED(c->device->CreateSharedHandle(c->sync12, nullptr, GENERIC_ALL, nullptr, &h))) return false;
+    hr = c->d11_5->OpenSharedFence(h, IID_PPV_ARGS(&c->sync11));
+    CloseHandle(h);
+    if (FAILED(hr)) { Log("FAIL OpenSharedFence: 0x%08X", static_cast<unsigned>(hr)); return false; }
+    return true;
+}
+
+// the shared texture, recreated when the back buffer changes
+static bool EnsureBridge(Chain *c, const D3D11_TEXTURE2D_DESC &bd)
+{
+    if (c->bridge12) {
+        D3D12_RESOURCE_DESC cur = c->bridge12->GetDesc();
+        if (cur.Width == bd.Width && cur.Height == bd.Height && cur.Format == bd.Format) return true;
+        WaitIdle(c);
+        SafeRelease(c->bridge11);
+        SafeRelease(c->bridge12);
+    }
+    D3D12_HEAP_PROPERTIES heap = {D3D12_HEAP_TYPE_DEFAULT};
+    D3D12_RESOURCE_DESC d = {};
+    d.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    d.Width = bd.Width;
+    d.Height = bd.Height;
+    d.DepthOrArraySize = 1;
+    d.MipLevels = 1;
+    d.Format = bd.Format;
+    d.SampleDesc.Count = 1;
+    d.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_SIMULTANEOUS_ACCESS;
+    HRESULT hr = c->device->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_SHARED, &d, D3D12_RESOURCE_STATE_COMMON, nullptr,
+        IID_PPV_ARGS(&c->bridge12));
+    if (FAILED(hr)) {
+        Log("FAIL shared texture %ux%u fmt=%d: 0x%08X", bd.Width, bd.Height, bd.Format, static_cast<unsigned>(hr));
+        return false;
+    }
+    HANDLE h = nullptr;
+    hr = c->device->CreateSharedHandle(c->bridge12, nullptr, GENERIC_ALL, nullptr, &h);
+    if (SUCCEEDED(hr)) {
+        hr = c->d11_1->OpenSharedResource1(h, IID_PPV_ARGS(&c->bridge11));
+        CloseHandle(h);
+    }
+    if (FAILED(hr)) {
+        Log("FAIL opening the shared texture on D3D11: 0x%08X", static_cast<unsigned>(hr));
+        SafeRelease(c->bridge12);
+        return false;
+    }
+    Log("D3D11 bridge: shared texture %ux%u fmt=%d", bd.Width, bd.Height, bd.Format);
+    return true;
+}
+
+// back buffer -> shared texture; returns the shared texture as the frame's "back buffer" (caller releases it)
+static ID3D12Resource *Acquire11(Chain *c, const char **why)
+{
+    ID3D11Texture2D *bb = nullptr;
+    if (FAILED(c->swapchain->GetBuffer(0, IID_PPV_ARGS(&bb)))) { *why = "GetBuffer failed"; return nullptr; }
+    D3D11_TEXTURE2D_DESC bd = {};
+    bb->GetDesc(&bd);
+    if (bd.SampleDesc.Count != 1) { bb->Release(); *why = "multisampled back buffer"; return nullptr; }
+    if (!EnsureBridge(c, bd)) { bb->Release(); c->broken = true; *why = "shared texture failed"; return nullptr; }
+    c->ctx11->CopyResource(c->bridge11, bb);
+    bb->Release();
+    c->ctx11_4->Signal(c->sync11, ++c->sync_value);
+    c->ctx11->Flush();
+    c->queue->Wait(c->sync12, c->sync_value);
+    c->bridge12->AddRef();
+    return c->bridge12;
+}
+
+// shared texture -> back buffer, once our queue is done with it
+static void Finish11(Chain *c)
+{
+    ID3D11Texture2D *bb = nullptr;
+    if (FAILED(c->swapchain->GetBuffer(0, IID_PPV_ARGS(&bb)))) return;
+    c->queue->Signal(c->sync12, ++c->sync_value);
+    c->ctx11_4->Wait(c->sync11, c->sync_value);
+    c->ctx11->CopyResource(bb, c->bridge11);
+    bb->Release();
+}
+
 static const D3D12_RESOURCE_STATES kRead =
     D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
@@ -1112,9 +1242,15 @@ static void ProcessFrame(Chain *c)
     if (!c->cfg.enabled) { Skip(c, 1, "disabled (ini or F10)"); return; }
     if (c->broken) return;
 
-    UINT index = c->swapchain->GetCurrentBackBufferIndex();
     ID3D12Resource *bb = nullptr;
-    if (FAILED(c->swapchain->GetBuffer(index, IID_PPV_ARGS(&bb)))) { Skip(c, 4, "GetBuffer failed"); return; }
+    if (c->d11) {
+        const char *why = "";
+        bb = Acquire11(c, &why);
+        if (bb == nullptr) { Skip(c, 4, why); return; }
+    } else {
+        UINT index = c->swapchain->GetCurrentBackBufferIndex();
+        if (FAILED(c->swapchain->GetBuffer(index, IID_PPV_ARGS(&bb)))) { Skip(c, 4, "GetBuffer failed"); return; }
+    }
     D3D12_RESOURCE_DESC desc = bb->GetDesc();
     const int hdr = HdrMode(desc.Format, c->color_space);
     if (hdr < 0 || desc.SampleDesc.Count != 1) {
@@ -1342,6 +1478,7 @@ static void ProcessFrame(Chain *c)
     Barrier(l, c->nr, kRead, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     Barrier(l, c->delta, kRead, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     Submit(c, end_slot, l);
+    if (c->d11) Finish11(c);
 
     if (c->cfg.dump_frame >= 0 && c->frame == static_cast<UINT64>(c->cfg.dump_frame)) {
         WaitIdle(c);
@@ -1616,9 +1753,11 @@ static void Track(IUnknown *device, IUnknown *swapchain)
 {
     if (device == nullptr || swapchain == nullptr) return;
     ID3D12CommandQueue *queue = nullptr;
-    if (FAILED(device->QueryInterface(IID_PPV_ARGS(&queue)))) return;   // D3D11 etc.: pass through
+    ID3D11Device *d11 = nullptr;
+    if (FAILED(device->QueryInterface(IID_PPV_ARGS(&queue))) && FAILED(device->QueryInterface(IID_PPV_ARGS(&d11))))
+        return;   // neither D3D12 nor D3D11 (D3D10 etc.): pass through
     IDXGISwapChain3 *sc3 = nullptr;
-    if (FAILED(swapchain->QueryInterface(IID_PPV_ARGS(&sc3)))) { queue->Release(); return; }
+    if (FAILED(swapchain->QueryInterface(IID_PPV_ARGS(&sc3)))) { SafeRelease(queue); SafeRelease(d11); return; }
     sc3->Release();   // keep a weak pointer; the swap chain owns itself
 
     void **vt = *reinterpret_cast<void ***>(sc3);
@@ -1635,15 +1774,26 @@ static void Track(IUnknown *device, IUnknown *swapchain)
 
     auto *c = new Chain;
     c->swapchain = sc3;
-    c->queue = queue;
-    queue->GetDevice(IID_PPV_ARGS(&c->device));
-    D3D12_COMMAND_QUEUE_DESC qd = queue->GetDesc();
-    bool ok = qd.Type == D3D12_COMMAND_LIST_TYPE_DIRECT && InitNgx(c->device) && InitPipeline(c);
-    if (!ok) {
-        Log("swap chain %p: setup failed (queue type %d), passing through", swapchain, qd.Type);
-        c->broken = true;
+    if (d11) {
+        bool ok = InitD3D11(c, d11) && InitNgx(c->device) && InitPipeline(c);
+        d11->Release();   // InitD3D11 took its own reference
+        if (!ok) {
+            Log("swap chain %p: D3D11 setup failed, passing through", swapchain);
+            c->broken = true;
+        } else {
+            Log("swap chain %p tracked (D3D11 device %p, processed on our D3D12 device %p)", swapchain, d11, c->device);
+        }
     } else {
-        Log("swap chain %p tracked (D3D12 queue %p)", swapchain, queue);
+        c->queue = queue;
+        queue->GetDevice(IID_PPV_ARGS(&c->device));
+        D3D12_COMMAND_QUEUE_DESC qd = queue->GetDesc();
+        bool ok = qd.Type == D3D12_COMMAND_LIST_TYPE_DIRECT && InitNgx(c->device) && InitPipeline(c);
+        if (!ok) {
+            Log("swap chain %p: setup failed (queue type %d), passing through", swapchain, qd.Type);
+            c->broken = true;
+        } else {
+            Log("swap chain %p tracked (D3D12 queue %p)", swapchain, queue);
+        }
     }
     std::lock_guard<std::mutex> lock(g_chains_lock);
     auto it = g_chains.find(swapchain);

@@ -1,5 +1,5 @@
 // DLSS5 Manager 核心: 游戏库扫描、游戏检测、显卡/预设、OptiScaler.ini / dlss5fb.ini 读写、安装/卸载。
-// 两种注入方式: OptiScaler (游戏自带超分，借用它的深度/运动矢量) 与兜底模式 (自带 dxgi.dll 代理，截取 DX12 画面)。
+// 两种注入方式: OptiScaler (游戏自带超分，借用它的深度/运动矢量) 与兜底模式 (自带 dxgi.dll 代理，截取 DX12 / DX11 画面)。
 // 图形界面 (Gui.cs) 与命令行 (Cli.cs) 共用。目标 .NET Framework 4.8 (Windows 10/11 自带)。
 using System;
 using System.Collections.Generic;
@@ -230,8 +230,10 @@ namespace Dlss5Manager
         public bool ApisGuessed;   // 导入表里没有，是从程序里的字符串推测的 (运行时才加载图形库的引擎，如 Godot)
         public bool UnrealEngine { get { return Engine.StartsWith("Unreal"); } }
 
-        // 没有超分、但能跑 DX12 的游戏默认走兜底模式；已安装的以安装记录为准
-        public string SuggestedMode { get { return Upscalers.Count == 0 && Apis.Contains("DX12") ? Modes.Fallback : Modes.OptiScaler; } }
+        // 兜底模式能挂上的游戏: DX12 直接处理，DX11 经共享纹理在自建的 DX12 设备上处理 (Vulkan 不行)
+        public bool FallbackCapable { get { return Apis.Contains("DX12") || Apis.Contains("DX11"); } }
+        // 没有超分、但能跑 DX12 / DX11 的游戏默认走兜底模式；已安装的以安装记录为准
+        public string SuggestedMode { get { return Upscalers.Count == 0 && FallbackCapable ? Modes.Fallback : Modes.OptiScaler; } }
         public string Mode { get { return Installed != null ? (Installed.mode ?? Modes.OptiScaler) : SuggestedMode; } }
 
         static readonly Regex SkipDir = new Regex(@"^(_CommonRedist|Redist|redist|DirectX|vcredist|EasyAntiCheat|BattlEye|Support|Installers?|__Installer|\.dlss5_backup|ThirdParty|Prerequisites|CrashReportClient)$", RegexOptions.IgnoreCase);
@@ -401,7 +403,7 @@ namespace Dlss5Manager
             if (ProxyOwners.Values.Any(v => v.StartsWith("OptiScaler"))) list.Add("已有一份别人装的 OptiScaler，请先卸载它，避免两份冲突");
             if (mode == Modes.Fallback)
             {
-                if (!Apis.Contains("DX12")) list.Add("兜底模式只支持 DX12 游戏" + (Apis.Count > 0 ? " (这个游戏是 " + string.Join(" / ", Apis) + ")" : ""));
+                if (!FallbackCapable) list.Add("兜底模式只支持 DX12 / DX11 游戏" + (Apis.Count > 0 ? " (这个游戏是 " + string.Join(" / ", Apis) + ")" : ""));
                 string owner;
                 if (ProxyOwners.TryGetValue("dxgi.dll", out owner) && owner != "本工具")
                     list.Add("兜底模式必须以 dxgi.dll 注入，但它已被占用 (" + owner + ")");
@@ -416,11 +418,9 @@ namespace Dlss5Manager
             if (mode == Modes.Fallback)
             {
                 list.Add("兜底模式: 从游戏画面直接截取，没有深度、运动矢量和历史帧，UI 也会一起被处理；进游戏后 F10 开关、F11 左右对比");
-                if (Engine == "Unity" && Apis.Contains("DX11"))
-                    list.Add("Unity 游戏常默认用 DX11，兜底模式需要 DX12: 在 Steam 启动选项里加 -force-d3d12");
                 if (Upscalers.Count > 0) list.Add("这个游戏自带超分，用 OptiScaler 方式效果更好 (有深度和运动矢量)");
                 if (ApisGuessed && Apis.Count > 1)
-                    list.Add("图形 API 是从程序里推测的，游戏可能支持多种: 必须以 DX12 运行兜底模式才生效 (Godot 游戏可加启动参数 --rendering-driver d3d12)；"
+                    list.Add("图形 API 是从程序里推测的，游戏可能支持多种: 以 DX12 或 DX11 运行兜底模式才生效，Vulkan 不行 (Godot 游戏可加启动参数 --rendering-driver d3d12)；"
                              + "装好后进一次游戏，dlss5fb.log 里出现 tracked 就说明挂上了");
             }
             else
@@ -428,7 +428,7 @@ namespace Dlss5Manager
                 if (Upscalers.Count == 0)
                     list.Add(UnrealEngine ? "没找到超分的 dll；Unreal 游戏的 FSR/TSR 常常编进了主程序，能否生效要进游戏看 OptiScaler 菜单"
                                           : "没找到 DLSS/FSR/XeSS。OptiScaler 方式要从游戏的超分调用里拿深度和运动矢量，游戏不支持超分时不会生效"
-                                            + (Apis.Contains("DX12") ? "；可以改用兜底模式" : ""));
+                                            + (FallbackCapable ? "；可以改用兜底模式" : ""));
                 if (Apis.Count > 0 && !Apis.Contains("DX12") && !Apis.Contains("Vulkan") && Apis.Contains("DX11"))
                     list.Add("DX11 游戏: 会把超分切到 dlss_12 (DX11-on-12)，这是 DX11 下唯一能跑 DLSS5 的方式");
                 foreach (var kv in ProxyOwners)
