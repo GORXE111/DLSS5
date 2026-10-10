@@ -29,7 +29,7 @@ python plugin\build_plugin.py      -> plugin\dist\DLSS5-RTX30\ (含 payload 与�
 | 主程序 | Unreal 的 `*-Win64-Shipping.exe` > 商店记录的启动程序 > 最大的 exe (排除启动器、崩溃上报、安装程序等) |
 | 引擎 | Shipping exe / `Engine` 目录 → Unreal；`UnityPlayer.dll` → Unity；`REDprelauncher.exe` → REDengine |
 | 位数 | 主程序的 PE 头: 32 位游戏 → **拒绝安装** (DLSS5 的 dll 只有 64 位) |
-| 图形 API | 主程序 (Unity 看 UnityPlayer.dll) 的导入表与延迟导入表：d3d12 / d3d11 / vulkan-1；`D3D12\D3D12Core.dll` (Agility SDK) |
+| 图形 API | 主程序 (Unity 看 UnityPlayer.dll) 的导入表与延迟导入表：d3d12 / d3d11 / vulkan-1；找不到时再看主程序旁边 >1 MB 的引擎 dll；`D3D12\D3D12Core.dll` (Agility SDK) |
 | 超分 | `nvngx_dlss.dll`、`sl.dlss.dll`、`libxess*.dll`、`amd_fidelityfx_*.dll`、`ffx_fsr2_api_*.dll` 等；Unreal 的 DLSS 插件目录 |
 | 反作弊 | exe 目录及往上 3 层里 EasyAntiCheat / BattlEye / xigncode / GameGuard / vgk / ACE 等 → **拒绝安装** |
 | 注入名 | dxgi / winmm / version / dbghelp / d3d12 / wininet / winhttp 中第一个没被占用的；识别已有的 ReShade、Special K、别人装的 OptiScaler |

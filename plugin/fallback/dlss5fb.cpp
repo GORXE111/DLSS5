@@ -341,15 +341,18 @@ Texture2D<float4> DeltaT : register(t3);
 Texture2D<int2> Flow : register(t4);         // optical flow, S10.5 pixels, one vector per grid cell
 Texture2D<float> Gray0 : register(t5);       // grey frames (which one is current: curGray)
 Texture2D<float> Gray1 : register(t6);
+Texture2D<float4> Prev : register(t7);       // last frame's back buffer (full resolution)
+Texture2D<float> UiT : register(t8);         // UI evidence, read by the pixel shader
 RWTexture2D<float4> Out : register(u0);
 RWTexture2D<float4> Stable : register(u1);   // rgb: last value fed to NR, a: how much it changed this frame
-RWTexture2D<float4> Delta : register(u2);    // rgb: smoothed NR change (NR output - NR input), a: UI evidence 0..1
+RWTexture2D<float4> Delta : register(u2);    // smoothed NR change (NR output - NR input)
 // optical flow input (luma). ABGR8 "colour" input is not usable: the D3D12 driver path reads each byte of an RGBA8
 // texel as a separate grey pixel (flow comes back 4x too large horizontally), measured with fbtest --pan
 RWTexture2D<float> Gray : register(u3);
 RWTexture2D<float2> Motion : register(u4);   // motion vectors for DLSS-NR (pixels, current -> previous)
 RWBuffer<float> CutBuf : register(u5);       // [0] mean motion-compensated difference, [1] cut this frame, [2] cut last frame,
                                              // [3] share of pixels that changed since the last frame (is the scene moving?)
+RWTexture2D<float> Ui : register(u6);        // UI evidence 0..1 per back buffer pixel
 SamplerState Lin : register(s0);
 cbuffer C : register(b0) {
     float2 loSize; float2 bbSize; float taps; float direct; float split; float band;
@@ -429,19 +432,69 @@ void Smooth(uint3 id : SV_DispatchThreadID)
     // ColourStrength < 1: move towards the change's brightness part only, so the game keeps its own hues
     dn = lerp(dot(dn, float3(0.299, 0.587, 0.114)).xxx, dn, colour);
     float a = first > 0 || CutBuf[2] > 0 ? 1 : saturate(smooth + m * gain);   // right after a cut: no averaging
-    // UI: a HUD pixel keeps its exact value while the scene around it moves. Evidence grows by uiRate on every frame
-    // the scene moves (more than a fifth of the picture changed) and this pixel did not; a change takes a quarter
-    // back, so a counter that ticks now and then stays protected. PS scales the change down with the evidence.
-    float4 old = Delta[id.xy];
-    float u = first > 0 || uiRate <= 0 ? 0 : old.a;
-    if (uiRate > 0) {
-        if (Stable[id.xy].a > 0) u = max(u - 0.25, 0);
-        else if (CutBuf[3] > 0.2) u = min(u + uiRate, 1);
-    }
-    if (CutBuf[1] > 0) { Delta[id.xy] = float4(0, 0, 0, u); return; }   // scene cut: show the game's frame, restart the average
-    Delta[id.xy] = float4(lerp(old.rgb, dn, a), u);
+    if (CutBuf[1] > 0) { Delta[id.xy] = 0; return; }   // scene cut: show the game's frame, restart the average
+    Delta[id.xy] = float4(lerp(Delta[id.xy].rgb, dn, a), 1);
 }
 
+// UI: a HUD pixel keeps its value while the scene around it moves. Evidence grows by uiRate on every frame the scene
+// moves (more than a fifth of the picture changed) and this pixel stayed put; a clear change takes a quarter back, so
+// a counter that ticks now and then stays protected. Done per back buffer pixel: HUD text is one or two pixels wide,
+// and at the NR resolution it shares a texel with the moving picture (measured in Unigine Superposition: evidence
+// kept at the NR resolution protected a solid test rectangle but none of the real text).
+// "Stayed put" is one of two things:
+//   exactly the same value: opaque HUD (panels, icons, text);
+//   nearly the same, on an edge, with the picture around it changing: real HUD text is often a little transparent
+//   (Superposition's title is 250, not 255, and moves by +-1 with the background). "Nearly the same" alone would
+//   also catch smooth sky and walls; an edge that stays in place while its surroundings move is what only a HUD has.
+float UiLevel(float3 c) { return hdrMode > 0 ? dot(Picture(c), 1.0 / 3) : dot(c, 1.0 / 3); }
+[numthreads(8, 8, 1)]
+void UiPass(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)bbSize.x || id.y >= (uint)bbSize.y) return;
+    int2 p = int2(id.xy), hi = int2(bbSize) - 1;
+    float3 a = Src.Load(int3(p, 0)).rgb, b = Prev.Load(int3(p, 0)).rgb;
+    float3 d3 = abs(a - b);
+    float d = max(d3.r, max(d3.g, d3.b));
+    float unit = hdrMode > 0 ? max(max(a.r, max(a.g, a.b)), 0.05) * 4 : 1;   // HDR: relative to the pixel's level
+    float u = first > 0 ? 0 : Ui[p];
+    if (d > 6.0 / 255 * unit) u = max(u - 0.25, 0);
+    else if (CutBuf[3] > 0.2) {
+        // Every frame the scene moves either adds or takes away: a smooth surface drifts by a few steps on most
+        // frames and is exactly still on a few. With "still adds, small drift is ignored" its evidence only ever
+        // went up, and a sheet of paper in Superposition was marked as HUD after a few hundred frames.
+        // Clipped white and crushed black hold exactly still while the camera moves: for those only the edge rule counts.
+        // (white = every channel at the top: a saturated red health bar is not clipped)
+        float3 e = hdrMode > 0 ? Picture(a) : a;
+        bool stay = d == 0 && min(e.r, min(e.g, e.b)) < 0.985 && max(e.r, max(e.g, e.b)) > 0.015;
+        bool unsure = false;   // nearly still on an edge, but nothing around it moved either: this frame says nothing
+        if (!stay && d <= 2.0 / 255 * unit) {
+            // an edge here? (level range over a plus-shaped neighbourhood of radius 2)
+            float l0 = UiLevel(a), mn = l0, mx = l0;
+            static const int2 kOff[8] = {int2(1, 0), int2(-1, 0), int2(0, 1), int2(0, -1), int2(2, 0), int2(-2, 0), int2(0, 2), int2(0, -2)};
+            for (int i = 0; i < 8; ++i) {
+                float l = UiLevel(Src.Load(int3(clamp(p + kOff[i], 0, hi), 0)).rgb);
+                mn = min(mn, l);
+                mx = max(mx, l);
+            }
+            if (mx - mn > 24.0 / 255) {
+                // is the picture around it changing? (grey frames at the NR resolution, 1.5 texels around)
+                float2 q = (float2(p) + 0.5) / bbSize, o = 1.5 / loSize;
+                float act = 0;
+                for (int j = -1; j <= 1; j += 2)
+                    for (int k = -1; k <= 1; k += 2) {
+                        float2 s = q + o * float2(k, j);
+                        act = max(act, abs(Gray0.SampleLevel(Lin, s, 0) - Gray1.SampleLevel(Lin, s, 0)));
+                    }
+                stay = act > 6.0 / 255;
+                unsure = !stay;
+            }
+        }
+        if (!unsure) u = stay ? min(u + uiRate, 1) : max(u - uiRate, 0);
+    }
+    Ui[p] = u;
+}
+
+)" R"(   // (MSVC limits one string literal to about 16 KB: the shader source is split here)
 float Median9(float v[9])
 {
     // partial sorting network: min/max exchanges that leave the median in v[4]
@@ -565,15 +618,17 @@ float4 PS(float4 pos : SV_Position, float2 uv : TEXCOORD0) : SV_Target
         if (pos.x < mid) return b;
     }
     float4 dt = DeltaT.SampleLevel(Lin, uv, 0);
-    float ua = dt.a;
-    if (uiRate > 0 && direct <= 0) {
-        // the evidence lives at the NR resolution, and a HUD edge that is not aligned to its grid shares a texel with the
-        // moving picture: widen the evidence by one texel so the HUD's edge rows are covered too
-        float2 o = 1.0 / loSize;
-        ua = max(max(DeltaT.SampleLevel(Lin, uv + float2(o.x, o.y), 0).a, DeltaT.SampleLevel(Lin, uv + float2(-o.x, o.y), 0).a),
-                 max(DeltaT.SampleLevel(Lin, uv + float2(o.x, -o.y), 0).a, DeltaT.SampleLevel(Lin, uv - float2(o.x, o.y), 0).a));
+    float ui = 0;
+    if (uiRate > 0) {
+        // 3x3 mean of the evidence: an anti-aliased glyph edge is part text, part moving picture, and changes every
+        // frame; its neighbours tell how much of it is text
+        for (int j = -1; j <= 1; ++j)
+            for (int i = -1; i <= 1; ++i)
+                ui += smoothstep(0.6, 1.0, UiT.Load(int3(clamp(int2(pos.xy) + int2(i, j), 0, int2(bbSize) - 1), 0)));
+        // HUD pixels come in strokes and patches; a lone pixel is a scene pixel that happened to hold still (clipped
+        // highlights, dark corners: seen as red speckle with UiShow in Superposition) and gets no protection
+        ui = max(ui / 9, smoothstep(0.6, 1.0, UiT.Load(int3(pos.xy, 0)))) * saturate((ui - 1.5) / 1.5);
     }
-    float ui = uiRate > 0 ? smoothstep(0.6, 1.0, ua) : 0;
     float3 d = dt.rgb * (1 - ui);
     if (uiShow > 0 && ui > 0) return float4(lerp(b.rgb, float3(1, 0, 0), 0.6 * ui), b.a);
     if (hdrMode > 0) {
@@ -616,7 +671,7 @@ static const UINT kFrames = 3;
 static const UINT kConstants = 26;   // root constants (cbuffer C)
 // descriptor heap: SRV copy/lo/nr/delta/flow, then two UAV tables lo/stable/delta/gray/motion that differ only in
 // which grey frame they write (the optical flow engine compares this frame's grey image with the previous one)
-static const UINT kSrv = 0, kUav = 7, kUavCount = 6;
+static const UINT kSrv = 0, kUav = 9, kUavCount = 7;
 
 struct Chain {
     std::mutex lock;
@@ -639,6 +694,7 @@ struct Chain {
     ID3D12PipelineState *smooth = nullptr;
     ID3D12PipelineState *to_motion = nullptr;
     ID3D12PipelineState *cut = nullptr;
+    ID3D12PipelineState *uipass = nullptr;
     ID3D12Resource *cut_buf = nullptr;                 // CutBuf: 4 floats on the GPU
     ID3D12Resource *cut_rb[kFrames] = {};              // read back one frame late, for the log
     UINT64 cuts = 0;
@@ -650,6 +706,7 @@ struct Chain {
     UINT W = 0, H = 0, w = 0, h = 0;
     DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
     ID3D12Resource *copy = nullptr, *lo = nullptr, *nr = nullptr, *depth = nullptr, *mv = nullptr, *stable = nullptr, *delta = nullptr;
+    ID3D12Resource *prev = nullptr, *ui = nullptr;     // UI protection: last frame's back buffer, evidence per pixel
     bool first_smooth = true;
     // optical flow session at NR resolution: two grey frames (current / previous) and the forward flow
     NvOFHandle of = nullptr;
@@ -747,6 +804,7 @@ static void ReleaseSized(Chain *c)
     ReleaseFlow(c);
     if (c->feature) { ngx.b_release(ngx.release, c->feature); c->feature = nullptr; }
     SafeRelease(c->copy); SafeRelease(c->lo); SafeRelease(c->nr); SafeRelease(c->depth); SafeRelease(c->mv); SafeRelease(c->stable); SafeRelease(c->delta);
+    SafeRelease(c->prev); SafeRelease(c->ui);
     c->W = c->H = c->w = c->h = 0;
 }
 
@@ -758,7 +816,7 @@ static void DestroyChain(Chain *c)
     SafeRelease(c->ctx11_4); SafeRelease(c->ctx11); SafeRelease(c->d11_5); SafeRelease(c->d11_1); SafeRelease(c->d11);
     for (auto &a : c->alloc) SafeRelease(a);
     SafeRelease(c->list); SafeRelease(c->list2); SafeRelease(c->fence); SafeRelease(c->root); SafeRelease(c->down); SafeRelease(c->smooth);
-    SafeRelease(c->to_motion); SafeRelease(c->cut); SafeRelease(c->combine); SafeRelease(c->cut_buf);
+    SafeRelease(c->to_motion); SafeRelease(c->cut); SafeRelease(c->uipass); SafeRelease(c->combine); SafeRelease(c->cut_buf);
     for (auto &r : c->cut_rb) SafeRelease(r);
     SafeRelease(c->heap); SafeRelease(c->rtv_heap); SafeRelease(c->queue); SafeRelease(c->device);
     if (c->event) CloseHandle(c->event);
@@ -845,6 +903,12 @@ static bool InitPipeline(Chain *c)
     if (cs == nullptr) return false;
     cp.CS = {cs->GetBufferPointer(), cs->GetBufferSize()};
     hr = d->CreateComputePipelineState(&cp, IID_PPV_ARGS(&c->cut));
+    cs->Release();
+    if (FAILED(hr)) return false;
+    cs = Compile("UiPass", "cs_5_0");
+    if (cs == nullptr) return false;
+    cp.CS = {cs->GetBufferPointer(), cs->GetBufferSize()};
+    hr = d->CreateComputePipelineState(&cp, IID_PPV_ARGS(&c->uipass));
     cs->Release();
     if (FAILED(hr)) return false;
     {
@@ -1071,8 +1135,10 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
     c->mv = MakeTexture(c->device, w, h, DXGI_FORMAT_R16G16_FLOAT, true, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
     c->stable = MakeTexture(c->device, w, h, DXGI_FORMAT_R16G16B16A16_FLOAT, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     c->delta = MakeTexture(c->device, w, h, DXGI_FORMAT_R16G16B16A16_FLOAT, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+    c->prev = MakeTexture(c->device, W, H, bb.Format, false, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+    c->ui = MakeTexture(c->device, W, H, DXGI_FORMAT_R32_FLOAT, true, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     c->first_smooth = true;
-    if (!c->copy || !c->lo || !c->nr || !c->depth || !c->mv || !c->stable || !c->delta) return -1;
+    if (!c->copy || !c->lo || !c->nr || !c->depth || !c->mv || !c->stable || !c->delta || !c->prev || !c->ui) return -1;
     CreateFlow(c);
 
     UINT inc = c->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -1096,6 +1162,12 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
     c->device->CreateShaderResourceView(c->flow, &fd, {h0.ptr + 4 * inc});
     fd.Format = DXGI_FORMAT_R8_UNORM;   // grey frames for the Lucas-Kanade refinement
     for (int t = 0; t < 2; ++t) c->device->CreateShaderResourceView(c->gray[t], &fd, {h0.ptr + (5 + t) * inc});
+    fd.Format = bb.Format;              // last frame's back buffer and the UI evidence
+    if (fd.Format == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB) fd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    if (fd.Format == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB) fd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    c->device->CreateShaderResourceView(c->prev, &fd, {h0.ptr + 7 * inc});
+    fd.Format = DXGI_FORMAT_R32_FLOAT;
+    c->device->CreateShaderResourceView(c->ui, &fd, {h0.ptr + 8 * inc});
     for (UINT t = 0; t < 2; ++t) {
         const UINT u = kUav + t * kUavCount;
         D3D12_UNORDERED_ACCESS_VIEW_DESC ud = {};
@@ -1114,6 +1186,8 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
         bd.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
         bd.Buffer.NumElements = 4;
         c->device->CreateUnorderedAccessView(c->cut_buf, nullptr, &bd, {h0.ptr + (u + 5) * inc});
+        ud.Format = DXGI_FORMAT_R32_FLOAT;
+        c->device->CreateUnorderedAccessView(c->ui, nullptr, &ud, {h0.ptr + (u + 6) * inc});
     }
     return InitCombine(c, bb.Format) && CreateFeature(c) ? 1 : -1;
 }
@@ -1414,6 +1488,10 @@ static void ProcessFrame(Chain *c)
         l->Dispatch(1, 1, 1);
         uv.UAV.pResource = c->cut_buf;
         l->ResourceBarrier(1, &uv);
+        if (k[24] > 0) {   // UI evidence per back buffer pixel
+            l->SetPipelineState(c->uipass);
+            l->Dispatch((c->W + 7) / 8, (c->H + 7) / 8, 1);
+        }
         // log: read back what the GPU found the last time this slot was used (that frame has finished)
         const float *v = nullptr;
         D3D12_RANGE r = {0, 8};
@@ -1430,6 +1508,7 @@ static void ProcessFrame(Chain *c)
         Barrier(l, c->cut_buf, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     }
     Barrier(l, c->mv, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+    Barrier(l, c->ui, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, kRead);
     if (flow_valid) Barrier(l, c->flow, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COMMON);
 
     // DLSS-NR
@@ -1508,7 +1587,13 @@ static void ProcessFrame(Chain *c)
     if (!c->broken) l->DrawInstanced(3, 1, 0, 0);
 
     Barrier(l, bb, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-    Barrier(l, c->copy, kRead, D3D12_RESOURCE_STATE_COPY_DEST);
+    // keep this frame for the next one's UI check
+    Barrier(l, c->copy, kRead, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    Barrier(l, c->prev, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+    l->CopyResource(c->prev, c->copy);
+    Barrier(l, c->prev, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+    Barrier(l, c->copy, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+    Barrier(l, c->ui, kRead, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     Barrier(l, c->lo, kRead, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     Barrier(l, c->nr, kRead, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     Barrier(l, c->delta, kRead, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);

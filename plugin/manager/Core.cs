@@ -318,6 +318,25 @@ namespace Dlss5Manager
                 if (found.Contains("vkCreateInstance")) p.Apis.Add("Vulkan");
                 p.ApisGuessed = p.Apis.Count > 0;
             }
+            if (p.Apis.Count == 0 && exe != null)
+            {
+                // 渲染代码在引擎 dll 里的游戏 (例如 Unigine 的 Unigine_x64.dll，运行时才 LoadLibrary 图形库):
+                // 看主程序旁边较大的 dll 的导入表与其中的函数名字符串
+                try
+                {
+                    foreach (string dll in Directory.GetFiles(p.ExeDir, "*.dll"))
+                    {
+                        if (new FileInfo(dll).Length < 1024 * 1024) continue;
+                        var di = Pe.Imports(dll);
+                        var ds = FindAscii(dll, "D3D12CreateDevice", "D3D11CreateDevice", "vkCreateInstance");
+                        if ((di.Contains("d3d12.dll") || ds.Contains("D3D12CreateDevice")) && !p.Apis.Contains("DX12")) p.Apis.Add("DX12");
+                        if ((di.Contains("d3d11.dll") || ds.Contains("D3D11CreateDevice")) && !p.Apis.Contains("DX11")) p.Apis.Add("DX11");
+                        if ((di.Contains("vulkan-1.dll") || ds.Contains("vkCreateInstance")) && !p.Apis.Contains("Vulkan")) p.Apis.Add("Vulkan");
+                    }
+                }
+                catch (Exception) { }
+                p.ApisGuessed = p.Apis.Count > 0;
+            }
             if (!p.Apis.Contains("DX12") && File.Exists(up))
             {
                 // Unity 运行时才加载图形库 (导入表里没有): 播放器支持 -force-d3d12 就能以 DX12 运行
