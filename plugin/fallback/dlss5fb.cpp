@@ -81,6 +81,9 @@ struct Config {
     float knee = 0.8f;             // HDR: above this (paper white = 1) brightness is compressed smoothly into [knee, 1)
     float stabilize = 1.5f;        // NR input dead band in 1/255 steps: pixels that changed less keep their previous value
     float smooth = 0.2f;           // per-frame weight of a new NR change where the input did not change locally (1 = off)
+    int ui_protect = 1;            // UiProtect: leave pixels alone that stay identical while the scene moves (HUD, text)
+    int ui_frames = 20;            // UiFrames: moving frames a pixel must stay identical before it counts as UI
+    int ui_show = 0;               // UiShow: tint what is treated as UI red (testing)
     int compare = 0;               // 1: left half original, right half processed
     int toggle_key = VK_F10;
     int compare_key = VK_F11;
@@ -133,6 +136,9 @@ static Config ReadConfig()
     c.knee = std::min(std::max(IniFloat(L"HdrKnee", c.knee), 0.2f), 0.95f);
     c.stabilize = std::max(0.0f, IniFloat(L"Stabilize", c.stabilize));
     c.smooth = std::min(std::max(IniFloat(L"Smooth", c.smooth), 0.02f), 1.0f);
+    c.ui_protect = IniInt(L"UiProtect", c.ui_protect);
+    c.ui_frames = std::min(std::max(IniInt(L"UiFrames", c.ui_frames), 2), 600);
+    c.ui_show = IniInt(L"UiShow", c.ui_show);
     c.compare = IniInt(L"Compare", c.compare);
     c.toggle_key = IniInt(L"ToggleKey", c.toggle_key);
     c.compare_key = IniInt(L"CompareKey", c.compare_key);
@@ -337,12 +343,13 @@ Texture2D<float> Gray0 : register(t5);       // grey frames (which one is curren
 Texture2D<float> Gray1 : register(t6);
 RWTexture2D<float4> Out : register(u0);
 RWTexture2D<float4> Stable : register(u1);   // rgb: last value fed to NR, a: how much it changed this frame
-RWTexture2D<float4> Delta : register(u2);    // smoothed NR change (NR output - NR input)
+RWTexture2D<float4> Delta : register(u2);    // rgb: smoothed NR change (NR output - NR input), a: UI evidence 0..1
 // optical flow input (luma). ABGR8 "colour" input is not usable: the D3D12 driver path reads each byte of an RGBA8
 // texel as a separate grey pixel (flow comes back 4x too large horizontally), measured with fbtest --pan
 RWTexture2D<float> Gray : register(u3);
 RWTexture2D<float2> Motion : register(u4);   // motion vectors for DLSS-NR (pixels, current -> previous)
-RWBuffer<float> CutBuf : register(u5);       // [0] mean motion-compensated difference, [1] cut this frame, [2] cut last frame
+RWBuffer<float> CutBuf : register(u5);       // [0] mean motion-compensated difference, [1] cut this frame, [2] cut last frame,
+                                             // [3] share of pixels that changed since the last frame (is the scene moving?)
 SamplerState Lin : register(s0);
 cbuffer C : register(b0) {
     float2 loSize; float2 bbSize; float taps; float direct; float split; float band;
@@ -350,6 +357,7 @@ cbuffer C : register(b0) {
     float grid; float mvScale; float mvConstX; float flowFilter;
     float refine; float curGray; float linearIO; float colour;
     float cutThreshold; float hdrMode; float hdrScale; float knee;
+    float uiRate; float uiShow;
 };
 
 float3 ToLinear(float3 c) { return c <= 0.04045 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4); }
@@ -421,8 +429,17 @@ void Smooth(uint3 id : SV_DispatchThreadID)
     // ColourStrength < 1: move towards the change's brightness part only, so the game keeps its own hues
     dn = lerp(dot(dn, float3(0.299, 0.587, 0.114)).xxx, dn, colour);
     float a = first > 0 || CutBuf[2] > 0 ? 1 : saturate(smooth + m * gain);   // right after a cut: no averaging
-    if (CutBuf[1] > 0) { Delta[id.xy] = 0; return; }   // scene cut: show the game's frame, restart the average
-    Delta[id.xy] = float4(lerp(Delta[id.xy].rgb, dn, a), 1);
+    // UI: a HUD pixel keeps its exact value while the scene around it moves. Evidence grows by uiRate on every frame
+    // the scene moves (more than a fifth of the picture changed) and this pixel did not; a change takes a quarter
+    // back, so a counter that ticks now and then stays protected. PS scales the change down with the evidence.
+    float4 old = Delta[id.xy];
+    float u = first > 0 || uiRate <= 0 ? 0 : old.a;
+    if (uiRate > 0) {
+        if (Stable[id.xy].a > 0) u = max(u - 0.25, 0);
+        else if (CutBuf[3] > 0.2) u = min(u + uiRate, 1);
+    }
+    if (CutBuf[1] > 0) { Delta[id.xy] = float4(0, 0, 0, u); return; }   // scene cut: show the game's frame, restart the average
+    Delta[id.xy] = float4(lerp(old.rgb, dn, a), u);
 }
 
 float Median9(float v[9])
@@ -498,11 +515,12 @@ void ToMotion(uint3 id : SV_DispatchThreadID)
 // small residual; after a cut nothing matches. DLSS-NR's own gate rejects the stale history only one frame late,
 // so on a cut this frame shows the game's picture unchanged (Smooth writes a zero change).
 groupshared float g_sum[256];
+groupshared float g_mov[256];
 [numthreads(256, 1, 1)]
 void Cut(uint3 tid : SV_GroupThreadID)
 {
     uint n = (uint)loSize.x * (uint)loSize.y;
-    float sum = 0, cnt = 0;
+    float sum = 0, cnt = 0, mov = 0;
     float2 inv = 1.0 / loSize;
     for (uint i = tid.x * 7; i < n; i += 256 * 7) {
         uint2 p = uint2(i % (uint)loSize.x, i / (uint)loSize.x);
@@ -510,17 +528,21 @@ void Cut(uint3 tid : SV_GroupThreadID)
         float2 pp = pc + (flowValid > 0 ? Motion[p] : 0);
         float ic = curGray < 0.5 ? Gray0.SampleLevel(Lin, pc * inv, 0) : Gray1.SampleLevel(Lin, pc * inv, 0);
         float ip = curGray < 0.5 ? Gray1.SampleLevel(Lin, pp * inv, 0) : Gray0.SampleLevel(Lin, pp * inv, 0);
+        float i0 = curGray < 0.5 ? Gray1.SampleLevel(Lin, pc * inv, 0) : Gray0.SampleLevel(Lin, pc * inv, 0);
         sum += abs(ic - ip);
+        mov += abs(ic - i0) > 4.0 / 255 ? 1 : 0;
         cnt += 1;
     }
     g_sum[tid.x] = sum / max(cnt, 1);
+    g_mov[tid.x] = mov / max(cnt, 1);
     GroupMemoryBarrierWithGroupSync();
     for (uint s = 128; s > 0; s >>= 1) {
-        if (tid.x < s) g_sum[tid.x] += g_sum[tid.x + s];
+        if (tid.x < s) { g_sum[tid.x] += g_sum[tid.x + s]; g_mov[tid.x] += g_mov[tid.x + s]; }
         GroupMemoryBarrierWithGroupSync();
     }
     if (tid.x == 0) {
         float mean = g_sum[0] / 256;
+        CutBuf[3] = flowValid > 0 ? g_mov[0] / 256 : 0;
         CutBuf[0] = mean;
         CutBuf[2] = CutBuf[1];
         CutBuf[1] = flowValid > 0 && cutThreshold > 0 && mean > cutThreshold ? 1 : 0;
@@ -542,7 +564,18 @@ float4 PS(float4 pos : SV_Position, float2 uv : TEXCOORD0) : SV_Target
         if (abs(pos.x - 0.5 - mid) < 1) return float4(1, 1, 1, b.a);
         if (pos.x < mid) return b;
     }
-    float3 d = DeltaT.SampleLevel(Lin, uv, 0).rgb;
+    float4 dt = DeltaT.SampleLevel(Lin, uv, 0);
+    float ua = dt.a;
+    if (uiRate > 0 && direct <= 0) {
+        // the evidence lives at the NR resolution, and a HUD edge that is not aligned to its grid shares a texel with the
+        // moving picture: widen the evidence by one texel so the HUD's edge rows are covered too
+        float2 o = 1.0 / loSize;
+        ua = max(max(DeltaT.SampleLevel(Lin, uv + float2(o.x, o.y), 0).a, DeltaT.SampleLevel(Lin, uv + float2(-o.x, o.y), 0).a),
+                 max(DeltaT.SampleLevel(Lin, uv + float2(o.x, -o.y), 0).a, DeltaT.SampleLevel(Lin, uv - float2(o.x, o.y), 0).a));
+    }
+    float ui = uiRate > 0 ? smoothstep(0.6, 1.0, ua) : 0;
+    float3 d = dt.rgb * (1 - ui);
+    if (uiShow > 0 && ui > 0) return float4(lerp(b.rgb, float3(1, 0, 0), 0.6 * ui), b.a);
     if (hdrMode > 0) {
         // apply the change measured in the knee domain to the original HDR value: below the knee this is exactly
         // DLSS5's change; above it the change is not stretched by the inverse knee, so highlights stay as they were
@@ -550,7 +583,7 @@ float4 PS(float4 pos : SV_Position, float2 uv : TEXCOORD0) : SV_Target
         float3 e = ToSrgb(Knee(max(x, 0)));
         return float4(FromWork(x + ToLinear(saturate(e + d)) - ToLinear(e)), b.a);
     }
-    float3 c = direct > 0 && smooth >= 1 && colour >= 1 ? saturate(Encode(Nr.SampleLevel(Lin, uv, 0).rgb))
+    float3 c = direct > 0 && smooth >= 1 && colour >= 1 ? lerp(saturate(Encode(Nr.SampleLevel(Lin, uv, 0).rgb)), b.rgb, ui)
                                          : saturate(b.rgb + d);
     return float4(c, b.a);
 }
@@ -580,7 +613,7 @@ template <class T> static void SafeRelease(T *&p) { if (p) { p->Release(); p = n
 
 static DXGI_FORMAT LoFormat(bool linear) { return linear ? DXGI_FORMAT_R16G16B16A16_FLOAT : DXGI_FORMAT_R8G8B8A8_UNORM; }
 static const UINT kFrames = 3;
-static const UINT kConstants = 24;   // root constants (cbuffer C)
+static const UINT kConstants = 26;   // root constants (cbuffer C)
 // descriptor heap: SRV copy/lo/nr/delta/flow, then two UAV tables lo/stable/delta/gray/motion that differ only in
 // which grey frame they write (the optical flow engine compares this frame's grey image with the previous one)
 static const UINT kSrv = 0, kUav = 7, kUavCount = 6;
@@ -606,7 +639,7 @@ struct Chain {
     ID3D12PipelineState *smooth = nullptr;
     ID3D12PipelineState *to_motion = nullptr;
     ID3D12PipelineState *cut = nullptr;
-    ID3D12Resource *cut_buf = nullptr;                 // 2 floats on the GPU
+    ID3D12Resource *cut_buf = nullptr;                 // CutBuf: 4 floats on the GPU
     ID3D12Resource *cut_rb[kFrames] = {};              // read back one frame late, for the log
     UINT64 cuts = 0;
     ID3D12PipelineState *combine = nullptr;
@@ -1079,7 +1112,7 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
         D3D12_UNORDERED_ACCESS_VIEW_DESC bd = {};
         bd.Format = DXGI_FORMAT_R32_FLOAT;
         bd.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
-        bd.Buffer.NumElements = 3;
+        bd.Buffer.NumElements = 4;
         c->device->CreateUnorderedAccessView(c->cut_buf, nullptr, &bd, {h0.ptr + (u + 5) * inc});
     }
     return InitCombine(c, bb.Format) && CreateFeature(c) ? 1 : -1;
@@ -1224,9 +1257,10 @@ static void ProcessFrame(Chain *c)
             bool first = c->ini_time.dwLowDateTime == 0 && c->ini_time.dwHighDateTime == 0;
             c->ini_time = t;
             c->cfg = ReadConfig();
-            Log("%s config: enabled=%d scale=%.3f intensity=%.2f tone=%.2f structure=%.2f skin=%.2f mask=%d style=%d temporal=%d",
+            Log("%s config: enabled=%d scale=%.3f intensity=%.2f tone=%.2f structure=%.2f skin=%.2f mask=%d style=%d temporal=%d ui=%d",
                 first ? "loaded" : "reloaded", c->cfg.enabled, c->cfg.scale, c->cfg.intensity, c->cfg.local_tone,
-                c->cfg.local_structure, c->cfg.skin_structure, c->cfg.auto_mask, c->cfg.style, c->cfg.temporal);
+                c->cfg.local_structure, c->cfg.skin_structure, c->cfg.auto_mask, c->cfg.style, c->cfg.temporal,
+                c->cfg.ui_protect ? c->cfg.ui_frames : 0);
         }
     }
     const int keys[2] = {c->cfg.toggle_key, c->cfg.compare_key};
@@ -1300,7 +1334,8 @@ static void ProcessFrame(Chain *c)
         direct ? 1.0f : 0.0f, c->cfg.compare ? 1.0f : 0.0f, c->cfg.stabilize / 255.0f,
         c->cfg.smooth, 255.0f / 3.0f, c->first_smooth ? 1.0f : 0.0f, 0, float(c->grid), c->cfg.mv_scale, c->cfg.mv_const_x, c->cfg.flow_filter ? 1.0f : 0.0f,
         float(c->cfg.flow_refine), float(c->cur_gray), c->cfg.linear ? 1.0f : 0.0f, c->cfg.colour,
-        c->cfg.cut, float(c->hdr), c->hdr == 1 ? 80.0f / c->cfg.paper_white : 10000.0f / c->cfg.paper_white, c->cfg.knee};
+        c->cfg.cut, float(c->hdr), c->hdr == 1 ? 80.0f / c->cfg.paper_white : 10000.0f / c->cfg.paper_white, c->cfg.knee,
+        c->cfg.ui_protect && c->cfg.temporal ? 1.0f / c->cfg.ui_frames : 0.0f, c->cfg.ui_show ? 1.0f : 0.0f};
     c->first_smooth = false;
     const int cur = c->cur_gray;
     UINT inc = c->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);

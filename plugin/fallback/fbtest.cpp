@@ -9,6 +9,7 @@
 //     --chains 2                           two windows / swap chains presented alternately
 //     --fullscreen N                       at frame N enter fullscreen, leave again 30 frames later
 //     --pan N                              shift the image N pixels right every frame (wrapping, like nr-lab --temporal-shift)
+//     --ui                                 a static "HUD" rectangle (x W/8.., y H/8.., size W/4 x H/6) drawn over the picture
 //     --cut N image2.ppm                   from frame N on show image2 (same size): a hard scene cut
 //     --hdr scrgb|hdr10                    HDR swap chain: RGBA16F linear scRGB, or RGB10A2 PQ Rec.2020 (SetColorSpace1);
 //                                          the image is taken as sRGB, white = --paper-white nits (default 200),
@@ -139,7 +140,7 @@ int main(int argc, char **argv)
     if (!ReadPpm(argv[1], &W, &H, &rgb)) { std::printf("cannot read %s\n", argv[1]); return 2; }
     int frames = 60, resize_at = -1, recreate_at = -1, fullscreen_at = -1, chains = 1, pan = 0, cut_at = -1;
     const char *cut_image = nullptr;
-    bool present1 = false, resize1 = false, waitable = false;
+    bool present1 = false, resize1 = false, waitable = false, ui = false;
     DXGI_FORMAT fmt = DXGI_FORMAT_R8G8B8A8_UNORM;
     for (int i = 2; i < argc; ++i) {
         std::string a = argv[i];
@@ -157,6 +158,7 @@ int main(int argc, char **argv)
         else if (a == "--chains") chains = std::max(1, std::min(2, next()));
         else if (a == "--fullscreen") fullscreen_at = next();
         else if (a == "--pan") pan = next();
+        else if (a == "--ui") ui = true;
         else if (a == "--cut" && i + 2 < argc) { cut_at = std::atoi(argv[++i]); cut_image = argv[++i]; }
         else if (a == "--hdr" && i + 1 < argc) {
             std::string h = argv[++i];
@@ -358,6 +360,11 @@ int main(int argc, char **argv)
             } else {
                 D3D12_BOX box = {0, y0, 0, std::min(W, c.w), y0 + std::min(H, c.h), 1};
                 list->CopyTextureRegion(&to, 0, 0, 0, &from, &box);
+            }
+            if (ui && c.w == W && c.h == H) {
+                // a "HUD": the same piece of the image at the same place every frame, whatever the picture does
+                D3D12_BOX hud = {W / 8, H / 8, 0, W / 8 + W / 4, H / 8 + H / 6, 1};
+                list->CopyTextureRegion(&to, W / 8, H / 8, 0, &from, &hud);
             }
             b.Transition = {bb, D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PRESENT};
             list->ResourceBarrier(1, &b);

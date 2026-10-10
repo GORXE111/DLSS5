@@ -21,6 +21,20 @@ function Same-Pixels([string]$a, [string]$b) {
     return [Linq.Enumerable]::SequenceEqual($xa, $ya)
 }
 
+# mean and max absolute difference of two 640x360 PPMs inside [x0,x1) x [y0,y1)
+function Region-Diff([string]$a, [string]$b, [int]$x0, [int]$y0, [int]$x1, [int]$y1) {
+    $x = [IO.File]::ReadAllBytes($a); $y = [IO.File]::ReadAllBytes($b)
+    $n = 640 * 360 * 3; $ox = $x.Length - $n; $oy = $y.Length - $n
+    $sum = 0; $max = 0; $cnt = 0
+    for ($r = $y0; $r -lt $y1; $r++) {
+        for ($i = ($r * 640 + $x0) * 3; $i -lt ($r * 640 + $x1) * 3; $i++) {
+            $d = [Math]::Abs([int]$x[$ox + $i] - [int]$y[$oy + $i]); $sum += $d; $cnt++
+            if ($d -gt $max) { $max = $d }
+        }
+    }
+    return @{ mean = [Math]::Round($sum / $cnt, 2); max = $max }
+}
+
 $cases = @(
     @{ name = 'rgba8';        args = @();                            ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=5"; dump = $true }
     @{ name = 'bgra8';        args = @('--format', 'bgra8');         ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=5"; dump = $true }
@@ -38,6 +52,9 @@ $cases = @(
     @{ name = 'optical flow (moving)'; args = @('--pan', '4');       ini = 'WorkingScale=0.5'; expect = @('optical flow: 320x180') }
     @{ name = 'scene cut';    args = @('--cut', '100', 'sponza640.ppm'); ini = 'WorkingScale=0.5'; expect = @('scene cut: frame 101') }
     @{ name = 'exact MV = nr-lab mvok'; args = @('--pan', '4');      ini = "WorkingScale=1.0`nStabilize=0`nSmooth=1`nMvConstX=-4`nDumpFrame=1`nDumpCount=4"; mvok = $true }
+    # HUD protection: a static rectangle over a panning picture must come out untouched, the picture around it changed
+    @{ name = 'UI protection';           args = @('--pan', '4', '--ui'); ini = "WorkingScale=0.5`nDumpFrame=150"; ui = $true }
+    @{ name = 'UI protection off';       args = @('--pan', '4', '--ui'); ini = "WorkingScale=0.5`nUiProtect=0`nDumpFrame=150"; ui = $false; uioff = $true }
     # D3D11 "games" (fbtest11): processed on our own D3D12 device through a shared texture. rb = the back buffer read
     # back on the D3D11 side after the last Present must equal what the proxy wrote (blt model keeps its contents).
     @{ name = 'D3D11 blt + readback';    exe = 'fbtest11.exe'; args = @('--model', 'blt', '--readback', 'rb11.ppm'); ini = "WorkingScale=1.0`nTemporal=0`nDumpFrame=$Frames"; dump = $true; rb = $true; expect = @('tracked (D3D11 device') }
@@ -78,6 +95,17 @@ try {
             if (-not (Test-Path dlss5fb_nr.ppm)) { $why += 'no dump' }
             elseif (Test-Path $ref) { if (-not (Same-Pixels (Join-Path $test dlss5fb_nr.ppm) $ref)) { $why += 'NR output differs from nr-lab' } }
             if ((Test-Path dlss5fb_in.ppm) -and -not (Same-Pixels (Join-Path $test dlss5fb_in.ppm) (Join-Path $test pattern.ppm))) { $why += 'captured input differs from the image' }
+        }
+        if ($c.ui -or $c.uioff) {
+            if (-not (Test-Path dlss5fb_in.ppm) -or -not (Test-Path dlss5fb_out.ppm)) { $why += 'no dump' }
+            else {
+                # fbtest --ui: HUD at x 80..239, y 45..104 of the 640x360 picture
+                $d = Region-Diff (Join-Path $test dlss5fb_in.ppm) (Join-Path $test dlss5fb_out.ppm) 80 45 240 105
+                $o = Region-Diff (Join-Path $test dlss5fb_in.ppm) (Join-Path $test dlss5fb_out.ppm) 300 150 460 210
+                if ($c.ui -and $d.max -ne 0) { $why += "HUD changed (max $($d.max))" }
+                if ($c.uioff -and $d.mean -lt 2) { $why += "HUD not processed with UiProtect=0 (mean $($d.mean))" }
+                if ($o.mean -lt 2) { $why += "picture outside the HUD not processed (mean $($o.mean))" }
+            }
         }
         if ($c.rb) {
             if (-not (Test-Path rb11.ppm) -or -not (Test-Path dlss5fb_out.ppm)) { $why += 'no read-back / output dump' }
