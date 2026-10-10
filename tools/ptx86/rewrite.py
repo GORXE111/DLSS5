@@ -51,6 +51,8 @@ def _dec_spread(dst, w):
 
 
 def _e4m3x2_to_f16x2(dst, src16):
+    if ACC.get("dec") == "none":   # 只测速: 不解码 (结果错误)
+        return f"cvt.u32.u16 {dst}, {src16};\n"
     return (
         "{ .reg .b32 %x_t;\n"
         f"cvt.u32.u16 %x_t, {src16};\n"
@@ -92,6 +94,8 @@ def _f16x2_to_e4m3x2(dst16, src):
         return _f16x2_to_e4m3x2_f32(dst16, src)
     if ACC.get("enc", "v1") == "v1":
         return _f16x2_to_e4m3x2_v1(dst16, src)
+    if ACC.get("enc") == "none":   # 只测速: 不编码 (结果错误)
+        return f"cvt.u16.u32 {dst16}, {src};\n"
     # 字节位置约定: 结果先放在 32 位的 bit 0..7 (半0) 与 bit 16..23 (半1)，最后一条 prmt 取字节 0/2。
     #   正规: (a + lsb + 0x3F + 0x6000) >> 7。0x6000 = (8<<3)... 即 -64 mod 256 预先左移 7 位加进去，
     #         每半最大 0x5F00+0x6040 < 0x10000 不跨半进位；右移后半1 的字节恰落在 bit 16..23
@@ -176,6 +180,8 @@ def _f16x2_to_e4m3x2_f32(dst16, src):
 def _unpack4(reg, lo, hi):
     if ACC.get("dec", "v1") == "v1":
         return _unpack4_v1(reg, lo, hi)
+    if ACC.get("dec") == "none":   # 只测速: 不解码 (结果错误)，看转换开销的上限
+        return f"mov.b32 {lo}, {reg};\nmov.b32 {hi}, {reg};\n"
     return _unpack4_v2(reg, lo, hi)
 
 

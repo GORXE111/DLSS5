@@ -72,8 +72,8 @@ def main():
     ap.add_argument("--acc", choices=["f16", "f32"], default="f16", help="FP8 mma 仿真的累加精度")
     ap.add_argument("--maxnreg", type=int, default=0, help="把 .maxnreg 压到不超过此值 (0=不改)")
     ap.add_argument("--maxnreg-floor", type=int, default=0, help="把 .maxnreg 抬到至少此值 (0=不改)")
-    ap.add_argument("--enc", choices=["v1", "v2"], default="v1", help="FP16->FP8 编码实现")
-    ap.add_argument("--dec", choices=["v1", "v2"], default="v1", help="FP8->FP16 解码实现")
+    ap.add_argument("--enc", choices=["v1", "v2", "none"], default="v1", help="FP16->FP8 编码实现 (none: 只测速，结果错误)")
+    ap.add_argument("--dec", choices=["v1", "v2", "none"], default="v1", help="FP8->FP16 解码实现 (none: 只测速，结果错误)")
     ap.add_argument("--out")
     args = ap.parse_args()
     global WORK
