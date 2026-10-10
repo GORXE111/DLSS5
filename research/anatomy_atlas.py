@@ -70,6 +70,41 @@ def tiles(n, m, other):
     return [(c, jpg(x)) for c, x in t], cap
 
 
+def survey_rows():
+    """anatomy2.py survey: 每张画面 输入 (皮肤作用区域叠成红色) | NR 输出"""
+    p = os.path.join(OUT, "survey_masks.npz")
+    if not os.path.exists(p):
+        return []
+    z = np.load(p)
+    sv = json.load(open(os.path.join(OUT, "survey.json"), encoding="utf-8"))
+    cells = []
+    for k, m in sv.items():
+        src, sk, out = z[f"{k}_src"].astype(np.float32), z[f"{k}_skin"].astype(np.float32) / 255, z[f"{k}_out"]
+        a = np.clip(sk * 1.5, 0, 1)[..., None]
+        ov = (src * (1 - a) + np.array([255, 40, 40]) * a).astype(np.uint8)
+        cap = (f"{k} · 皮肤 p99 {m['skin']['p99']:.1f} 面积 {m['skin']['area'] * 100:.1f}% · 饱和 ×{m['saturation']:.2f}"
+               f" · 暖 {m['warmth_d']:+.1f} · ΔY {m['mean_dY']:+.1f}")
+        cells.append(f'<figure><img src="{jpg(ov)}"><figcaption>{cap}</figcaption></figure>'
+                     f'<figure><img src="{jpg(out)}"><figcaption>{k} NR 输出</figcaption></figure>')
+    return [f"<section><h2>普查: Skin 参数作用区域 (红)</h2><p>Skin 0→2 的输出差，≥10/255 为全红</p><div class=g>{''.join(cells)}</div></section>"]
+
+
+def push_rows():
+    """anatomy2.py style: 沿全局上下文主成分推动 ±2σ"""
+    rows = []
+    for base in ("img1", "scene_05", "people_10"):
+        f0 = os.path.join(OUT, f"push_{base}_base.npy")
+        if not os.path.exists(f0):
+            continue
+        cells = [f'<figure><img src="{jpg(np.load(f0))}"><figcaption>原输出</figcaption></figure>']
+        for j in range(1, 6):
+            for s, lab in (("m", "−2σ"), ("p", "+2σ")):
+                cells.append(f'<figure><img src="{jpg(np.load(os.path.join(OUT, f"push_{base}_pc{j}_{s}.npy")))}">'
+                             f'<figcaption>PC{j} {lab}</figcaption></figure>')
+        rows.append(f"<section><h2>风格方向: {base}</h2><div class=g>{''.join(cells)}</div></section>")
+    return rows
+
+
 def main():
     m = json.load(open(os.path.join(OUT, "metrics.json"), encoding="utf-8"))
     names = list(m["sweep"])
@@ -79,7 +114,8 @@ def main():
         ts, cap = tiles(n, m, other)
         cells = "".join(f'<figure><img src="{u}"><figcaption>{c}</figcaption></figure>' for c, u in ts)
         rows.append(f"<section><h2>{n}</h2><p>{cap}</p><div class=g>{cells}</div></section>")
-    html = f"""<!doctype html><meta charset=utf-8><title>DLSS5 Anatomy</title>
+    rows += survey_rows() + push_rows()
+    html =f"""<!doctype html><meta charset=utf-8><title>DLSS5 Anatomy</title>
 <style>:root{{--bg:#111;--fg:#ddd;--mut:#999}}body{{background:var(--bg);color:var(--fg);font:14px system-ui;margin:16px}}
 .g{{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:8px}}figure{{margin:0}}img{{width:100%;display:block}}
 figcaption{{color:var(--mut);font-size:12px;padding:2px 0}}h2{{margin:24px 0 4px}}p{{color:var(--mut);margin:0 0 8px}}</style>
