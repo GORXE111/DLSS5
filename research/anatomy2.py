@@ -7,7 +7,7 @@
             Skin 0 vs 2 的作用区域 (AutoMask 皮肤分割) 与按类别的统计
   style     全局上下文 (ViT 出口，每 token = 输入 64x64 像素一格) 的结构: 注意力熵、token 间相似度；
             全部画面平均 token 的主成分 (风格方向)，沿各方向推动后画面怎么变
-测试画面与下载画面只在本地读取，输出写 anatomy_out/ (不入库)。
+下载画面用 research/fetch_commons.py 取 (清单 commons_manifest.json)。测试画面与下载画面只在本地读取，输出写 anatomy_out/ (不入库)。
     python research/anatomy2.py temporal|survey|style [--n N]
 """
 import argparse
