@@ -84,6 +84,7 @@ struct Config {
     int ui_protect = 1;            // UiProtect: leave pixels alone that stay identical while the scene moves (HUD, text)
     int ui_frames = 20;            // UiFrames: moving frames a pixel must stay identical before it counts as UI
     int ui_show = 0;               // UiShow: tint what is treated as UI red (testing)
+    int edge_upsample = 1;         // EdgeUpsample: bring the NR change up to the back buffer along the picture's edges
     int compare = 0;               // 1: left half original, right half processed
     int toggle_key = VK_F10;
     int compare_key = VK_F11;
@@ -139,6 +140,7 @@ static Config ReadConfig()
     c.ui_protect = IniInt(L"UiProtect", c.ui_protect);
     c.ui_frames = std::min(std::max(IniInt(L"UiFrames", c.ui_frames), 2), 600);
     c.ui_show = IniInt(L"UiShow", c.ui_show);
+    c.edge_upsample = IniInt(L"EdgeUpsample", c.edge_upsample);
     c.compare = IniInt(L"Compare", c.compare);
     c.toggle_key = IniInt(L"ToggleKey", c.toggle_key);
     c.compare_key = IniInt(L"CompareKey", c.compare_key);
@@ -360,7 +362,7 @@ cbuffer C : register(b0) {
     float grid; float mvScale; float mvConstX; float flowFilter;
     float refine; float curGray; float linearIO; float colour;
     float cutThreshold; float hdrMode; float hdrScale; float knee;
-    float uiRate; float uiShow;
+    float uiRate; float uiShow; float edgeSigma;
 };
 
 float3 ToLinear(float3 c) { return c <= 0.04045 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4); }
@@ -608,6 +610,31 @@ void VS(uint id : SV_VertexID, out float4 pos : SV_Position, out float2 uv : TEX
     pos = float4(uv * float2(2, -2) + float2(-1, 1), 0, 1);
 }
 
+// The NR change at a back buffer pixel. Plain bilinear lets the change of one side of an edge leak a few pixels
+// into the other (NR runs at a fraction of the resolution). Joint bilateral: of the four NR texels around the pixel,
+// those whose input colour is close to this pixel's count more. Measured on three Superposition frames against the
+// native-resolution change shrunk to 0.35 and brought back: 17% less error within 3 px of strong edges, 3% less
+// elsewhere; a wider (3x3) footprint was worse.
+float3 Change(float2 uv, float3 picture)
+{
+    float3 plain = DeltaT.SampleLevel(Lin, uv, 0).rgb;
+    if (edgeSigma <= 0) return plain;
+    float2 q = uv * loSize - 0.5;
+    int2 q0 = int2(floor(q));
+    float2 f = q - q0;
+    float3 acc = 0;
+    float sum = 0;
+    for (int j = 0; j <= 1; ++j)
+        for (int i = 0; i <= 1; ++i) {
+            int3 t = int3(clamp(q0 + int2(i, j), 0, int2(loSize) - 1), 0);
+            float3 g = picture - Encode(Lo.Load(t).rgb);
+            float w = (i ? f.x : 1 - f.x) * (j ? f.y : 1 - f.y) * exp(-dot(g, g) / (2 * edgeSigma * edgeSigma));
+            acc += w * DeltaT.Load(t).rgb;
+            sum += w;
+        }
+    return lerp(plain, acc / max(sum, 1e-6), saturate(sum / 1e-3));   // no texel alike: plain bilinear
+}
+
 float4 PS(float4 pos : SV_Position, float2 uv : TEXCOORD0) : SV_Target
 {
     float4 b = Src.Load(int3(pos.xy, 0));
@@ -617,7 +644,7 @@ float4 PS(float4 pos : SV_Position, float2 uv : TEXCOORD0) : SV_Target
         if (abs(pos.x - 0.5 - mid) < 1) return float4(1, 1, 1, b.a);
         if (pos.x < mid) return b;
     }
-    float4 dt = DeltaT.SampleLevel(Lin, uv, 0);
+    float3 dt = Change(uv, Picture(b.rgb));
     float ui = 0;
     if (uiRate > 0) {
         // 3x3 mean of the evidence: an anti-aliased glyph edge is part text, part moving picture, and changes every
@@ -629,7 +656,7 @@ float4 PS(float4 pos : SV_Position, float2 uv : TEXCOORD0) : SV_Target
         // highlights, dark corners: seen as red speckle with UiShow in Superposition) and gets no protection
         ui = max(ui / 9, smoothstep(0.6, 1.0, UiT.Load(int3(pos.xy, 0)))) * saturate((ui - 1.5) / 1.5);
     }
-    float3 d = dt.rgb * (1 - ui);
+    float3 d = dt * (1 - ui);
     if (uiShow > 0 && ui > 0) return float4(lerp(b.rgb, float3(1, 0, 0), 0.6 * ui), b.a);
     if (hdrMode > 0) {
         // apply the change measured in the knee domain to the original HDR value: below the knee this is exactly
@@ -668,7 +695,7 @@ template <class T> static void SafeRelease(T *&p) { if (p) { p->Release(); p = n
 
 static DXGI_FORMAT LoFormat(bool linear) { return linear ? DXGI_FORMAT_R16G16B16A16_FLOAT : DXGI_FORMAT_R8G8B8A8_UNORM; }
 static const UINT kFrames = 3;
-static const UINT kConstants = 26;   // root constants (cbuffer C)
+static const UINT kConstants = 27;   // root constants (cbuffer C)
 // descriptor heap: SRV copy/lo/nr/delta/flow, then two UAV tables lo/stable/delta/gray/motion that differ only in
 // which grey frame they write (the optical flow engine compares this frame's grey image with the previous one)
 static const UINT kSrv = 0, kUav = 9, kUavCount = 7;
@@ -1409,7 +1436,8 @@ static void ProcessFrame(Chain *c)
         c->cfg.smooth, 255.0f / 3.0f, c->first_smooth ? 1.0f : 0.0f, 0, float(c->grid), c->cfg.mv_scale, c->cfg.mv_const_x, c->cfg.flow_filter ? 1.0f : 0.0f,
         float(c->cfg.flow_refine), float(c->cur_gray), c->cfg.linear ? 1.0f : 0.0f, c->cfg.colour,
         c->cfg.cut, float(c->hdr), c->hdr == 1 ? 80.0f / c->cfg.paper_white : 10000.0f / c->cfg.paper_white, c->cfg.knee,
-        c->cfg.ui_protect && c->cfg.temporal ? 1.0f / c->cfg.ui_frames : 0.0f, c->cfg.ui_show ? 1.0f : 0.0f};
+        c->cfg.ui_protect && c->cfg.temporal ? 1.0f / c->cfg.ui_frames : 0.0f, c->cfg.ui_show ? 1.0f : 0.0f,
+        c->cfg.edge_upsample && !direct ? 0.06f : 0.0f};
     c->first_smooth = false;
     const int cur = c->cur_gray;
     UINT inc = c->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
