@@ -1924,6 +1924,9 @@ static void Track(IUnknown *device, IUnknown *swapchain)
 static HRESULT STDMETHODCALLTYPE HookCreateSC(IDXGIFactory *f, IUnknown *dev, DXGI_SWAP_CHAIN_DESC *desc, IDXGISwapChain **out)
 {
     HRESULT hr = o_create_sc(f, dev, desc, out);
+    if (desc) Log("CreateSwapChain %ux%u fmt=%d buffers=%u effect=%d windowed=%d flags=0x%X = 0x%08X", desc->BufferDesc.Width,
+        desc->BufferDesc.Height, desc->BufferDesc.Format, desc->BufferCount, desc->SwapEffect, desc->Windowed, desc->Flags,
+        static_cast<unsigned>(hr));
     if (SUCCEEDED(hr) && out) Track(dev, *out);
     return hr;
 }

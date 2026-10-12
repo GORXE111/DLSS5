@@ -18,6 +18,7 @@
     自由漫游模式下每次激活只渲染一两帧 (每秒 2 次时只有 4 fps)，所以默认每秒 100 次 (--keep-hz)。
   - 跑分模式 (-mode 2) 约 150 秒跑完后自己退出 (退出码 0)；自由漫游 (-mode 1) 不退出，长时间测试用它。
   - 它的输出很多，标准输出必须接到文件: 接到没人读的管道会把它卡住。
+  - 独占全屏 (--fullscreen) 下不能投递激活消息: 投了反而只剩约 4 fps。全屏时窗口本来就在前台，脚本自动不投递。
   - 运行期间用户按 ESC 会结束跑分。
 """
 import argparse
@@ -124,7 +125,7 @@ def main():
                     for msg, wp in ((0x001C, 1), (0x0006, 1), (0x0007, 0)):
                         user32.PostMessageW(h, msg, wp, 0)
                 stop.wait(1.0 / a.keep_hz)
-        if a.keep_hz > 0:
+        if a.keep_hz > 0 and not a.fullscreen:
             threading.Thread(target=keep_active, daemon=True).start()
         t0, start_clock = time.time(), time.localtime()
         cpu, fg, gpu, samples = [], [], [], []
