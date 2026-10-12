@@ -22,6 +22,8 @@
   (全进程一个，NGX 只认第一个设备)，再建一张两边共享的纹理：D3D11 把后缓冲拷进去 → 上面整条管线原样在这张纹理上跑 →
   D3D11 拷回后缓冲。两个设备用共享 fence (`ID3D11DeviceContext4::Signal/Wait` 与队列的 `Wait/Signal`) 在 GPU 上排队，CPU 不等待。
   翻转 / blt 交换链、`D3D11CreateDeviceAndSwapChain`、sRGB 后缓冲都测过；多重采样的后缓冲不处理。需要 Windows 10 1703+。
+- **Vulkan 游戏**：兜底代理还不支持 (它挂的是 DXGI 交换链)。但 `nvngx_dlssnr.dll` 的 Vulkan 入口是真的: `harness/nrvk.cpp` 在 RTX 3060 上用移植版经 `NVSDK_NGX_VULKAN_Init_Ext / CreateFeature / EvaluateFeature` 跑同一张测试图，输出与 D3D12 的逐字节相同 (640x360 约 9.8 ms/帧，
+  1280x720 约 20 ms/帧)。它用 `VK_NVX_binary_import` 从 Vulkan 直接启动 CUDA 内核。要支持 Vulkan 游戏，需要另写一个 Vulkan 层 (挂 `vkQueuePresentKHR`)。
 - NGX 的调用顺序与 `harness/nr-lab.cpp` 相同：驱动的 `_nvngx.dll` Init → 经调用桥 `dlss5_nvngx.dll`
   (就是 `harness/nvngx-bridge.cpp`；NR 片段要求调用方模块名里含 "nvngx.dll") 调片段的 Init_Ext → CreateFeature(18)。
   不需要 `nvngx_dlss.dll` / `nvngx_dlssg.dll`。

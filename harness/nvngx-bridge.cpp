@@ -34,6 +34,26 @@ extern "C" __declspec(dllexport) unsigned long __cdecl NVNGXBridge_D3D12_InitExt
     return result;
 }
 
+// Vulkan: same check, more arguments (instance, physical device, device are opaque handles here).
+using NgxSnippetInitVulkanExt = unsigned long (__cdecl *)(unsigned long long, const wchar_t *, void *, void *, void *,
+    unsigned long, const void *);
+extern "C" __declspec(dllexport) unsigned long __cdecl NVNGXBridge_VULKAN_InitExt(
+    NgxSnippetInitVulkanExt init,
+    unsigned long long application_id,
+    const wchar_t *application_data_path,
+    void *instance,
+    void *physical_device,
+    void *device,
+    unsigned long api_version,
+    const void *feature_common_info)
+{
+    if (init == nullptr) return 0xBAD00005UL;
+    volatile unsigned long result = init(application_id, application_data_path, instance, physical_device, device,
+        api_version, feature_common_info);
+    MemoryBarrier();
+    return result;
+}
+
 extern "C" __declspec(dllexport) unsigned long __cdecl NVNGXBridge_D3D12_PopulateParameters(
     NgxPopulateParameters populate, void *parameters)
 {

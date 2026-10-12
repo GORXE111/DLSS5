@@ -7,6 +7,8 @@ cl /nologo /std:c++17 /O2 /EHsc /W3 /MD /LD nvngx-bridge.cpp /Fe:nvngx.dll /link
 cl /nologo /std:c++17 /O2 /EHsc /W3 /MD /utf-8 /I"ngx" nr-lab.cpp /Fe:nr-lab.exe /link "ngx\libs\nvsdk_ngx_d.lib" d3d12.lib dxgi.lib dxguid.lib user32.lib advapi32.lib ole32.lib || exit /b 1
 rem nr11: probes the D3D11 entry points of nvngx_dlssnr.dll (they are stubs: Init_Ext returns 0xBAD00001)
 cl /nologo /std:c++17 /O2 /EHsc /W3 /MD /utf-8 /D_CRT_SECURE_NO_WARNINGS /I"ngx" nr11.cpp /Fe:nr11.exe /link d3d11.lib dxgi.lib user32.lib || exit /b 1
+rem nrvk: runs DLSS-NR through its Vulkan entry points (needs ..\oss\Vulkan-Headers; skipped without them)
+if exist ..\oss\Vulkan-Headers\include cl /nologo /std:c++17 /O2 /EHsc /W3 /MD /utf-8 /D_CRT_SECURE_NO_WARNINGS /I"ngx" /I"..\oss\Vulkan-Headers\include" nrvk.cpp /Fe:nrvk.exe || exit /b 1
 for %%D in (rt_sm86 rt_orig) do (
     copy /y nvngx.dll %%D\ >nul
     copy /y nr-lab.exe %%D\ >nul
