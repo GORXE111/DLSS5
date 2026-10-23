@@ -1,0 +1,754 @@
+{
+  "passed": false,
+  "complete": false,
+  "requested_suite_passed": false,
+  "errors": [],
+  "isolated": [
+    {
+      "name": "linear_2x2",
+      "samples": 4100,
+      "kind": "linear",
+      "metrics": {
+        "mae_255": 2.4623856539042986e-06,
+        "max_255": 3.039836883544922e-05,
+        "p99_255": 1.519918441772461e-05,
+        "output_sha256": "a4406e4604f8e7fc3b1307156c5e263e37ca7ec36edd50c2314b95e628a85d09",
+        "reference_sha256": "6d6c21de07fe4aaf2aaa823bd500c2ae33976245897e24fa7c1850d8daa466c7"
+      },
+      "baseline": {
+        "mae_255": 0.06807672818952308,
+        "max_255": 0.6275097280740738,
+        "p99_255": 0.3552704483270646,
+        "output_sha256": "8a8fe20e44b4277fe691543e9b4b3214d2b216d44b7486355c6cf4a25b394880",
+        "reference_sha256": "6d6c21de07fe4aaf2aaa823bd500c2ae33976245897e24fa7c1850d8daa466c7"
+      },
+      "probe_ptx_sha256": "39ac58f15e9895c9aed2adb0efde9da8d5a2ec9584a974fb9379d28b31e0e49d",
+      "input_sha256": "f4fffc31f7a79759130633a1d8e23e8926a4b7bacc968facd5b848cfc5ed7d3f",
+      "coordinates_sha256": "69e0201bed484c6dbd59b47bf5c58ec4771ca8f9fd1e5de00475634c51dae507",
+      "reference_scope": "Authored raw TEX instruction",
+      "arithmetic": "TEX",
+      "passed": true
+    },
+    {
+      "name": "pre_2x2",
+      "samples": 4100,
+      "kind": "pre",
+      "metrics": {
+        "mae_255": 8.827639624087169e-06,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "5e7c35081071c52a6f97d9b42bb226178f1c23d289b5c7b30f89c12dd3ef016f",
+        "reference_sha256": "faef4da088e636ad83cf3064de79bdff2f4e375edef3720610f672350f090f81"
+      },
+      "baseline": {
+        "mae_255": 0.07542593259838695,
+        "max_255": 0.7897648215293884,
+        "p99_255": 0.3958365015685558,
+        "output_sha256": "f20252536058a17171a0a87652733c6a1a34f23224c7082a92cc5a0864796851",
+        "reference_sha256": "faef4da088e636ad83cf3064de79bdff2f4e375edef3720610f672350f090f81"
+      },
+      "probe_ptx_sha256": "5dd49b088d9e182dc9f22ce8c2725fed3434fdb17ee8e33ba6d305cda4817468",
+      "input_sha256": "f4fffc31f7a79759130633a1d8e23e8926a4b7bacc968facd5b848cfc5ed7d3f",
+      "coordinates_sha256": "69e0201bed484c6dbd59b47bf5c58ec4771ca8f9fd1e5de00475634c51dae507",
+      "reference_scope": "Historical artificial pre setup without FTZ multiply; split comparison only, not the complete pre kernel",
+      "arithmetic": "split",
+      "passed": true
+    },
+    {
+      "name": "pre_native_2x2",
+      "samples": 4100,
+      "kind": "pre_native",
+      "metrics": {
+        "mae_255": 8.827639624087169e-06,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "5e7c35081071c52a6f97d9b42bb226178f1c23d289b5c7b30f89c12dd3ef016f",
+        "reference_sha256": "faef4da088e636ad83cf3064de79bdff2f4e375edef3720610f672350f090f81"
+      },
+      "baseline": {
+        "mae_255": 0.07542593259838695,
+        "max_255": 0.7897648215293884,
+        "p99_255": 0.3958365015685558,
+        "output_sha256": "f20252536058a17171a0a87652733c6a1a34f23224c7082a92cc5a0864796851",
+        "reference_sha256": "faef4da088e636ad83cf3064de79bdff2f4e375edef3720610f672350f090f81"
+      },
+      "probe_ptx_sha256": "7d3335ff4a8cb4b9ed2e035f9c324884deacee1a99902bca907dba46275251db",
+      "input_sha256": "f4fffc31f7a79759130633a1d8e23e8926a4b7bacc968facd5b848cfc5ed7d3f",
+      "coordinates_sha256": "69e0201bed484c6dbd59b47bf5c58ec4771ca8f9fd1e5de00475634c51dae507",
+      "reference_scope": "Sampling slice with original FTZ coordinate context",
+      "arithmetic": "fused",
+      "passed": true
+    },
+    {
+      "name": "post_2x2",
+      "samples": 4100,
+      "kind": "post",
+      "metrics": {
+        "mae_255": 8.827639624087169e-06,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "5e7c35081071c52a6f97d9b42bb226178f1c23d289b5c7b30f89c12dd3ef016f",
+        "reference_sha256": "faef4da088e636ad83cf3064de79bdff2f4e375edef3720610f672350f090f81"
+      },
+      "baseline": {
+        "mae_255": 0.07542593259838695,
+        "max_255": 0.7897648215293884,
+        "p99_255": 0.3958365015685558,
+        "output_sha256": "f20252536058a17171a0a87652733c6a1a34f23224c7082a92cc5a0864796851",
+        "reference_sha256": "faef4da088e636ad83cf3064de79bdff2f4e375edef3720610f672350f090f81"
+      },
+      "probe_ptx_sha256": "ce6cf5f9ee7fcf9ba4d430f61d7f7ca150cd19e4693e3bfb06425f0313d60367",
+      "input_sha256": "f4fffc31f7a79759130633a1d8e23e8926a4b7bacc968facd5b848cfc5ed7d3f",
+      "coordinates_sha256": "69e0201bed484c6dbd59b47bf5c58ec4771ca8f9fd1e5de00475634c51dae507",
+      "before_post_arithmetic": {
+        "mae_255": 8.827639624087169e-06,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "5e7c35081071c52a6f97d9b42bb226178f1c23d289b5c7b30f89c12dd3ef016f",
+        "reference_sha256": "faef4da088e636ad83cf3064de79bdff2f4e375edef3720610f672350f090f81"
+      },
+      "reference_scope": "Original post sampling slice",
+      "arithmetic": "fused",
+      "passed": true
+    },
+    {
+      "name": "linear_27x19",
+      "samples": 4609,
+      "kind": "linear",
+      "metrics": {
+        "mae_255": 2.9892959129036985e-06,
+        "max_255": 3.039836883544922e-05,
+        "p99_255": 1.519918441772461e-05,
+        "output_sha256": "b11b3abedae7771b4d01e3b88f20b71cd5a4a5458a7cfa00f4a551482718e9cb",
+        "reference_sha256": "2ab4c5ca8c90e211b16c878c6bf9dd937a1c8089c28a7914ec594117bfdfbfd7"
+      },
+      "baseline": {
+        "mae_255": 0.11465764484026975,
+        "max_255": 1.0144087672233582,
+        "p99_255": 0.5653947651386261,
+        "output_sha256": "5599773cd66f4ab0610e4765fc54b5a6752b11b127c8fb3f2a3cd50d7fbd2047",
+        "reference_sha256": "2ab4c5ca8c90e211b16c878c6bf9dd937a1c8089c28a7914ec594117bfdfbfd7"
+      },
+      "probe_ptx_sha256": "39ac58f15e9895c9aed2adb0efde9da8d5a2ec9584a974fb9379d28b31e0e49d",
+      "input_sha256": "bb357201d25d0d689400da7fab3368111ae13600b0f687b833c192d84035ab03",
+      "coordinates_sha256": "fd5848a8011c952dc45b87fd792259741c12176ac811981ec9187c141f8d1044",
+      "reference_scope": "Authored raw TEX instruction",
+      "arithmetic": "TEX",
+      "passed": true
+    },
+    {
+      "name": "pre_27x19",
+      "samples": 4609,
+      "kind": "pre",
+      "metrics": {
+        "mae_255": 9.414702323421498e-06,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "19db71db4bb4b9b97d3233e08eb9d12e2e4e3b8780280463e93020fd1ec10797",
+        "reference_sha256": "4dabf53d6c0f98ba685dc2dca48e0ec4561e48a498aad7d7f1dd2bc6bdfb7cd2"
+      },
+      "baseline": {
+        "mae_255": 0.13306627226802917,
+        "max_255": 1.1333290860056877,
+        "p99_255": 0.6693594664335247,
+        "output_sha256": "5dcc66f7d147b5dfd884d46cf21825c36fea12e149a770ae392f1ec95efb33d3",
+        "reference_sha256": "4dabf53d6c0f98ba685dc2dca48e0ec4561e48a498aad7d7f1dd2bc6bdfb7cd2"
+      },
+      "probe_ptx_sha256": "5dd49b088d9e182dc9f22ce8c2725fed3434fdb17ee8e33ba6d305cda4817468",
+      "input_sha256": "bb357201d25d0d689400da7fab3368111ae13600b0f687b833c192d84035ab03",
+      "coordinates_sha256": "fd5848a8011c952dc45b87fd792259741c12176ac811981ec9187c141f8d1044",
+      "reference_scope": "Historical artificial pre setup without FTZ multiply; split comparison only, not the complete pre kernel",
+      "arithmetic": "split",
+      "passed": true
+    },
+    {
+      "name": "pre_native_27x19",
+      "samples": 4609,
+      "kind": "pre_native",
+      "metrics": {
+        "mae_255": 9.454278038616044e-06,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "ec3f5ea3f0d6203fb54d5553920c2f4e13d56d23c7360a7fb888f4d4d62f6028",
+        "reference_sha256": "e6084b6ca5dad48a364b011f863283a344ee3ac4076992a785bbeaf8ee3dc814"
+      },
+      "baseline": {
+        "mae_255": 0.13306727113379857,
+        "max_255": 1.1333290860056877,
+        "p99_255": 0.6693594664335247,
+        "output_sha256": "5dcc66f7d147b5dfd884d46cf21825c36fea12e149a770ae392f1ec95efb33d3",
+        "reference_sha256": "e6084b6ca5dad48a364b011f863283a344ee3ac4076992a785bbeaf8ee3dc814"
+      },
+      "probe_ptx_sha256": "7d3335ff4a8cb4b9ed2e035f9c324884deacee1a99902bca907dba46275251db",
+      "input_sha256": "bb357201d25d0d689400da7fab3368111ae13600b0f687b833c192d84035ab03",
+      "coordinates_sha256": "fd5848a8011c952dc45b87fd792259741c12176ac811981ec9187c141f8d1044",
+      "reference_scope": "Sampling slice with original FTZ coordinate context",
+      "arithmetic": "fused",
+      "passed": true
+    },
+    {
+      "name": "post_27x19",
+      "samples": 4609,
+      "kind": "post",
+      "metrics": {
+        "mae_255": 9.454278038616044e-06,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "ec3f5ea3f0d6203fb54d5553920c2f4e13d56d23c7360a7fb888f4d4d62f6028",
+        "reference_sha256": "e6084b6ca5dad48a364b011f863283a344ee3ac4076992a785bbeaf8ee3dc814"
+      },
+      "baseline": {
+        "mae_255": 0.13306727113379857,
+        "max_255": 1.1333290860056877,
+        "p99_255": 0.6693594664335247,
+        "output_sha256": "5dcc66f7d147b5dfd884d46cf21825c36fea12e149a770ae392f1ec95efb33d3",
+        "reference_sha256": "e6084b6ca5dad48a364b011f863283a344ee3ac4076992a785bbeaf8ee3dc814"
+      },
+      "probe_ptx_sha256": "ce6cf5f9ee7fcf9ba4d430f61d7f7ca150cd19e4693e3bfb06425f0313d60367",
+      "input_sha256": "bb357201d25d0d689400da7fab3368111ae13600b0f687b833c192d84035ab03",
+      "coordinates_sha256": "fd5848a8011c952dc45b87fd792259741c12176ac811981ec9187c141f8d1044",
+      "before_post_arithmetic": {
+        "mae_255": 1.458293661575142e-05,
+        "max_255": 0.0001519918441772461,
+        "p99_255": 6.079673767089844e-05,
+        "output_sha256": "19db71db4bb4b9b97d3233e08eb9d12e2e4e3b8780280463e93020fd1ec10797",
+        "reference_sha256": "e6084b6ca5dad48a364b011f863283a344ee3ac4076992a785bbeaf8ee3dc814"
+      },
+      "reference_scope": "Original post sampling slice",
+      "arithmetic": "fused",
+      "passed": true
+    },
+    {
+      "name": "linear_53x37",
+      "samples": 6057,
+      "kind": "linear",
+      "metrics": {
+        "mae_255": 2.196198398521361e-06,
+        "max_255": 3.039836883544922e-05,
+        "p99_255": 1.519918441772461e-05,
+        "output_sha256": "518a0b0f2374192febb458ff0c669fdb5b3677832770e69d0b5b8165186052bc",
+        "reference_sha256": "1057ca88140b6d6cd91cf606aa387093459162873bed5eae36e5db6ffe326e90"
+      },
+      "baseline": {
+        "mae_255": 0.09226033345216676,
+        "max_255": 1.2987551093101501,
+        "p99_255": 0.5339367091655721,
+        "output_sha256": "dba7c1e139b67cc9cfad30497817dff1c3207dbf125c686dfbe2e4c94a419f55",
+        "reference_sha256": "1057ca88140b6d6cd91cf606aa387093459162873bed5eae36e5db6ffe326e90"
+      },
+      "probe_ptx_sha256": "39ac58f15e9895c9aed2adb0efde9da8d5a2ec9584a974fb9379d28b31e0e49d",
+      "input_sha256": "ef34d68f710e64c3506801e895691a0c9d716a13b202017657ee0cd6fdf4e3d4",
+      "coordinates_sha256": "ec7d4e3c6b5cd77a46cd5f0348273add560c42b361c428255c1ee03a99a0d580",
+      "reference_scope": "Authored raw TEX instruction",
+      "arithmetic": "TEX",
+      "passed": true
+    },
+    {
+      "name": "pre_53x37",
+      "samples": 6057,
+      "kind": "pre",
+      "metrics": {
+        "mae_255": 6.9161543927691446e-06,
+        "max_255": 7.599592208862305e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "0e94abeda1e0e9682b36525de4c65e3e9406412a559a44720679d592f67644fb",
+        "reference_sha256": "d45e3dbf05a934001cde18b12f978d57c4675a73a9d4d8bf68f56598bb57cd1a"
+      },
+      "baseline": {
+        "mae_255": 0.10617765635007137,
+        "max_255": 1.1198455095291138,
+        "p99_255": 0.6460512131452559,
+        "output_sha256": "528ac8e0e3506c13cdef5f30a1b8d262be69bb1761f5bafcd94d3d5d5a6ee297",
+        "reference_sha256": "d45e3dbf05a934001cde18b12f978d57c4675a73a9d4d8bf68f56598bb57cd1a"
+      },
+      "probe_ptx_sha256": "5dd49b088d9e182dc9f22ce8c2725fed3434fdb17ee8e33ba6d305cda4817468",
+      "input_sha256": "ef34d68f710e64c3506801e895691a0c9d716a13b202017657ee0cd6fdf4e3d4",
+      "coordinates_sha256": "ec7d4e3c6b5cd77a46cd5f0348273add560c42b361c428255c1ee03a99a0d580",
+      "reference_scope": "Historical artificial pre setup without FTZ multiply; split comparison only, not the complete pre kernel",
+      "arithmetic": "split",
+      "passed": true
+    },
+    {
+      "name": "pre_native_53x37",
+      "samples": 6057,
+      "kind": "pre_native",
+      "metrics": {
+        "mae_255": 5.108894150327069e-05,
+        "max_255": 0.3867356479167938,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "5a5f2ea4f3115b76bd15f83059cf27293f98ca123b90434d9331014f1dcf63f1",
+        "reference_sha256": "1f7ff856a3855927820324f4bcdac935e7faf31398024eadd835797cabe3b8a5"
+      },
+      "baseline": {
+        "mae_255": 0.106259316756676,
+        "max_255": 1.1198607087135315,
+        "p99_255": 0.6464000344276423,
+        "output_sha256": "528ac8e0e3506c13cdef5f30a1b8d262be69bb1761f5bafcd94d3d5d5a6ee297",
+        "reference_sha256": "1f7ff856a3855927820324f4bcdac935e7faf31398024eadd835797cabe3b8a5"
+      },
+      "probe_ptx_sha256": "7d3335ff4a8cb4b9ed2e035f9c324884deacee1a99902bca907dba46275251db",
+      "input_sha256": "ef34d68f710e64c3506801e895691a0c9d716a13b202017657ee0cd6fdf4e3d4",
+      "coordinates_sha256": "ec7d4e3c6b5cd77a46cd5f0348273add560c42b361c428255c1ee03a99a0d580",
+      "reference_scope": "Sampling slice with original FTZ coordinate context",
+      "arithmetic": "fused",
+      "passed": false
+    },
+    {
+      "name": "post_53x37",
+      "samples": 6057,
+      "kind": "post",
+      "metrics": {
+        "mae_255": 5.108894150327069e-05,
+        "max_255": 0.3867356479167938,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "5a5f2ea4f3115b76bd15f83059cf27293f98ca123b90434d9331014f1dcf63f1",
+        "reference_sha256": "1f7ff856a3855927820324f4bcdac935e7faf31398024eadd835797cabe3b8a5"
+      },
+      "baseline": {
+        "mae_255": 0.106259316756676,
+        "max_255": 1.1198607087135315,
+        "p99_255": 0.6464000344276423,
+        "output_sha256": "528ac8e0e3506c13cdef5f30a1b8d262be69bb1761f5bafcd94d3d5d5a6ee297",
+        "reference_sha256": "1f7ff856a3855927820324f4bcdac935e7faf31398024eadd835797cabe3b8a5"
+      },
+      "probe_ptx_sha256": "ce6cf5f9ee7fcf9ba4d430f61d7f7ca150cd19e4693e3bfb06425f0313d60367",
+      "input_sha256": "ef34d68f710e64c3506801e895691a0c9d716a13b202017657ee0cd6fdf4e3d4",
+      "coordinates_sha256": "ec7d4e3c6b5cd77a46cd5f0348273add560c42b361c428255c1ee03a99a0d580",
+      "before_post_arithmetic": {
+        "mae_255": 0.0001661935495048824,
+        "max_255": 0.9594029188156128,
+        "p99_255": 0.00010639429092407227,
+        "output_sha256": "0e94abeda1e0e9682b36525de4c65e3e9406412a559a44720679d592f67644fb",
+        "reference_sha256": "1f7ff856a3855927820324f4bcdac935e7faf31398024eadd835797cabe3b8a5"
+      },
+      "reference_scope": "Original post sampling slice",
+      "arithmetic": "fused",
+      "passed": false
+    },
+    {
+      "name": "linear_640x360",
+      "samples": 6057,
+      "kind": "linear",
+      "metrics": {
+        "mae_255": 2.2594159352458583e-06,
+        "max_255": 3.039836883544922e-05,
+        "p99_255": 1.519918441772461e-05,
+        "output_sha256": "ea154ec770223c8971b49a2ab5eed48d1440d57920d21bd51034448a737ee8cc",
+        "reference_sha256": "317787fd07246b75cdd810b39845388eb3f15400568cdf523fe95694450118be"
+      },
+      "baseline": {
+        "mae_255": 0.09259807065256746,
+        "max_255": 1.0738755762577057,
+        "p99_255": 0.5404039621353142,
+        "output_sha256": "33a004f82ef3d445556ae959307f4614bf22e7fd709da94179ead654246908f2",
+        "reference_sha256": "317787fd07246b75cdd810b39845388eb3f15400568cdf523fe95694450118be"
+      },
+      "probe_ptx_sha256": "39ac58f15e9895c9aed2adb0efde9da8d5a2ec9584a974fb9379d28b31e0e49d",
+      "input_sha256": "5e5f18f91c06bd41acdf8f192722d99cd81240796007333d0b179d2b90c8c7a4",
+      "coordinates_sha256": "3c3caee5068ea555cf4cde50984a5db51a6f5af3b36a3ac72ae5c35b1bc853d9",
+      "reference_scope": "Authored raw TEX instruction",
+      "arithmetic": "TEX",
+      "passed": true
+    },
+    {
+      "name": "pre_640x360",
+      "samples": 6057,
+      "kind": "pre",
+      "metrics": {
+        "mae_255": 6.993149406304628e-06,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "be14d0215ab686dd6337b301b21b1802f292c04ea5cc8720b85f5a2498290411",
+        "reference_sha256": "be17f974ef282be9947bca0be4300510d4ad75cd3accbdb5bb0592a5adaa8c5a"
+      },
+      "baseline": {
+        "mae_255": 0.1076314909612055,
+        "max_255": 1.2683263421058655,
+        "p99_255": 0.6584659069776521,
+        "output_sha256": "c082af9c4f0c65948775705ce6d98495eca03ad85d27fc3201d9bc7edbc011c3",
+        "reference_sha256": "be17f974ef282be9947bca0be4300510d4ad75cd3accbdb5bb0592a5adaa8c5a"
+      },
+      "probe_ptx_sha256": "5dd49b088d9e182dc9f22ce8c2725fed3434fdb17ee8e33ba6d305cda4817468",
+      "input_sha256": "5e5f18f91c06bd41acdf8f192722d99cd81240796007333d0b179d2b90c8c7a4",
+      "coordinates_sha256": "3c3caee5068ea555cf4cde50984a5db51a6f5af3b36a3ac72ae5c35b1bc853d9",
+      "reference_scope": "Historical artificial pre setup without FTZ multiply; split comparison only, not the complete pre kernel",
+      "arithmetic": "split",
+      "passed": true
+    },
+    {
+      "name": "pre_native_640x360",
+      "samples": 6057,
+      "kind": "pre_native",
+      "metrics": {
+        "mae_255": 7.6119895180786026e-06,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "627ff84e06a8b18fe23afa5a8101fd47308a05ad07a49bfa892252237f1d8775",
+        "reference_sha256": "196ffc62e863b045ead1da7cba6fc24d49f2d600205c0d5beee9779e40d745c4"
+      },
+      "baseline": {
+        "mae_255": 0.10761479704078367,
+        "max_255": 1.2684783339500427,
+        "p99_255": 0.6576717495918273,
+        "output_sha256": "c082af9c4f0c65948775705ce6d98495eca03ad85d27fc3201d9bc7edbc011c3",
+        "reference_sha256": "196ffc62e863b045ead1da7cba6fc24d49f2d600205c0d5beee9779e40d745c4"
+      },
+      "probe_ptx_sha256": "7d3335ff4a8cb4b9ed2e035f9c324884deacee1a99902bca907dba46275251db",
+      "input_sha256": "5e5f18f91c06bd41acdf8f192722d99cd81240796007333d0b179d2b90c8c7a4",
+      "coordinates_sha256": "3c3caee5068ea555cf4cde50984a5db51a6f5af3b36a3ac72ae5c35b1bc853d9",
+      "reference_scope": "Sampling slice with original FTZ coordinate context",
+      "arithmetic": "fused",
+      "passed": true
+    },
+    {
+      "name": "post_640x360",
+      "samples": 6057,
+      "kind": "post",
+      "metrics": {
+        "mae_255": 7.6119895180786026e-06,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "627ff84e06a8b18fe23afa5a8101fd47308a05ad07a49bfa892252237f1d8775",
+        "reference_sha256": "196ffc62e863b045ead1da7cba6fc24d49f2d600205c0d5beee9779e40d745c4"
+      },
+      "baseline": {
+        "mae_255": 0.10761479704078367,
+        "max_255": 1.2684783339500427,
+        "p99_255": 0.6576717495918273,
+        "output_sha256": "c082af9c4f0c65948775705ce6d98495eca03ad85d27fc3201d9bc7edbc011c3",
+        "reference_sha256": "196ffc62e863b045ead1da7cba6fc24d49f2d600205c0d5beee9779e40d745c4"
+      },
+      "probe_ptx_sha256": "ce6cf5f9ee7fcf9ba4d430f61d7f7ca150cd19e4693e3bfb06425f0313d60367",
+      "input_sha256": "5e5f18f91c06bd41acdf8f192722d99cd81240796007333d0b179d2b90c8c7a4",
+      "coordinates_sha256": "3c3caee5068ea555cf4cde50984a5db51a6f5af3b36a3ac72ae5c35b1bc853d9",
+      "before_post_arithmetic": {
+        "mae_255": 0.0009001479597070174,
+        "max_255": 0.9195202589035034,
+        "p99_255": 0.001048743724822998,
+        "output_sha256": "be14d0215ab686dd6337b301b21b1802f292c04ea5cc8720b85f5a2498290411",
+        "reference_sha256": "196ffc62e863b045ead1da7cba6fc24d49f2d600205c0d5beee9779e40d745c4"
+      },
+      "reference_scope": "Original post sampling slice",
+      "arithmetic": "fused",
+      "passed": true
+    }
+  ],
+  "full_kernel": [
+    {
+      "name": "full_post/zero",
+      "metrics": {
+        "mae_255": 2.595833896812394e-06,
+        "max_255": 3.039836883544922e-05,
+        "p99_255": 1.519918441772461e-05,
+        "output_sha256": "87de93fbcb767b01959e40a61b11fff53d5cf6377d45b00ebc8ac7fd738ce911",
+        "reference_sha256": "0c343500e709fe5f29f6a5e75e800636363e31f534f9fde9166dbef31c7e200b"
+      },
+      "baseline": {
+        "mae_255": 0.0007169774975035755,
+        "max_255": 0.013071298599243164,
+        "p99_255": 0.005447012465447192,
+        "output_sha256": "e509dbd48fef0addb6d1e144a38d15c173596541ec56c26dc3447ce34d9d45a2",
+        "reference_sha256": "0c343500e709fe5f29f6a5e75e800636363e31f534f9fde9166dbef31c7e200b"
+      },
+      "before_coordinate_fix": {
+        "mae_255": 2.595833896812394e-06,
+        "max_255": 3.039836883544922e-05,
+        "p99_255": 1.519918441772461e-05,
+        "output_sha256": "87de93fbcb767b01959e40a61b11fff53d5cf6377d45b00ebc8ac7fd738ce911",
+        "reference_sha256": "0c343500e709fe5f29f6a5e75e800636363e31f534f9fde9166dbef31c7e200b"
+      },
+      "motion": [
+        0,
+        0
+      ],
+      "input_sha256": "63c9de9f156e5b4c23204288522deae491528cdfa63497a941279b210088b7e7",
+      "motion_sha256": "8df6d450b5a7cb358b9e8373af9fd9304e5912389c644f6c4bc66068380e88a3",
+      "passed": true
+    },
+    {
+      "name": "full_post/integer",
+      "metrics": {
+        "mae_255": 2.5064635377189703e-06,
+        "max_255": 3.039836883544922e-05,
+        "p99_255": 1.519918441772461e-05,
+        "output_sha256": "1855d98d092a1a0d5c7164bf35f4ee28be0354ecfdd5ffd8efe9ae7332be8e3d",
+        "reference_sha256": "346c8fb624c2e807096fdadc3e5b0e2f2f03352b52d53d298b9d1362fd68f028"
+      },
+      "baseline": {
+        "mae_255": 0.0007076244489220014,
+        "max_255": 0.013329684734344482,
+        "p99_255": 0.005152523517608643,
+        "output_sha256": "e505bec98c6764612393bc5459c07baa3158386993b82800f44952abb057c4cf",
+        "reference_sha256": "346c8fb624c2e807096fdadc3e5b0e2f2f03352b52d53d298b9d1362fd68f028"
+      },
+      "before_coordinate_fix": {
+        "mae_255": 0.00022959974816987797,
+        "max_255": 0.0028965133242309093,
+        "p99_255": 0.002093687653541565,
+        "output_sha256": "db76064aa3ed8a48d44078f887f4b49d332d98df3e992ddd0a9333d773ab25c8",
+        "reference_sha256": "346c8fb624c2e807096fdadc3e5b0e2f2f03352b52d53d298b9d1362fd68f028"
+      },
+      "motion": [
+        -4,
+        0
+      ],
+      "input_sha256": "63c9de9f156e5b4c23204288522deae491528cdfa63497a941279b210088b7e7",
+      "motion_sha256": "d8e44b7c5c5aa97cce052ed3d282c4c298749a2f5a89469bc0e8f821b60197c4",
+      "passed": true
+    },
+    {
+      "name": "full_post/fractional",
+      "metrics": {
+        "mae_255": 1.0382165669368486e-05,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "84356606a681db9747b9d1feb53fdbcbadd678eb1057dad12ce68d28fc3f0c10",
+        "reference_sha256": "428d341151c099151b79d922582703f412b859aa0dab4086b262f8ba231aac5b"
+      },
+      "baseline": {
+        "mae_255": 0.2864032904393732,
+        "max_255": 1.1997932195663452,
+        "p99_255": 0.8763394519686699,
+        "output_sha256": "1c8c1502d33e513f8804814a7cfee61024597ce945ed00ba07d88da56b2046a3",
+        "reference_sha256": "428d341151c099151b79d922582703f412b859aa0dab4086b262f8ba231aac5b"
+      },
+      "before_coordinate_fix": {
+        "mae_255": 0.00010322253297981001,
+        "max_255": 0.0024622678756713867,
+        "p99_255": 0.0011095404624938965,
+        "output_sha256": "03bfa564731b87578c952c754a670e25c95049eced6477fa70a9feeaf3d66849",
+        "reference_sha256": "428d341151c099151b79d922582703f412b859aa0dab4086b262f8ba231aac5b"
+      },
+      "motion": [
+        3.25,
+        -1.5
+      ],
+      "input_sha256": "63c9de9f156e5b4c23204288522deae491528cdfa63497a941279b210088b7e7",
+      "motion_sha256": "d5a3df5869283d7a4e3482c8d844f2df077cd563ecc5eb185997a13ccd6b4c4e",
+      "passed": true
+    },
+    {
+      "name": "full_post/negative_fraction",
+      "metrics": {
+        "mae_255": 1.0440244909420353e-05,
+        "max_255": 0.00012159347534179688,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "cdf56da0a18391da3d805e861ba409b7d686698fc75f71f5f06eee84ae43bb43",
+        "reference_sha256": "a3267a46439f131a376a7cefa5cb120938311bbf2824d312fc5c327b51633917"
+      },
+      "baseline": {
+        "mae_255": 0.15037024674477886,
+        "max_255": 0.5584332346916199,
+        "p99_255": 0.40444277375936516,
+        "output_sha256": "bffdf0fff879f9b370e1469355b0fbf7c12c2a695700ac972c883a14619f8f3c",
+        "reference_sha256": "a3267a46439f131a376a7cefa5cb120938311bbf2824d312fc5c327b51633917"
+      },
+      "before_coordinate_fix": {
+        "mae_255": 0.00011061016354376729,
+        "max_255": 0.0015807151794433594,
+        "p99_255": 0.0007751584053039551,
+        "output_sha256": "80e025928fa0e43ae4242dc52f93866531893fdb69659abd7e9ff729855ab84a",
+        "reference_sha256": "a3267a46439f131a376a7cefa5cb120938311bbf2824d312fc5c327b51633917"
+      },
+      "motion": [
+        -2.375,
+        1.625
+      ],
+      "input_sha256": "63c9de9f156e5b4c23204288522deae491528cdfa63497a941279b210088b7e7",
+      "motion_sha256": "603ae1262b1cfec91d724746c524edc2e9532be0fc1111bc8248cd9653839a04",
+      "passed": true
+    },
+    {
+      "name": "full_post/outside",
+      "metrics": {
+        "mae_255": 7.423840644251969e-07,
+        "max_255": 1.519918441772461e-05,
+        "p99_255": 1.519918441772461e-05,
+        "output_sha256": "3baafcab5f4b7be6b1bef927dca24e225552920ab12ee8a7dd7a64a90a092481",
+        "reference_sha256": "47f93728e273f4408654cd8f370a20d3772aa413492a2ff1f5e889c98d1a5550"
+      },
+      "baseline": {
+        "mae_255": 2.776072101874484e-07,
+        "max_255": 1.519918441772461e-05,
+        "p99_255": 7.599592208862305e-06,
+        "output_sha256": "e1bbbdce1e1657a1f5f7d3ac8c86907e49d18b1a6b51ff57860456256adf719c",
+        "reference_sha256": "47f93728e273f4408654cd8f370a20d3772aa413492a2ff1f5e889c98d1a5550"
+      },
+      "before_coordinate_fix": {
+        "mae_255": 6.55863388803684e-07,
+        "max_255": 1.519918441772461e-05,
+        "p99_255": 1.519918441772461e-05,
+        "output_sha256": "b741c49ecdf881fe3e8405393b8d19f57a21ec9bbbfb3393bee188075e43f6aa",
+        "reference_sha256": "47f93728e273f4408654cd8f370a20d3772aa413492a2ff1f5e889c98d1a5550"
+      },
+      "motion": [
+        650,
+        -370
+      ],
+      "input_sha256": "63c9de9f156e5b4c23204288522deae491528cdfa63497a941279b210088b7e7",
+      "motion_sha256": "95fa289ebdaec7187a8b61995703486b73dfb18a03ad7ef73196a0bf6f3686df",
+      "passed": true
+    },
+    {
+      "name": "full_post/odd_53x37",
+      "metrics": {
+        "mae_255": 1.7570221985650876e-05,
+        "max_255": 0.0001519918441772461,
+        "p99_255": 7.599592208862305e-05,
+        "output_sha256": "5e108279b6900be0f04611b1f040a0550097e4ca24283a126efc86381f38c69f",
+        "reference_sha256": "d6410e69d06f216408587012d467ab29c261ef12950901a806886405f901feb7"
+      },
+      "baseline": {
+        "mae_255": 0.1488443459196549,
+        "max_255": 0.508701503276825,
+        "p99_255": 0.40490733683109287,
+        "output_sha256": "3854697a901aea8f3b291db361a3525d971d2b933a66f945b88886a770cbcec5",
+        "reference_sha256": "d6410e69d06f216408587012d467ab29c261ef12950901a806886405f901feb7"
+      },
+      "motion": [
+        -2.375,
+        1.625
+      ],
+      "input_sha256": "2717fe7ab592a0e845c5b7e1f97750e5db0dec7d3ee78e4203331a2ac658f02e",
+      "motion_sha256": "7945c4be4af53f98f77c01c92d627f1a67eaee776db1e621451d4c8589499252",
+      "passed": true
+    },
+    {
+      "name": "full_post/odd_95x63",
+      "metrics": {
+        "mae_255": 1.0059965415202228e-05,
+        "max_255": 9.119510650634766e-05,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "82a2f4617815b3380799de6abeb1608f73ecda97fee7e7ac762b4bcd10b46111",
+        "reference_sha256": "9eaa82badba24ec05b15fe4b7e52726d3df46a1e79f124f5ab73352ca3b81147"
+      },
+      "baseline": {
+        "mae_255": 0.1486000129740097,
+        "max_255": 0.5323362350463867,
+        "p99_255": 0.40468527674674987,
+        "output_sha256": "87e4f546be8c206ca10c4b5e9f5838c685dabda2c3d3929e7f2053be3a4d5949",
+        "reference_sha256": "9eaa82badba24ec05b15fe4b7e52726d3df46a1e79f124f5ab73352ca3b81147"
+      },
+      "motion": [
+        -2.375,
+        1.625
+      ],
+      "input_sha256": "8b0c0766529a1f25132785a1d28a6a9120c85d04041b560022002cd6ca6effed",
+      "motion_sha256": "c3b6332bea0bf54646425ce3b819f93c1dd3c47d727a3e94126ba45a7c995a17",
+      "passed": true
+    },
+    {
+      "name": "full_post/spatial_53x37",
+      "metrics": {
+        "mae_255": 0.0003538914635981549,
+        "max_255": 0.9222105145454407,
+        "p99_255": 0.0001519918441772461,
+        "output_sha256": "811d7dee40624462eb25191d071c89cb3487886e4e5922dc736f9cf77d0b85b9",
+        "reference_sha256": "c58ca7b8ef01696f8c49194bac0a9ea7600866fe954c9d331520d99d5912011d"
+      },
+      "before_post_arithmetic": {
+        "mae_255": 0.00035881918844025176,
+        "max_255": 0.9222067147493362,
+        "p99_255": 0.0001671910285949707,
+        "output_sha256": "2e371cacc6d9b1b33c8b34289889e44e8b20a5d75e2fb2c11d26bf1f2ff2ef56",
+        "reference_sha256": "c58ca7b8ef01696f8c49194bac0a9ea7600866fe954c9d331520d99d5912011d"
+      },
+      "input_sha256": "c6c5ed77ccb165d1df0d5408d0e71fbb37d98ebe02d749f7eed10e87fa6d5279",
+      "motion_sha256": "47aaba13aef2529ff33743efe4259075072ec0c26532c222658ed5ac6c1efd4d",
+      "coordinates_sha256": "5d5b22a8163b9293681b453fe0f68bdeb7a370d1d3cf16238d6e6c5c03370380",
+      "passed": false
+    },
+    {
+      "name": "full_post/spatial_640x360",
+      "metrics": {
+        "mae_255": 1.9560491160665174e-05,
+        "max_255": 0.9132078476250172,
+        "p99_255": 4.559755325317383e-05,
+        "output_sha256": "9d1f40279bcbeb05bede333a118d291adac86a9b7bc3325a664195b42e334e32",
+        "reference_sha256": "1a668fde46f198efa2be1c2753447dcbec85e9d873f0bdb81559cccc93015128"
+      },
+      "before_post_arithmetic": {
+        "mae_255": 0.0013694573501166528,
+        "max_255": 1.2596552073955536,
+        "p99_255": 0.001272931694984436,
+        "output_sha256": "f6528333b58c00fbd597a6f60b2f972842f2828ebc55fc0f44707bfbe695ae8e",
+        "reference_sha256": "1a668fde46f198efa2be1c2753447dcbec85e9d873f0bdb81559cccc93015128"
+      },
+      "input_sha256": "84c45fce906a40f1deb5817d8b448bf8079486ec31e1a6a29506dafba5fa9bd2",
+      "motion_sha256": "b4d73863bfea5dd8e002d7308aef2f47cc589c82e6f780721983e5d30e8040d5",
+      "coordinates_sha256": "48fc209540453cca74bf4e7a2d6e4db7e1730d16322bcfc1511d916b3a549df7",
+      "passed": false
+    }
+  ],
+  "network": [],
+  "scope": "Partial diagnostic sampling suite; not full acceptance",
+  "thresholds": {
+    "isolated_max_255": 0.005,
+    "isolated_mae_255": 0.0005,
+    "min_correlation": 0.999,
+    "max_mae_255": 3.0
+  },
+  "sampler_contract": {
+    "normalized_coordinate_fraction_bits": 21,
+    "axis_weight_fraction_bits": 8,
+    "cross_weight_fraction_bits": 8,
+    "weight_ties": "half upward",
+    "addressing": "normalized clamp",
+    "filtering": "linear",
+    "scope": "Empirical RTX 3060 TEX model; coordinate/cross/tie details are not an API or cross-GPU guarantee"
+  },
+  "limitations": [
+    "Catmull div/rcp.approx remain Torch approximations; finite passing cases do not certify all coordinates/GPUs",
+    "PTX slices are re-JIT-compiled sampling instructions; full-kernel evidence is listed separately",
+    "Full post tests zero the neural weights and use blend=1, recovering history as 2*RGB output",
+    "Network comparisons are against the sm86 f16 port and are not official sm120 output parity"
+  ],
+  "execution": {
+    "isolated": true,
+    "network": false
+  },
+  "network_baseline": "Legacy bilinear/Catmull sampler under the current Reset contract; not a replay of the complete batch3 network",
+  "catmull_arithmetic": {
+    "split": "historical artificial pre probe: separate pixel multiply/add rounding",
+    "fused": "complete original pre/post pixel coordinate FFMA via float64 temporary then float32"
+  },
+  "sources": {
+    "torch\\check_sampling.py": "d7ee6c61a8b2be04a2a4a69c96a71b345cccffc5acb6b26791f5dee57b249855",
+    "torch\\dlss5\\ops.py": "1027dde94aec6a1397065d7b348a9e94d8b44b1b1062fc814dbce363cd2bd91e",
+    "torch\\dlss5\\net.py": "fc5b33dad907b265ad8a09ef7c193e212854e38ae1a6ca097c3af2a27ef3d684",
+    "fatbins\\fatbin_01.1.sm_120.ptx": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+    "sm86_port\\fatbin_01.sm86.cubin": "2871d683d650d602aa7590927fce9ef0a27394685a7fe127efd357b8be506043",
+    "research\\tapspost\\nr-trace.tsv": "a4778616e8d296c5bc200e3eb0da1c2cde12f984b54a922e50e42f4fb2ba7a58",
+    "torch\\test_sampling.py": "a1344b9b7f00674c80a2e40cab02298c8cc458c8d03c9d070eefa33c347d873e",
+    "dlss5\\nvngx_dlssnr.dll": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+    "sm86_port\\nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "research\\klab.py": "30b01bbd75b73af6feb04bf28bf46e69718f6da2c71e08daf78c78fa2428dd25"
+  },
+  "post_machine_code_evidence": {
+    "path": "research\\batch4_sampling\\post_arithmetic_static.json",
+    "sha256": "e9568755e7dd5d5a29b7f4a54344be31676b5d1595d302b3857b4b076ac484f4"
+  },
+  "baseline_report": {
+    "path": "research\\validation\\batch3_sampling_current.json",
+    "sha256": "dd843d543e649ee3b2c2f2b2271bfaed11d5a99118eeb31d0c6c37fa58fa4378"
+  },
+  "device": "NVIDIA GeForce RTX 3060",
+  "torch_version": "2.5.1+cu121",
+  "coverage": {
+    "isolated": {
+      "compared": 16,
+      "passed": 14,
+      "failed": 2
+    },
+    "full_kernel": {
+      "compared": 9,
+      "passed": 7,
+      "failed": 2
+    },
+    "network": {
+      "compared": 0,
+      "passed": 0,
+      "failed": 0
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "status": "passed",
+  "scope": "Post-promotion binding of live generation to strict verifier and GPU-tested candidate",
+  "promotion_report_sha256": "674ce1e14d379a2c1e457774c83156022c17d72c9d7c6fcae736bb38da2e3780",
+  "strict_report_sha256": "096be66cdecdb3a122f02fc27cbcaed5668bfb47b440719042dbb753bd2e534a",
+  "gpu_report_sha256": "b17bd5c9d8576307be965a56cd6b557f7f3e3e51f3b76de9ce0de724f38e7cd8",
+  "fatbins": [
+    {
+      "tag": "fatbin_01",
+      "sha256": "53773a3ec5f12416628a3ee376258c3617dcfdf0103fab3ff72e266857c6eb24",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_02",
+      "sha256": "270dba8ec90981d24c86667f76150c70a850ecdff99a152606f35b6948d63a91",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_03",
+      "sha256": "864d123541f081d25c82c4be1161d3823fcd65d134edbea2ead7a9af02b5cd8f",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_04",
+      "sha256": "64bfe99cd0f7610fa5cf9926575f0e091ab66008cb8567557a76587e684b3d73",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_05",
+      "sha256": "a5df34f2ef0299e40435ba8345054c5b71fe49e85c77ec80764c0033388cdd4d",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_06",
+      "sha256": "d2f1be4a0721d244bb044b83236d2170cee693140908ef039311142c8e0d8a62",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_07",
+      "sha256": "ea1f4a9c00adf9632ead32a7ddbb4a534184d72192cc1e8fbd84c39af3baa9cd",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_08",
+      "sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_09",
+      "sha256": "20d7ababfbbf7ad76ab5f66c97cd3b7874b64157594eecf1cc222858a7c7b809",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_10",
+      "sha256": "3bba3d2f0b72d9b421ec3fba13a6866d28cf6d6506ea1d7c1e84691862fd2dc8",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_11",
+      "sha256": "084f4ffcbb56ce9b30f341dc704e3eb84d8de57674fa167ff61611f36a1b0a6b",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_12",
+      "sha256": "8cf57cf1c75242d9ec53ca48b0c37afd9ee23ee23c5390011d2e31094c2f07be",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_13",
+      "sha256": "9f74ea77fa2ab62aad28c9bb10b5189055ac8f1432beb72b424363e639412919",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_14",
+      "sha256": "6f3ef48456b463a91b80f82e0005433273d80fea4f3701b307715a6756629664",
+      "matches_strict_verified_embedded_fatbin": true
+    },
+    {
+      "tag": "fatbin_15",
+      "sha256": "8eadb95c4d84b36d440c292ea7b4804349ebff48afcd687c261bc427aece0fab",
+      "matches_strict_verified_embedded_fatbin": true
+    }
+  ],
+  "dll_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+  "fatbins_bound": 15,
+  "backup": "E:\\DLSS5\\sm86_port.batch3-backup-0b84169e5487",
+  "old_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd"
+}

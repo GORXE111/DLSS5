@@ -1,0 +1,542 @@
+{
+  "schema": 1,
+  "scope": "normal NGX synthetic evaluations on the RTX 3060 sm86 port; no forced transfer parameters",
+  "tool_sha256": "0705fda671348152121c5acab22c97a590e4b6fac855f8aac0cdf24042183d39",
+  "runtime_sources": {
+    "nr-lab.exe": {
+      "path": "E:\\DLSS5\\harness\\nr-lab.exe",
+      "sha256": "f5a64682431e21ead3e9429563cca37404b9295ec9b44fa20f1d3c0e5ce727f8"
+    },
+    "nvngx.dll": {
+      "path": "E:\\DLSS5\\harness\\rt_sm86\\nvngx.dll",
+      "sha256": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182"
+    },
+    "nvngx_dlssnr.dll": {
+      "path": "E:\\DLSS5\\sm86_port\\nvngx_dlssnr.dll",
+      "sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd"
+    },
+    "nvngx_dlss.dll": {
+      "path": "E:\\DLSS5\\dlss5\\nvngx_dlss.dll",
+      "sha256": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e"
+    },
+    "nvngx_dlssg.dll": {
+      "path": "E:\\DLSS5\\dlss5\\nvngx_dlssg.dll",
+      "sha256": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+    }
+  },
+  "cases": [
+    {
+      "name": "native_style1",
+      "command": [
+        "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\runtime\\nr-lab.exe",
+        "--nr-only",
+        "--model",
+        "1",
+        "--input",
+        "640x360",
+        "--output",
+        "640x360",
+        "--frames",
+        "1",
+        "--style",
+        "1"
+      ],
+      "returncode": 0,
+      "requested_frames": 1,
+      "execution_passed": true,
+      "postprocess_trace_observed": true,
+      "artifacts": {
+        "nr-lab-result.json": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\native_style1\\nr-lab-result.json",
+          "sha256": "398875db2cec4d074204d1b117874251d27e5e41a854b5889a1f8015ac46292d"
+        },
+        "nr-lab.log": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\native_style1\\nr-lab.log",
+          "sha256": "80d806a7be70b26728794e24727c205bd36dc9dd07b2789f9120ca251c35e2b7"
+        },
+        "nr-trace.tsv": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\native_style1\\nr-trace.tsv",
+          "sha256": "e6cbdeb038222715587ee41f462954f1988940dd078df3d1f627141abb04dd34"
+        },
+        "stderr.txt": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\native_style1\\stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout.txt": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\native_style1\\stdout.txt",
+          "sha256": "7c4421e2126454ef012b271a4a32be8fbca654dd0a735a01be97eaaa467d159d"
+        }
+      },
+      "postprocess_blocks": [
+        {
+          "sequence": "157",
+          "parameter_sha256": "64c25a620f1ce7bc633cedf838cf2af878f3188c5791deca4c20fc6a7f0b7c39",
+          "parameter_size": 376,
+          "texture_224": {
+            "handle": 0,
+            "base_x": 0.0,
+            "base_y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "inverse_width": 0.0,
+            "inverse_height": 0.0
+          },
+          "texture_256": {
+            "handle": 0,
+            "base_x": 0.0,
+            "base_y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "inverse_width": 0.0,
+            "inverse_height": 0.0
+          },
+          "enable_300": 0,
+          "grid_width_304": 0,
+          "grid_height_308": 0,
+          "output_size": [
+            640,
+            360
+          ],
+          "transfer_predicate": false
+        }
+      ],
+      "runtime_result": {
+        "featureId": 18,
+        "created": true,
+        "evaluationsSucceeded": 1,
+        "input": {
+          "width": 640,
+          "height": 360
+        },
+        "output": {
+          "width": 640,
+          "height": 360
+        },
+        "model": 1,
+        "style": 1,
+        "requestedPerfQuality": -1,
+        "runtimeScaleOverride": -1.0,
+        "profile": "sRGB",
+        "pipeline": "nr-only",
+        "compactNrResources": false,
+        "optionalProbe": "none",
+        "optionalFormat": "unknown",
+        "optionalVariant": 1,
+        "optionalChannel": -1,
+        "useAutoMask": 1,
+        "uiCorrection": 0,
+        "temporalShiftPixels": 0,
+        "motionVector": [
+          0.0,
+          0.0
+        ],
+        "nrResolvedScalingRatio": 1.0,
+        "nrScalingCallbackResult": "0x00000001",
+        "nrScalingCallbackSucceeded": true,
+        "nrStatsVramBytes": 0,
+        "nrStatsOptLevel": 40,
+        "nrStatsDevBranch": 0,
+        "runtimeParamsCalls": 1,
+        "changedPercent": 100.0,
+        "quadrantChangedPercent": [
+          100.0,
+          100.0,
+          100.0,
+          100.0
+        ],
+        "checksumFnv1a64": "19C63BF5EEA62666",
+        "upscalingValidated": true,
+        "outputCoverageValidated": true,
+        "fidelityValidated": false,
+        "validationScope": "feature execution and output coverage only"
+      }
+    },
+    {
+      "name": "native_style2",
+      "command": [
+        "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\runtime\\nr-lab.exe",
+        "--nr-only",
+        "--model",
+        "1",
+        "--input",
+        "640x360",
+        "--output",
+        "640x360",
+        "--frames",
+        "1",
+        "--style",
+        "2"
+      ],
+      "returncode": 0,
+      "requested_frames": 1,
+      "execution_passed": true,
+      "postprocess_trace_observed": true,
+      "artifacts": {
+        "nr-lab-result.json": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\native_style2\\nr-lab-result.json",
+          "sha256": "1d511a5beea25590e4ace6be84c6c55f5cf110c69937333f447e0a072c25156f"
+        },
+        "nr-lab.log": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\native_style2\\nr-lab.log",
+          "sha256": "e7cbb52062e2f9683306930c3acc0b325c460a3d3115310c69d82c9b92926ded"
+        },
+        "nr-trace.tsv": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\native_style2\\nr-trace.tsv",
+          "sha256": "a04e4102ba7619da9cda778600627a6d222357cf151fe22ee7d88c669a992ca9"
+        },
+        "stderr.txt": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\native_style2\\stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout.txt": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\native_style2\\stdout.txt",
+          "sha256": "33e5c9671d8347cd20dd582b48ed3f576052e34e862f453e0079cde87675049d"
+        }
+      },
+      "postprocess_blocks": [
+        {
+          "sequence": "157",
+          "parameter_sha256": "9b8fead4b96f3926e1b8404b32d3df0c9f701429902565dc18f94946e5c790ff",
+          "parameter_size": 376,
+          "texture_224": {
+            "handle": 0,
+            "base_x": 0.0,
+            "base_y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "inverse_width": 0.0,
+            "inverse_height": 0.0
+          },
+          "texture_256": {
+            "handle": 0,
+            "base_x": 0.0,
+            "base_y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "inverse_width": 0.0,
+            "inverse_height": 0.0
+          },
+          "enable_300": 0,
+          "grid_width_304": 0,
+          "grid_height_308": 0,
+          "output_size": [
+            640,
+            360
+          ],
+          "transfer_predicate": false
+        }
+      ],
+      "runtime_result": {
+        "featureId": 18,
+        "created": true,
+        "evaluationsSucceeded": 1,
+        "input": {
+          "width": 640,
+          "height": 360
+        },
+        "output": {
+          "width": 640,
+          "height": 360
+        },
+        "model": 1,
+        "style": 2,
+        "requestedPerfQuality": -1,
+        "runtimeScaleOverride": -1.0,
+        "profile": "sRGB",
+        "pipeline": "nr-only",
+        "compactNrResources": false,
+        "optionalProbe": "none",
+        "optionalFormat": "unknown",
+        "optionalVariant": 1,
+        "optionalChannel": -1,
+        "useAutoMask": 1,
+        "uiCorrection": 0,
+        "temporalShiftPixels": 0,
+        "motionVector": [
+          0.0,
+          0.0
+        ],
+        "nrResolvedScalingRatio": 1.0,
+        "nrScalingCallbackResult": "0x00000001",
+        "nrScalingCallbackSucceeded": true,
+        "nrStatsVramBytes": 0,
+        "nrStatsOptLevel": 40,
+        "nrStatsDevBranch": 0,
+        "runtimeParamsCalls": 1,
+        "changedPercent": 100.0,
+        "quadrantChangedPercent": [
+          100.0,
+          100.0,
+          100.0,
+          100.0
+        ],
+        "checksumFnv1a64": "E1BB088D21394390",
+        "upscalingValidated": true,
+        "outputCoverageValidated": true,
+        "fidelityValidated": false,
+        "validationScope": "feature execution and output coverage only"
+      }
+    },
+    {
+      "name": "different_output_style1",
+      "command": [
+        "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\runtime\\nr-lab.exe",
+        "--nr-only",
+        "--model",
+        "1",
+        "--input",
+        "640x360",
+        "--output",
+        "960x540",
+        "--frames",
+        "1",
+        "--style",
+        "1"
+      ],
+      "returncode": 5,
+      "requested_frames": 1,
+      "execution_passed": false,
+      "postprocess_trace_observed": true,
+      "artifacts": {
+        "nr-lab-result.json": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\different_output_style1\\nr-lab-result.json",
+          "sha256": "e059c3f21dfc31ad20011e942174ab537e84c334010d576bc8dbbd419c06b969"
+        },
+        "nr-lab.log": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\different_output_style1\\nr-lab.log",
+          "sha256": "94294d9a79a8309c214f8182c0d76b16d63cafa8b199eca03a339336a4fefb61"
+        },
+        "nr-trace.tsv": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\different_output_style1\\nr-trace.tsv",
+          "sha256": "73cfabd0971ef41b189882bde689c394c7cb1ac233bfb754760ee609d1e6847f"
+        },
+        "stderr.txt": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\different_output_style1\\stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout.txt": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\different_output_style1\\stdout.txt",
+          "sha256": "d273f09b5d33a6a6cda2e96af4dfb1e73bc5cd85d1eee0cc802ba1d20af10690"
+        }
+      },
+      "postprocess_blocks": [
+        {
+          "sequence": "157",
+          "parameter_sha256": "c83ce2ac61589b9122981c31a08ccbec7bf323031338670807d88c24f062af77",
+          "parameter_size": 376,
+          "texture_224": {
+            "handle": 0,
+            "base_x": 0.0,
+            "base_y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "inverse_width": 0.0,
+            "inverse_height": 0.0
+          },
+          "texture_256": {
+            "handle": 0,
+            "base_x": 0.0,
+            "base_y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "inverse_width": 0.0,
+            "inverse_height": 0.0
+          },
+          "enable_300": 0,
+          "grid_width_304": 0,
+          "grid_height_308": 0,
+          "output_size": [
+            640,
+            360
+          ],
+          "transfer_predicate": false
+        }
+      ],
+      "runtime_result": {
+        "featureId": 18,
+        "created": true,
+        "evaluationsSucceeded": 1,
+        "input": {
+          "width": 640,
+          "height": 360
+        },
+        "output": {
+          "width": 960,
+          "height": 540
+        },
+        "model": 1,
+        "style": 1,
+        "requestedPerfQuality": -1,
+        "runtimeScaleOverride": -1.0,
+        "profile": "sRGB",
+        "pipeline": "nr-only",
+        "compactNrResources": false,
+        "optionalProbe": "none",
+        "optionalFormat": "unknown",
+        "optionalVariant": 1,
+        "optionalChannel": -1,
+        "useAutoMask": 1,
+        "uiCorrection": 0,
+        "temporalShiftPixels": 0,
+        "motionVector": [
+          0.0,
+          0.0
+        ],
+        "nrResolvedScalingRatio": 1.0,
+        "nrScalingCallbackResult": "0x00000001",
+        "nrScalingCallbackSucceeded": true,
+        "nrStatsVramBytes": 0,
+        "nrStatsOptLevel": 40,
+        "nrStatsDevBranch": 0,
+        "runtimeParamsCalls": 1,
+        "changedPercent": 44.44444,
+        "quadrantChangedPercent": [
+          100.0,
+          33.33333,
+          33.33333,
+          11.11111
+        ],
+        "checksumFnv1a64": "43333720311AD666",
+        "upscalingValidated": false,
+        "outputCoverageValidated": false,
+        "fidelityValidated": false,
+        "validationScope": "feature execution and output coverage only"
+      }
+    },
+    {
+      "name": "runtime_half_style1",
+      "command": [
+        "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\runtime\\nr-lab.exe",
+        "--nr-only",
+        "--model",
+        "1",
+        "--input",
+        "640x360",
+        "--output",
+        "640x360",
+        "--frames",
+        "2",
+        "--style",
+        "1",
+        "--runtime-scale",
+        "0.5"
+      ],
+      "returncode": 0,
+      "requested_frames": 2,
+      "execution_passed": true,
+      "postprocess_trace_observed": true,
+      "artifacts": {
+        "nr-lab-result.json": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\runtime_half_style1\\nr-lab-result.json",
+          "sha256": "5fce76dcaaa4ff29227f1cfa0f9feddc4e8fff4e7572ae9bd3022ed75ca4714f"
+        },
+        "nr-lab.log": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\runtime_half_style1\\nr-lab.log",
+          "sha256": "d4e79eb4184633afa9fa45d6feb4b031963e43eaa6fa6c27468b2756c53c9d2b"
+        },
+        "nr-trace.tsv": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\runtime_half_style1\\nr-trace.tsv",
+          "sha256": "e7dfa581385eb703c77bbb382f6d87663940ab43f6d5461d10c94b9d424ae983"
+        },
+        "stderr.txt": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\runtime_half_style1\\stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout.txt": {
+          "path": "E:\\DLSS5\\research\\transfer_host_runtime_batch2\\runtime_half_style1\\stdout.txt",
+          "sha256": "5c3368d6f39262cb36f6bdba2e4f2320e86f828aba868affa874c09606a88973"
+        }
+      },
+      "postprocess_blocks": [
+        {
+          "sequence": "157",
+          "parameter_sha256": "64c25a620f1ce7bc633cedf838cf2af878f3188c5791deca4c20fc6a7f0b7c39",
+          "parameter_size": 376,
+          "texture_224": {
+            "handle": 0,
+            "base_x": 0.0,
+            "base_y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "inverse_width": 0.0,
+            "inverse_height": 0.0
+          },
+          "texture_256": {
+            "handle": 0,
+            "base_x": 0.0,
+            "base_y": 0.0,
+            "width": 0.0,
+            "height": 0.0,
+            "inverse_width": 0.0,
+            "inverse_height": 0.0
+          },
+          "enable_300": 0,
+          "grid_width_304": 0,
+          "grid_height_308": 0,
+          "output_size": [
+            640,
+            360
+          ],
+          "transfer_predicate": false
+        }
+      ],
+      "runtime_result": {
+        "featureId": 18,
+        "created": true,
+        "evaluationsSucceeded": 2,
+        "input": {
+          "width": 640,
+          "height": 360
+        },
+        "output": {
+          "width": 640,
+          "height": 360
+        },
+        "model": 1,
+        "style": 1,
+        "requestedPerfQuality": -1,
+        "runtimeScaleOverride": 0.5,
+        "profile": "sRGB",
+        "pipeline": "nr-only",
+        "compactNrResources": false,
+        "optionalProbe": "none",
+        "optionalFormat": "unknown",
+        "optionalVariant": 1,
+        "optionalChannel": -1,
+        "useAutoMask": 1,
+        "uiCorrection": 0,
+        "temporalShiftPixels": 0,
+        "motionVector": [
+          0.0,
+          0.0
+        ],
+        "nrResolvedScalingRatio": 1.0,
+        "nrScalingCallbackResult": "0x00000001",
+        "nrScalingCallbackSucceeded": true,
+        "nrStatsVramBytes": 0,
+        "nrStatsOptLevel": 40,
+        "nrStatsDevBranch": 0,
+        "runtimeParamsCalls": 2,
+        "changedPercent": 100.0,
+        "quadrantChangedPercent": [
+          100.0,
+          100.0,
+          100.0,
+          100.0
+        ],
+        "checksumFnv1a64": "01BF8314B25C4BDA",
+        "upscalingValidated": true,
+        "outputCoverageValidated": true,
+        "fidelityValidated": false,
+        "validationScope": "feature execution and output coverage only"
+      }
+    }
+  ],
+  "static_evidence": "research/validation/transfer_host_static_batch2.json",
+  "errors": [],
+  "observation_complete": true,
+  "all_requested_executions_passed": false,
+  "observed_block_count": 4,
+  "observed_transfer_enabled_count": 0,
+  "conclusion": "All observed normal postprocess blocks disabled transfer; this is limited to the recorded synthetic cases and runtime identity."
+}

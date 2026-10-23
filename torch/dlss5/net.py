@@ -6,6 +6,7 @@
     out = net(color, hist=None, mv=None, frame=0)   # color/hist: (360, 640, 3) [0,1]；mv: (360, 640, 2) 像素；返回 (360, 640, 3)
 """
 import json
+import math
 import os
 
 import numpy as np
@@ -23,6 +24,16 @@ LEVEL = {"1h": (32, 192, 320), "2h": (64, 96, 160), "4h": (128, 48, 80), "8h": (
 
 def _up(v, m):
     return (v + m - 1) // m * m
+
+
+def _finite_scalar(name, value):
+    try:
+        value = float(value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ValueError(f"{name} must be a finite real number") from exc
+    if not math.isfinite(value):
+        raise ValueError(f"{name} must be a finite real number")
+    return value
 
 
 def _n_down(x):
@@ -75,6 +86,8 @@ def control_inputs(tone=1.0, structure=1.0, skin=-1.0, auto_mask=True, style=0):
     auto_mask = DLSSNR.UseAutoMask (提供 ControlMask 时 DLL 强制为 0)，style = DLSSNR.Style (0..2)。
     DLL (sub_18001A700) 写 pre 参数 +172 tone, +176 structure, +180 style/128, +184 有效 skin, +188 有效 structure
     (auto_mask 关时后两者为 -1)；kernel 再据此生成下面 5 路。"""
+    tone, structure, skin, style = (_finite_scalar(n, v) for n, v in
+                                   (("tone", tone), ("structure", structure), ("skin", skin), ("style", style)))
     skin_eff = (skin if skin >= 0 else structure) if auto_mask else -1.0
     struct_eff = structure if auto_mask else -1.0
     on = max(skin_eff, struct_eff) >= 0
@@ -84,11 +97,16 @@ def control_inputs(tone=1.0, structure=1.0, skin=-1.0, auto_mask=True, style=0):
             "Style": min(max(int(style), 0), 2) / 128, "style": min(max(int(style), 0), 2)}
 
 
+def _pre_rgb(rgb):
+    """Original pre: CVT.RN.F16, SUB.F16(.5), MUL.F16(.125), in both modes."""
+    return ((rgb.half() - 0.5) * 0.125).float()
+
+
 # ================================================================== pre_block (block0)
 class PreBlock(_Base):
     """每个全分辨率像素 16 路输入 -> 适配器 16->32 -> 全分辨率 1h swin (skip, 供 post_block) -> 2x2 平均 (进 block1)。
     输入: 颜色 RGB 与重投影历史 RGB 各 (c-0.5)*0.125，3 路噪声，常数 1，5 路控制量 (control_inputs)，1 路恒 0。
-    补齐行/列按不重复边缘的镜像取样 (360p: y' = 718 - y)。历史缺失 (重置帧) 时以颜色充当历史。"""
+    补齐行/列按不重复边缘的镜像取样 (360p: y' = 718 - y)。History 或 MV 缺失时直接以已采样颜色充当历史。"""
 
     CONTROLS = ["LocalTone", "StructureGate", "Skin", "Structure", "Style"]
     INPUTS = ["颜色R", "颜色G", "颜色B", "历史R", "历史G", "历史B", "噪声0", "噪声1", "噪声2", "常数"] + CONTROLS
@@ -130,8 +148,12 @@ class PreBlock(_Base):
         x = torch.where(x >= Wi, 2 * (Wi - 1) - x, x)
         u, v = (x + 0.5) / Wi, (y + 0.5) / Hi
         c = bilinear(color, u, v)[..., :3]
-        mvs = mv[y.long().clamp(0, Hi - 1), x.long().clamp(0, Wi - 1)]
-        h = catmull_rom5(hist[..., :3], u + mvs[..., 0] / Wi, v + mvs[..., 1] / Hi)
+        if hist is None or mv is None:                        # 原 pre: 任一句柄缺失，跳过整个历史采样分支
+            h = c
+        else:
+            mvs = mv[y.long().clamp(0, Hi - 1), x.long().clamp(0, Wi - 1)]
+            hu, hv = ops.reproject_uv(u, v, mvs, Wi, Hi)
+            h = catmull_rom5(hist[..., :3], hu, hv)
         nz = noise(GH, GW, frame, self.dev).permute(1, 2, 0)
         key = tuple((ctrl or control_inputs())[n] for n in self.CONTROLS)
         if key not in self._kc:                              # 缓存: CUDA Graph 捕获期间不能做主机->显存拷贝
@@ -141,7 +163,8 @@ class PreBlock(_Base):
         if mask is not None:                                 # DLSSNR.ControlMask: G、B 逐像素乘到 LocalTone、StructureGate
             m = mask[y.long(), x.long()]
             k = torch.cat([k[..., :1], k[..., 1:2] * m[..., 1:2], k[..., 2:3] * m[..., 2:3], k[..., 3:]], -1)
-        return torch.cat([(c - 0.5) * 0.125, (h - 0.5) * 0.125, nz, k], -1).view(-1, len(self.INPUTS))
+        rgb = _pre_rgb(torch.cat((c, h), -1))                 # 六列按原 half 次序；噪声和控制量保留原精度
+        return torch.cat([rgb, nz, k], -1).view(-1, len(self.INPUTS))
 
     def __call__(self, color, hist, mv, frame, ctrl=None):
         GH, GW = dims(*color.shape[:2])["grid"]
@@ -186,20 +209,21 @@ class PostBlock(_Base):
         H, W = color.shape[:2]
         n = self.net(x69, skip, *dims(H, W)["grid"])[:H, :W]
         cur = (color + 8 * self.scale * n[..., :3]).clamp(0, 1)
-        if hist is None:                                            # 重置帧: 无历史混合
+        if hist is None or mv is None:                              # 原 post: History/MV 任一缺失，禁用混合
             return cur
         gate = (torch.sigmoid(n[..., 3:]) * self.blend).clamp(0, 1)
         y, x = torch.meshgrid(torch.arange(H, device=self.dev, dtype=torch.float32),
                               torch.arange(W, device=self.dev, dtype=torch.float32), indexing="ij")
-        h = catmull_rom5(hist[..., :3], (x + 0.5 + mv[..., 0]) / W, (y + 0.5 + mv[..., 1]) / H)
+        hu, hv = ops.reproject_uv((x + 0.5) / W, (y + 0.5) / H, mv, W, H)
+        h = catmull_rom5(hist[..., :3], hu, hv, arithmetic="fused")
         return cur + gate * (h - cur)
 
 
 # ================================================================== 整网
 class DLSS5:
     def __init__(self, device="cuda", records=None, schedule=None, precise=False, half=None):
-        """precise=True: 逐处模拟 kernel 的 f16/fp8 舍入、f32 计算 (逐块对照用，慢)；
-        False (默认): 不模拟舍入、半精度计算 (autocast)。整帧与 kernel 的吻合度两者相同 (见 bench_modes.py)。
+        """precise=True: 逐处模拟矩阵/中间激活的 f16/fp8 舍入、f32 计算 (逐块对照用，慢)；
+        False (默认): 矩阵/中间激活采用快速舍入路径与半精度计算 (autocast)。两种模式均固定执行 pre RGB 的逐步 half 归一化。
         half: 是否用半精度 (默认 = not precise)"""
         torch.backends.cuda.matmul.allow_tf32 = False             # 与参考一致的 f32 matmul
         torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False   # 半精度 matmul 用 f32 累加
@@ -230,33 +254,62 @@ class DLSS5:
             self.steps.append((st, m))
 
     @torch.no_grad()
-    def __call__(self, color, hist=None, mv=None, frame=0, trace=None, controls=None, intensity=1.0, control_mask=None):
-        """color/hist: (H, W, 3) float [0,1] (numpy 或 torch)，输出 f32；mv: (H, W, 2) 像素位移；hist=None 表示重置帧。
+    def __call__(self, color, hist=None, mv=None, frame=0, trace=None, controls=None, intensity=1.0, control_mask=None,
+                 ui_correction=False, ui=None, ui_alpha=None, backbuffer=None):
+        """color/hist: (H, W, 3) float [0,1] (numpy 或 torch)，输出 f32；mv: (H, W, 2) 像素位移。
+        hist=None 表示重置帧，显式 MV 不参与 pre/post 历史采样；有 hist 时 mv=None 沿用全零 MV 的公共 API 默认值。
+        直接调用 PreBlock/PostBlock 或导出 Core 时，None 则表示原始资源缺失，任一缺失均禁用历史。
         controls: control_inputs(...) 的结果 (默认 = DLL 默认参数)。
         intensity: DLSSNR.Intensity，夹到 [0,1] 后在网络之外做 lerp(color, NR 输出, t)，与 DLL 一致；
         Style 1/2 时再经 style.grade 调色 (cg2r_post_process_kernel)。
         control_mask: DLSSNR.ControlMask，(H, W, 4) [R, G, B, A]，逐像素乘到全局参数上 (与 DLL 逐字节一致):
             R x Intensity (网络之外的混合)，G x LocalTone，B x LocalStructure (pre_block 的控制输入)，A 未使用。
             提供时 DLL 强制 UseAutoMask=0，所以 controls 须为 control_inputs(auto_mask=False, ...) (默认即此)。
+        ui_correction: DLSSNR.UICorrection；开启时应用相同尺寸的 ui (H,W,4)、ui_alpha (H,W) 或 (H,W,1)、
+            backbuffer (H,W,3/4)。UIAlpha.R 优先于 UI.a；缺失 Backbuffer 时用 Color。关闭时忽略这三项。
         trace: 可选 dict，记录各级出口 (step 序号 -> 张量) 以便对照"""
         ops.PRECISE = self.precise
+        intensity = _finite_scalar("intensity", intensity)
+        if controls is not None:
+            for name in PreBlock.CONTROLS:
+                _finite_scalar(f"controls.{name}", controls[name])
+            sid = _finite_scalar("controls.style", controls.get("style", 0))
+            if sid not in (0, 1, 2):
+                raise ValueError("controls.style must be 0, 1, or 2")
         t = lambda a: None if a is None else torch.as_tensor(np.asarray(a) if not torch.is_tensor(a) else a,  # noqa: E731
                                                               dtype=torch.float32, device=self.dev)
         color, hist, mv = t(color), t(hist), t(mv)
+        if ui_correction:
+            ui, ui_alpha, backbuffer = t(ui), t(ui_alpha), t(backbuffer)
+            for name, img, channels in (("ui", ui, (4,)), ("backbuffer", backbuffer, (3, 4))):
+                if img is not None and (img.ndim != 3 or img.shape[:2] != color.shape[:2] or img.shape[-1] not in channels):
+                    raise ValueError(f"{name} must match Color's (H,W) and have {channels} channels")
+                if img is not None and not torch.isfinite(img).all():
+                    raise ValueError(f"{name} must contain only finite values")
+            if ui_alpha is not None:
+                if ui_alpha.ndim == 2:
+                    ui_alpha = ui_alpha[..., None]
+                if ui_alpha.ndim != 3 or ui_alpha.shape[:2] != color.shape[:2] or ui_alpha.shape[-1] != 1:
+                    raise ValueError("ui_alpha must match Color's (H,W) and have one channel")
+                if not torch.isfinite(ui_alpha).all():
+                    raise ValueError("ui_alpha must contain only finite values")
         if control_mask is not None:
             if controls is None:
                 controls = control_inputs(auto_mask=False)
             if controls["Skin"] != -1.0 or controls["Structure"] != -1.0:
                 raise ValueError("ControlMask forces UseAutoMask=0: use control_inputs(auto_mask=False, ...)")
-            if controls.get("style", 0):
-                raise NotImplementedError("ControlMask with Style 1/2 has not been checked against the DLL")
             control_mask = t(control_mask)
+            if control_mask.ndim != 3 or control_mask.shape[:2] != color.shape[:2] or control_mask.shape[-1] != 4:
+                raise ValueError("control_mask must match Color's (H,W) and have four RGBA channels")
+            if not torch.isfinite(control_mask).all():
+                raise ValueError("control_mask must contain only finite values")
             controls = dict(controls, mask=control_mask)
         with torch.autocast("cuda", dtype=torch.float16, enabled=self.half, cache_enabled=False):
             out = self._forward(color, hist, mv, frame, trace, controls).float()
         style = (controls or {}).get("style", 0)                   # 网络之外的部分用 f32
-        if style:                                                  # Style 1/2: DLL 的调色后处理 (含 Intensity 混合)
-            return style_mod.apply(color[..., :3], out, style, intensity)
+        if style or ui_correction:                                 # 调色/UI 后处理: 掩码 R 和强度在此应用一次
+            return style_mod.apply(color[..., :3], out, style, intensity, control_mask,
+                                   ui_correction, ui, ui_alpha, backbuffer)
         k = min(max(float(intensity), 0.0), 1.0)
         if control_mask is not None:                               # 逐像素 Intensity (post_block 的 control_mask 变体)
             k = k * control_mask[..., :1]
@@ -272,7 +325,7 @@ class DLSS5:
         for i, (st, m) in enumerate(self.steps):
             k = st["kind"]
             if k == "pre":
-                x, pre_skip = m(color, color if hist is None else hist, mv, frame, controls)
+                x, pre_skip = m(color, hist, mv, frame, controls)
             elif k == "swin":
                 lv = st["level"]
                 H, Wd = D[lv]
@@ -313,7 +366,8 @@ class DLSS5:
 
     def graph(self, H=360, W=640, history=True, controls=None, intensity=1.0):
         """把整帧前向捕获成 CUDA Graph，返回 run(color, hist=None, mv=None, frame=0) -> 输出 (静态缓冲，下次调用会被覆盖)。
-        history=False 捕获重置帧 (无历史) 的图。输入尺寸、controls 与 intensity 在捕获时固定。"""
+        history=False 捕获重置帧的图，显式 MV 被忽略。run 的 hist 是否存在必须与捕获时 history 一致；
+        history=True 下 mv=None 保持全零 MV 默认值。输入尺寸、controls 与 intensity 在捕获时固定。"""
         dev = self.dev
         sc = torch.zeros(H, W, 3, device=dev)
         sh = torch.zeros(H, W, 3, device=dev) if history else None
@@ -330,10 +384,12 @@ class DLSS5:
             out = self(sc, sh, sm, sf, controls=controls, intensity=intensity)
 
         def run(color, hist=None, mv=None, frame=0):
+            if history != (hist is not None):
+                raise ValueError("hist presence must match the CUDA Graph's fixed history setting")
             sc.copy_(torch.as_tensor(color, device=dev))
             if history:
                 sh.copy_(torch.as_tensor(hist, device=dev))
-            sm.copy_(torch.as_tensor(mv, device=dev)) if mv is not None else sm.zero_()
+            sm.copy_(torch.as_tensor(mv, device=dev)) if history and mv is not None else sm.zero_()
             sf.fill_(int(frame))
             g.replay()
             return out

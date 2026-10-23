@@ -1,7 +1,9 @@
 """GPU 数值原语。舍入点与 kernel / numpy 参考一致: f16() 对应 kernel 里的 f16 累加/存储，q8() 对应 FP8 e4m3 量化。"""
 import math
+import struct
 
 import torch
+from .ptx_math import rcp_approx
 
 EPS = 6.2e-05
 PRECISE = False       # True: 逐处模拟 kernel 的 f16 与 fp8 舍入 (逐块对照用)；False: 只模拟 fp8 量化 (f16 舍入对整帧无影响，
@@ -87,33 +89,83 @@ def inv_sum(p):
     return f16(1.0 / s.clamp_min(6.1e-5))
 
 
-# ------------------------------------------------------------------ 纹理采样 (CUDA 纹理同式: 坐标*size-0.5，clamp)
+# ------------------------------------------------------------------ 纹理采样
+def reproject_uv(u, v, motion, width, height):
+    """Original pre/post FMA of pixel motion with float32 inverse dimensions."""
+    iw = struct.unpack("<f", struct.pack("<f", 1 / width))[0]
+    ih = struct.unpack("<f", struct.pack("<f", 1 / height))[0]
+    return ((motion[..., 0].double() * iw + u.double()).float(),
+            (motion[..., 1].double() * ih + v.double()).float())
+
+
 def bilinear(img, u, v):
+    """Normalized clamp TEX, including the measured RTX 3060 filter precision.
+
+    Axis coefficients have eight fractional bits. Normalized-coordinate
+    truncation (21 fractional bits), cross-weight quantization and half-up ties
+    are measured properties of this GPU, not a guarantee for other hardware.
+    No color-space conversion is performed. All operations support CUDA Graphs.
+    """
     Hh, Ww = img.shape[:2]
-    xx = (u * Ww - 0.5).clamp(0, Ww - 1)
-    yy = (v * Hh - 0.5).clamp(0, Hh - 1)
-    x0, y0 = xx.floor().long(), yy.floor().long()
-    x1, y1 = (x0 + 1).clamp(max=Ww - 1), (y0 + 1).clamp(max=Hh - 1)
-    fx, fy = (xx - x0)[..., None], (yy - y0)[..., None]
-    return (img[y0, x0] * (1 - fx) * (1 - fy) + img[y0, x1] * fx * (1 - fy)
-            + img[y1, x0] * (1 - fx) * fy + img[y1, x1] * fx * fy)
+    xx = torch.floor(u.float().double() * 2097152) * (Ww / 2097152) - 0.5
+    yy = torch.floor(v.float().double() * 2097152) * (Hh / 2097152) - 0.5
+    ix, iy = xx.floor().long(), yy.floor().long()
+    fx = (torch.floor((xx - ix) * 256 + 0.5) / 256).float()[..., None]
+    fy = (torch.floor((yy - iy) * 256 + 0.5) / 256).float()[..., None]
+    xy = torch.floor(fx * fy * 256 + 0.5) / 256
+    x0, x1 = ix.clamp(0, Ww - 1), (ix + 1).clamp(0, Ww - 1)
+    y0, y1 = iy.clamp(0, Hh - 1), (iy + 1).clamp(0, Hh - 1)
+    return (img[y0, x0] * (1 - fx - fy + xy) + img[y0, x1] * (fx - xy)
+            + img[y1, x0] * (fy - xy) + img[y1, x1] * xy)
 
 
-def catmull_rom5(img, u, v):
-    """Jimenez 5-tap Catmull-Rom (pre/post 两处的历史重投影都用它)"""
+def catmull_rom5(img, u, v, *, arithmetic="fused"):
+    """Retained five-tap Catmull-Rom with measured TEX filtering.
+
+    ``fused`` uses the fused pixel-coordinate subtraction emitted by both
+    complete original pre/post kernels. ``split`` retains separate rounding
+    only for comparison with the historical artificial pre sampling probe.
+    CUDA uses the current device's approximate reciprocal instruction. CPU uses
+    ordinary reciprocal, without a hardware-parity promise. This is not a claim
+    of bit-exact reconstruction of complete kernels on arbitrary GPUs.
+    """
     Hh, Ww = img.shape[:2]
-    px, py = u * Ww, v * Hh
-    cx, cy = (px - 0.5).floor() + 0.5, (py - 0.5).floor() + 0.5
-    fx, fy = (px - cx).clamp(0, 1), (py - cy).clamp(0, 1)
-    w0x, w0y = fx * (-0.5 + fx * (1 - 0.5 * fx)), fy * (-0.5 + fy * (1 - 0.5 * fy))
-    w1x, w1y = 1 + fx * fx * (-2.5 + 1.5 * fx), 1 + fy * fy * (-2.5 + 1.5 * fy)
-    w2x, w2y = fx * (0.5 + fx * (2 - 1.5 * fx)), fy * (0.5 + fy * (2 - 1.5 * fy))
-    w3x, w3y = fx * fx * (-0.5 + 0.5 * fx), fy * fy * (-0.5 + 0.5 * fy)
+    if arithmetic == "split":
+        px, py = u * Ww, v * Hh
+        cx, cy = (px - 0.5).floor() + 0.5, (py - 0.5).floor() + 0.5
+        fx, fy = (px - cx).clamp(0, 1), (py - cy).clamp(0, 1)
+    elif arithmetic == "fused":
+        # The original MUL.FTZ + ADD.FTZ contract permits contraction: both the
+        # center selection and fractional offset are FFMA in the complete kernels.
+        # Binary64 exactly holds an f32 coordinate times these integer extents.
+        px, py = u.float().double() * Ww, v.float().double() * Hh
+        cx, cy = (px - 0.5).float().floor() + 0.5, (py - 0.5).float().floor() + 0.5
+        fx, fy = (px - cx.double()).float().clamp(0, 1), (py - cy.double()).float().clamp(0, 1)
+    else:
+        raise ValueError("arithmetic must be 'fused' or 'split'")
+    fx2, fy2 = fx * fx, fy * fy
+    fx3, fy3 = fx * fx2, fy * fy2
+    # Preserve the original PTX operation order: w0 uses one FMA and w2 is
+    # obtained by subtracting the other coefficients, rather than a polynomial.
+    w0x = ((fx + fx3).double() * -0.5 + fx2.double()).float()
+    w0y = ((fy + fy3).double() * -0.5 + fy2.double()).float()
+    w1x, w1y = (1.5 * fx3 - 2.5 * fx2) + 1, (1.5 * fy3 - 2.5 * fy2) + 1
+    w3x, w3y = (fx3 - fx2) * 0.5, (fy3 - fy2) * 0.5
+    w2x, w2y = ((1 - w0x) - w1x) - w3x, ((1 - w0y) - w1y) - w3y
     w12x, w12y = w1x + w2x, w1y + w2y
-    t12x = (cx + w2x / w12x).clamp(0.5, Ww - 0.5) / Ww
-    t12y = (cy + w2y / w12y).clamp(0.5, Hh - 0.5) / Hh
-    t0x, t0y = (cx - 1).clamp(0.5, Ww - 0.5) / Ww, (cy - 1).clamp(0.5, Hh - 0.5) / Hh
-    t3x, t3y = (cx + 2).clamp(0.5, Ww - 0.5) / Ww, (cy + 2).clamp(0.5, Hh - 0.5) / Hh
+    # Only the kernel's image-size inverse is RCP.APPROX. The final descriptor
+    # inverse is a supplied float32 parameter, rounded from the host's 1/size.
+    iw = rcp_approx(torch.full((), Ww, device=u.device, dtype=torch.float32))
+    ih = rcp_approx(torch.full((), Hh, device=v.device, dtype=torch.float32))
+    def normalized(coordinate, size, inverse):
+        # Full-resource descriptor: retain its multiply/extent/inverse sequence.
+        t = coordinate.clamp(0.5, size - 0.5) * inverse
+        return (t * size) * (1 / size)
+    # div.approx followed by add contracts to RCP.APPROX + FFMA in the original.
+    t12x = normalized((w2x.double() * rcp_approx(w12x).double() + cx.double()).float(), Ww, iw)
+    t12y = normalized((w2y.double() * rcp_approx(w12y).double() + cy.double()).float(), Hh, ih)
+    t0x, t0y = normalized(cx - 1, Ww, iw), normalized(cy - 1, Hh, ih)
+    t3x, t3y = normalized(cx + 2, Ww, iw), normalized(cy + 2, Hh, ih)
     a, b = (w12x * w0y)[..., None], (w0x * w12y)[..., None]
     c, d, e = (w12x * w12y)[..., None], (w3x * w12y)[..., None], (w12x * w3y)[..., None]
     s = (bilinear(img, t12x, t0y) * a + bilinear(img, t0x, t12y) * b + bilinear(img, t12x, t12y) * c

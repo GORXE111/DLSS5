@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "target": "DLSS-NR 310.8.0",
+  "dll_sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+  "weights_sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4",
+  "weights_bytes": 147695410,
+  "payload_bytes": 147683778,
+  "records": 153,
+  "steps": 71,
+  "step_kinds": {
+    "pre": 1,
+    "swin": 44,
+    "split16": 16,
+    "vit": 8,
+    "block39": 1,
+    "post": 1
+  },
+  "kernel_launches": 156,
+  "all_records_referenced_once": true,
+  "scope": "original resource identity, byte ranges and schedule coverage; not numerical equivalence"
+}

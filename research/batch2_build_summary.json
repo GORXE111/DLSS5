@@ -1,0 +1,587 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "started_utc": "2026-10-23T16:24:33.852338+08:00",
+  "work": "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2",
+  "scope": "Safety-reviewed current-source build: all 15 content caches invalidated by source changes and actually rewritten, assembled with ptxas and packed with fatbinary. Existing independently verified original sm120 cubins were reused in the same owned work directory. Followed by complete 15/15 content-cache reuse. Original weight identity and byte identity to the existing port preserved. Not a new-empty-directory cold build and not official sm120 numerical parity.",
+  "commands": [
+    [
+      "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+      "-m",
+      "tools.ptx86.build_dll",
+      "--work",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2",
+      "--out",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.first.revision.dll",
+      "--report",
+      "E:\\DLSS5\\research\\batch2_build_first_revision.json"
+    ],
+    [
+      "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+      "-m",
+      "tools.ptx86.build_dll",
+      "--work",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2",
+      "--out",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.second.revision.dll",
+      "--report",
+      "E:\\DLSS5\\research\\batch2_build_second_revision.json"
+    ]
+  ],
+  "verification_command": [
+    "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+    "-m",
+    "tools.ptx86.verify_build",
+    "--candidate",
+    "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.first.revision.dll",
+    "--second",
+    "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.second.revision.dll",
+    "--baseline",
+    "E:\\DLSS5\\sm86_port\\nvngx_dlssnr.dll",
+    "--first-report",
+    "E:\\DLSS5\\research\\batch2_build_first_revision.json",
+    "--second-report",
+    "E:\\DLSS5\\research\\batch2_build_second_revision.json",
+    "--report",
+    "E:\\DLSS5\\research\\batch2_build_verified_revision.json"
+  ],
+  "numerical_options": {
+    "mode": "f16",
+    "enc": "v1",
+    "dec": "v1",
+    "maxnreg": 0,
+    "maxnreg_floor": 0
+  },
+  "cpu_unit_tests": {
+    "passed": 18,
+    "failed": 0,
+    "log": "research/batch2_build_unit_revision.log",
+    "independent_reviewer_rerun": "18/18 passed; original two reproductions rejected without writes"
+  },
+  "self_test_isolation_incident": {
+    "live_dll_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "fatbin_01_cache_matches_live_dll_embedded_fatbin": true,
+    "cache_sha256": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4",
+    "embedded_sha256": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4",
+    "note": "A test isolation error refreshed this one cache, but never rewrote the live DLL; comparing regenerated cache content to the existing DLL.",
+    "cause": "A newly added reporting test was temporarily assigned to the wrong test class; its inherited CUDA-tool mocks were absent.",
+    "affected_cache_files": [
+      "E:\\DLSS5\\sm86_port\\fatbin_01.1.sm_120.cubin",
+      "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.ptx",
+      "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.cubin",
+      "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.fatbin",
+      "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.fatbin.cache.json"
+    ],
+    "before_file_hashes_available": false,
+    "live_dll_never_written": true,
+    "package_model_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "package_manifest_verification": "passed; see batch2_build_package_preservation.log",
+    "fix": "Restored test class ownership; reporting tests now prohibit calls to real CUDA tools. Final CPU unit suite: 7 passed.",
+    "affected_cache_file_sha256_after_rebuild": {
+      "E:\\DLSS5\\sm86_port\\fatbin_01.1.sm_120.cubin": "feb368ff5279a7408b1e55554db6e468d7f114a24b18b2af8d7e6989a410c612",
+      "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.ptx": "2beb1b23aecf9aa55df12a327fb401a50e3515a2da8762a3590627942616703a",
+      "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.cubin": "0186cdf53222f9f586d19ea4f98f92d3b5928e3235d52f922e8dae047f8dceca",
+      "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.fatbin": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4",
+      "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.fatbin.cache.json": "d8e190e9c921242165c18688499c305d78ac9a931b8eb8657174bd2f7bcd3707"
+    }
+  },
+  "gpu_smoke": {
+    "status": "passed",
+    "same_harness_for_both_dlls": true,
+    "cases": [
+      "reset",
+      "history_f3",
+      "intensity_zero"
+    ],
+    "commands": [
+      [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "-m",
+        "harness.reference",
+        "capture",
+        "--dll",
+        "E:\\DLSS5\\sm86_port\\nvngx_dlssnr.dll",
+        "--out",
+        "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\smoke\\baseline",
+        "--kind",
+        "port-sm86",
+        "--suite",
+        "smoke",
+        "--harness",
+        "E:\\DLSS5\\harness\\batch2\\nr-lab.exe"
+      ],
+      [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "-m",
+        "harness.reference",
+        "capture",
+        "--dll",
+        "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.first.dll",
+        "--out",
+        "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\smoke\\rebuilt",
+        "--kind",
+        "port-sm86",
+        "--suite",
+        "smoke",
+        "--harness",
+        "E:\\DLSS5\\harness\\batch2\\nr-lab.exe"
+      ],
+      [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "-m",
+        "harness.reference",
+        "compare",
+        "--reference",
+        "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\smoke\\baseline",
+        "--candidate",
+        "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\smoke\\rebuilt",
+        "--criterion",
+        "bit-exact",
+        "--report",
+        "E:\\DLSS5\\research\\batch2_build_smoke.json"
+      ]
+    ],
+    "baseline_cases_passed": 3,
+    "candidate_cases_passed": 3,
+    "comparisons_passed": 3,
+    "criterion": "bit-exact",
+    "harness_sha256": "ba7ba59393c8562e502c363a34c14ff8496b48b63856f48d1901b5736e894625",
+    "runtime_sha256": {
+      "nr-lab.exe": "ba7ba59393c8562e502c363a34c14ff8496b48b63856f48d1901b5736e894625",
+      "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+      "nvngx_dlssnr.dll": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+      "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+      "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+    },
+    "report": "research/batch2_build_smoke.json",
+    "all_mae_255": 0,
+    "all_exact_fraction": 1,
+    "repeated_for_safety_revision": false,
+    "applies_to_current_dll_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "reason": "Safety revision changed tooling only; both new DLL files remain byte-identical to the previously captured and compared DLL."
+  },
+  "cpu_build_status": "passed",
+  "runs": {
+    "first": {
+      "status": "passed",
+      "wall_seconds": 311.3504991000518,
+      "cache_hits": 0,
+      "cache_misses": 15,
+      "output": "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.first.revision.dll",
+      "sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+      "bytes": 194906112,
+      "stage_wall_seconds": {
+        "extract_original": 0,
+        "rewrite": 46.977044499944896,
+        "ptxas": 204.06781990022864,
+        "fatbinary": 1.0323909000726417,
+        "total": 281.22633420000784
+      },
+      "outside_fatbin_stages_seconds": 30.12416490004398,
+      "original_sm120_cubins_reextracted": 0
+    },
+    "second": {
+      "status": "passed",
+      "wall_seconds": 42.551280699903145,
+      "cache_hits": 15,
+      "cache_misses": 0,
+      "output": "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.second.revision.dll",
+      "sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+      "bytes": 194906112,
+      "stage_wall_seconds": {
+        "extract_original": 0,
+        "rewrite": 0,
+        "ptxas": 0,
+        "fatbinary": 0,
+        "total": 9.376844400074333
+      },
+      "outside_fatbin_stages_seconds": 33.17443629982881,
+      "original_sm120_cubins_reextracted": 0
+    }
+  },
+  "cpu_verification": {
+    "baseline_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "build_report_sha256": {
+      "first": "84dcb4bf6e26d90a49d5144aaea366a75302c8e9da5c96abbcb422c69fa782a9",
+      "second": "ed1d47451bf74917ff57bdd0ec25f919163c87965452750daf8b1028ef20dc53"
+    },
+    "cache_validation": {
+      "all_per_fatbin_decisions_and_stages_revalidated": true,
+      "compiled_sm86_cubins_embedded": 15,
+      "current_inputs_revalidated": true,
+      "first_misses": 15,
+      "first_wall_seconds": 311.3504991000518,
+      "numerical_options": {
+        "dec": "v1",
+        "enc": "v1",
+        "maxnreg": 0,
+        "maxnreg_floor": 0,
+        "mode": "f16"
+      },
+      "original_sm120_cubins_preserved": 15,
+      "second_compile_rewrite_extract_stages": 0,
+      "second_hits": 15,
+      "second_wall_seconds": 42.551280699903145,
+      "source_fatbins_match_original_dll": 15
+    },
+    "candidate": "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.first.revision.dll",
+    "candidate_bytes": 194906112,
+    "candidate_matches_existing_dll": true,
+    "candidate_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "fatbins": [
+      {
+        "bytes": 6514344,
+        "offset_in_section": 0,
+        "sha256": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4"
+      },
+      {
+        "bytes": 4228680,
+        "offset_in_section": 6514432,
+        "sha256": "a25a36a23e5fe1bb105227544fa45ce35d4bba8cbfe00af32611e95cc6e872de"
+      },
+      {
+        "bytes": 4163920,
+        "offset_in_section": 10743296,
+        "sha256": "abcb261b28d64ea323ce4e25504412f67e6f221ae7af6cc4b2ecae24e0dbea55"
+      },
+      {
+        "bytes": 4317632,
+        "offset_in_section": 14907392,
+        "sha256": "9aaf7f8e1d63daba638443d61a99279a845e60e63300b038ee09d328e38df662"
+      },
+      {
+        "bytes": 3612048,
+        "offset_in_section": 19225088,
+        "sha256": "5a2e3faeeeafb7ee8f9878df243fffe298bef3aed5c9dc5098c8213b4810a638"
+      },
+      {
+        "bytes": 5632904,
+        "offset_in_section": 22837248,
+        "sha256": "86adf0a150e40ced017a4bd0945288867cfaafc9d01afa48aa97a73c8f491d50"
+      },
+      {
+        "bytes": 440936,
+        "offset_in_section": 28470272,
+        "sha256": "cee146f03fdf22e758a9c20a490b4ae502695dc5226d4cdb94c0f02991522471"
+      },
+      {
+        "bytes": 11216,
+        "offset_in_section": 28911360,
+        "sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059"
+      },
+      {
+        "bytes": 15312,
+        "offset_in_section": 28922624,
+        "sha256": "20d7ababfbbf7ad76ab5f66c97cd3b7874b64157594eecf1cc222858a7c7b809"
+      },
+      {
+        "bytes": 16560,
+        "offset_in_section": 28937984,
+        "sha256": "3bba3d2f0b72d9b421ec3fba13a6866d28cf6d6506ea1d7c1e84691862fd2dc8"
+      },
+      {
+        "bytes": 14584,
+        "offset_in_section": 28954624,
+        "sha256": "084f4ffcbb56ce9b30f341dc704e3eb84d8de57674fa167ff61611f36a1b0a6b"
+      },
+      {
+        "bytes": 14336,
+        "offset_in_section": 28969216,
+        "sha256": "8cf57cf1c75242d9ec53ca48b0c37afd9ee23ee23c5390011d2e31094c2f07be"
+      },
+      {
+        "bytes": 9584,
+        "offset_in_section": 28983552,
+        "sha256": "9f74ea77fa2ab62aad28c9bb10b5189055ac8f1432beb72b424363e639412919"
+      },
+      {
+        "bytes": 72360,
+        "offset_in_section": 28993280,
+        "sha256": "6f3ef48456b463a91b80f82e0005433273d80fea4f3701b307715a6756629664"
+      },
+      {
+        "bytes": 10064,
+        "offset_in_section": 29065728,
+        "sha256": "8eadb95c4d84b36d440c292ea7b4804349ebff48afcd687c261bc427aece0fab"
+      }
+    ],
+    "scope": "CPU build evidence consistency and resource identity; not official output parity",
+    "second_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "source_dll_sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+    "source_weights": {
+      "bytes": 147695410,
+      "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+    },
+    "started_utc": "2026-10-23T09:02:25.056876+00:00",
+    "status": "passed",
+    "two_builds_byte_identical": true,
+    "weights": {
+      "bytes": 147695410,
+      "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+    }
+  },
+  "build_failures": [],
+  "expected_failure_checks": {
+    "reporting_tests": "SystemExit(7), invalid args and RuntimeError replace stale PASS with failed reports",
+    "missing_candidate_verifier": {
+      "exit_code": 1,
+      "status": "failed",
+      "report": "research/batch2_build_verifier_negative.json"
+    }
+  },
+  "builder_source_sha256": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+  "reproduction_note": "Latest revision used the same owned work directory, reused valid original sm120 cubins, and invalidated all 15 rewritten/compiled caches because the builder source hash changed. The independent second output reuses the exact same cache inputs. The initial empty-directory schema1 run remains historical evidence.",
+  "finished_utc": "2026-10-23T09:03:46.390175+00:00",
+  "final_live_and_package_identity": {
+    "live_dll": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "packaged_model": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd"
+  },
+  "official_reference": false,
+  "report_files": [
+    "research/batch2_build_first_revision.json",
+    "research/batch2_build_second_revision.json",
+    "research/batch2_build_verified_revision.json",
+    "research/batch2_build_smoke.json",
+    "research/batch2_build_historical_report_hashes.json",
+    "research/batch2_build_cache_incident.json"
+  ],
+  "safety_revision": {
+    "status": "passed",
+    "cpu_unit_tests": {
+      "passed": 18,
+      "failed": 0,
+      "log": "research/batch2_build_unit_revision.log"
+    },
+    "independent_review": "complete_model independently reran all 18 tests and the two original reproductions; no blocking findings",
+    "frozen_sources": {
+      "tools/ptx86/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+      "tools/ptx86/verify_build.py": "89e08f6091b771d61354c6c44a5e7c707b40f2560d1f2fbadeffa55d4e0ff73a",
+      "tools/ptx86/test_cache.py": "7330c5ad17abb686d3a1dad9b2c0c1fabd920b931edab181be34452953b2afc9",
+      "tools/ptx86/test_build_safety.py": "9e87313847a2a9db94372e7f8f000617a450769419f22e91ddfa5f2fdd9871e5"
+    },
+    "first_report": "research/batch2_build_first_revision.json",
+    "second_report": "research/batch2_build_second_revision.json",
+    "verification_report": "research/batch2_build_verified_revision.json",
+    "historical_report_hashes": {
+      "research/batch2_build_first.json": "445068562009a17c3997846c140afcf16ac6ae5b5f306d5163d8411e3a4c26fe",
+      "research/batch2_build_second.json": "c9685e1cf14daf89721880c18f95edc9b4b2dec634851c129ca49e88abfb4601",
+      "research/batch2_build_verified.json": "7968b720d191d414f76fd6ff7403dd58a3b51e273ec59b27d8c12a464e0a171f",
+      "research/batch2_build_smoke.json": "8a1115c53110ec3c87a551d753fbf8ab25898f9795d25dc4811aaa089f7b634b",
+      "research/batch2_build_cache_incident.json": "cdf594498f290b2e3061ecd43da3dd94b03657bc8a3f3512cc45596f33da2307"
+    },
+    "started_utc": "2026-10-23T08:56:32.467355+00:00",
+    "current_sources_match_review": true,
+    "finished_utc": "2026-10-23T09:03:46.390175+00:00",
+    "historical_report_hashes_preserved": true,
+    "input_report_sha256": {
+      "first": "84dcb4bf6e26d90a49d5144aaea366a75302c8e9da5c96abbcb422c69fa782a9",
+      "second": "ed1d47451bf74917ff57bdd0ec25f919163c87965452750daf8b1028ef20dc53"
+    },
+    "final_report_sha256": {
+      "research/batch2_build_first_revision.json": "84dcb4bf6e26d90a49d5144aaea366a75302c8e9da5c96abbcb422c69fa782a9",
+      "research/batch2_build_second_revision.json": "ed1d47451bf74917ff57bdd0ec25f919163c87965452750daf8b1028ef20dc53",
+      "research/batch2_build_verified_revision.json": "ff52b8edc94cb5b90268ff472a6c0529be40c9f55f01680f22d877196fe3bdf6"
+    }
+  },
+  "revision_commands": [
+    [
+      "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+      "-m",
+      "tools.ptx86.build_dll",
+      "--work",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2",
+      "--out",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.first.revision.dll",
+      "--report",
+      "E:\\DLSS5\\research\\batch2_build_first_revision.json"
+    ],
+    [
+      "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+      "-m",
+      "tools.ptx86.build_dll",
+      "--work",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2",
+      "--out",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.second.revision.dll",
+      "--report",
+      "E:\\DLSS5\\research\\batch2_build_second_revision.json"
+    ]
+  ],
+  "historical_runs": {
+    "first": {
+      "status": "passed",
+      "wall_seconds": 526.4840454000514,
+      "cache_hits": 0,
+      "cache_misses": 15,
+      "output": "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.first.dll",
+      "sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+      "bytes": 194906112,
+      "stage_wall_seconds": {
+        "extract_original": 7.12956289970316,
+        "rewrite": 71.26975589990616,
+        "ptxas": 392.6523354999954,
+        "fatbinary": 1.8347643001470715,
+        "total": 484.2985100002261
+      },
+      "outside_fatbin_stages_seconds": 42.18553539982531
+    },
+    "second": {
+      "status": "passed",
+      "wall_seconds": 40.38029689993709,
+      "cache_hits": 15,
+      "cache_misses": 0,
+      "output": "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.second.dll",
+      "sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+      "bytes": 194906112,
+      "stage_wall_seconds": {
+        "extract_original": 0,
+        "rewrite": 0,
+        "ptxas": 0,
+        "fatbinary": 0,
+        "total": 1.9096060000592843
+      },
+      "outside_fatbin_stages_seconds": 38.47069089987781
+    }
+  },
+  "historical_commands": [
+    [
+      "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+      "-m",
+      "tools.ptx86.build_dll",
+      "--work",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2",
+      "--out",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.first.dll",
+      "--report",
+      "E:\\DLSS5\\research\\batch2_build_first.json"
+    ],
+    [
+      "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+      "-m",
+      "tools.ptx86.build_dll",
+      "--work",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2",
+      "--out",
+      "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.second.dll",
+      "--report",
+      "E:\\DLSS5\\research\\batch2_build_second.json"
+    ]
+  ],
+  "historical_cpu_verification": {
+    "baseline_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "cache_validation": {
+      "compiled_sm86_cubins_embedded": 15,
+      "first_misses": 15,
+      "first_wall_seconds": 526.4840454000514,
+      "numerical_options": {
+        "dec": "v1",
+        "enc": "v1",
+        "maxnreg": 0,
+        "maxnreg_floor": 0,
+        "mode": "f16"
+      },
+      "original_sm120_cubins_preserved": 15,
+      "second_compile_rewrite_extract_stages": 0,
+      "second_hits": 15,
+      "second_wall_seconds": 40.38029689993709,
+      "source_fatbins_match_original_dll": 15
+    },
+    "candidate": "E:\\DLSS5\\_dl\\batch2_build_20261023_37b2b721d2\\nvngx_dlssnr.first.dll",
+    "candidate_bytes": 194906112,
+    "candidate_matches_existing_dll": true,
+    "candidate_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "fatbins": [
+      {
+        "bytes": 6514344,
+        "offset_in_section": 0,
+        "sha256": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4"
+      },
+      {
+        "bytes": 4228680,
+        "offset_in_section": 6514432,
+        "sha256": "a25a36a23e5fe1bb105227544fa45ce35d4bba8cbfe00af32611e95cc6e872de"
+      },
+      {
+        "bytes": 4163920,
+        "offset_in_section": 10743296,
+        "sha256": "abcb261b28d64ea323ce4e25504412f67e6f221ae7af6cc4b2ecae24e0dbea55"
+      },
+      {
+        "bytes": 4317632,
+        "offset_in_section": 14907392,
+        "sha256": "9aaf7f8e1d63daba638443d61a99279a845e60e63300b038ee09d328e38df662"
+      },
+      {
+        "bytes": 3612048,
+        "offset_in_section": 19225088,
+        "sha256": "5a2e3faeeeafb7ee8f9878df243fffe298bef3aed5c9dc5098c8213b4810a638"
+      },
+      {
+        "bytes": 5632904,
+        "offset_in_section": 22837248,
+        "sha256": "86adf0a150e40ced017a4bd0945288867cfaafc9d01afa48aa97a73c8f491d50"
+      },
+      {
+        "bytes": 440936,
+        "offset_in_section": 28470272,
+        "sha256": "cee146f03fdf22e758a9c20a490b4ae502695dc5226d4cdb94c0f02991522471"
+      },
+      {
+        "bytes": 11216,
+        "offset_in_section": 28911360,
+        "sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059"
+      },
+      {
+        "bytes": 15312,
+        "offset_in_section": 28922624,
+        "sha256": "20d7ababfbbf7ad76ab5f66c97cd3b7874b64157594eecf1cc222858a7c7b809"
+      },
+      {
+        "bytes": 16560,
+        "offset_in_section": 28937984,
+        "sha256": "3bba3d2f0b72d9b421ec3fba13a6866d28cf6d6506ea1d7c1e84691862fd2dc8"
+      },
+      {
+        "bytes": 14584,
+        "offset_in_section": 28954624,
+        "sha256": "084f4ffcbb56ce9b30f341dc704e3eb84d8de57674fa167ff61611f36a1b0a6b"
+      },
+      {
+        "bytes": 14336,
+        "offset_in_section": 28969216,
+        "sha256": "8cf57cf1c75242d9ec53ca48b0c37afd9ee23ee23c5390011d2e31094c2f07be"
+      },
+      {
+        "bytes": 9584,
+        "offset_in_section": 28983552,
+        "sha256": "9f74ea77fa2ab62aad28c9bb10b5189055ac8f1432beb72b424363e639412919"
+      },
+      {
+        "bytes": 72360,
+        "offset_in_section": 28993280,
+        "sha256": "6f3ef48456b463a91b80f82e0005433273d80fea4f3701b307715a6756629664"
+      },
+      {
+        "bytes": 10064,
+        "offset_in_section": 29065728,
+        "sha256": "8eadb95c4d84b36d440c292ea7b4804349ebff48afcd687c261bc427aece0fab"
+      }
+    ],
+    "scope": "CPU build reproducibility, section integrity and original weight identity; not official output parity",
+    "second_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "source_dll_sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+    "source_weights": {
+      "bytes": 147695410,
+      "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+    },
+    "started_utc": "2026-10-23T16:30:37.15626+08:00",
+    "status": "passed",
+    "two_builds_byte_identical": true,
+    "weights": {
+      "bytes": 147695410,
+      "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+    }
+  },
+  "historical_report_hashes_preserved": true,
+  "timing_interpretation": "Recorded wall times for these two runs only; no stable speedup or performance claim."
+}

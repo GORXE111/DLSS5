@@ -341,7 +341,8 @@ class Core(torch.nn.Module):
 
     # ------------------------------------------------------------ 引擎外的部分 (torch)
     def inputs(self, color, hist, mv, frame, ctrl=None):
-        X = F.pad(self.net.steps[0][1].inputs(color, color if hist is None else hist, mv, frame, ctrl).half(), (0, 1))
+        """Raw resource contract: missing History or MV uses Color directly as pre history."""
+        X = F.pad(self.net.steps[0][1].inputs(color, hist, mv, frame, ctrl).half(), (0, 1))
         if self.canon:                                            # 适配器 16->32 在引擎外算 (实测对引擎耗时几乎没有影响: 540p 45.1 -> 44.3 ms)
             return B.q8(X @ self.A16)
         return X
@@ -352,12 +353,13 @@ class Core(torch.nn.Module):
         H, W = color.shape[:2]
         n = n[:H, :W].float()
         cur = (color + 8 * post.scale * n[..., :3]).clamp(0, 1)
-        if hist is None:
+        if hist is None or mv is None:
             return cur
         gate = (torch.sigmoid(n[..., 3:]) * post.blend).clamp(0, 1)
         y, x = torch.meshgrid(torch.arange(H, device=color.device, dtype=torch.float32),
                               torch.arange(W, device=color.device, dtype=torch.float32), indexing="ij")
-        h = ops.catmull_rom5(hist[..., :3], (x + 0.5 + mv[..., 0]) / W, (y + 0.5 + mv[..., 1]) / H)
+        hu, hv = ops.reproject_uv((x + 0.5) / W, (y + 0.5) / H, mv, W, H)
+        h = ops.catmull_rom5(hist[..., :3], hu, hv, arithmetic="fused")
         return cur + gate * (h - cur)
 
     def export(self, path, opset=17):

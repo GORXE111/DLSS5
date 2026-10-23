@@ -1,39 +1,95 @@
-# sm_86 移植的整链路回归 + 计时。
-#   .\bench.ps1 -Variant rt_sm86 -Dll ..\sm86_port\nvngx_dlssnr.dll
-# 输出: 360p 校验和 (4 帧) / intensity=0 校验和 / 720p、1080p 每帧耗时
+# sm_86 整链路回归。这里断言固定基准的校验和；近似误差验收使用 torch/check*.py。
 param(
     [string]$Variant = 'rt_sm86',
     [string]$Dll = (Join-Path $PSScriptRoot '..\sm86_port\nvngx_dlssnr.dll'),
     [string[]]$Sizes = @('1280x720', '1920x1080'),
-    [int]$Frames = 24
+    [ValidateRange(6, 100000)][int]$Frames = 24,
+    [string]$Report
 )
-$dir = Join-Path $PSScriptRoot $Variant
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+$dir = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot $Variant))
+$dllSource = (Resolve-Path -LiteralPath $Dll).Path
 New-Item -ItemType Directory -Force $dir | Out-Null
-foreach ($f in 'nr-lab.exe', 'nvngx.dll') { Copy-Item (Join-Path $PSScriptRoot "rt_sm86\$f") $dir -Force -ErrorAction SilentlyContinue }
-foreach ($f in 'nvngx_dlss.dll', 'nvngx_dlssg.dll') { Copy-Item (Join-Path $PSScriptRoot "..\dlss5\$f") $dir -Force }
-Copy-Item $Dll (Join-Path $dir 'nvngx_dlssnr.dll') -Force
-Set-Location $dir
-
-function Invoke-Lab([string[]]$LabArgs, [string]$Log) {
-    $p = Start-Process -FilePath .\nr-lab.exe -ArgumentList $LabArgs -NoNewWindow -PassThru `
-        -RedirectStandardOutput $Log -RedirectStandardError 'err.txt'
-    if (-not $p.WaitForExit(600000)) { $p.Kill(); throw "nr-lab 超时: $LabArgs" }
-    if (Select-String -Path $Log -Pattern 'sm86-crash' -Quiet) { Get-Content $Log | Select-String 'sm86-crash' -Context 0, 6 }
-    Get-Content nr-lab-result.json -Raw | ConvertFrom-Json
+if (-not $Report) { $Report = Join-Path $dir 'bench-result.json' }
+$Report = [IO.Path]::GetFullPath($Report)
+$summary = [ordered]@{
+    schema = 1; variant = $Variant; referenceKind = 'RTX3060_port'; claim = 'port_regression_only'
+    mode = 'fixed_checksum_bit_exact'; dllSha256 = (Get-FileHash -LiteralPath $dllSource -Algorithm SHA256).Hash
+    expected = @{ normal = '5B3A70119F21C9EE'; intensity0 = 'D61DE47C7AECF78F' }
+    checks = @(); performance = @(); passed = $false; errors = @()
 }
 
-$base = @('--nr-only', '--input', '640x360', '--output', '640x360', '--frames', '4')
-$r = Invoke-Lab $base 'o_check.txt'
-Copy-Item nr-lab-output-model1-srgb.ppm out_check.ppm -Force
-$z = Invoke-Lab ($base + @('--intensity', '0')) 'o_int0.txt'
-Copy-Item nr-lab-output-model1-srgb.ppm out_int0.ppm -Force
-"{0}: 360p checksum={1} evals={2}  intensity0 checksum={3}" -f $Variant, $r.checksumFnv1a64, $r.evaluationsSucceeded, $z.checksumFnv1a64
+function Copy-IfDifferent([string]$Source, [string]$Destination) {
+    if ([IO.Path]::GetFullPath($Source) -ne [IO.Path]::GetFullPath($Destination)) {
+        Copy-Item -LiteralPath $Source -Destination $Destination -Force
+    }
+}
 
-foreach ($res in $Sizes) {
-    $null = Invoke-Lab @('--nr-only', '--input', $res, '--output', $res, '--frames', "$Frames") 'o_perf.txt'
-    $t = Get-Content o_perf.txt | Select-String 'frame (\d+) EvaluateFeature = 0x00000001' |
-        ForEach-Object { [datetime]::ParseExact($_.Line.Substring(0, 12), 'HH:mm:ss.fff', $null) }
-    $dt = for ($i = 5; $i -lt $t.Count; $i++) { ($t[$i] - $t[$i - 1]).TotalMilliseconds }
-    $m = $dt | Measure-Object -Average -Minimum
-    "{0}: {1,-10} frames={2} avg={3:N1} ms  min={4:N1} ms" -f $Variant, $res, $t.Count, $m.Average, $m.Minimum
+function Invoke-Lab([string[]]$LabArgs, [string]$Log, [int]$ExpectedFrames) {
+    # Never let a crashed process borrow the previous run's JSON.
+    if (Test-Path -LiteralPath 'nr-lab-result.json') { Remove-Item -LiteralPath 'nr-lab-result.json' }
+    $p = Start-Process -FilePath .\nr-lab.exe -ArgumentList $LabArgs -WindowStyle Hidden -PassThru `
+        -RedirectStandardOutput $Log -RedirectStandardError 'err.txt'
+    if (-not $p.WaitForExit(600000)) { $p.Kill(); throw "nr-lab 超时: $LabArgs" }
+    $p.Refresh()
+    if ($p.ExitCode -ne 0) { throw "nr-lab 退出码 $($p.ExitCode): $LabArgs" }
+    if (-not (Test-Path -LiteralPath 'nr-lab-result.json')) { throw 'nr-lab 未生成结果 JSON' }
+    $result = Get-Content -LiteralPath 'nr-lab-result.json' -Raw | ConvertFrom-Json
+    if (-not $result.created -or -not $result.upscalingValidated -or $result.evaluationsSucceeded -ne $ExpectedFrames) {
+        throw "nr-lab 未完成全部有效帧: $($result.evaluationsSucceeded)/$ExpectedFrames"
+    }
+    if (Select-String -LiteralPath $Log -Pattern 'sm86-crash' -Quiet) { throw "nr-lab 捕获到 sm86-crash: $Log" }
+    return $result
+}
+
+function Assert-Checksum([string]$Name, $Result, [string]$Expected) {
+    $passed = $Result.checksumFnv1a64 -eq $Expected
+    $summary.checks += @{ name = $Name; mode = 'bit_exact_checksum'; actual = $Result.checksumFnv1a64; expected = $Expected; passed = $passed }
+    if (-not $passed) { throw "$Name 校验和不一致: $($Result.checksumFnv1a64), 预期 $Expected。近似吻合不等于此基准通过。" }
+}
+
+$pushed = $false
+try {
+    foreach ($f in 'nr-lab.exe', 'nvngx.dll') {
+        Copy-IfDifferent (Join-Path $PSScriptRoot "rt_sm86\$f") (Join-Path $dir $f)
+    }
+    foreach ($f in 'nvngx_dlss.dll', 'nvngx_dlssg.dll') {
+        Copy-IfDifferent (Join-Path $PSScriptRoot "..\dlss5\$f") (Join-Path $dir $f)
+    }
+    Copy-IfDifferent $dllSource (Join-Path $dir 'nvngx_dlssnr.dll')
+    Push-Location $dir
+    $pushed = $true
+    $base = @('--nr-only', '--input', '640x360', '--output', '640x360', '--frames', '4', '--model', '1')
+    $r = Invoke-Lab $base 'o_check.txt' 4
+    Assert-Checksum '360p/4frames' $r $summary.expected.normal
+    Copy-Item -LiteralPath 'nr-lab-output-model1-srgb.ppm' -Destination 'out_check.ppm' -Force
+    $z = Invoke-Lab ($base + @('--intensity', '0')) 'o_int0.txt' 4
+    Assert-Checksum '360p/intensity0' $z $summary.expected.intensity0
+    Copy-Item -LiteralPath 'nr-lab-output-model1-srgb.ppm' -Destination 'out_int0.ppm' -Force
+    "{0}: bit-exact 基准通过 (normal={1}, intensity0={2})" -f $Variant, $r.checksumFnv1a64, $z.checksumFnv1a64
+    foreach ($res in $Sizes) {
+        if ($res -notmatch '^[1-9][0-9]*x[1-9][0-9]*$') { throw "无效分辨率: $res" }
+        $null = Invoke-Lab @('--nr-only', '--input', $res, '--output', $res, '--frames', "$Frames", '--model', '1') 'o_perf.txt' $Frames
+        $t = @(Get-Content -LiteralPath 'o_perf.txt' | Select-String 'frame (\d+) EvaluateFeature = 0x00000001' |
+            ForEach-Object { [datetime]::ParseExact($_.Line.Substring(0, 12), 'HH:mm:ss.fff', $null) })
+        if ($t.Count -ne $Frames) { throw "性能日志帧数错误: $($t.Count)/$Frames" }
+        $dt = @(for ($i = 5; $i -lt $t.Count; $i++) {
+            $elapsed = ($t[$i] - $t[$i - 1]).TotalMilliseconds
+            if ($elapsed -lt 0) { $elapsed += 86400000 }
+            $elapsed
+        })
+        $m = $dt | Measure-Object -Average -Minimum
+        $summary.performance += @{ resolution = $res; frames = $Frames; samples = $dt.Count; averageMs = $m.Average; minimumMs = $m.Minimum }
+        "{0}: {1,-10} frames={2} avg={3:N1} ms min={4:N1} ms" -f $Variant, $res, $t.Count, $m.Average, $m.Minimum
+    }
+    $summary.passed = $true
+} catch {
+    $summary.errors += $_.Exception.Message
+    throw
+} finally {
+    if ($pushed) { Pop-Location }
+    $reportParent = Split-Path -Parent $Report
+    if ($reportParent) { New-Item -ItemType Directory -Force $reportParent | Out-Null }
+    $summary | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $Report -Encoding utf8
 }

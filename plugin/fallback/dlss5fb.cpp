@@ -182,6 +182,10 @@ using PfnBridgeEvaluate = NVSDK_NGX_Result (NVSDK_CONV *)(PfnEvaluate, ID3D12Gra
     const NVSDK_NGX_Handle *, const NVSDK_NGX_Parameter *, PFN_NVSDK_NGX_ProgressCallback_C);
 using PfnBridgeRelease = NVSDK_NGX_Result (NVSDK_CONV *)(PfnRelease, NVSDK_NGX_Handle *);
 
+// Capability parameters and the snippet runtime are process-wide. Chain::lock
+// protects a chain's resources, but cannot protect this shared Set/Call sequence.
+// Lock order is always chain -> NGX; NGX code must never acquire a chain lock.
+static std::mutex g_ngx_lock;
 static struct {
     bool tried = false, ok = false;
     ID3D12Device *device = nullptr;
@@ -223,6 +227,7 @@ static HMODULE LoadDriverCore()
 
 static bool InitNgx(ID3D12Device *device)
 {
+    std::lock_guard<std::mutex> ngx_lock(g_ngx_lock);
     if (ngx.tried) return ngx.ok && ngx.device == device;
     ngx.tried = true;
     ngx.device = device;
@@ -320,17 +325,18 @@ static NV_OF_D3D12_API_FUNCTION_LIST g_of;
 
 static bool LoadOpticalFlow()
 {
-    static int state = 0;   // 0 untried, 1 ok, -1 unavailable
-    if (state) return state > 0;
-    state = -1;
+    // C++ local-static initialization waits for the initializing thread; a plain
+    // state integer let another chain observe an incomplete API function table.
+    static const bool loaded = [] {
     HMODULE m = LoadLibraryW(L"nvofapi64.dll");
     auto create = m ? reinterpret_cast<NV_OF_STATUS (NVOFAPI *)(uint32_t, NV_OF_D3D12_API_FUNCTION_LIST *)>(
         GetProcAddress(m, "NvOFAPICreateInstanceD3D12")) : nullptr;
     if (create == nullptr) { Log("optical flow: nvofapi64.dll not available; no motion vectors"); return false; }
     NV_OF_STATUS st = create(NV_OF_API_VERSION, &g_of);
     if (st != NV_OF_SUCCESS) { Log("optical flow: NvOFAPICreateInstanceD3D12 = %d", st); return false; }
-    state = 1;
     return true;
+    }();
+    return loaded;
 }
 
 // ---------------------------------------------------------------- shaders
@@ -829,7 +835,11 @@ static void ReleaseFlow(Chain *c)
 static void ReleaseSized(Chain *c)
 {
     ReleaseFlow(c);
-    if (c->feature) { ngx.b_release(ngx.release, c->feature); c->feature = nullptr; }
+    if (c->feature) {
+        std::lock_guard<std::mutex> ngx_lock(g_ngx_lock);
+        ngx.b_release(ngx.release, c->feature);
+        c->feature = nullptr;
+    }
     SafeRelease(c->copy); SafeRelease(c->lo); SafeRelease(c->nr); SafeRelease(c->depth); SafeRelease(c->mv); SafeRelease(c->stable); SafeRelease(c->delta);
     SafeRelease(c->prev); SafeRelease(c->ui);
     c->W = c->H = c->w = c->h = 0;
@@ -1011,6 +1021,7 @@ static void Submit(Chain *c, UINT slot, ID3D12GraphicsCommandList *list = nullpt
 
 static bool CreateFeature(Chain *c)
 {
+    std::lock_guard<std::mutex> ngx_lock(g_ngx_lock);
     if (c->feature) { ngx.b_release(ngx.release, c->feature); c->feature = nullptr; }
     ngx.params->Reset();
     ngx.b_populate(ngx.populate, ngx.params);
@@ -1539,7 +1550,10 @@ static void ProcessFrame(Chain *c)
     Barrier(l, c->ui, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, kRead);
     if (flow_valid) Barrier(l, c->flow, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COMMON);
 
-    // DLSS-NR
+    // DLSS-NR: keep every parameter mutation and the consuming call atomic
+    // relative to other chains (including feature creation / release).
+    {
+    std::lock_guard<std::mutex> ngx_lock(g_ngx_lock);
     NVSDK_NGX_Parameter *p = ngx.params;
     // history only with real motion vectors (zero vectors would smear every moving edge)
     const bool reset = !c->cfg.temporal || !flow_valid;
@@ -1580,6 +1594,7 @@ static void ProcessFrame(Chain *c)
     if (code != 0 || NVSDK_NGX_FAILED(r)) {
         Log("FAIL EvaluateFeature = 0x%08X seh=0x%08X; fallback mode disabled", static_cast<unsigned>(r), code);
         c->broken = true;
+    }
     }
     ++c->nr_frames;
     Barrier(l, c->nr, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, kRead);

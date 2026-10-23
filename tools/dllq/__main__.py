@@ -4,7 +4,7 @@
 
 先跑一次 `python -m dllq index` 建索引，之后所有查询都是秒级。
 """
-import argparse, sys
+import argparse, importlib, sys
 from .core import out_utf8
 
 
@@ -115,9 +115,9 @@ def main(argv=None):
     fn = {"map": Q.cmd_map, "const": Q.cmd_const, "kernel": Q.cmd_kernel,
           "consts-in": Q.cmd_consts_in, "ops": Q.cmd_ops, "def": Q.cmd_def,
           "grep": Q.cmd_grep, "str": Q.cmd_str, "weights": Q.cmd_weights,
-          "isa": Q.cmd_isa, "shape": Q.cmd_shape, "unpack": Q.cmd_unpack, "addr": __import__("dllq.addr",fromlist=["x"]).cmd_addr,
-          "dis": __import__("dllq.dis",fromlist=["x"]).cmd_dis,
-          "xref": __import__("dllq.dis",fromlist=["x"]).cmd_xref, "vec": __import__("dllq.vec", fromlist=["x"]).cmd_vec, "note": Q.cmd_note, "ask": Q.cmd_ask}[a.cmd]
+          "isa": Q.cmd_isa, "shape": Q.cmd_shape, "unpack": Q.cmd_unpack, "addr": importlib.import_module(".addr", __package__).cmd_addr,
+          "dis": importlib.import_module(".dis", __package__).cmd_dis,
+          "xref": importlib.import_module(".dis", __package__).cmd_xref, "vec": importlib.import_module(".vec", __package__).cmd_vec, "note": Q.cmd_note, "ask": Q.cmd_ask}[a.cmd]
     fn(a)
     return 0
 

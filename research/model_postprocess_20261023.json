@@ -1,0 +1,250 @@
+{
+  "scope": "DLSS-NR 310.8.0 sm_86 port; no native RTX 50 baseline",
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "frame_tolerance": {
+    "mae_255_max": 2.5,
+    "correlation_min": 0.998
+  },
+  "kernel_max_255": 0.001,
+  "frames": [
+    {
+      "mae_255": 0.9396007061004639,
+      "max_255": 12.999999046325684,
+      "corr": 0.9997778446747679,
+      "equal_fraction": 0.40910011574074073,
+      "name": "style1_mask",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "control-mask",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--ramp-channels",
+        "1",
+        "--style",
+        "1"
+      ],
+      "checksum_fnv1a64": "B3FE2DEC3DD842CB"
+    },
+    {
+      "mae_255": 1.0152184963226318,
+      "max_255": 12.999999046325684,
+      "corr": 0.999755888786546,
+      "equal_fraction": 0.3913628472222222,
+      "name": "style2_mask",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "control-mask",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--ramp-channels",
+        "1",
+        "--style",
+        "2"
+      ],
+      "checksum_fnv1a64": "A1122413C0D87BF7"
+    },
+    {
+      "mae_255": 0.3877575099468231,
+      "max_255": 5.000001430511475,
+      "corr": 0.999962137758284,
+      "equal_fraction": 0.6436443865740741,
+      "name": "style1_mask_intensity",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "control-mask",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--ramp-channels",
+        "1",
+        "--style",
+        "1",
+        "--intensity",
+        "0.4"
+      ],
+      "checksum_fnv1a64": "122D1685BD3CD03E"
+    },
+    {
+      "mae_255": 0.9647930860519409,
+      "max_255": 10.999999046325684,
+      "corr": 0.9998081111370105,
+      "equal_fraction": 0.4096513310185185,
+      "name": "ui_alpha",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "ui-alpha",
+        "--optional-format",
+        "r8",
+        "--optional-variant",
+        "3",
+        "--ui-correction",
+        "1"
+      ],
+      "checksum_fnv1a64": "6719DB1CE9C09EF8"
+    },
+    {
+      "mae_255": 0.8227676749229431,
+      "max_255": 11.00000286102295,
+      "corr": 0.9998190341814625,
+      "equal_fraction": 0.4454542824074074,
+      "name": "style1_ui_alpha",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "ui-alpha",
+        "--optional-format",
+        "r8",
+        "--optional-variant",
+        "3",
+        "--ui-correction",
+        "1",
+        "--style",
+        "1"
+      ],
+      "checksum_fnv1a64": "608CBEDD1912F3C7"
+    },
+    {
+      "mae_255": 0.4968547523021698,
+      "max_255": 11.000000953674316,
+      "corr": 0.9999576428040148,
+      "equal_fraction": 0.7077864583333333,
+      "name": "ui_bundle_priority_backbuffer",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "ui-bundle",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--bundle-backbuffer",
+        "1",
+        "--ui-correction",
+        "1"
+      ],
+      "checksum_fnv1a64": "D76C86342FA9AB85"
+    },
+    {
+      "mae_255": 0.28045862913131714,
+      "max_255": 7.999999523162842,
+      "corr": 0.9999846754572542,
+      "equal_fraction": 0.7757798032407407,
+      "name": "style2_ui_bundle",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "ui-bundle",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--bundle-backbuffer",
+        "1",
+        "--ui-correction",
+        "1",
+        "--style",
+        "2",
+        "--intensity",
+        "0.6"
+      ],
+      "checksum_fnv1a64": "7991F4F3E2450EDE"
+    },
+    {
+      "mae_255": 1.9154731035232544,
+      "max_255": 16.999998092651367,
+      "corr": 0.99931132029883,
+      "equal_fraction": 0.17172887731481482,
+      "name": "ui_disabled",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "ui-bundle",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--bundle-backbuffer",
+        "1",
+        "--ui-correction",
+        "0"
+      ],
+      "checksum_fnv1a64": "FF4996CEBF6E31B3"
+    }
+  ],
+  "kernels": [
+    {
+      "mae_255": 9.346494152850937e-06,
+      "max_255": 0.00021278858184814453,
+      "corr": 0.9999999999999624,
+      "equal_fraction": 0.5143634200237974,
+      "name": "style1_mask",
+      "passed": true
+    },
+    {
+      "mae_255": 6.601624590985011e-06,
+      "max_255": 0.0001519918441772461,
+      "corr": 0.999999999999976,
+      "equal_fraction": 0.5881353051164372,
+      "name": "style2_mask_intensity",
+      "passed": true
+    },
+    {
+      "mae_255": 9.372390195494518e-06,
+      "max_255": 0.0002887845039367676,
+      "corr": 0.9999999999999599,
+      "equal_fraction": 0.5267720550739419,
+      "name": "ui_alpha",
+      "passed": true
+    },
+    {
+      "mae_255": 9.501953172730282e-06,
+      "max_255": 0.00018998980522155762,
+      "corr": 0.9999999999999614,
+      "equal_fraction": 0.4733979262281149,
+      "name": "ui_rgba",
+      "passed": true
+    },
+    {
+      "mae_255": 6.009082426317036e-06,
+      "max_255": 0.00019758939743041992,
+      "corr": 0.9999999999999872,
+      "equal_fraction": 0.647628760836308,
+      "name": "ui_alpha_priority",
+      "passed": true
+    },
+    {
+      "mae_255": 3.195560793756158e-06,
+      "max_255": 0.00011779367923736572,
+      "corr": 0.9999999999999943,
+      "equal_fraction": 0.7535271120176781,
+      "name": "style2_ui_mask",
+      "passed": true
+    },
+    {
+      "mae_255": 1.2500961020123214e-05,
+      "max_255": 0.0002887845039367676,
+      "corr": 0.9999999999999651,
+      "equal_fraction": 0.563488016318205,
+      "name": "backbuffer_no_alpha",
+      "passed": true
+    },
+    {
+      "mae_255": 0.0,
+      "max_255": 0.0,
+      "corr": 0.9999999999999998,
+      "equal_fraction": 1.0,
+      "name": "zero_intensity_backbuffer",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "report_kind": "independent CPU code/evidence review",
+  "status": "complete",
+  "passed": true,
+  "gpu_used_in_this_review": false,
+  "reviewed_sources_modified": false,
+  "native_1_to_1": false,
+  "claim": "Sampling numerical contract and report-safety evidence independently reviewed; saved GPU results were checked for coverage, thresholds and current identity, not rerun by this review",
+  "sampling": {
+    "full_kernel_coordinate_context": {
+      "method": "Independent cuobjdump CPU invocation for four complete original sm120/ported sm86 pre/post functions, then source-byte SHA checks at all selected offsets",
+      "functions": 4,
+      "selected_ffma_ftz_instructions": 16,
+      "all_machine_bytes_match": true,
+      "static_evidence_path": "research\\batch4_sampling\\post_arithmetic_static.json",
+      "static_evidence_sha256": "e9568755e7dd5d5a29b7f4a54344be31676b5d1595d302b3857b4b076ac484f4"
+    },
+    "legacy_pre_diagnostic": {
+      "cases": 4,
+      "arithmetic": "split",
+      "scope": "Artificial historical setup without FTZ multiplication; retained for diagnostic compatibility. This is not evidence of the complete original pre arithmetic."
+    },
+    "authentic_pre_context": {
+      "cases": 4,
+      "arithmetic": "fused",
+      "scope": "Original Catmull slice with upstream mul.ftz restored; complete pre machine code independently confirms fusion. The probe remains a re-JIT sampling slice, not the complete pre neural kernel."
+    },
+    "raw_tex_cases": 4,
+    "post_sampling_slice_cases": 4,
+    "complete_post_reference": {
+      "cases": 9,
+      "source": "Current local sm86 cubin, full original post kernel launched through klab, zero neural weights, blend=1: 2*RGB recovers history sampling",
+      "case_kinds": [
+        "zero",
+        "integer",
+        "fractional",
+        "negative_fraction",
+        "outside",
+        "two odd sizes",
+        "two spatially varying fractional fields"
+      ],
+      "reference_cycle_found": false
+    },
+    "fixed_thresholds": {
+      "isolated_max_255": 0.005,
+      "isolated_mae_255": 0.0005,
+      "min_correlation": 0.999,
+      "max_mae_255": 3.0
+    },
+    "baseline_name": "Legacy bilinear/Catmull sampler under the current Reset contract; not a replay of the complete batch3 network",
+    "baseline_scope_correct": "Current Reset contract plus legacy sampler; not a replay of the complete old network",
+    "hardware_reciprocal": {
+      "source": "torch/dlss5/ptx_math.py",
+      "authored_ptx_sha256": "0bf8b5fd0683381a75e1cd9340341d65d4bb89811b4ac33b35bc8d60951f0306",
+      "cpu_fallback": "Ordinary reciprocal only; not CUDA numerical parity",
+      "static_review": [
+        "Caches module/function by active CUDA context and retains modules for graph lifetime",
+        "Cold graph compilation explicitly rejected; warmup compiles outside capture",
+        "Launch uses the current Torch CUDA stream and records input stream lifetime",
+        "Driver errors propagate; CUDA errors never choose the CPU fallback"
+      ],
+      "gpu_tests_not_repeated_by_reviewer": true
+    },
+    "partial_and_coverage_contract": "Partial execution sets complete=false and passed=false, with requested_suite_passed separately recorded; full acceptance requires 16 probes, 9 complete post cases, 20 network rows and Graph",
+    "independent_cpu_tests": {
+      "command": "python -m unittest discover -s torch -p test_sampling.py -v",
+      "tests": 12,
+      "passed": 12
+    },
+    "unknown_cli_stale_pass": {
+      "before": {
+        "reproduced": true,
+        "exit_code": 2,
+        "old_pass_remained": true,
+        "gpu_initialization_prohibited": true
+      },
+      "after": {
+        "independently_retested": true,
+        "exit_code": 2,
+        "passed": false,
+        "complete": false,
+        "gpu_initialization_prohibited": true
+      },
+      "status": "resolved"
+    },
+    "saved_gpu_report": {
+      "path": "research\\validation\\batch4_sampling.json",
+      "sha256": "5e134985d54838cf3e529574b07d745493138fd91eda28795e7d705b72654a32",
+      "complete": true,
+      "independent_gate_recalculation": true,
+      "all_declared_source_hashes_match_current": true,
+      "all_network_reference_file_hashes_match_current": true,
+      "coverage": {
+        "isolated": {
+          "compared": 16,
+          "passed": 16,
+          "failed": 0
+        },
+        "full_kernel": {
+          "compared": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "network": {
+          "compared": 20,
+          "passed": 20,
+          "failed": 0
+        }
+      },
+      "cuda_graph_hashes_equal": true,
+      "maximum_isolated_error_255": 9.119510650634766e-05,
+      "maximum_complete_post_error_255": 0.0002434244379401207,
+      "minimum_network_correlation": 0.9992151926929704,
+      "maximum_network_mae_255": 2.0559982638888887
+    }
+  },
+  "shared_report_paths": {
+    "independent_cpu_tests": {
+      "command": "python -m unittest tools.test_report_paths -v",
+      "tests": 13,
+      "passed": 13
+    },
+    "reviewed_behaviors": [
+      "Report and .tmp direct/hardlink aliases to declared source/runtime/reference inputs are rejected before writes",
+      "Capture containment and outside hardlinks are both protected",
+      "Dynamic references are registered before reading and revalidated at acceptance finish",
+      "Exclusive creation preserves pre-existing foreign temporary files",
+      "Serialization happens before creating temporary output; failed writes remove only a temporary file whose inode belongs to this call",
+      "Adapters protect verify_assets, transfer host inputs, temporal captures and acceptance references"
+    ],
+    "original_reproducer_index": {
+      "path": "_dl/batch4_release_audit_f0025c7abd/report_alias_findings.json",
+      "sha256": "4417740ebad33bb9c1ec80958f977aa9c792d955eba0984924a0ca08b86f8c3d"
+    },
+    "new_blocking_findings": []
+  },
+  "limitations": [
+    "Selected scalar FFMA/RCP and finite synthetic cases do not prove native sm120 MMA or whole-product parity",
+    "Measured texture coordinate/cross-weight precision remains specific to the recorded RTX3060",
+    "Reviewer performed CPU/static tests only; saved GPU numerical measurements belong to the separately identified execution report"
+  ],
+  "blocking_findings_resolved": true,
+  "reviewed_source_sha256": {
+    "torch/dlss5/ops.py": "babf1b19a18e0b742603f0d6f594f4e7a2e9f67a8dbfb57c68eea7f7a0c80742",
+    "torch/dlss5/ptx_math.py": "0034713bcbdec10e1e0220e17fbfdc4d46d812f085c325139c5d3d58bddf9c59",
+    "torch/check_sampling.py": "1a5de1c479e42215c2bf7289c51dc1fbfbb66d824b4857b9a9ef00b8a006ec82",
+    "torch/test_sampling.py": "2b3a3188f575e2005903e586ed35f6aa8d721c127192e40d4165f29fde2eea97",
+    "tools/report_paths.py": "88c0c40940267fcd0fe185bc87c37114a834da8e1c0a53bd8dd19a50d44dfb60",
+    "tools/test_report_paths.py": "c73f728119ac8321eb8ae09a69ee892147dcf8ce21f4fc5348b01628b92912e4",
+    "tools/verify_assets.py": "11caaa6176490c03c3d21af2aedbe6a1627990940a6d50367f61ef8d80bb9c88",
+    "tools/trace_transfer_host.py": "e5c84c52d59d6bebe2183866e3d89318c7d840db1cd9addb967d5a5b8115cfbd",
+    "torch/acceptance.py": "343df6ef367d2d93c3a710a7b00212ca0b5e902e504304aa84536c9a1b70812f",
+    "harness/check_temporal.py": "2892b16b8917e372a6f005c8d0ca29d885084ab71682b9ca9148226c6717ae36"
+  }
+}

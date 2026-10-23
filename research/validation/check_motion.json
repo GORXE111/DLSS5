@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "suite": "check_motion",
+  "reference_kind": "RTX3060_port",
+  "reference_accumulation": "f16_two_mma_approximation",
+  "claim": "port_regression_only",
+  "mode": "approximate",
+  "thresholds": {
+    "min_correlation": 0.999,
+    "max_mae": 3.0,
+    "max_nrmse": null
+  },
+  "checks": [
+    {
+      "name": "mvok/frame1",
+      "passed": true,
+      "correlation": 0.9994160152989495,
+      "mae": 1.7058260995370371,
+      "max_error": 27.0,
+      "exact_fraction": 0.19086516203703704,
+      "within_one_fraction": 0.5218229166666667,
+      "nrmse": 0.017613822279785304,
+      "units": "uint8_rgb"
+    },
+    {
+      "name": "mvok/frame2",
+      "passed": true,
+      "correlation": 0.999430267272309,
+      "mae": 1.7692288773148148,
+      "max_error": 28.0,
+      "exact_fraction": 0.18553096064814814,
+      "within_one_fraction": 0.5083058449074074,
+      "nrmse": 0.018266834430426423,
+      "units": "uint8_rgb"
+    },
+    {
+      "name": "mvok/frame3",
+      "passed": true,
+      "correlation": 0.9994538828858022,
+      "mae": 1.7207132523148148,
+      "max_error": 14.0,
+      "exact_fraction": 0.19159432870370371,
+      "within_one_fraction": 0.5218619791666667,
+      "nrmse": 0.017781328604407433,
+      "units": "uint8_rgb"
+    },
+    {
+      "name": "mv0/frame1",
+      "passed": true,
+      "correlation": 0.9993152311539274,
+      "mae": 1.8776996527777778,
+      "max_error": 22.0,
+      "exact_fraction": 0.17563802083333332,
+      "within_one_fraction": 0.4862934027777778,
+      "nrmse": 0.01936512560151989,
+      "units": "uint8_rgb"
+    },
+    {
+      "name": "mv0/frame2",
+      "passed": true,
+      "correlation": 0.9992909774103861,
+      "mae": 1.9174537037037036,
+      "max_error": 26.0,
+      "exact_fraction": 0.17068431712962964,
+      "within_one_fraction": 0.47651331018518517,
+      "nrmse": 0.019725435057414545,
+      "units": "uint8_rgb"
+    },
+    {
+      "name": "mv0/frame3",
+      "passed": true,
+      "correlation": 0.9993141793846015,
+      "mae": 1.8563859953703703,
+      "max_error": 28.0,
+      "exact_fraction": 0.17701967592592593,
+      "within_one_fraction": 0.49085358796296297,
+      "nrmse": 0.019097647968675413,
+      "units": "uint8_rgb"
+    }
+  ],
+  "skipped": [],
+  "errors": [],
+  "references": {
+    "E:\\DLSS5\\research\\out_mvok_f1.ppm": "e5a850a1907f87679e384529b0009ffa6d18079cc2cb1cda934bc611535fa012",
+    "E:\\DLSS5\\research\\out_mvok_f2.ppm": "c9bffb3a54c1745bf13b1d954c149a73e188c48cea1d0a9839c7d577c2eda43e",
+    "E:\\DLSS5\\research\\out_mvok_f3.ppm": "501c342f4a4144a7e46c56f0723fa03b803fafde93ccffbbaf2541a9d802a82b",
+    "E:\\DLSS5\\research\\out_mv0_f1.ppm": "693edb481e216485c08736b9ac041cd95b1e60e744dbdafbc1fb03d6fad70ca4",
+    "E:\\DLSS5\\research\\out_mv0_f2.ppm": "c6b3544093ec41f336153ef36bd3603bb9da81c92243855bf68660561bd9d580",
+    "E:\\DLSS5\\research\\out_mv0_f3.ppm": "aca520acb29f3eee93435b24aad8ba744de21b5da0eab202339c202fe2512cd1"
+  },
+  "coverage": {
+    "compared": 6,
+    "skipped": 0,
+    "fraction": 1.0
+  },
+  "passed": true,
+  "status": "passed"
+}

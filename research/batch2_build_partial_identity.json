@@ -1,0 +1,27 @@
+[
+  {
+    "tag": "fatbin_01",
+    "matches_existing_dll": true,
+    "sha256": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4"
+  },
+  {
+    "tag": "fatbin_02",
+    "matches_existing_dll": true,
+    "sha256": "a25a36a23e5fe1bb105227544fa45ce35d4bba8cbfe00af32611e95cc6e872de"
+  },
+  {
+    "tag": "fatbin_03",
+    "matches_existing_dll": true,
+    "sha256": "abcb261b28d64ea323ce4e25504412f67e6f221ae7af6cc4b2ecae24e0dbea55"
+  },
+  {
+    "tag": "fatbin_04",
+    "matches_existing_dll": true,
+    "sha256": "9aaf7f8e1d63daba638443d61a99279a845e60e63300b038ee09d328e38df662"
+  },
+  {
+    "tag": "fatbin_05",
+    "matches_existing_dll": true,
+    "sha256": "5a2e3faeeeafb7ee8f9878df243fffe298bef3aed5c9dc5098c8213b4810a638"
+  }
+]

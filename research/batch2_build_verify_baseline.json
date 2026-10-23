@@ -1,0 +1,94 @@
+{
+  "candidate": "sm86_port\\nvngx_dlssnr.dll",
+  "candidate_bytes": 194906112,
+  "candidate_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+  "fatbins": [
+    {
+      "bytes": 6514344,
+      "offset_in_section": 0,
+      "sha256": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4"
+    },
+    {
+      "bytes": 4228680,
+      "offset_in_section": 6514432,
+      "sha256": "a25a36a23e5fe1bb105227544fa45ce35d4bba8cbfe00af32611e95cc6e872de"
+    },
+    {
+      "bytes": 4163920,
+      "offset_in_section": 10743296,
+      "sha256": "abcb261b28d64ea323ce4e25504412f67e6f221ae7af6cc4b2ecae24e0dbea55"
+    },
+    {
+      "bytes": 4317632,
+      "offset_in_section": 14907392,
+      "sha256": "9aaf7f8e1d63daba638443d61a99279a845e60e63300b038ee09d328e38df662"
+    },
+    {
+      "bytes": 3612048,
+      "offset_in_section": 19225088,
+      "sha256": "5a2e3faeeeafb7ee8f9878df243fffe298bef3aed5c9dc5098c8213b4810a638"
+    },
+    {
+      "bytes": 5632904,
+      "offset_in_section": 22837248,
+      "sha256": "86adf0a150e40ced017a4bd0945288867cfaafc9d01afa48aa97a73c8f491d50"
+    },
+    {
+      "bytes": 440936,
+      "offset_in_section": 28470272,
+      "sha256": "cee146f03fdf22e758a9c20a490b4ae502695dc5226d4cdb94c0f02991522471"
+    },
+    {
+      "bytes": 11216,
+      "offset_in_section": 28911360,
+      "sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059"
+    },
+    {
+      "bytes": 15312,
+      "offset_in_section": 28922624,
+      "sha256": "20d7ababfbbf7ad76ab5f66c97cd3b7874b64157594eecf1cc222858a7c7b809"
+    },
+    {
+      "bytes": 16560,
+      "offset_in_section": 28937984,
+      "sha256": "3bba3d2f0b72d9b421ec3fba13a6866d28cf6d6506ea1d7c1e84691862fd2dc8"
+    },
+    {
+      "bytes": 14584,
+      "offset_in_section": 28954624,
+      "sha256": "084f4ffcbb56ce9b30f341dc704e3eb84d8de57674fa167ff61611f36a1b0a6b"
+    },
+    {
+      "bytes": 14336,
+      "offset_in_section": 28969216,
+      "sha256": "8cf57cf1c75242d9ec53ca48b0c37afd9ee23ee23c5390011d2e31094c2f07be"
+    },
+    {
+      "bytes": 9584,
+      "offset_in_section": 28983552,
+      "sha256": "9f74ea77fa2ab62aad28c9bb10b5189055ac8f1432beb72b424363e639412919"
+    },
+    {
+      "bytes": 72360,
+      "offset_in_section": 28993280,
+      "sha256": "6f3ef48456b463a91b80f82e0005433273d80fea4f3701b307715a6756629664"
+    },
+    {
+      "bytes": 10064,
+      "offset_in_section": 29065728,
+      "sha256": "8eadb95c4d84b36d440c292ea7b4804349ebff48afcd687c261bc427aece0fab"
+    }
+  ],
+  "scope": "CPU build reproducibility, section integrity and original weight identity; not official output parity",
+  "source_dll_sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+  "source_weights": {
+    "bytes": 147695410,
+    "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+  },
+  "started_utc": "2026-10-23T08:22:41.882647+00:00",
+  "status": "passed",
+  "weights": {
+    "bytes": 147695410,
+    "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+  }
+}

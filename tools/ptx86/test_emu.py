@@ -2,16 +2,19 @@
 
 测试 PTX 用原始 sm_120 指令写，经过 rewrite() 同一条路径再加载，所以测的就是移植时实际用的代码。
   1. e4m3 -> f16x2: 全部 65536 种 16 位输入穷举
-  2. f16x2 -> e4m3x2 satfinite: 全部 65536 个 f16 穷举 (NaN 除外)
+  2. f16x2 -> e4m3x2 satfinite: 全部 65536 个 f16 穷举 (含 NaN 类别)
   3. mma m16n8k32 e4m3: 随机 A/B/C 多轮，对照 f32 参考
 
 python -m tools.ptx86.test_emu
 """
 import ctypes
+import argparse
+import sys
 import numpy as np
 import torch
 
-from .rewrite import rewrite
+from .rewrite import rewrite, ACC
+from .test_numeric_special import reference_decode, reference_encode, half_equivalent, byte_equivalent
 
 PTX = r"""
 .version 9.4
@@ -148,15 +151,15 @@ def launch(f, grid, block, *args):
 
 # ---------------------------------------------------------------- 参考实现
 
-E4M3 = torch.arange(256, dtype=torch.uint8).view(torch.float8_e4m3fn).float().numpy()  # 0x7F/0xFF = NaN
+# Independent exact-integer CPU oracle; torch FP8 conversion is not the gold.
+E4M3_BITS = np.array([reference_decode(i) for i in range(256)], np.uint16)
+E4M3 = E4M3_BITS.view(np.float16).astype(np.float32)
 
 
 def ref_encode(h):
     """f16 -> e4m3 字节，RN + satfinite。"""
-    x = h.astype(np.float32)
-    c = np.clip(x, -448, 448)
-    b = torch.from_numpy(c).to(torch.float8_e4m3fn).view(torch.uint8).numpy()
-    return b
+    bits = np.ascontiguousarray(h, dtype=np.float16).view(np.uint16)
+    return np.array([reference_encode(i) for i in bits.reshape(-1)], np.uint8).reshape(bits.shape)
 
 
 def test_decode(mod):
@@ -164,18 +167,16 @@ def test_decode(mod):
     src = torch.arange(n, dtype=torch.int32).to(torch.int16).cuda()
     out = torch.zeros(n, dtype=torch.int32, device="cuda")
     launch(fn(mod, "cvt_dec"), n // 256, 256, src, out, n)
-    got = out.cpu().numpy().view(np.float16).reshape(n, 2).astype(np.float32)
+    got = out.cpu().numpy().view(np.uint16).reshape(n, 2)
     lo, hi = np.arange(n) & 0xFF, np.arange(n) >> 8
-    exp = np.stack([E4M3[lo], E4M3[hi]], 1)
-    nan = np.isnan(exp)
-    bad = (got != exp) & ~nan
-    print(f"[decode] 65536 组 / {bad.sum()} 错 (NaN 编码 {nan.any(1).sum()} 组跳过)")
+    exp = np.stack([E4M3_BITS[lo], E4M3_BITS[hi]], 1)
+    bad = ~half_equivalent(got, exp)
+    print(f"[decode] 65536 组 / {bad.sum()} 错 (含 NaN 类别、有限数与 signed zero 逐位)")
     return bad.sum() == 0
 
 
 def test_encode(mod):
     h = np.arange(65536, dtype=np.uint32).astype(np.uint16).view(np.float16)
-    ok = ~np.isnan(h)
     pairs = np.stack([h, h[::-1]], 1).copy()  # lo/hi 两半都覆盖全部值
     src = torch.from_numpy(pairs.view(np.int32).reshape(-1)).cuda()
     out = torch.zeros(65536, dtype=torch.int16, device="cuda")
@@ -183,7 +184,7 @@ def test_encode(mod):
     got = out.cpu().numpy().view(np.uint16)
     g_lo, g_hi = got & 0xFF, got >> 8
     e_lo, e_hi = ref_encode(pairs[:, 0]), ref_encode(pairs[:, 1])
-    bad = ((g_lo != e_lo) & ok) | ((g_hi != e_hi) & ok[::-1])
+    bad = ~byte_equivalent(g_lo, e_lo) | ~byte_equivalent(g_hi, e_hi)
     print(f"[encode] 65536x2 个 f16 / {bad.sum()} 错")
     if bad.any():
         i = np.nonzero(bad)[0][:5]
@@ -271,9 +272,8 @@ def test_fq(mod):
     out = torch.zeros(65536, dtype=torch.int32, device="cuda")
     launch(fn(mod, "fq_roundtrip"), 256, 256, src, out, 65536)
     got = out.cpu().numpy().view(np.uint16).reshape(-1, 2)
-    exp = np.stack([E4M3[ref_encode(pairs[:, 0])], E4M3[ref_encode(pairs[:, 1])]], 1).astype(np.float16).view(np.uint16)
-    ok = ~np.isnan(pairs.astype(np.float32))
-    bad = (got != exp) & ok
+    exp = np.stack([E4M3_BITS[ref_encode(pairs[:, 0])], E4M3_BITS[ref_encode(pairs[:, 1])]], 1)
+    bad = ~half_equivalent(got, exp)
     print(f"[fq]     65536x2 个 f16 伪量化 / {bad.sum()} 错")
     if bad.any():
         i = np.nonzero(bad.any(1))[0][:5]
@@ -302,9 +302,26 @@ def test_mma_fused(mod, rounds=100):
     return bad == 0
 
 
-if __name__ == "__main__":
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", choices=("f16", "f32"), default="f16")
+    parser.add_argument("--enc", choices=("v1", "v2", "f32"), default="v1")
+    parser.add_argument("--dec", choices=("v1", "v2"), default="v1")
+    parser.add_argument("--no-fuse", action="store_true")
+    parser.add_argument("--conversions-only", action="store_true")
+    args = parser.parse_args()
+    ACC.update(mode=args.mode, enc=args.enc, dec=args.dec, fuse=not args.no_fuse)
+    if args.enc == "f32":
+        ACC["encode"] = "f32"
     m = load()
     src, st = rewrite(PTX)
     print("fuse:", {k: v for k, v in st.items() if k.startswith("fuse:")})
-    r = [test_decode(m), test_encode(m), test_mma(m), test_fq(m), test_mma_fused(m)]
+    r = [test_decode(m), test_encode(m), test_fq(m)]
+    if not args.conversions_only:
+        r += [test_mma(m), test_mma_fused(m)]
     print("全部通过" if all(r) else "有失败")
+    return 0 if all(r) else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

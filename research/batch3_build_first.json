@@ -1,0 +1,1306 @@
+{
+  "cache_hits": 0,
+  "cache_misses": 15,
+  "fatbins": [
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "feb368ff5279a7408b1e55554db6e468d7f114a24b18b2af8d7e6989a410c612",
+          "source_fatbin": "c11e2eb6f6eeabadffe340dba74ec8c3f474f4ac4a8ed601d59e04d1d49bda3d",
+          "source_ptx": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "feb368ff5279a7408b1e55554db6e468d7f114a24b18b2af8d7e6989a410c612",
+      "outputs": {
+        "cubin": {
+          "bytes": 4144608,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_01.sm86.cubin",
+          "sha256": "2871d683d650d602aa7590927fce9ef0a27394685a7fe127efd357b8be506043"
+        },
+        "fatbin": {
+          "bytes": 6934184,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_01.sm86.fatbin",
+          "sha256": "53773a3ec5f12416628a3ee376258c3617dcfdf0103fab3ff72e266857c6eb24"
+        },
+        "ptx": {
+          "bytes": 29579780,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_01.sm86.ptx",
+          "sha256": "ff32305789b53a9e54be00899808986872c697aeb2a575f939a46c5219874372"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_01"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "a10a8083b9489622fe290d669f05f38db7308c3c10771d0f0d6f22718e3cb1ae",
+          "source_fatbin": "2a2627a5c3b2e9f2d3143c39322af284b03540caa7bd246e0a5481949aca7eb7",
+          "source_ptx": "ce7ddc731de4e6b90c59c10c100202d2781b7cb9d8c2d8faa9181ff965b1678d",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "a10a8083b9489622fe290d669f05f38db7308c3c10771d0f0d6f22718e3cb1ae",
+      "outputs": {
+        "cubin": {
+          "bytes": 2959712,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_02.sm86.cubin",
+          "sha256": "2937e4116ad7580ff5829595aac9946508868c2a8a423c94a1cccd654358aae4"
+        },
+        "fatbin": {
+          "bytes": 4601416,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_02.sm86.fatbin",
+          "sha256": "270dba8ec90981d24c86667f76150c70a850ecdff99a152606f35b6948d63a91"
+        },
+        "ptx": {
+          "bytes": 22832487,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_02.sm86.ptx",
+          "sha256": "7e62558ba9d0796412d287b840226b8f09ade72430339c0cf27fb2d76fc82ea4"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_02"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "9cba6bc0001a80c902ee20fd5638bf442bdf0674aaada676d67a6d1b89ca0aaa",
+          "source_fatbin": "13f9782f9fcc2757a2273231fef4642672b3bcfcd74be8bf7407b31cef634631",
+          "source_ptx": "c1b1fe55678d5a27414cb02d2a9a054e3239f2b6da8567e9420c4e8bd2dc1048",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "9cba6bc0001a80c902ee20fd5638bf442bdf0674aaada676d67a6d1b89ca0aaa",
+      "outputs": {
+        "cubin": {
+          "bytes": 2971616,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_03.sm86.cubin",
+          "sha256": "45993e24b0d8e94d9a471caa14e824b4d120bcdea4695a0379e5ca38c13942c9"
+        },
+        "fatbin": {
+          "bytes": 4562000,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_03.sm86.fatbin",
+          "sha256": "864d123541f081d25c82c4be1161d3823fcd65d134edbea2ead7a9af02b5cd8f"
+        },
+        "ptx": {
+          "bytes": 23357965,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_03.sm86.ptx",
+          "sha256": "0d54f99221dcc4fe7affd9e56a086d1e86ebff834679a2320e59693567fad5f0"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_03"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "46ad7753bfb3a70a92a3524a5e638bb2fe93edb37cf3389ad1fa524e4e19b084",
+          "source_fatbin": "32f9331ca703a2b908e7aaab4f40012993b93b919898f6c50cfb2e0d1569e25d",
+          "source_ptx": "afca21c868f1c8df337de6f3ef9ac18c0b80a01bb0fbd2a5a5c05bfb5ff84b3d",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "46ad7753bfb3a70a92a3524a5e638bb2fe93edb37cf3389ad1fa524e4e19b084",
+      "outputs": {
+        "cubin": {
+          "bytes": 3009120,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_04.sm86.cubin",
+          "sha256": "c80b58ecbe88f59f9dae89644f33a6df435047f25d52c2ab8b5abfc692c04aaf"
+        },
+        "fatbin": {
+          "bytes": 4706496,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_04.sm86.fatbin",
+          "sha256": "64bfe99cd0f7610fa5cf9926575f0e091ab66008cb8567557a76587e684b3d73"
+        },
+        "ptx": {
+          "bytes": 24775721,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_04.sm86.ptx",
+          "sha256": "d50cb31f69bebfdea035d553b47bcde78c44a14be632571ad93a313c8014425e"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_04"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "97bdf9a571dec8bff41975fe670610b0a3363b49885ada171e61229578ecf569",
+          "source_fatbin": "d0eea04aa187686c34d42f77e5fbcd6f1a8ff604b0d45108ac76d02cc9a5581a",
+          "source_ptx": "ceb628025068799abb0c08ce37d19bb0ac91d84cd766cd36bdd9ee0d6a36df9b",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "97bdf9a571dec8bff41975fe670610b0a3363b49885ada171e61229578ecf569",
+      "outputs": {
+        "cubin": {
+          "bytes": 2305632,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_05.sm86.cubin",
+          "sha256": "c17120cf09812329bef75031cfab34a63e948f84b21e515288a49f31e0f196d0"
+        },
+        "fatbin": {
+          "bytes": 3842960,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_05.sm86.fatbin",
+          "sha256": "a5df34f2ef0299e40435ba8345054c5b71fe49e85c77ec80764c0033388cdd4d"
+        },
+        "ptx": {
+          "bytes": 16034932,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_05.sm86.ptx",
+          "sha256": "0cbb27dff122337adf7f4bb6f913f6f4eace99663491a7ba87c53a1044934fad"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_05"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "bfb2ebe117b7c4d92a78e1885412acbb80233f2d9b11af1e854430eb3cc0a2a1",
+          "source_fatbin": "3fa6f076eecfbb6e19c378f84bbb7025cd805ed4de9a2f9c9b995eb34a7f3d76",
+          "source_ptx": "98995d9949f07b464d69e1063e673aa48e2123d219b273104881ec38197631c5",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "bfb2ebe117b7c4d92a78e1885412acbb80233f2d9b11af1e854430eb3cc0a2a1",
+      "outputs": {
+        "cubin": {
+          "bytes": 3371360,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_06.sm86.cubin",
+          "sha256": "eb17168e279935b4505d9dd5679a9b247076c76a887468314bcb2af06648f9cb"
+        },
+        "fatbin": {
+          "bytes": 5862792,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_06.sm86.fatbin",
+          "sha256": "d2f1be4a0721d244bb044b83236d2170cee693140908ef039311142c8e0d8a62"
+        },
+        "ptx": {
+          "bytes": 19118234,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_06.sm86.ptx",
+          "sha256": "7311792438154aada2b6da728f53b2a284923510eebd5fe5c3c895e2c4924326"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_06"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "e67c8db5c29348f1650c532735b0d4740f6a003b7f932ae5c505a41ced082e7a",
+          "source_fatbin": "661970ae2e3970b2d1541255c96ffabe241b4d3c5c2a59a895be1fde5db0dbe8",
+          "source_ptx": "1456260981c8d5c40c7d402f79c1a9c44bcae931f2b2f3d7062d0ca864e255e8",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "e67c8db5c29348f1650c532735b0d4740f6a003b7f932ae5c505a41ced082e7a",
+      "outputs": {
+        "cubin": {
+          "bytes": 305952,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_07.sm86.cubin",
+          "sha256": "e03b311d2a759ae0d2dd2a60e204839bab50a5b5888d06881f3ea32a5781e16c"
+        },
+        "fatbin": {
+          "bytes": 477288,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_07.sm86.fatbin",
+          "sha256": "ea1f4a9c00adf9632ead32a7ddbb4a534184d72192cc1e8fbd84c39af3baa9cd"
+        },
+        "ptx": {
+          "bytes": 1746210,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_07.sm86.ptx",
+          "sha256": "20998ad9cfd22177833881153484ca7b28f7dfdef5921f3eac5c55f0abf59199"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_07"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "7318a0e884d5fd92e1006f490b572eca90308d355b57663232f214e8fc460109",
+          "source_fatbin": "779c283266c3ee724d2942b19465e702ebb4c8d057e3664cef070b3e1c81f056",
+          "source_ptx": "6a2ecf58a7d012d77c86392e816b7fa2fe77d5fad4c86b26234c3781ee872e18",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "7318a0e884d5fd92e1006f490b572eca90308d355b57663232f214e8fc460109",
+      "outputs": {
+        "cubin": {
+          "bytes": 4136,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_08.sm86.cubin",
+          "sha256": "d7a360a13ff34d7716a61674cb8307a4d4830df12c91b67100e7363afcdfe4df"
+        },
+        "fatbin": {
+          "bytes": 11216,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_08.sm86.fatbin",
+          "sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059"
+        },
+        "ptx": {
+          "bytes": 2610,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_08.sm86.ptx",
+          "sha256": "6e281013013387382a3abf6ffb0d822f20f74ab6964271e61ef41e1730d08438"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_08"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "81fe728b271e66911f0026ef517717516032fb14e53092764cfc568ccfea2b9b",
+          "source_fatbin": "ed1a4c0f392922c42ea6b7344485271fa7e35aa462b3406f266957f9f718c2c5",
+          "source_ptx": "e6c2374fc01f878f9e3e0fbed4137c29c6b02575a31373bf940ef23c0cfe90cd",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "81fe728b271e66911f0026ef517717516032fb14e53092764cfc568ccfea2b9b",
+      "outputs": {
+        "cubin": {
+          "bytes": 5352,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_09.sm86.cubin",
+          "sha256": "410b364c86dc077f0322b9041c45cd4d3f68ed6c36dbc8d8a6c8825d9aec6be7"
+        },
+        "fatbin": {
+          "bytes": 15312,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_09.sm86.fatbin",
+          "sha256": "20d7ababfbbf7ad76ab5f66c97cd3b7874b64157594eecf1cc222858a7c7b809"
+        },
+        "ptx": {
+          "bytes": 3942,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_09.sm86.ptx",
+          "sha256": "589d003fbe1a0f591e019421f94e8056f89a1a5feee21d85f4af24e95c6ade88"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_09"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "56151310361b82915f93d6ece0daea39ba169f0978defbebe4823e1f80bea065",
+          "source_fatbin": "5d97bb668347b521aa814ba533b522072e8b87a570943a912fe9df58a9baeaff",
+          "source_ptx": "b108f54d3c4d766fbcbe037ffbcada536c55f3767f07fca38e092bff1420e3c7",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "56151310361b82915f93d6ece0daea39ba169f0978defbebe4823e1f80bea065",
+      "outputs": {
+        "cubin": {
+          "bytes": 5864,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_10.sm86.cubin",
+          "sha256": "43b713ff791e99b054b47ec8d4438f38a5e41799f98af850e51cd9f050c6ccbb"
+        },
+        "fatbin": {
+          "bytes": 16560,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_10.sm86.fatbin",
+          "sha256": "3bba3d2f0b72d9b421ec3fba13a6866d28cf6d6506ea1d7c1e84691862fd2dc8"
+        },
+        "ptx": {
+          "bytes": 4718,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_10.sm86.ptx",
+          "sha256": "453ca7d30582be510df8720b2830d5ec41dd5297a4d0863c09343b3b38c2bfb9"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_10"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "c28089f55fcb9aa2c5ba5a9d788e434019f45ec7cbf75c485d2b9bed783af36c",
+          "source_fatbin": "823a224929b8fac30f765cbe3bf1a9afcd50ed5f3b1e15be9ff0fd46410fac75",
+          "source_ptx": "73b8b32e7c96778b6e87ac40a9e1d3c34a67dbc0f67cbc79fb0fd997fb0fca8b",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "c28089f55fcb9aa2c5ba5a9d788e434019f45ec7cbf75c485d2b9bed783af36c",
+      "outputs": {
+        "cubin": {
+          "bytes": 5408,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_11.sm86.cubin",
+          "sha256": "3998d4210cf0236836287496fd904c59b6bd5893efb9cfd8193acf1eafa677d8"
+        },
+        "fatbin": {
+          "bytes": 14584,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_11.sm86.fatbin",
+          "sha256": "084f4ffcbb56ce9b30f341dc704e3eb84d8de57674fa167ff61611f36a1b0a6b"
+        },
+        "ptx": {
+          "bytes": 5136,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_11.sm86.ptx",
+          "sha256": "598b3ba95c543d3f13375a9fd53eded42fe2b794cd676828d19ec272f43fde88"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_11"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "33f7a107595087bd78767804ff52ac48fafe48cff117a2033abcf180f28df0c8",
+          "source_fatbin": "19538d2ed39a9a09b847f9840943ab1d874d5837b97986b9312fb6a288c1be6c",
+          "source_ptx": "0a056a78544645c1795daa8d1bd0a8c4b6a16b9f9be5ec60b62d18177b926cb6",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "33f7a107595087bd78767804ff52ac48fafe48cff117a2033abcf180f28df0c8",
+      "outputs": {
+        "cubin": {
+          "bytes": 5416,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_12.sm86.cubin",
+          "sha256": "8c673d574ff771e226f76362f7b1b5ed18606499ce2a040091ce5c6ff6ac8e55"
+        },
+        "fatbin": {
+          "bytes": 14336,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_12.sm86.fatbin",
+          "sha256": "8cf57cf1c75242d9ec53ca48b0c37afd9ee23ee23c5390011d2e31094c2f07be"
+        },
+        "ptx": {
+          "bytes": 4095,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_12.sm86.ptx",
+          "sha256": "35f12669c0b75dd3801fa4c05f211042f930eccc61a59e67de5a45454cfd88fb"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_12"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "e1428deac41c43211dc7c752dc113a9c8b5e70e83a2b47444a31c9d3b17ad17c",
+          "source_fatbin": "6325f8342464cc0958d8e403b3242c163156542a193c348ae2212c749b5db51b",
+          "source_ptx": "c373100f91e7b6bc3041f7c827f759b2f0b2843dd2e40fe5b1d69f3ab072e4ce",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "e1428deac41c43211dc7c752dc113a9c8b5e70e83a2b47444a31c9d3b17ad17c",
+      "outputs": {
+        "cubin": {
+          "bytes": 3496,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_13.sm86.cubin",
+          "sha256": "dfb6bc32f5fc7c20e33c90fc9764cd2aef267387d811a8c547010107c6b13050"
+        },
+        "fatbin": {
+          "bytes": 9584,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_13.sm86.fatbin",
+          "sha256": "9f74ea77fa2ab62aad28c9bb10b5189055ac8f1432beb72b424363e639412919"
+        },
+        "ptx": {
+          "bytes": 1005,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_13.sm86.ptx",
+          "sha256": "9d2dba5c1a9e098bcf005463e2f2e8453122b020c0becec9f9321061b3dc03e9"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_13"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "58569c5f57907392ba644b66cb9e0870e4641ca52db47bab741a8ccae4a4000b",
+          "source_fatbin": "33a80ea097cedc532fdc62dec5b4fe3f4975142458047eec797cb6671b6dfdc2",
+          "source_ptx": "13640f51aec2492f88dd2ad50e603beaaae63f56de2ae6c3764bca624ffaf65b",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "58569c5f57907392ba644b66cb9e0870e4641ca52db47bab741a8ccae4a4000b",
+      "outputs": {
+        "cubin": {
+          "bytes": 32288,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_14.sm86.cubin",
+          "sha256": "66eb4f87344ef3929f972022eb08b2f49783e13a69ac123a78d7507bf93d77db"
+        },
+        "fatbin": {
+          "bytes": 72360,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_14.sm86.fatbin",
+          "sha256": "6f3ef48456b463a91b80f82e0005433273d80fea4f3701b307715a6756629664"
+        },
+        "ptx": {
+          "bytes": 72380,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_14.sm86.ptx",
+          "sha256": "757842c49e23a69de45117b58f4a7063d8300d9432ef75ad443e1be2c43c656c"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_14"
+    },
+    {
+      "cache": "miss",
+      "extracted_original": true,
+      "inputs": {
+        "fatbinary_args": [
+          "-64",
+          "--compress=false",
+          "sm=86",
+          "sm=120"
+        ],
+        "files": {
+          "code/build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+          "code/flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+          "code/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+          "code/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+          "original_cubin": "45b45cb9ddb9863c88b60efdabf502a2aaf02f6c02a85eb9e6925aa0046a6978",
+          "source_fatbin": "bdaebb6d803f5990c63c67e2e4afa2dcb64a68fd2a864543f46d3e91e47d3101",
+          "source_ptx": "e3efb4f68797cad3bb9492431ca3c024b9eca70591cc39384d8c9f61c115c322",
+          "tool/cuobjdump.exe": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5",
+          "tool/fatbinary.exe": "7ac13247edd275418ac8d8f4dd41ae1900a52b58b4f289a55956dda3ac613715",
+          "tool/ptxas.exe": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693"
+        },
+        "ptxas_args": [
+          "-arch=sm_86"
+        ],
+        "rewrite_options": {
+          "dec": "v1",
+          "enc": "v1",
+          "maxnreg": 0,
+          "maxnreg_floor": 0,
+          "mode": "f16"
+        },
+        "schema": 1
+      },
+      "original_cubin_sha256": "45b45cb9ddb9863c88b60efdabf502a2aaf02f6c02a85eb9e6925aa0046a6978",
+      "outputs": {
+        "cubin": {
+          "bytes": 3752,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_15.sm86.cubin",
+          "sha256": "aa960832cabfc38ad57e6e7166910cee8f34f3bbe5f4413640bc67f96a089070"
+        },
+        "fatbin": {
+          "bytes": 10064,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_15.sm86.fatbin",
+          "sha256": "8eadb95c4d84b36d440c292ea7b4804349ebff48afcd687c261bc427aece0fab"
+        },
+        "ptx": {
+          "bytes": 1564,
+          "path": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_15.sm86.ptx",
+          "sha256": "2de19310aed0c17660be0e227fd41123c8cfd05915b28aa22d141f27f58ba8a9"
+        }
+      },
+      "status": "passed",
+      "tag": "fatbin_15"
+    }
+  ],
+  "numerical_options": {
+    "dec": "v1",
+    "enc": "v1",
+    "maxnreg": 0,
+    "maxnreg_floor": 0,
+    "mode": "f16"
+  },
+  "output": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+  "output_bytes": 196982784,
+  "output_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+  "report_kind": "full-dll-build",
+  "schema": 2,
+  "source_dll_sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+  "stages": [
+    {
+      "name": "full_dll_build",
+      "started_utc": "2026-10-23T09:48:36.159752+00:00",
+      "status": "passed",
+      "wall_seconds": 629.8308112000814
+    },
+    {
+      "name": "fatbin_01/total",
+      "started_utc": "2026-10-23T09:48:37.766156+00:00",
+      "status": "passed",
+      "wall_seconds": 166.4257303000195
+    },
+    {
+      "name": "fatbin_01/extract_original",
+      "started_utc": "2026-10-23T09:48:38.111575+00:00",
+      "status": "passed",
+      "wall_seconds": 1.483256599982269
+    },
+    {
+      "name": "fatbin_01/rewrite",
+      "started_utc": "2026-10-23T09:48:45.208385+00:00",
+      "status": "passed",
+      "wall_seconds": 16.406298799905926
+    },
+    {
+      "name": "fatbin_01/ptxas",
+      "started_utc": "2026-10-23T09:49:02.636013+00:00",
+      "status": "passed",
+      "wall_seconds": 139.23251200001687
+    },
+    {
+      "name": "fatbin_01/fatbinary",
+      "started_utc": "2026-10-23T09:51:22.497306+00:00",
+      "status": "passed",
+      "wall_seconds": 1.1112248999997973
+    },
+    {
+      "name": "fatbin_02/total",
+      "started_utc": "2026-10-23T09:51:24.600886+00:00",
+      "status": "passed",
+      "wall_seconds": 104.95450969995
+    },
+    {
+      "name": "fatbin_02/extract_original",
+      "started_utc": "2026-10-23T09:51:25.179914+00:00",
+      "status": "passed",
+      "wall_seconds": 0.7622792000183836
+    },
+    {
+      "name": "fatbin_02/rewrite",
+      "started_utc": "2026-10-23T09:51:26.666526+00:00",
+      "status": "passed",
+      "wall_seconds": 11.933397299959324
+    },
+    {
+      "name": "fatbin_02/ptxas",
+      "started_utc": "2026-10-23T09:51:38.993701+00:00",
+      "status": "passed",
+      "wall_seconds": 89.29871359991375
+    },
+    {
+      "name": "fatbin_02/fatbinary",
+      "started_utc": "2026-10-23T09:53:08.691906+00:00",
+      "status": "passed",
+      "wall_seconds": 0.4251953000202775
+    },
+    {
+      "name": "fatbin_03/total",
+      "started_utc": "2026-10-23T09:53:10.101942+00:00",
+      "status": "passed",
+      "wall_seconds": 78.0732126000803
+    },
+    {
+      "name": "fatbin_03/extract_original",
+      "started_utc": "2026-10-23T09:53:10.457601+00:00",
+      "status": "passed",
+      "wall_seconds": 0.70764949999284
+    },
+    {
+      "name": "fatbin_03/rewrite",
+      "started_utc": "2026-10-23T09:53:11.815395+00:00",
+      "status": "passed",
+      "wall_seconds": 10.066102700075135
+    },
+    {
+      "name": "fatbin_03/ptxas",
+      "started_utc": "2026-10-23T09:53:22.306285+00:00",
+      "status": "passed",
+      "wall_seconds": 64.91031680000015
+    },
+    {
+      "name": "fatbin_03/fatbinary",
+      "started_utc": "2026-10-23T09:54:27.597516+00:00",
+      "status": "passed",
+      "wall_seconds": 0.2623668999876827
+    },
+    {
+      "name": "fatbin_04/total",
+      "started_utc": "2026-10-23T09:54:28.563738+00:00",
+      "status": "passed",
+      "wall_seconds": 94.7011362001067
+    },
+    {
+      "name": "fatbin_04/extract_original",
+      "started_utc": "2026-10-23T09:54:28.924387+00:00",
+      "status": "passed",
+      "wall_seconds": 1.0834801000310108
+    },
+    {
+      "name": "fatbin_04/rewrite",
+      "started_utc": "2026-10-23T09:54:30.665144+00:00",
+      "status": "passed",
+      "wall_seconds": 10.812498499988578
+    },
+    {
+      "name": "fatbin_04/ptxas",
+      "started_utc": "2026-10-23T09:54:41.986950+00:00",
+      "status": "passed",
+      "wall_seconds": 80.24608419998549
+    },
+    {
+      "name": "fatbin_04/fatbinary",
+      "started_utc": "2026-10-23T09:56:02.606107+00:00",
+      "status": "passed",
+      "wall_seconds": 0.26210379996336997
+    },
+    {
+      "name": "fatbin_05/total",
+      "started_utc": "2026-10-23T09:56:03.695831+00:00",
+      "status": "passed",
+      "wall_seconds": 44.04823309998028
+    },
+    {
+      "name": "fatbin_05/extract_original",
+      "started_utc": "2026-10-23T09:56:04.051999+00:00",
+      "status": "passed",
+      "wall_seconds": 3.4578320999862626
+    },
+    {
+      "name": "fatbin_05/rewrite",
+      "started_utc": "2026-10-23T09:56:08.177455+00:00",
+      "status": "passed",
+      "wall_seconds": 6.299163400079124
+    },
+    {
+      "name": "fatbin_05/ptxas",
+      "started_utc": "2026-10-23T09:56:14.797389+00:00",
+      "status": "passed",
+      "wall_seconds": 31.587614799966104
+    },
+    {
+      "name": "fatbin_05/fatbinary",
+      "started_utc": "2026-10-23T09:56:46.793859+00:00",
+      "status": "passed",
+      "wall_seconds": 0.04189969995059073
+    },
+    {
+      "name": "fatbin_06/total",
+      "started_utc": "2026-10-23T09:56:48.170369+00:00",
+      "status": "passed",
+      "wall_seconds": 58.284069600049406
+    },
+    {
+      "name": "fatbin_06/extract_original",
+      "started_utc": "2026-10-23T09:56:48.541982+00:00",
+      "status": "passed",
+      "wall_seconds": 0.06222459999844432
+    },
+    {
+      "name": "fatbin_06/rewrite",
+      "started_utc": "2026-10-23T09:56:49.212749+00:00",
+      "status": "passed",
+      "wall_seconds": 8.511701099923812
+    },
+    {
+      "name": "fatbin_06/ptxas",
+      "started_utc": "2026-10-23T09:56:58.312533+00:00",
+      "status": "passed",
+      "wall_seconds": 46.194272199994884
+    },
+    {
+      "name": "fatbin_06/fatbinary",
+      "started_utc": "2026-10-23T09:57:45.005028+00:00",
+      "status": "passed",
+      "wall_seconds": 0.6901917000068352
+    },
+    {
+      "name": "fatbin_07/total",
+      "started_utc": "2026-10-23T09:57:46.845265+00:00",
+      "status": "passed",
+      "wall_seconds": 16.67774900002405
+    },
+    {
+      "name": "fatbin_07/extract_original",
+      "started_utc": "2026-10-23T09:57:47.269409+00:00",
+      "status": "passed",
+      "wall_seconds": 0.8392724000150338
+    },
+    {
+      "name": "fatbin_07/rewrite",
+      "started_utc": "2026-10-23T09:57:49.754073+00:00",
+      "status": "passed",
+      "wall_seconds": 1.0784641000209376
+    },
+    {
+      "name": "fatbin_07/ptxas",
+      "started_utc": "2026-10-23T09:57:52.703883+00:00",
+      "status": "passed",
+      "wall_seconds": 8.921664800029248
+    },
+    {
+      "name": "fatbin_07/fatbinary",
+      "started_utc": "2026-10-23T09:58:02.326444+00:00",
+      "status": "passed",
+      "wall_seconds": 0.7497959000756964
+    },
+    {
+      "name": "fatbin_08/total",
+      "started_utc": "2026-10-23T09:58:03.916318+00:00",
+      "status": "passed",
+      "wall_seconds": 2.521337200072594
+    },
+    {
+      "name": "fatbin_08/extract_original",
+      "started_utc": "2026-10-23T09:58:04.312734+00:00",
+      "status": "passed",
+      "wall_seconds": 0.05879190005362034
+    },
+    {
+      "name": "fatbin_08/rewrite",
+      "started_utc": "2026-10-23T09:58:05.071812+00:00",
+      "status": "passed",
+      "wall_seconds": 0.0024144999915733933
+    },
+    {
+      "name": "fatbin_08/ptxas",
+      "started_utc": "2026-10-23T09:58:05.419501+00:00",
+      "status": "passed",
+      "wall_seconds": 0.06942309997975826
+    },
+    {
+      "name": "fatbin_08/fatbinary",
+      "started_utc": "2026-10-23T09:58:05.778062+00:00",
+      "status": "passed",
+      "wall_seconds": 0.2573929999489337
+    },
+    {
+      "name": "fatbin_09/total",
+      "started_utc": "2026-10-23T09:58:07.074871+00:00",
+      "status": "passed",
+      "wall_seconds": 2.7258529000682756
+    },
+    {
+      "name": "fatbin_09/extract_original",
+      "started_utc": "2026-10-23T09:58:07.401760+00:00",
+      "status": "passed",
+      "wall_seconds": 0.04249130003154278
+    },
+    {
+      "name": "fatbin_09/rewrite",
+      "started_utc": "2026-10-23T09:58:08.014397+00:00",
+      "status": "passed",
+      "wall_seconds": 0.002696799929253757
+    },
+    {
+      "name": "fatbin_09/ptxas",
+      "started_utc": "2026-10-23T09:58:08.406951+00:00",
+      "status": "passed",
+      "wall_seconds": 0.254979099961929
+    },
+    {
+      "name": "fatbin_09/fatbinary",
+      "started_utc": "2026-10-23T09:58:09.009913+00:00",
+      "status": "passed",
+      "wall_seconds": 0.16587989998515695
+    },
+    {
+      "name": "fatbin_10/total",
+      "started_utc": "2026-10-23T09:58:10.144055+00:00",
+      "status": "passed",
+      "wall_seconds": 2.550260700052604
+    },
+    {
+      "name": "fatbin_10/extract_original",
+      "started_utc": "2026-10-23T09:58:10.605480+00:00",
+      "status": "passed",
+      "wall_seconds": 0.047985499957576394
+    },
+    {
+      "name": "fatbin_10/rewrite",
+      "started_utc": "2026-10-23T09:58:11.248734+00:00",
+      "status": "passed",
+      "wall_seconds": 0.00345359998755157
+    },
+    {
+      "name": "fatbin_10/ptxas",
+      "started_utc": "2026-10-23T09:58:11.625910+00:00",
+      "status": "passed",
+      "wall_seconds": 0.14451889996416867
+    },
+    {
+      "name": "fatbin_10/fatbinary",
+      "started_utc": "2026-10-23T09:58:12.132520+00:00",
+      "status": "passed",
+      "wall_seconds": 0.04833979997783899
+    },
+    {
+      "name": "fatbin_11/total",
+      "started_utc": "2026-10-23T09:58:13.027893+00:00",
+      "status": "passed",
+      "wall_seconds": 2.5505440999986604
+    },
+    {
+      "name": "fatbin_11/extract_original",
+      "started_utc": "2026-10-23T09:58:13.409756+00:00",
+      "status": "passed",
+      "wall_seconds": 0.04391320003196597
+    },
+    {
+      "name": "fatbin_11/rewrite",
+      "started_utc": "2026-10-23T09:58:14.290766+00:00",
+      "status": "passed",
+      "wall_seconds": 0.004462099983356893
+    },
+    {
+      "name": "fatbin_11/ptxas",
+      "started_utc": "2026-10-23T09:58:14.672954+00:00",
+      "status": "passed",
+      "wall_seconds": 0.08091330004390329
+    },
+    {
+      "name": "fatbin_11/fatbinary",
+      "started_utc": "2026-10-23T09:58:15.102586+00:00",
+      "status": "passed",
+      "wall_seconds": 0.03200160001870245
+    },
+    {
+      "name": "fatbin_12/total",
+      "started_utc": "2026-10-23T09:58:15.951318+00:00",
+      "status": "passed",
+      "wall_seconds": 4.017840500106104
+    },
+    {
+      "name": "fatbin_12/extract_original",
+      "started_utc": "2026-10-23T09:58:16.368503+00:00",
+      "status": "passed",
+      "wall_seconds": 0.08412949997000396
+    },
+    {
+      "name": "fatbin_12/rewrite",
+      "started_utc": "2026-10-23T09:58:17.089739+00:00",
+      "status": "passed",
+      "wall_seconds": 0.00274229992646724
+    },
+    {
+      "name": "fatbin_12/ptxas",
+      "started_utc": "2026-10-23T09:58:17.421831+00:00",
+      "status": "passed",
+      "wall_seconds": 0.5962212000740692
+    },
+    {
+      "name": "fatbin_12/fatbinary",
+      "started_utc": "2026-10-23T09:58:18.349376+00:00",
+      "status": "passed",
+      "wall_seconds": 0.32166579994373024
+    },
+    {
+      "name": "fatbin_13/total",
+      "started_utc": "2026-10-23T09:58:20.402389+00:00",
+      "status": "passed",
+      "wall_seconds": 2.4345670000184327
+    },
+    {
+      "name": "fatbin_13/extract_original",
+      "started_utc": "2026-10-23T09:58:20.827744+00:00",
+      "status": "passed",
+      "wall_seconds": 0.04286899999715388
+    },
+    {
+      "name": "fatbin_13/rewrite",
+      "started_utc": "2026-10-23T09:58:21.460850+00:00",
+      "status": "passed",
+      "wall_seconds": 0.0011202000314369798
+    },
+    {
+      "name": "fatbin_13/ptxas",
+      "started_utc": "2026-10-23T09:58:21.788255+00:00",
+      "status": "passed",
+      "wall_seconds": 0.1296654000179842
+    },
+    {
+      "name": "fatbin_13/fatbinary",
+      "started_utc": "2026-10-23T09:58:22.222282+00:00",
+      "status": "passed",
+      "wall_seconds": 0.06087000004481524
+    },
+    {
+      "name": "fatbin_14/total",
+      "started_utc": "2026-10-23T09:58:23.290652+00:00",
+      "status": "passed",
+      "wall_seconds": 2.660152700031176
+    },
+    {
+      "name": "fatbin_14/extract_original",
+      "started_utc": "2026-10-23T09:58:23.676394+00:00",
+      "status": "passed",
+      "wall_seconds": 0.1664837000425905
+    },
+    {
+      "name": "fatbin_14/rewrite",
+      "started_utc": "2026-10-23T09:58:24.482300+00:00",
+      "status": "passed",
+      "wall_seconds": 0.048318900051526725
+    },
+    {
+      "name": "fatbin_14/ptxas",
+      "started_utc": "2026-10-23T09:58:24.896029+00:00",
+      "status": "passed",
+      "wall_seconds": 0.21160090004559606
+    },
+    {
+      "name": "fatbin_14/fatbinary",
+      "started_utc": "2026-10-23T09:58:25.416537+00:00",
+      "status": "passed",
+      "wall_seconds": 0.1986250999616459
+    },
+    {
+      "name": "fatbin_15/total",
+      "started_utc": "2026-10-23T09:58:26.336800+00:00",
+      "status": "passed",
+      "wall_seconds": 2.5230879000155255
+    },
+    {
+      "name": "fatbin_15/extract_original",
+      "started_utc": "2026-10-23T09:58:26.685236+00:00",
+      "status": "passed",
+      "wall_seconds": 0.04431949998252094
+    },
+    {
+      "name": "fatbin_15/rewrite",
+      "started_utc": "2026-10-23T09:58:27.300957+00:00",
+      "status": "passed",
+      "wall_seconds": 0.0014832000015303493
+    },
+    {
+      "name": "fatbin_15/ptxas",
+      "started_utc": "2026-10-23T09:58:27.687110+00:00",
+      "status": "passed",
+      "wall_seconds": 0.12989889993332326
+    },
+    {
+      "name": "fatbin_15/fatbinary",
+      "started_utc": "2026-10-23T09:58:28.312843+00:00",
+      "status": "passed",
+      "wall_seconds": 0.13579919992480427
+    }
+  ],
+  "started_utc": "2026-10-23T09:48:35.835645+00:00",
+  "status": "passed",
+  "wall_seconds": 630.2470099000493,
+  "work": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2"
+}

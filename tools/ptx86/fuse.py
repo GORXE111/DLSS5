@@ -41,6 +41,8 @@ ANY_DST = re.compile(r"^(?:@!?%p\d+\s+)?[a-z][\w.:]*\s+(\{[^}]*\}|%\w+)")
 # ---------------------------------------------------------------- 常量解码
 
 def _e4m3_to_f16_bits(b):
+    if b & 0x7F == 0x7F:
+        return ((b & 0x80) << 8) | 0x7E00
     s, e, m = b >> 7, (b >> 3) & 0xF, b & 7
     if e == 0:
         v = m / 512.0
@@ -65,8 +67,10 @@ def fq(dst, src):
     正规段: 幅值位 +0x3F+lsb 后清低 7 位 = 尾数 RNE 到 3 位 (进位自然进指数)
     次正规段 (<2^-6): |x|+2.0-2.0，2.0 的 ulp 恰为 2^-9"""
     return (
-        "{ .reg .b32 %f_a, %f_l, %f_r, %f_s, %f_m, %f_k;\n"
+        "{ .reg .b32 %f_a, %f_l, %f_r, %f_s, %f_m, %f_k, %f_n;\n"
         f"and.b32 %f_a, {src}, 0x7FFF7FFF;\n"
+        "set.nan.u32.f16x2 %f_n, %f_a, %f_a;\n"
+        "and.b32 %f_n, %f_n, 0x20002000;\n"
         "mov.b32 %f_k, 0x5F005F00;\n"
         "min.f16x2 %f_a, %f_a, %f_k;\n"
         "shr.u32 %f_l, %f_a, 7;\n"
@@ -85,6 +89,7 @@ def fq(dst, src):
         "or.b32 %f_r, %f_r, %f_s;\n"
         f"and.b32 %f_s, {src}, 0x80008000;\n"
         f"or.b32 {dst}, %f_r, %f_s;\n"
+        f"or.b32 {dst}, {dst}, %f_n;\n"
         "}\n"
     )
 

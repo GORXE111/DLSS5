@@ -1,0 +1,125 @@
+{
+  "passed": true,
+  "errors": [],
+  "cpu": [
+    {
+      "size_wh": [
+        53,
+        37
+      ],
+      "motion": [
+        3.25,
+        -1.5
+      ],
+      "input_sha256": "82dba72ce6c55a04c8d397acadc4644c04d487636d80f344d53adfcd787e6303",
+      "old_output_sha256": "968e39a3b5a6882c6e5cf87fc3f1cd3c9cf91aa8792a2d3b91c1d981984d09b4",
+      "output_sha256": "6cd7edf4c2720fb33b5b47cdec8f3c10655bfe3fa12c6d152cac8f8d58b46ed7",
+      "old_history_values_different_from_color": 40705,
+      "new_history_values_different_from_color": 0,
+      "max_history_change": 0.13863059878349304,
+      "passed": true
+    },
+    {
+      "size_wh": [
+        53,
+        37
+      ],
+      "motion": [
+        -2.375,
+        1.625
+      ],
+      "input_sha256": "82dba72ce6c55a04c8d397acadc4644c04d487636d80f344d53adfcd787e6303",
+      "old_output_sha256": "783c0fdcdc24dc478813cb37f79c430732cd012336597df3c5078f3e96e539fe",
+      "output_sha256": "6cd7edf4c2720fb33b5b47cdec8f3c10655bfe3fa12c6d152cac8f8d58b46ed7",
+      "old_history_values_different_from_color": 97193,
+      "new_history_values_different_from_color": 0,
+      "max_history_change": 0.1332639455795288,
+      "passed": true
+    },
+    {
+      "size_wh": [
+        95,
+        63
+      ],
+      "motion": [
+        0,
+        0
+      ],
+      "input_sha256": "5705629fbfb2a9f9c58abfcdf9c98abe7aed7f3c331567f3ab4ced6b321d7748",
+      "old_output_sha256": "e4214ae30ce25e68bc34cad13af6894d1553a1d5d0201c984192313f938d7f3b",
+      "output_sha256": "22115945f273bf5e2162ea0ebc71f8032888689af43df2addcaa65cdf837d460",
+      "old_history_values_different_from_color": 882,
+      "new_history_values_different_from_color": 0,
+      "max_history_change": 2.2351741790771484e-07,
+      "passed": true
+    }
+  ],
+  "kernel": [],
+  "network": [],
+  "graph": [],
+  "gpu_used": false,
+  "scope": "RTX3060 f16 port reset regression, not native sm120 equivalence",
+  "acceptance_scope": "CPU + kernel + candidate network + Graph + fixed-History control; legacy baseline failures are preserved observations, not candidate acceptance",
+  "thresholds": {
+    "post_max_255": 0.005,
+    "post_mae_255": 0.0005,
+    "network_min_correlation": 0.999,
+    "network_max_mae_255": 3.0,
+    "pre_min_correlation": 0.98,
+    "pre_max_nrmse": 0.25
+  },
+  "limitations": [
+    "Pre probe retains the original resource predicate and history slice, but is not the complete pre neural kernel",
+    "Full post uses zero neural weights and blend=.75 to isolate resource-dependent temporal composition",
+    "Network baseline reproduces the prior Color-as-History argument substitution using the current sampler arithmetic",
+    "CUDA Graph history presence is fixed at capture; use a separate reset Graph to reset state",
+    "Public MV=None means zero motion; raw Pre/Post/Core MV=None means resource absent"
+  ],
+  "source_sha256": {
+    "torch/check_reset.py": "10e7aaccf06c7fd1dbed3c44cb81a7acccf0f8e701258ee8b3de2a5ba6c7d68d",
+    "torch/test_reset.py": "d882134510908e90e976db537e2aec7fd45026b12d90e6f7f416b7d2e82322d0",
+    "torch/dlss5/net.py": "fbaa399b5dbdf86e1b5b43181acdbfe4a034787f8fbae54c942e7dbb54b5cabc",
+    "torch/dlss5/export.py": "0474195754644198b60cccb1025f43e928f00d4d84466adbe26b6969c1ef77e8",
+    "torch/dlss5/ops.py": "c13eb3dc3dfaddc8a07badf9f347bfff6a100003424ba3c835bad39c4b61a3d7",
+    "fatbins/fatbin_01.1.sm_120.ptx": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+    "sm86_port/fatbin_01.sm86.cubin": "2871d683d650d602aa7590927fce9ef0a27394685a7fe127efd357b8be506043",
+    "sm86_port/nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "harness/reference.py": "1cd0f5a333b9272755112839a715751e4d285cb0837d4fe70ba82ee6bd7ecbe8",
+    "research/klab.py": "30b01bbd75b73af6feb04bf28bf46e69718f6da2c71e08daf78c78fa2428dd25",
+    "research/tapspost/nr-trace.tsv": "a4778616e8d296c5bc200e3eb0da1c2cde12f984b54a922e50e42f4fb2ba7a58",
+    "WEIGHTS_HT.bin": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4",
+    "weights_map.json": "3cc0d06eee61fee43e0fe07c06abc5332e44bb3688c4c772a00be581695a674b"
+  },
+  "baseline_contract": {
+    "source": "research/validation/batch3_independent_review.json",
+    "source_sha256": "fc8820f38ca0301f16e1c97a6e1de870deb3ccdc438438e6599bc4b56dc9711c",
+    "legacy_pre": "Pre.inputs(Color, Color if History is None else History, MV, frame)",
+    "public_default": "MV=None is converted to a real zero tensor by DLSS5._forward; preserved",
+    "raw_resources": "Pre/Post/Core: either History=None or MV=None disables history",
+    "reset_graph": "history=False ignores explicit MV; contradictory History presence raises ValueError"
+  },
+  "coverage": {
+    "cpu": {
+      "compared": 3,
+      "passed": 3
+    },
+    "kernel": {
+      "compared": 0,
+      "passed": 0
+    },
+    "graph": {
+      "compared": 0,
+      "passed": 0
+    },
+    "network": {
+      "baseline": {
+        "compared": 0,
+        "passed": 0
+      },
+      "candidate": {
+        "compared": 0,
+        "passed": 0
+      }
+    }
+  }
+}

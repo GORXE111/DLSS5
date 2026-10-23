@@ -1,0 +1,2364 @@
+{
+  "scope": "Forced cg2r transfer kernel on RTX 3060; NGX resource binding/filter state and native RTX 50 parity unverified",
+  "implementation_status": "experimental; measured RTX 3060 sampler contract, NGX binding unverified",
+  "thresholds": {
+    "max_255": 0.005,
+    "mae_255": 0.0005
+  },
+  "checks": [
+    {
+      "name": "point_same_grid",
+      "options": {
+        "grid_size": [
+          37,
+          53
+        ],
+        "base_filter": "point",
+        "target_filter": "point"
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        37,
+        53,
+        3
+      ],
+      "mae_255": 0.00016227454181678863,
+      "max_255": 0.00174790620803833,
+      "p99_255": 0.0008663535118103027,
+      "p999_255": 0.001339321732521063,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "7655487cbd0f3dbeb843002ea0e5182e9859be5f6c4a7a6269e6ed265ed4c82d",
+      "output_sha256": "5c621ac319da7f98afca5ffdcd99fa6d8516410a01213667976db2fc11bff247",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "14a58178cf214c13e4a6d9f49276f11dce69d29094cb3a6fff73d7d35eba53fb"
+      },
+      "passed": true
+    },
+    {
+      "name": "point_low_odd",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ],
+        "base_filter": "point",
+        "target_filter": "point"
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 0.00011032135419078781,
+      "max_255": 0.0013071298599243164,
+      "p99_255": 0.000623166561126709,
+      "p999_255": 0.0009781283140182675,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "81bed8b706bd3aca85ad4adb18477852d9aa64b11d66556cc7b61bba3258c31f",
+      "output_sha256": "bdfaa46d608ede0db0630e92b3989fbd33ca50b8d6a7f3e90396c81e7237bac7",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "linear_same_grid",
+      "options": {
+        "grid_size": [
+          37,
+          53
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        37,
+        53,
+        3
+      ],
+      "mae_255": 0.00015683548619010385,
+      "max_255": 0.0019758939743041992,
+      "p99_255": 0.0008359551429748535,
+      "p999_255": 0.0012919306755065918,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "36018bd31be9ff9b076530f60282e9ea0e6bd773ef1c9ed9536e25425f981d94",
+      "output_sha256": "85f4a053dd0f01c4e4c90fb5b0c7df8ea57a87aca69b51c480a9b92c66386645",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "e7790cd98d918db8fad5daf522f29bd0830a8034943219291504fbda043e5732"
+      },
+      "passed": true
+    },
+    {
+      "name": "linear_low_odd",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 0.00010587975189445995,
+      "max_255": 0.0009879469871520996,
+      "p99_255": 0.0005775690078735352,
+      "p999_255": 0.0008520510792732268,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "76c3132d0b5f83145beaba7c260b64f737714cd4d50c304facac6ad7eb0f984f",
+      "output_sha256": "921fbffac2d8c48769d7aa975957657c0ff4e1e8e7db0e68a19bb6e3e7c353ea",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "point_large_grid_fallback",
+      "options": {
+        "grid_size": [
+          81,
+          117
+        ],
+        "base_filter": "point",
+        "target_filter": "point"
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        31,
+        47,
+        3
+      ],
+      "target_shape": [
+        41,
+        61,
+        3
+      ],
+      "mae_255": 0.00024196612973987662,
+      "max_255": 0.003769397735595703,
+      "p99_255": 0.0017354428768158003,
+      "p999_255": 0.0030550360679626465,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "842d89ffdd9ecda097217afc1a4ddf731fa7f86f179e459746085d27c8d5a4aa",
+      "output_sha256": "e11f7c0fd6b033dd32d35fc9931c543d324e3ba40b56e7e618984ab76acf43d9",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "b73fc9189ba8a9b17188ee954cd30412b441f6785dccf71c6e8a7443f41f347c",
+        "target": "c84133ad4a6f02e4617efa72fed723802109667d307dc1b7936b3b8e6c0a407a"
+      },
+      "passed": true
+    },
+    {
+      "name": "linear_large_grid_fallback",
+      "options": {
+        "grid_size": [
+          81,
+          117
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        31,
+        47,
+        3
+      ],
+      "target_shape": [
+        41,
+        61,
+        3
+      ],
+      "mae_255": 0.00017135882297077696,
+      "max_255": 0.0018391013145446777,
+      "p99_255": 0.0008207559585571289,
+      "p999_255": 0.0013143038749695063,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "c2382f5cdbca56cff00a749a5380ec7efa21e46b8ecde5a5500b6aba47d0a471",
+      "output_sha256": "7413e3a902a78f9448a3fb7e05df510fae6529a232053df206283cd5269fd924",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "48ae13d25ff419c28fbe0be361ec0e4d7429bf5902a8a371f31d75de021d6581",
+        "target": "31115ae6491baafde9232fedffe8c8e98f837e474bbb59acbcf2aa2b3ff59577"
+      },
+      "passed": true
+    },
+    {
+      "name": "point_subrect",
+      "options": {
+        "grid_size": [
+          17,
+          25
+        ],
+        "base_subrect": [
+          3,
+          2,
+          61,
+          37
+        ],
+        "target_subrect": [
+          4,
+          3,
+          29,
+          17
+        ],
+        "base_filter": "point",
+        "target_filter": "point"
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        43,
+        71,
+        3
+      ],
+      "target_shape": [
+        23,
+        39,
+        3
+      ],
+      "mae_255": 9.880721291706673e-05,
+      "max_255": 0.0011551380157470703,
+      "p99_255": 0.0005623698234558105,
+      "p999_255": 0.0008529478311538756,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "0259903fb5f7e94a927f02d2c7258b837948270a4a5dd44759fb4729f6f97304",
+      "output_sha256": "6956b848fed8ca028f84e7f5c7ca0c37c323120f9a56887679611f109eeae2eb",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "0b476a0571f23f38dfc329fd45d9ec9744b74f36aef5901bdfe80226645615bc",
+        "target": "4ff4dcf71e04ee4a1a264580d1bd4dc9345b84eab936b54be82c4d9330b6a239"
+      },
+      "passed": true
+    },
+    {
+      "name": "linear_subrect",
+      "options": {
+        "grid_size": [
+          17,
+          25
+        ],
+        "base_subrect": [
+          3,
+          2,
+          61,
+          37
+        ],
+        "target_subrect": [
+          4,
+          3,
+          29,
+          17
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        43,
+        71,
+        3
+      ],
+      "target_shape": [
+        23,
+        39,
+        3
+      ],
+      "mae_255": 0.00010551724721587841,
+      "max_255": 0.0009879469871520996,
+      "p99_255": 0.0005181401968002341,
+      "p999_255": 0.0008681470155716002,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "f6b54220990acbd27526c382d2735c0d10cb5b14eba17b31983651c39597ed32",
+      "output_sha256": "58f91ed415cce5d4c593127f59e35d90063e2c4cd0a1391e0a989014fc6a3c93",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "99ad4f607db0e597daa55ceca05ecd1a9bb2a13d5a040c97ed00955bff57b9c8",
+        "target": "43868e4cd91111f026aa70f9a0c589f4a8ccc2c8401d776c9cacb6e1b3715937"
+      },
+      "passed": true
+    },
+    {
+      "name": "point_outside_rect",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ],
+        "base_subrect": [
+          -12,
+          -8,
+          76,
+          55
+        ],
+        "target_subrect": [
+          -7,
+          -5,
+          41,
+          31
+        ],
+        "base_filter": "point",
+        "target_filter": "point"
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 9.438912942974128e-05,
+      "max_255": 0.0010031461715698242,
+      "p99_255": 0.0005471706390380859,
+      "p999_255": 0.0008511543273925781,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "48aaa8a087e18b570198632b91f5d67e698999a1c7b96a80788086af294bc174",
+      "output_sha256": "195d97c8f7f8ade64be8a9df187e9209dc6179fdc709434df8137be6a9ca0de0",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "linear_outside_rect",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ],
+        "base_subrect": [
+          -12,
+          -8,
+          76,
+          55
+        ],
+        "target_subrect": [
+          -7,
+          -5,
+          41,
+          31
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 9.772961903201992e-05,
+      "max_255": 0.0010411441326141357,
+      "p99_255": 0.00044077634811401367,
+      "p999_255": 0.0007644885778427781,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "1be0c92b0459920fe3f47238939909c69224bb995554390edbd4a6f66acf5bfb",
+      "output_sha256": "63f661cd7d9866a200e699c83021f9b0475b96198e0d9ef7d9aa9fdd68467b94",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "linear_explicit_descriptor",
+      "options": {
+        "grid_size": [
+          13,
+          21
+        ],
+        "base_subrect": [
+          1.25,
+          2.5,
+          45,
+          29,
+          0.018867924528301886,
+          0.02702702702702703
+        ],
+        "target_subrect": [
+          0.5,
+          1.25,
+          23,
+          15,
+          0.037037037037037035,
+          0.05263157894736842
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 9.58124433075634e-05,
+      "max_255": 0.0007523596286773682,
+      "p99_255": 0.00042557716369628906,
+      "p999_255": 0.0005945616960525572,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "9f983a1312755b5799f4f874eaffcaf8bc1ef68136895a31443714c39ac12e81",
+      "output_sha256": "8ee22382dbe0ecaf5e52476435a5eddb390204b6cd7ea3f9ddd18cf412aa0273",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "point_different_resource_sizes",
+      "options": {
+        "grid_size": [
+          9,
+          19
+        ],
+        "base_filter": "point",
+        "target_filter": "point"
+      },
+      "output_shape": [
+        45,
+        63,
+        3
+      ],
+      "base_shape": [
+        51,
+        79,
+        3
+      ],
+      "target_shape": [
+        11,
+        21,
+        3
+      ],
+      "mae_255": 7.484702781505368e-05,
+      "max_255": 0.000972747802734375,
+      "p99_255": 0.00042557716369628906,
+      "p999_255": 0.0006592190265655632,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "e25ecd76947a7bfb11b8905be13a6e0b9d2a4d5dbaf864719214fa8bf3908f7f",
+      "output_sha256": "15422dc1668b38b85766811365760f917cbc58bbbab33a9f68ddb05356129920",
+      "input_sha256": {
+        "nr": "e79604e34d863fba80362b19f0c5dc362e8160251e45fbc3bc39e18858ee05cf",
+        "base": "b53d7430f3c22d646e0e716a5cfcde7076ffc0c01b693ff3879d5cfe42de0626",
+        "target": "ad4f1f33a4876ae7eb35d5b53eac100563fcbdd508931645d5b48e0a2dbf88c1"
+      },
+      "passed": true
+    },
+    {
+      "name": "linear_single_pixel",
+      "options": {
+        "grid_size": [
+          1,
+          1
+        ]
+      },
+      "output_shape": [
+        1,
+        1,
+        3
+      ],
+      "base_shape": [
+        3,
+        5,
+        3
+      ],
+      "target_shape": [
+        5,
+        3,
+        3
+      ],
+      "mae_255": 1.0132789611816406e-05,
+      "max_255": 1.8998980522155762e-05,
+      "p99_255": 1.8770992755889893e-05,
+      "p999_255": 1.897618174552918e-05,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "045194aa10699218de062d6e3e1fe1238a4ff9df64b3fb73226d53f57acf9444",
+      "output_sha256": "5198cd6c79e4050872296811d963ac8ccceaa461c5c4432e1d10d05a1173639d",
+      "input_sha256": {
+        "nr": "a93001083c977fe6950469c1fdbd6d34fb0542e62c98bbbcdcdd8fa936ec80ee",
+        "base": "c74aa7af678a07c5c3ca862bd965fe9987b2d19b0123d9a76f9b90bc7aa70d5f",
+        "target": "00438b8d0196defa79f4a511e203526bc4b55e444c9e5de6514b0a548fe6f4af"
+      },
+      "passed": true
+    },
+    {
+      "name": "linear_single_row",
+      "options": {
+        "grid_size": [
+          1,
+          5
+        ]
+      },
+      "output_shape": [
+        1,
+        37,
+        3
+      ],
+      "base_shape": [
+        1,
+        53,
+        3
+      ],
+      "target_shape": [
+        1,
+        7,
+        3
+      ],
+      "mae_255": 7.548243612856479e-05,
+      "max_255": 0.00036098062992095947,
+      "p99_255": 0.00025838613510131836,
+      "p999_255": 0.0003496952354908005,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "4391f90c079adbcddd4fb6d69fd249cb6b065d4418715401e01602025aad5c29",
+      "output_sha256": "6103bbcd3ac4fe1d46b23eb15b876681aa62428488e953b1d605de9aee3e5c6a",
+      "input_sha256": {
+        "nr": "f4577ef5b4c7d278ce9c2cd976aca3eaf5211e644b24bad168f59dd35378207d",
+        "base": "7eea02fad31ed488a4da63283e03e1a18abea1f0610cff7b6544a015d108c164",
+        "target": "0221510f54a212ca7eb09737167caceee0e38d52f28f79855ccfa21708a965c9"
+      },
+      "passed": true
+    },
+    {
+      "name": "point_single_column",
+      "options": {
+        "grid_size": [
+          5,
+          1
+        ],
+        "base_filter": "point",
+        "target_filter": "point"
+      },
+      "output_shape": [
+        37,
+        1,
+        3
+      ],
+      "base_shape": [
+        53,
+        1,
+        3
+      ],
+      "target_shape": [
+        7,
+        1,
+        3
+      ],
+      "mae_255": 8.535848276035206e-05,
+      "max_255": 0.0005471706390380859,
+      "p99_255": 0.00044989585876464876,
+      "p999_255": 0.000537139177322389,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "7c3b668619a966daef5fbae1e8a13fdc72c87dc395f256cb54e9071f4df6ea81",
+      "output_sha256": "b4e3bd56822c246135ff69e994eda45c0761101e04b53b61d236542e345c34e8",
+      "input_sha256": {
+        "nr": "177e270c4779d44445064f8bdc352d8cfaa82f09c2dc0a3f58d454287a94fd9e",
+        "base": "946cd7f3f07ff734ba4db91aaf757210018e5f9118734c48d59bf3f619f946fe",
+        "target": "e70521b88eb66c26457a405a4415bb1e0bf8aee461fc6d73f07bc0d490754ca0"
+      },
+      "passed": true
+    },
+    {
+      "name": "equal_base_target",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        37,
+        53,
+        3
+      ],
+      "mae_255": 6.95491300811274e-05,
+      "max_255": 0.0005775690078735352,
+      "p99_255": 0.00033886581659317127,
+      "p999_255": 0.0005033665895462096,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "b504a543488813523cecc9fc4326b422ef60145d8328a43d8909138f925ff66f",
+      "output_sha256": "10d6d5584cdb85901885b78147285dcb61534aa0aca0e2bdd23ddda4d1e45799",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f"
+      },
+      "passed": true
+    },
+    {
+      "name": "equal_dark_base_target",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        37,
+        53,
+        3
+      ],
+      "mae_255": 1.8801074475049973e-07,
+      "max_255": 2.671731635928154e-07,
+      "p99_255": 2.671731635928154e-07,
+      "p999_255": 2.671731635928154e-07,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "e5cbd576d7cfd07cbde93df58d5153253d685cfc7d747a07e02f692b2cf6e030",
+      "output_sha256": "eede165290f73529830a93cd0b91a1637ea7f90cb4b7889e5ec0ca83b022659f",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "10bfde647130db5e9e792ebd3c5f6cd8265cf131c09668d57ad587aa628d4a71",
+        "target": "10bfde647130db5e9e792ebd3c5f6cd8265cf131c09668d57ad587aa628d4a71"
+      },
+      "passed": true
+    },
+    {
+      "name": "clamp_out_of_range_rgb",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 9.862297911216867e-05,
+      "max_255": 0.0018846988677978516,
+      "p99_255": 0.0008055567741394043,
+      "p999_255": 0.0014086148142814726,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "1e10237e550f560a1a8d5e5e79544fbf775f8c94f8c03a2ba83b9b782c4409c3",
+      "output_sha256": "c327843d83694c9d277b96981c552ad982b53b5f77f0bff31aac13bc219affc1",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "af99f98a0a830baa7e66e55f9079d22f3ecea5250f446107ca368c16125ecef1",
+        "target": "9d9fb52c449399ff6d0e3fbb354cdf7fa1b6b2cf42a1f8c919b906aa32368df7"
+      },
+      "passed": true
+    },
+    {
+      "name": "dark_to_bright",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 8.385980952453534e-06,
+      "max_255": 0.0002811849117279053,
+      "p99_255": 5.202870815992397e-05,
+      "p999_255": 0.00013299286365509033,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "d05c545ee89a4f1259b94110dfab333cbae4fea8d5c1916478e431a35f2b19d4",
+      "output_sha256": "7b356b3b43bc627cfdd5099aab81e3e2f2df27959c951c465ecfa9131fa7875f",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "78bddd38f11ecf36481197a7e9ddfa3563453fb450a3a1f1d1731c24a92c19c8",
+        "target": "1be6bebce60eb54da0e007dd4e0542b72d538b8960882d0248dbc9fdda9000b4"
+      },
+      "passed": true
+    },
+    {
+      "name": "bright_to_dark",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 1.7282420469144473e-06,
+      "max_255": 6.934627890586853e-05,
+      "p99_255": 1.519918441772461e-05,
+      "p999_255": 2.9672607779503615e-05,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "5cf4f04d9924064973d9fce3256f20e213e3cdb330e5c20fa64332e9982c4fdc",
+      "output_sha256": "40a07c7dbcb8c2669c5e9da1746b15644035832526dca563d19659edc02947d0",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "90387e547a27d287e509de4e17fe4138343d3cb08dc038eadde0dfa84b6e9213"
+      },
+      "passed": true
+    },
+    {
+      "name": "flag_disabled",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ],
+        "enabled": false
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 1.8098644251151086e-05,
+      "max_255": 0.00025838613510131836,
+      "p99_255": 0.00011087805032730213,
+      "p999_255": 0.00021413370966911764,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "743edeae688e0acb050d53d0505dc3d7bff02afdcc36d2126f205e4750c983ce",
+      "output_sha256": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "missing_base_disabled",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": null,
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 1.8098644251151086e-05,
+      "max_255": 0.00025838613510131836,
+      "p99_255": 0.00011087805032730213,
+      "p999_255": 0.00021413370966911764,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "743edeae688e0acb050d53d0505dc3d7bff02afdcc36d2126f205e4750c983ce",
+      "output_sha256": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": null,
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "missing_target_disabled",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": null,
+      "mae_255": 1.8098644251151086e-05,
+      "max_255": 0.00025838613510131836,
+      "p99_255": 0.00011087805032730213,
+      "p999_255": 0.00021413370966911764,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "743edeae688e0acb050d53d0505dc3d7bff02afdcc36d2126f205e4750c983ce",
+      "output_sha256": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": null
+      },
+      "passed": true
+    },
+    {
+      "name": "zero_grid_disabled",
+      "options": {
+        "grid_size": [
+          0,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 1.8098644251151086e-05,
+      "max_255": 0.00025838613510131836,
+      "p99_255": 0.00011087805032730213,
+      "p999_255": 0.00021413370966911764,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "743edeae688e0acb050d53d0505dc3d7bff02afdcc36d2126f205e4750c983ce",
+      "output_sha256": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "negative_grid_disabled",
+      "options": {
+        "grid_size": [
+          19,
+          -1
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 1.8098644251151086e-05,
+      "max_255": 0.00025838613510131836,
+      "p99_255": 0.00011087805032730213,
+      "p999_255": 0.00021413370966911764,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "743edeae688e0acb050d53d0505dc3d7bff02afdcc36d2126f205e4750c983ce",
+      "output_sha256": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "compose_style0_ui_mask",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 1.4303096920092273e-05,
+      "max_255": 0.0003343820571899414,
+      "p99_255": 0.0001272931694984436,
+      "p999_255": 0.0002284361422061935,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "847708e3e5c4784444331c1f276919f1f3853933f674f7d878da69cb22eed27b",
+      "output_sha256": "cb2538dc509a6fd4e1b95f34a8f1a2f0453ba80be8d2bc19665815fbbc9d671e",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80",
+        "color": "350e2f8d37dc30ace22364f85b804955f4e5821b1baf90fe10ec9793b75de659",
+        "backbuffer": "4b06ec99846a903d4cf26842e4c9505b2484a6f036a62fc7fa78be8a8c102fa9",
+        "ui": "e6d5c4fa118569f0ef44a97d0c803475789693527146d780c441dab987e74b99",
+        "ui_alpha": "36353c70161ffbae192e49f50767f5c187cbc9ef484fed7d0849635e13214282",
+        "control_mask": "4a401fdc168eef11069d6be454b8a15c2d1b742dc830d69aaaa2cc495bdc6eff"
+      },
+      "composition": {
+        "style_id": 0,
+        "intensity": 0.6
+      },
+      "passed": true
+    },
+    {
+      "name": "compose_style1_ui_mask",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 1.1903028169975505e-05,
+      "max_255": 0.00022798776626586914,
+      "p99_255": 0.00010639429092407227,
+      "p999_255": 0.00016898453235626818,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "7b35f7ca7d5dc4df365df2fda07ccd4c3947beb62dbc293c21c082c2fe7ffd2e",
+      "output_sha256": "c6163e706ffc7e95f2a03485a4212a0b57cc4b2956e2e7e1aface2a8ce8d6237",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80",
+        "color": "da2e279ecfa92d4c6a6df18b7012e1e26ef515d9f65265b8b7da012712216a21",
+        "backbuffer": "08d42e67c99ce3fbbf4e034cf333432e40377f4ddad5d8c266e5f98f4db704de",
+        "ui": "897755d8023bd2f5581d01c1a63cab18fcc88c915ba24b8840b971265ee4a9d1",
+        "ui_alpha": "74dbecc6cb877a3a0122b37b83ceaabb14731f748305fc2b62cbff920892261d",
+        "control_mask": "4e75d5995f4c86126ba348c4ea19e8233e8d9d37c97c9e2877baf98ab2d7c681"
+      },
+      "composition": {
+        "style_id": 1,
+        "intensity": 0.6
+      },
+      "passed": true
+    },
+    {
+      "name": "compose_style2_ui_mask",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 1.3034779881195448e-05,
+      "max_255": 0.00024318695068359375,
+      "p99_255": 0.00011053606867790277,
+      "p999_255": 0.0001841837167739928,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "1ca92aab9441ab2283a3eb7b919e3c4c500c530d4b35693f9e715eb2cbc6a8d6",
+      "output_sha256": "1486d7f52067a784f7c4a0eea039bbb4b9dedbf6f322a42f10f625a0016115a9",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80",
+        "color": "bacf15b7f9ef6669f3f6c6e834259ec97b404529f9ff412f7b9ecd5b2478fd92",
+        "backbuffer": "bfb12903a601df7931689bc1b48918c2a16d5495819a046fe7624ee27d00bc7c",
+        "ui": "3680584e2a65fb23cbd3b1e44317b8abc4d7c22981218b665e57ed962a53c489",
+        "ui_alpha": "22630022e7098ab03cfca2fadbd79b52cdab81612c18d2917bf34a63fcd4b371",
+        "control_mask": "ba8273a8c4dd3e77053baac03266890a6c83c6fa10bcc0a34cd0f0e8138e4b4a"
+      },
+      "composition": {
+        "style_id": 2,
+        "intensity": 0.6
+      },
+      "passed": true
+    },
+    {
+      "name": "point_outside_neighbor_-1",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ],
+        "base_subrect": [
+          -12.0009765625,
+          -8,
+          76,
+          55
+        ],
+        "target_subrect": [
+          -7.0009765625,
+          -5,
+          41,
+          31
+        ],
+        "base_filter": "point",
+        "target_filter": "point"
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 9.438912942974128e-05,
+      "max_255": 0.0010031461715698242,
+      "p99_255": 0.0005471706390380859,
+      "p999_255": 0.0008511543273925781,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "48aaa8a087e18b570198632b91f5d67e698999a1c7b96a80788086af294bc174",
+      "output_sha256": "195d97c8f7f8ade64be8a9df187e9209dc6179fdc709434df8137be6a9ca0de0",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "point_outside_neighbor_+1",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ],
+        "base_subrect": [
+          -11.9990234375,
+          -8,
+          76,
+          55
+        ],
+        "target_subrect": [
+          -6.9990234375,
+          -5,
+          41,
+          31
+        ],
+        "base_filter": "point",
+        "target_filter": "point"
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 9.352871445905728e-05,
+      "max_255": 0.0010031461715698242,
+      "p99_255": 0.0005471706390380859,
+      "p999_255": 0.0008511543273925781,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "ec195a255c65fe317b16379087106c0d6aac59845e165bbadecab5afcf6ef49d",
+      "output_sha256": "17c0f5e4672947b00d7d69993a284ca2b1bdcdabe1d884272e3b4b95cc530c71",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "linear_large_grid_neighbor_80x116",
+      "options": {
+        "grid_size": [
+          80,
+          116
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        31,
+        47,
+        3
+      ],
+      "target_shape": [
+        41,
+        61,
+        3
+      ],
+      "mae_255": 0.00016929809724050538,
+      "max_255": 0.00174790620803833,
+      "p99_255": 0.0008359551429748535,
+      "p999_255": 0.0012722933292389274,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "69177bf1d5912fbe29e9b0556fcb06da2dd5e2d25c04a4b094750029e9b43e23",
+      "output_sha256": "7ee0766a51008b67d299f899031515a142f8530ba012fbe8657ddd8777eeb4de",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "378864513da3597f5e1e17622a859a6d472992ce3ddb2ec480b4e30531ddaacd",
+        "target": "c78c751a7ab11ed8d0d6ac1a50761010095914e4634a189d6d0dda4df061a9f6"
+      },
+      "passed": true
+    },
+    {
+      "name": "linear_large_grid_neighbor_82x118",
+      "options": {
+        "grid_size": [
+          82,
+          118
+        ]
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        31,
+        47,
+        3
+      ],
+      "target_shape": [
+        41,
+        61,
+        3
+      ],
+      "mae_255": 0.0001830765564319493,
+      "max_255": 0.001595914363861084,
+      "p99_255": 0.0009119510650634766,
+      "p999_255": 0.0012937241792678892,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "b0c7e44621ecbce63863773c50563de36e371be8ba2eb1d78e332eaf4ecaafea",
+      "output_sha256": "3d90d8027ce07ed49aa5d7e113b45ce927fec7903258d51a6f3a7885ad6ed7da",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "ce921fe48f6046f5b8610dcaa355ff0802e4e0b2516326ea2d1a2e46537e6e5a",
+        "target": "06a015e5e3a9a046f600f5260f621e3a8ace467c5e951886134d986d4cc1e20c"
+      },
+      "passed": true
+    },
+    {
+      "name": "mixed_filter_linear_point",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ],
+        "base_filter": "linear",
+        "target_filter": "point"
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 0.00010587975189445995,
+      "max_255": 0.0009879469871520996,
+      "p99_255": 0.0005775690078735352,
+      "p999_255": 0.0008520510792732268,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "76c3132d0b5f83145beaba7c260b64f737714cd4d50c304facac6ad7eb0f984f",
+      "output_sha256": "921fbffac2d8c48769d7aa975957657c0ff4e1e8e7db0e68a19bb6e3e7c353ea",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    },
+    {
+      "name": "mixed_filter_point_linear",
+      "options": {
+        "grid_size": [
+          19,
+          27
+        ],
+        "base_filter": "point",
+        "target_filter": "linear"
+      },
+      "output_shape": [
+        37,
+        53,
+        3
+      ],
+      "base_shape": [
+        37,
+        53,
+        3
+      ],
+      "target_shape": [
+        19,
+        27,
+        3
+      ],
+      "mae_255": 0.00011032135419078781,
+      "max_255": 0.0013071298599243164,
+      "p99_255": 0.000623166561126709,
+      "p999_255": 0.0009781283140182675,
+      "within_max_budget_fraction": 1.0,
+      "reference_sha256": "81bed8b706bd3aca85ad4adb18477852d9aa64b11d66556cc7b61bba3258c31f",
+      "output_sha256": "bdfaa46d608ede0db0630e92b3989fbd33ca50b8d6a7f3e90396c81e7237bac7",
+      "input_sha256": {
+        "nr": "7226c59840433713b66457f07a695622f325c71fd8b80fd468d0af7a266f6de9",
+        "base": "5b2eab56da00054907ddeed7fd953d032c6791d06d92b362ba9b1681bba2ba5f",
+        "target": "7a49f18b539e98afe02a82a34b3c0fbfd5cd2151a89479870c636a632c196a80"
+      },
+      "passed": true
+    }
+  ],
+  "sampler_probes": [
+    {
+      "name": "axis_half_up_0",
+      "descriptor": [
+        0.001953125,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.00390625,
+        0.00390625,
+        0.5
+      ],
+      "helper_rgb": [
+        0.00390625,
+        0.00390625,
+        0.5
+      ],
+      "max_255": 0.0,
+      "passed": true,
+      "reference_sha256": "f0bcb9fa41c75c30acbe9b5b0c0c06d784b0f5860495926afe34488881a5999c",
+      "output_sha256": "f0bcb9fa41c75c30acbe9b5b0c0c06d784b0f5860495926afe34488881a5999c"
+    },
+    {
+      "name": "axis_half_up_1",
+      "descriptor": [
+        0.005859375,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.00390625,
+        0.007812438998371363,
+        0.5
+      ],
+      "helper_rgb": [
+        0.00390625,
+        0.0078125,
+        0.5
+      ],
+      "max_255": 1.555541530251503e-05,
+      "passed": true,
+      "reference_sha256": "765384c7fd6b423f95d6a4be76cbc065485731f50f66a06e700c7f90830055f3",
+      "output_sha256": "304bedcfc82a43cf1811166a918203ca083f4ca394a1126e28b70655edb993ce"
+    },
+    {
+      "name": "axis_half_up_2",
+      "descriptor": [
+        0.009765625,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.007812440395355225,
+        0.011718676425516605,
+        0.5000000596046448
+      ],
+      "helper_rgb": [
+        0.0078125,
+        0.01171875,
+        0.5
+      ],
+      "max_255": 1.8761493265628815e-05,
+      "passed": true,
+      "reference_sha256": "20eabe4b5e18cba83b5eda23fc48e2a86bfa389b35c5c6bead3f9dc764c577d5",
+      "output_sha256": "73f1f57334adb4894b9e2921e4b34e0c982eb705bb69aec5776929188123d714"
+    },
+    {
+      "name": "axis_half_up_127",
+      "descriptor": [
+        0.498046875,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.25,
+        0.5,
+        0.5
+      ],
+      "helper_rgb": [
+        0.25,
+        0.5,
+        0.5
+      ],
+      "max_255": 0.0,
+      "passed": true,
+      "reference_sha256": "dfb31d74116606214e7b274db5688ee1de1ebb8fcd16abba9314d8c410c4e6ab",
+      "output_sha256": "dfb31d74116606214e7b274db5688ee1de1ebb8fcd16abba9314d8c410c4e6ab"
+    },
+    {
+      "name": "axis_half_up_128",
+      "descriptor": [
+        0.501953125,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.2539061903953552,
+        0.5039063692092896,
+        0.5000000596046448
+      ],
+      "helper_rgb": [
+        0.25390625,
+        0.50390625,
+        0.5
+      ],
+      "max_255": 3.039836883544922e-05,
+      "passed": true,
+      "reference_sha256": "352269bd7ea280e6f21f208929a537b8e1ef2e7a03803b00e97851dba5366585",
+      "output_sha256": "849ca5e00d94ec929d71c8be839f0122c1bf77553ebc254b963569a3440869ed"
+    },
+    {
+      "name": "axis_half_up_254",
+      "descriptor": [
+        0.994140625,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.5,
+        0.99609375,
+        0.5
+      ],
+      "helper_rgb": [
+        0.5,
+        0.99609375,
+        0.5
+      ],
+      "max_255": 0.0,
+      "passed": true,
+      "reference_sha256": "b0a19c2d118dfdf5ce4e20147df8da81df4f6a48f098d6db638bf3805c37128a",
+      "output_sha256": "b0a19c2d118dfdf5ce4e20147df8da81df4f6a48f098d6db638bf3805c37128a"
+    },
+    {
+      "name": "cross_half_up_1",
+      "descriptor": [
+        0.00390625,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.00390625,
+        0.00390625,
+        0.5
+      ],
+      "helper_rgb": [
+        0.00390625,
+        0.00390625,
+        0.5
+      ],
+      "max_255": 0.0,
+      "passed": true,
+      "reference_sha256": "f0bcb9fa41c75c30acbe9b5b0c0c06d784b0f5860495926afe34488881a5999c",
+      "output_sha256": "f0bcb9fa41c75c30acbe9b5b0c0c06d784b0f5860495926afe34488881a5999c"
+    },
+    {
+      "name": "cross_half_up_3",
+      "descriptor": [
+        0.01171875,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.007812440395355225,
+        0.011718676425516605,
+        0.5000000596046448
+      ],
+      "helper_rgb": [
+        0.0078125,
+        0.01171875,
+        0.5
+      ],
+      "max_255": 1.8761493265628815e-05,
+      "passed": true,
+      "reference_sha256": "20eabe4b5e18cba83b5eda23fc48e2a86bfa389b35c5c6bead3f9dc764c577d5",
+      "output_sha256": "73f1f57334adb4894b9e2921e4b34e0c982eb705bb69aec5776929188123d714"
+    },
+    {
+      "name": "cross_half_up_5",
+      "descriptor": [
+        0.01953125,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.01171875,
+        0.019531207159161568,
+        0.5
+      ],
+      "helper_rgb": [
+        0.01171875,
+        0.01953125,
+        0.5
+      ],
+      "max_255": 1.0924413800239563e-05,
+      "passed": true,
+      "reference_sha256": "4f5e944e4c64e466e9bd1a3e2cb9f8311484983328f0366869e718ca89c041c8",
+      "output_sha256": "6a34c6cea0fc9cb1053cdecc8a6c40fa9d3409bcc445a088e201fd0ba5f0aa66"
+    },
+    {
+      "name": "cross_half_up_127",
+      "descriptor": [
+        0.49609375,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.25,
+        0.49609375,
+        0.5
+      ],
+      "helper_rgb": [
+        0.25,
+        0.49609375,
+        0.5
+      ],
+      "max_255": 0.0,
+      "passed": true,
+      "reference_sha256": "1c003f7996c0d60b4dd38a154861e5d9e30d216add5e6bea52c44fd4c09c1590",
+      "output_sha256": "1c003f7996c0d60b4dd38a154861e5d9e30d216add5e6bea52c44fd4c09c1590"
+    },
+    {
+      "name": "cross_half_up_129",
+      "descriptor": [
+        0.50390625,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.2539061903953552,
+        0.5039063692092896,
+        0.5000000596046448
+      ],
+      "helper_rgb": [
+        0.25390625,
+        0.50390625,
+        0.5
+      ],
+      "max_255": 3.039836883544922e-05,
+      "passed": true,
+      "reference_sha256": "352269bd7ea280e6f21f208929a537b8e1ef2e7a03803b00e97851dba5366585",
+      "output_sha256": "849ca5e00d94ec929d71c8be839f0122c1bf77553ebc254b963569a3440869ed"
+    },
+    {
+      "name": "cross_half_up_255",
+      "descriptor": [
+        0.99609375,
+        0.5,
+        1,
+        1
+      ],
+      "reference_rgb": [
+        0.5,
+        0.99609375,
+        0.5
+      ],
+      "helper_rgb": [
+        0.5,
+        0.99609375,
+        0.5
+      ],
+      "max_255": 0.0,
+      "passed": true,
+      "reference_sha256": "b0a19c2d118dfdf5ce4e20147df8da81df4f6a48f098d6db638bf3805c37128a",
+      "output_sha256": "b0a19c2d118dfdf5ce4e20147df8da81df4f6a48f098d6db638bf3805c37128a"
+    },
+    {
+      "name": "point_boundary_53_minus_1_over_1024",
+      "descriptor": [
+        25.9990234375,
+        0,
+        0,
+        1
+      ],
+      "reference_texel_index": 25.000001907348633,
+      "helper_texel_index": 25.0,
+      "reference_rgb": [
+        0.3906250298023224,
+        0.3906250298023224,
+        0.3906250298023224
+      ],
+      "helper_rgb": [
+        0.390625,
+        0.390625,
+        0.390625
+      ],
+      "max_255": 7.599592208862305e-06,
+      "passed": true,
+      "reference_sha256": "acd3ab4e7d701731d5fcef0fe28fbed2d277c65e75cbe72fea0265402eafb3ef",
+      "output_sha256": "4bdd3cce005b55a48628217af1d0f549eca7c0d5af957373553221f2abe024e6"
+    },
+    {
+      "name": "point_boundary_53_minus_1_ulp",
+      "descriptor": [
+        25.999998092651367,
+        0,
+        0,
+        1
+      ],
+      "reference_texel_index": 25.000001907348633,
+      "helper_texel_index": 25.0,
+      "reference_rgb": [
+        0.3906250298023224,
+        0.3906250298023224,
+        0.3906250298023224
+      ],
+      "helper_rgb": [
+        0.390625,
+        0.390625,
+        0.390625
+      ],
+      "max_255": 7.599592208862305e-06,
+      "passed": true,
+      "reference_sha256": "acd3ab4e7d701731d5fcef0fe28fbed2d277c65e75cbe72fea0265402eafb3ef",
+      "output_sha256": "4bdd3cce005b55a48628217af1d0f549eca7c0d5af957373553221f2abe024e6"
+    },
+    {
+      "name": "point_boundary_53_integer",
+      "descriptor": [
+        26.0,
+        0,
+        0,
+        1
+      ],
+      "reference_texel_index": 25.000001907348633,
+      "helper_texel_index": 25.0,
+      "reference_rgb": [
+        0.3906250298023224,
+        0.3906250298023224,
+        0.3906250298023224
+      ],
+      "helper_rgb": [
+        0.390625,
+        0.390625,
+        0.390625
+      ],
+      "max_255": 7.599592208862305e-06,
+      "passed": true,
+      "reference_sha256": "acd3ab4e7d701731d5fcef0fe28fbed2d277c65e75cbe72fea0265402eafb3ef",
+      "output_sha256": "4bdd3cce005b55a48628217af1d0f549eca7c0d5af957373553221f2abe024e6"
+    },
+    {
+      "name": "point_boundary_53_plus_1_ulp",
+      "descriptor": [
+        26.000001907348633,
+        0,
+        0,
+        1
+      ],
+      "reference_texel_index": 25.000001907348633,
+      "helper_texel_index": 25.0,
+      "reference_rgb": [
+        0.3906250298023224,
+        0.3906250298023224,
+        0.3906250298023224
+      ],
+      "helper_rgb": [
+        0.390625,
+        0.390625,
+        0.390625
+      ],
+      "max_255": 7.599592208862305e-06,
+      "passed": true,
+      "reference_sha256": "acd3ab4e7d701731d5fcef0fe28fbed2d277c65e75cbe72fea0265402eafb3ef",
+      "output_sha256": "4bdd3cce005b55a48628217af1d0f549eca7c0d5af957373553221f2abe024e6"
+    },
+    {
+      "name": "point_boundary_53_plus_1_over_1024",
+      "descriptor": [
+        26.0009765625,
+        0,
+        0,
+        1
+      ],
+      "reference_texel_index": 26.0,
+      "helper_texel_index": 26.0,
+      "reference_rgb": [
+        0.40625,
+        0.40625,
+        0.40625
+      ],
+      "helper_rgb": [
+        0.40625,
+        0.40625,
+        0.40625
+      ],
+      "max_255": 0.0,
+      "passed": true,
+      "reference_sha256": "d8b16298abc878d63a4be218c315f891eb0517756a878ee5286439d5ca22cda5",
+      "output_sha256": "d8b16298abc878d63a4be218c315f891eb0517756a878ee5286439d5ca22cda5"
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "sampler_model": {
+    "normalized_coordinate_fraction_bits": 21,
+    "coordinate_rounding": "truncate downward before multiplying resource dimensions",
+    "weight_fraction_bits": 8,
+    "weight_rounding": "axis and cross weight half-way ties round upward",
+    "scope": "Empirically measured on the reported RTX 3060; not a cross-GPU or API guarantee"
+  },
+  "documentation": {
+    "url": "https://docs.nvidia.com/cuda/archive/12.8.1/cuda-c-programming-guide/index.html#linear-filtering",
+    "documented": "CUDA describes axis interpolation coefficients with eight fractional bits",
+    "empirical": "The 21-bit coordinate model, cross-weight quantization and tie behavior are measured separately here"
+  },
+  "kernel_sha256": "66eb4f87344ef3929f972022eb08b2f49783e13a69ac123a78d7507bf93d77db",
+  "helper_sha256": "496220c379305fb4c09bd7f0187734d588f528d2775c44c78a0b4f6d990616ee",
+  "test_sha256": "ea30f0ef9eed15387ccaa73193f8db42aa400a34bf12b1b8d99ed975a6c0f0f9",
+  "baseline": {
+    "path": "E:\\DLSS5\\research\\validation\\check_transfer_batch1.json",
+    "report_sha256": "e9f68e02c773b559b33c861b8dd9e454443faf2d14f0cd55de58ea548e684c06",
+    "helper_sha256": "56aea7c697a7ac7b89b13d59647d0c55bf343271acf93cb2126268530fc55719",
+    "test_sha256": "b256ac4596e6a2eb0cdf12ee6d95b8f2bc10af1be79ccbfb42ef3556d52a99ef",
+    "previous_passed": false,
+    "source_hashes_changed": {
+      "helper_sha256": true,
+      "test_sha256": true
+    }
+  },
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "torch_version": "2.5.1+cu121",
+  "normalized_coordinate_probes": {
+    "authored_ptx_sha256": "5e037fb79dce74a32ad687121be5f414af6852d226c13be0dfc92ea7aecb8bcc",
+    "checks": [
+      {
+        "axis": "x",
+        "resource_extent": 2,
+        "samples": 81,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0
+        },
+        "passed": true,
+        "input_coordinates_sha256": "aadf117ea6d82f964eefa9805ccfc63781aa3c8cc80909e70beec8c310674371",
+        "reference_sha256": "1977fa4db1bcada986ead0b15c05aca3e83b7b6d36cc0f543f37e8b6ee29cc3b",
+        "output_sha256": "1977fa4db1bcada986ead0b15c05aca3e83b7b6d36cc0f543f37e8b6ee29cc3b"
+      },
+      {
+        "axis": "x",
+        "resource_extent": 3,
+        "samples": 162,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 72,
+          "17": 72,
+          "18": 52,
+          "19": 32,
+          "20": 16,
+          "21": 0,
+          "22": 4,
+          "23": 8,
+          "24": 9,
+          "25": 10,
+          "26": 10
+        },
+        "passed": true,
+        "input_coordinates_sha256": "a50ff5e3c3c97a8791f0588fc7fb00773a0a175a7ee7a99e925dd8d27a8cc5a2",
+        "reference_sha256": "42abd635ba0bb37d4b68454fb1781e7e5a52b4adec01c9a8898987fcbfb662c3",
+        "output_sha256": "42abd635ba0bb37d4b68454fb1781e7e5a52b4adec01c9a8898987fcbfb662c3"
+      },
+      {
+        "axis": "x",
+        "resource_extent": 7,
+        "samples": 243,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 86,
+          "17": 86,
+          "18": 54,
+          "19": 22,
+          "20": 8,
+          "21": 0,
+          "22": 24,
+          "23": 32,
+          "24": 33,
+          "25": 36,
+          "26": 37
+        },
+        "passed": true,
+        "input_coordinates_sha256": "371f7283047d6048966d5d6a277e5d145b749f06cd9c6724df01bfdebfcece93",
+        "reference_sha256": "0f46b66535ff03c3e2ba95fc6a425f46966efcfd1cb5a3fe9557660264758553",
+        "output_sha256": "0f46b66535ff03c3e2ba95fc6a425f46966efcfd1cb5a3fe9557660264758553"
+      },
+      {
+        "axis": "x",
+        "resource_extent": 17,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 86,
+          "17": 60,
+          "18": 34,
+          "19": 34,
+          "20": 8,
+          "21": 0,
+          "22": 12,
+          "23": 26,
+          "24": 33,
+          "25": 44,
+          "26": 49
+        },
+        "passed": true,
+        "input_coordinates_sha256": "002bdd47ce57c7c524fa057d140f177454950c3d760bc34a1a6158f29411db1d",
+        "reference_sha256": "98f31bcf0b3d4c2ede6681fca38791c6fd13a56d30cda257cd28700d010fb8ba",
+        "output_sha256": "98f31bcf0b3d4c2ede6681fca38791c6fd13a56d30cda257cd28700d010fb8ba"
+      },
+      {
+        "axis": "x",
+        "resource_extent": 31,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 55,
+          "17": 55,
+          "18": 55,
+          "19": 55,
+          "20": 39,
+          "21": 0,
+          "22": 16,
+          "23": 33,
+          "24": 49,
+          "25": 49,
+          "26": 54
+        },
+        "passed": true,
+        "input_coordinates_sha256": "4f340c4c1db351fa18830b6275f22e38330c73a064ae272a1bb834f97a1e8daa",
+        "reference_sha256": "f0a02637fbbec749d145bfa815ff0da86cc867eb89fff772f0c49143b8a9dcfe",
+        "output_sha256": "f0a02637fbbec749d145bfa815ff0da86cc867eb89fff772f0c49143b8a9dcfe"
+      },
+      {
+        "axis": "x",
+        "resource_extent": 37,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 73,
+          "17": 73,
+          "18": 73,
+          "19": 62,
+          "20": 35,
+          "21": 0,
+          "22": 28,
+          "23": 42,
+          "24": 66,
+          "25": 84,
+          "26": 84
+        },
+        "passed": true,
+        "input_coordinates_sha256": "936a76ba7e5bfd718b4a42c56acc5a1204e9159c6e3bb15b30a580cd3045af4f",
+        "reference_sha256": "6d28f63958a61daf9b3411f623482496ac9f726dd1adea4e7c70f3d5483aa0a0",
+        "output_sha256": "6d28f63958a61daf9b3411f623482496ac9f726dd1adea4e7c70f3d5483aa0a0"
+      },
+      {
+        "axis": "x",
+        "resource_extent": 53,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 119,
+          "17": 85,
+          "18": 51,
+          "19": 17,
+          "20": 17,
+          "21": 0,
+          "22": 4,
+          "23": 10,
+          "24": 17,
+          "25": 36,
+          "26": 45
+        },
+        "passed": true,
+        "input_coordinates_sha256": "65030a135b2d9a00d7f827321ee8fa107287070797f889cb7d32603673214948",
+        "reference_sha256": "a7ed935ca353b050218517e76c6dc5328e9cbac0e6fa58a243e77bb233a9eb25",
+        "output_sha256": "a7ed935ca353b050218517e76c6dc5328e9cbac0e6fa58a243e77bb233a9eb25"
+      },
+      {
+        "axis": "x",
+        "resource_extent": 64,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0
+        },
+        "passed": true,
+        "input_coordinates_sha256": "903581fbe8b4575ea13a4920a4b085a1f0b6aa390d095b608b75bfa738bfa630",
+        "reference_sha256": "361ce0558a5ef30b8e3334476c33a63ef70a521d813f6c416c8224dc5cf1dd7a",
+        "output_sha256": "361ce0558a5ef30b8e3334476c33a63ef70a521d813f6c416c8224dc5cf1dd7a"
+      },
+      {
+        "axis": "x",
+        "resource_extent": 127,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 8,
+          "17": 8,
+          "18": 8,
+          "19": 8,
+          "20": 8,
+          "21": 0,
+          "22": 24,
+          "23": 32,
+          "24": 32,
+          "25": 45,
+          "26": 61
+        },
+        "passed": true,
+        "input_coordinates_sha256": "b4b096e8ba8d452653e6868e0301f3d0653f00b54354ac0f3f02bfdfc40a2c72",
+        "reference_sha256": "70070af71204dd0324d50e2e656490e31c84a2b14f870e955a21d61d6d54014c",
+        "output_sha256": "70070af71204dd0324d50e2e656490e31c84a2b14f870e955a21d61d6d54014c"
+      },
+      {
+        "axis": "x",
+        "resource_extent": 257,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 80,
+          "17": 40,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 40,
+          "25": 40,
+          "26": 40
+        },
+        "passed": true,
+        "input_coordinates_sha256": "08a3d9903c212018b7d5aa9e7a9429cada817b4e2f7fb3ce8467b674992aa130",
+        "reference_sha256": "061145971d52774db62290b90a832d98da815fa3b71bc6fa0d2961053a332ab5",
+        "output_sha256": "061145971d52774db62290b90a832d98da815fa3b71bc6fa0d2961053a332ab5"
+      },
+      {
+        "axis": "x",
+        "resource_extent": 1023,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 57,
+          "17": 57,
+          "18": 57,
+          "19": 57,
+          "20": 41,
+          "21": 0,
+          "22": 16,
+          "23": 16,
+          "24": 16,
+          "25": 16,
+          "26": 16
+        },
+        "passed": true,
+        "input_coordinates_sha256": "b898755969828035f4346e3d358280495c83da7b36f709fd68230f9e135682d6",
+        "reference_sha256": "c11759b1cd71a596ad1482abadc1fad6a8d83cbd7177553e081e79f605c223e0",
+        "output_sha256": "c11759b1cd71a596ad1482abadc1fad6a8d83cbd7177553e081e79f605c223e0"
+      },
+      {
+        "axis": "y",
+        "resource_extent": 2,
+        "samples": 81,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0
+        },
+        "passed": true,
+        "input_coordinates_sha256": "f381c098e1715c9a9c3a1757bca708f4c1eeafb22402eed8901870163f2084a6",
+        "reference_sha256": "1977fa4db1bcada986ead0b15c05aca3e83b7b6d36cc0f543f37e8b6ee29cc3b",
+        "output_sha256": "1977fa4db1bcada986ead0b15c05aca3e83b7b6d36cc0f543f37e8b6ee29cc3b"
+      },
+      {
+        "axis": "y",
+        "resource_extent": 3,
+        "samples": 162,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 72,
+          "17": 72,
+          "18": 52,
+          "19": 32,
+          "20": 16,
+          "21": 0,
+          "22": 4,
+          "23": 8,
+          "24": 9,
+          "25": 10,
+          "26": 10
+        },
+        "passed": true,
+        "input_coordinates_sha256": "ac347a1eef18828be5113efa3d38bf85439221f78f0dfe4b554f784a153380a7",
+        "reference_sha256": "42abd635ba0bb37d4b68454fb1781e7e5a52b4adec01c9a8898987fcbfb662c3",
+        "output_sha256": "42abd635ba0bb37d4b68454fb1781e7e5a52b4adec01c9a8898987fcbfb662c3"
+      },
+      {
+        "axis": "y",
+        "resource_extent": 7,
+        "samples": 243,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 86,
+          "17": 86,
+          "18": 54,
+          "19": 22,
+          "20": 8,
+          "21": 0,
+          "22": 24,
+          "23": 32,
+          "24": 33,
+          "25": 36,
+          "26": 37
+        },
+        "passed": true,
+        "input_coordinates_sha256": "a28ebbfb06d97344b96b21030ccefa3d7fcaa7c767b41f982888ea339d0739ce",
+        "reference_sha256": "0f46b66535ff03c3e2ba95fc6a425f46966efcfd1cb5a3fe9557660264758553",
+        "output_sha256": "0f46b66535ff03c3e2ba95fc6a425f46966efcfd1cb5a3fe9557660264758553"
+      },
+      {
+        "axis": "y",
+        "resource_extent": 17,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 86,
+          "17": 60,
+          "18": 34,
+          "19": 34,
+          "20": 8,
+          "21": 0,
+          "22": 12,
+          "23": 26,
+          "24": 33,
+          "25": 44,
+          "26": 49
+        },
+        "passed": true,
+        "input_coordinates_sha256": "001952ee0211673310a54fdda4bfdc431146f7f825a346a88d64065ebce7f8d9",
+        "reference_sha256": "98f31bcf0b3d4c2ede6681fca38791c6fd13a56d30cda257cd28700d010fb8ba",
+        "output_sha256": "98f31bcf0b3d4c2ede6681fca38791c6fd13a56d30cda257cd28700d010fb8ba"
+      },
+      {
+        "axis": "y",
+        "resource_extent": 31,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 55,
+          "17": 55,
+          "18": 55,
+          "19": 55,
+          "20": 39,
+          "21": 0,
+          "22": 16,
+          "23": 33,
+          "24": 49,
+          "25": 49,
+          "26": 54
+        },
+        "passed": true,
+        "input_coordinates_sha256": "72daf4293151d0785f7e97b69b9c9705985eabd36ef6fe136e960c5b3d4dd8e9",
+        "reference_sha256": "f0a02637fbbec749d145bfa815ff0da86cc867eb89fff772f0c49143b8a9dcfe",
+        "output_sha256": "f0a02637fbbec749d145bfa815ff0da86cc867eb89fff772f0c49143b8a9dcfe"
+      },
+      {
+        "axis": "y",
+        "resource_extent": 37,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 73,
+          "17": 73,
+          "18": 73,
+          "19": 62,
+          "20": 35,
+          "21": 0,
+          "22": 28,
+          "23": 42,
+          "24": 66,
+          "25": 84,
+          "26": 84
+        },
+        "passed": true,
+        "input_coordinates_sha256": "c910fed92a996fbe686509019900c2c0c23848e8d6847a4437b0c8987922924a",
+        "reference_sha256": "6d28f63958a61daf9b3411f623482496ac9f726dd1adea4e7c70f3d5483aa0a0",
+        "output_sha256": "6d28f63958a61daf9b3411f623482496ac9f726dd1adea4e7c70f3d5483aa0a0"
+      },
+      {
+        "axis": "y",
+        "resource_extent": 53,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 119,
+          "17": 85,
+          "18": 51,
+          "19": 17,
+          "20": 17,
+          "21": 0,
+          "22": 4,
+          "23": 10,
+          "24": 17,
+          "25": 36,
+          "26": 45
+        },
+        "passed": true,
+        "input_coordinates_sha256": "fc25955d50ec9208ff08fb7a10418a657b1e83da345d512579bc81fa87d8d3f5",
+        "reference_sha256": "a7ed935ca353b050218517e76c6dc5328e9cbac0e6fa58a243e77bb233a9eb25",
+        "output_sha256": "a7ed935ca353b050218517e76c6dc5328e9cbac0e6fa58a243e77bb233a9eb25"
+      },
+      {
+        "axis": "y",
+        "resource_extent": 64,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 0,
+          "17": 0,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 0,
+          "25": 0,
+          "26": 0
+        },
+        "passed": true,
+        "input_coordinates_sha256": "9553d38a34c4b5bbc3ecfce8b1fe2ca096f67a0b8a26110a31adda68514a3292",
+        "reference_sha256": "361ce0558a5ef30b8e3334476c33a63ef70a521d813f6c416c8224dc5cf1dd7a",
+        "output_sha256": "361ce0558a5ef30b8e3334476c33a63ef70a521d813f6c416c8224dc5cf1dd7a"
+      },
+      {
+        "axis": "y",
+        "resource_extent": 127,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 8,
+          "17": 8,
+          "18": 8,
+          "19": 8,
+          "20": 8,
+          "21": 0,
+          "22": 24,
+          "23": 32,
+          "24": 32,
+          "25": 45,
+          "26": 61
+        },
+        "passed": true,
+        "input_coordinates_sha256": "0a8c2a45da889fbc059bb7665c9ac4bc32b463141380dc5d116d883db23443c9",
+        "reference_sha256": "70070af71204dd0324d50e2e656490e31c84a2b14f870e955a21d61d6d54014c",
+        "output_sha256": "70070af71204dd0324d50e2e656490e31c84a2b14f870e955a21d61d6d54014c"
+      },
+      {
+        "axis": "y",
+        "resource_extent": 257,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 80,
+          "17": 40,
+          "18": 0,
+          "19": 0,
+          "20": 0,
+          "21": 0,
+          "22": 0,
+          "23": 0,
+          "24": 40,
+          "25": 40,
+          "26": 40
+        },
+        "passed": true,
+        "input_coordinates_sha256": "64c8b34e9889c74ee9b47a5c406c0a52acf198e14d8b1e2982522a1afeded913",
+        "reference_sha256": "061145971d52774db62290b90a832d98da815fa3b71bc6fa0d2961053a332ab5",
+        "output_sha256": "061145971d52774db62290b90a832d98da815fa3b71bc6fa0d2961053a332ab5"
+      },
+      {
+        "axis": "y",
+        "resource_extent": 1023,
+        "samples": 324,
+        "helper_mismatches": 0,
+        "models": {
+          "16": 57,
+          "17": 57,
+          "18": 57,
+          "19": 57,
+          "20": 41,
+          "21": 0,
+          "22": 16,
+          "23": 16,
+          "24": 16,
+          "25": 16,
+          "26": 16
+        },
+        "passed": true,
+        "input_coordinates_sha256": "f1deb722bd6e4a93e99c5308eaffe5fabd6372d49377b46ed99e0e25a03bcb57",
+        "reference_sha256": "c11759b1cd71a596ad1482abadc1fad6a8d83cbd7177553e081e79f605c223e0",
+        "output_sha256": "c11759b1cd71a596ad1482abadc1fad6a8d83cbd7177553e081e79f605c223e0"
+      }
+    ],
+    "samples": 6156,
+    "model_mismatches": {
+      "16": 1272,
+      "17": 1072,
+      "18": 768,
+      "19": 574,
+      "20": 344,
+      "21": 0,
+      "22": 256,
+      "23": 398,
+      "24": 590,
+      "25": 720,
+      "26": 792
+    },
+    "passed": true,
+    "claim": "Empirical normalized-coordinate truncation to 21 fractional bits on the recorded RTX 3060; not an API guarantee"
+  },
+  "coverage": {
+    "transfer_checks_passed": 34,
+    "transfer_checks_total": 34,
+    "sampler_probes_passed": 17,
+    "sampler_probes_total": 17
+  }
+}

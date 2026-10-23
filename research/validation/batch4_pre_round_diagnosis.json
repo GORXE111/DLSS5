@@ -1,0 +1,243 @@
+{
+  "passed": true,
+  "complete": true,
+  "errors": [],
+  "checks": [
+    {
+      "name": "odd_reset",
+      "variant": "before",
+      "metrics": {
+        "correlation": 0.9993627211627626,
+        "mae": 1.8253954534912697,
+        "max_error": 14.0,
+        "exact_fraction": 0.18052644543454868,
+        "within_one_fraction": 0.495602871206261,
+        "nrmse": 0.01864944040160933,
+        "units": "uint8_rgb"
+      },
+      "output_sha256": "6f89225d3b80338dcecbf5bf7a078780f7ae225996045fb62c022adf03712b3b",
+      "passed": true
+    },
+    {
+      "name": "fraction_f0",
+      "variant": "before",
+      "metrics": {
+        "correlation": 0.9992729578530043,
+        "mae": 2.0559982638888887,
+        "max_error": 15.0,
+        "exact_fraction": 0.15980324074074073,
+        "within_one_fraction": 0.4465031828703704,
+        "nrmse": 0.02100279629054332,
+        "units": "uint8_rgb"
+      },
+      "output_sha256": "59653e5852c0c133f922c11ad23eb232feb62cb9bfe50b37315eb573d8df6a7b",
+      "input_sha256": "00313cf5720fbb4a5290683610eca9be0ae63a98c5c5b86b473d0b412e2e43d9",
+      "history_sha256": null,
+      "motion_sha256": "2538b3f02355a3df50af04898070d45bb61abf87bb95f24a024768a7c19eb9ee",
+      "passed": true
+    },
+    {
+      "name": "fraction_f1",
+      "variant": "before",
+      "metrics": {
+        "correlation": 0.9995745141084228,
+        "mae": 1.5769777199074073,
+        "max_error": 27.0,
+        "exact_fraction": 0.20549189814814814,
+        "within_one_fraction": 0.5593880208333334,
+        "nrmse": 0.01641222520484633,
+        "units": "uint8_rgb"
+      },
+      "output_sha256": "81e0f5c99d9843e6cefa923d054385cd03d814aedc00c809cde3793fbb612893",
+      "input_sha256": "dbcebdc477c3cc1625294945d2dea638270dfdfccdf1b041a4f9a1994e5c047c",
+      "history_sha256": "59653e5852c0c133f922c11ad23eb232feb62cb9bfe50b37315eb573d8df6a7b",
+      "motion_sha256": "2538b3f02355a3df50af04898070d45bb61abf87bb95f24a024768a7c19eb9ee",
+      "passed": true
+    },
+    {
+      "name": "odd_reset",
+      "variant": "rounded",
+      "metrics": {
+        "correlation": 0.9993660644128011,
+        "mae": 1.8173214463204568,
+        "max_error": 14.0,
+        "exact_fraction": 0.17918822016038535,
+        "within_one_fraction": 0.49503387337709576,
+        "nrmse": 0.01849233035222533,
+        "units": "uint8_rgb"
+      },
+      "output_sha256": "68ae26cf083416e391f7b1843ff69b66b170d6617d5e9d053617979a987b585e",
+      "passed": true
+    },
+    {
+      "name": "fraction_f0",
+      "variant": "rounded",
+      "metrics": {
+        "correlation": 0.9992922761587302,
+        "mae": 1.9887442129629629,
+        "max_error": 16.0,
+        "exact_fraction": 0.1649320023148148,
+        "within_one_fraction": 0.4589814814814815,
+        "nrmse": 0.02035540213912596,
+        "units": "uint8_rgb"
+      },
+      "output_sha256": "129b1c8267d549a7a5cf6be5f2095b68e7504d36b9c221b7f9135584938458d2",
+      "input_sha256": "00313cf5720fbb4a5290683610eca9be0ae63a98c5c5b86b473d0b412e2e43d9",
+      "history_sha256": null,
+      "motion_sha256": "2538b3f02355a3df50af04898070d45bb61abf87bb95f24a024768a7c19eb9ee",
+      "passed": true
+    },
+    {
+      "name": "fraction_f1",
+      "variant": "rounded",
+      "metrics": {
+        "correlation": 0.9995532845937258,
+        "mae": 1.6269126157407408,
+        "max_error": 36.0,
+        "exact_fraction": 0.19949652777777777,
+        "within_one_fraction": 0.5453747106481481,
+        "nrmse": 0.016915215742225577,
+        "units": "uint8_rgb"
+      },
+      "output_sha256": "d9d379f0bb4be7110b00248c03daafed1dc83f079656bd53819f48fa9b672c62",
+      "input_sha256": "dbcebdc477c3cc1625294945d2dea638270dfdfccdf1b041a4f9a1994e5c047c",
+      "history_sha256": "129b1c8267d549a7a5cf6be5f2095b68e7504d36b9c221b7f9135584938458d2",
+      "motion_sha256": "2538b3f02355a3df50af04898070d45bb61abf87bb95f24a024768a7c19eb9ee",
+      "passed": true
+    }
+  ],
+  "references": {
+    "odd_reset": {
+      "path": "E:\\DLSS5\\research\\batch4\\pre_round_diagnosis\\odd_reset",
+      "manifest_sha256": "185961655cd1ed5e0168893d39aad3df9c0c3f7a4903e9177e06e19ee8af4213",
+      "output_sha256": "3707490df7ded58dfa99fdefda18886ff0e4fc57f858c6faaa3fdefe2913a9e6",
+      "runtime_sha256": {
+        "nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+        "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+        "nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+        "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+        "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+      },
+      "args": [
+        "--nr-only",
+        "--model",
+        "1",
+        "--input",
+        "641x361",
+        "--output",
+        "641x361",
+        "--frames",
+        "1",
+        "--scene-variant",
+        "0",
+        "--temporal-shift",
+        "0",
+        "--temporal-shift-y",
+        "0",
+        "--motion-x",
+        "0",
+        "--motion-y",
+        "0"
+      ]
+    },
+    "fraction_f0": {
+      "path": "E:\\DLSS5\\research\\batch4\\pre_round_diagnosis\\fraction_f0",
+      "manifest_sha256": "112a44d76d98e3b6f53c8b375083d8917345a68e72bec73422840110374ff6ba",
+      "output_sha256": "a541f182967d4fe4f60e9a82f51a72def0db9b5ee8b42156732ebcdca15fc1e6",
+      "runtime_sha256": {
+        "nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+        "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+        "nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+        "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+        "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+      },
+      "args": [
+        "--nr-only",
+        "--model",
+        "1",
+        "--input",
+        "640x360",
+        "--output",
+        "640x360",
+        "--frames",
+        "1",
+        "--scene-variant",
+        "0",
+        "--temporal-shift",
+        "3",
+        "--temporal-shift-y",
+        "2",
+        "--motion-x",
+        "-3.5",
+        "--motion-y",
+        "-1.75"
+      ]
+    },
+    "fraction_f1": {
+      "path": "E:\\DLSS5\\research\\batch4\\pre_round_diagnosis\\fraction_f1",
+      "manifest_sha256": "e454da43413dc0177822127efce85aad066418c3dfa74606a4bfb0026126c402",
+      "output_sha256": "f03a917ede3a40c69ddca3f507e244914521f2305b5a5941291acec5635e4db8",
+      "runtime_sha256": {
+        "nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+        "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+        "nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+        "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+        "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+      },
+      "args": [
+        "--nr-only",
+        "--model",
+        "1",
+        "--input",
+        "640x360",
+        "--output",
+        "640x360",
+        "--frames",
+        "2",
+        "--scene-variant",
+        "0",
+        "--temporal-shift",
+        "3",
+        "--temporal-shift-y",
+        "2",
+        "--motion-x",
+        "-3.5",
+        "--motion-y",
+        "-1.75"
+      ]
+    }
+  },
+  "frozen_model_sources_modified": false,
+  "thresholds": {
+    "min_correlation": 0.999,
+    "max_mae_255": 3.0
+  },
+  "scope": "Bounded global pre rounding experiment; no native parity claim",
+  "source_sha256": {
+    "torch/diagnose_pre_round.py": "3a2943409121f0c0340ba0699b7f2f3661a6e2149742553d92f5f3bac35d4203",
+    "torch/check_reset.py": "c6698c5fd7149f20be1f136d3ceecc29a0f4acc5d2a627efbfc060651157c730",
+    "torch/dlss5/net.py": "fc5b33dad907b265ad8a09ef7c193e212854e38ae1a6ca097c3af2a27ef3d684",
+    "torch/dlss5/ops.py": "babf1b19a18e0b742603f0d6f594f4e7a2e9f67a8dbfb57c68eea7f7a0c80742",
+    "torch/dlss5/ptx_math.py": "0034713bcbdec10e1e0220e17fbfdc4d46d812f085c325139c5d3d58bddf9c59",
+    "torch/dlss5/blocks.py": "02e5de6579ae941fc745766e2e96596592eb958c7bc13290fe5a215245483e14",
+    "fatbins/fatbin_01.1.sm_120.ptx": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+    "sm86_port/fatbin_01.sm86.cubin": "2871d683d650d602aa7590927fce9ef0a27394685a7fe127efd357b8be506043",
+    "sm86_port/nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "WEIGHTS_HT.bin": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4",
+    "weights_map.json": "3cc0d06eee61fee43e0fe07c06abc5332e44bb3688c4c772a00be581695a674b"
+  },
+  "pre_kernel_feature_check": {
+    "size_wh": [
+      53,
+      37
+    ],
+    "probe_ptx_sha256": "acae11474b5781953117181f57f46ed2de11199826df0e8b92a4fe2ca3b6fc07",
+    "before_output_sha256": "02a07625033cb11567114661cb7a405f050562da8e8fec9a450296b242687560",
+    "output_sha256": "4c2791144ff8f050305d8c481fd5795291d303d7f5d35177b014f536e5312233",
+    "reference_sha256": "4c2791144ff8f050305d8c481fd5795291d303d7f5d35177b014f536e5312233",
+    "before_mismatch_values": 7064,
+    "after_mismatch_values": 0,
+    "noise_controls_bit_exact": true,
+    "passed": true
+  }
+}

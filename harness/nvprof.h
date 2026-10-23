@@ -10,9 +10,11 @@
 #pragma once
 #include <d3d12.h>
 #include <algorithm>
+#include <cerrno>
 #include <cstdint>
 #include <cstdlib>
 #include <map>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -120,7 +122,7 @@ inline void TraceChain(const CuLaunch *k, unsigned n)
 }
 
 // ---------------------------------------------------------------- 显存窃听
-// DLSS5_TAP="帧号;序号:地址:字节数;..."  地址可写 p<i> = 该次发射参数块里第 i 个 64 位字 (指针)。
+// DLSS5_TAP="帧号;序号:地址:字节数;..."  地址可写 p<i>[+字节偏移]，读取参数块中第 i 个 64 位指针。
 // 在该帧第 <序号> 次发射之后插一个 tap_copy kernel (tap.cubin，与 nr-lab.exe 同目录)，把显存拷进自有缓冲，
 // 帧结束后写成 tap_s<序号>_<地址>.bin，并在 tap_index.tsv 记一行。
 using PfnCreateCuModule = int(__cdecl *)(ID3D12Device *, const void *, unsigned, Handle *);
@@ -206,6 +208,36 @@ inline void UavBarrier(ID3D12GraphicsCommandList *list)
     list->ResourceBarrier(1, &b);
 }
 
+inline bool ResolveTapAddress(const std::string &spec, const CuLaunch &launched, unsigned long long *address)
+{
+    if (spec.empty() || !address) return false;
+    const char *text = spec.c_str();
+    char *end = nullptr;
+    unsigned long long base = 0, offset = 0;
+    if (*text == 'p') {
+        if (text[1] < '0' || text[1] > '9') return false;
+        errno = 0;
+        const unsigned long long idx = std::strtoull(text + 1, &end, 10);
+        if (errno == ERANGE || !launched.params || idx >= launched.param_size / 8) return false;
+        std::memcpy(&base, static_cast<const char *>(launched.params) + idx * 8, 8);
+        if (*end == '+') {
+            const char *start = end + 1;
+            if (*start < '0' || *start > '9') return false;
+            errno = 0;
+            offset = std::strtoull(start, &end, 0);
+            if (errno == ERANGE || end == start) return false;
+        }
+    } else {
+        if (*text < '0' || *text > '9') return false;
+        errno = 0;
+        base = std::strtoull(text, &end, 0);
+        if (errno == ERANGE || end == text) return false;
+    }
+    if (*end != '\0' || !base || offset > std::numeric_limits<unsigned long long>::max() - base) return false;
+    *address = base + offset;
+    return true;
+}
+
 // 第 seq 次发射刚完成: 按需插 tap
 inline void TapAfter(ID3D12GraphicsCommandList *list, unsigned seq, const CuLaunch &launched)
 {
@@ -213,12 +245,9 @@ inline void TapAfter(ID3D12GraphicsCommandList *list, unsigned seq, const CuLaun
     for (const TapReq &t : g_tap_reqs) {
         if (t.seq != seq || !EnsureTap(list)) continue;
         unsigned long long addr = 0;
-        if (t.addr[0] == 'p') {
-            const unsigned idx = unsigned(std::atoi(t.addr.c_str() + 1));
-            if ((idx + 1) * 8 > launched.param_size) continue;
-            std::memcpy(&addr, static_cast<const char *>(launched.params) + idx * 8, 8);
-        } else {
-            addr = std::strtoull(t.addr.c_str(), nullptr, 0);
+        if (!ResolveTapAddress(t.addr, launched, &addr)) {
+            std::printf("[tap] invalid address specification: %s\n", t.addr.c_str());
+            continue;
         }
         struct { unsigned long long src, dst; unsigned n16, pad; } prm = {
             addr, g_tap_buf->GetGPUVirtualAddress() + g_tap_used, unsigned((t.bytes + 15) / 16), 0 };

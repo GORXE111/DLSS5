@@ -1,5 +1,5 @@
 """逐块隔离: 4h/8h 每块以 kernel 抓取的上一块输出为输入，只测该块 (相关 / 逐值精确 / 幅度比 kernel÷torch)。
-需要 research/tapsblk 与 research/tapsnet 的抓取数据。"""
+需要显式 --capture 指向 tools.schedule_refs 的完整manifest；不搜索旧tap目录。"""
 import os
 import sys
 
@@ -11,21 +11,19 @@ sys.path.insert(0, HERE)
 from dlss5 import DLSS5, ops  # noqa: E402
 ops.PRECISE = True                     # 逐块对照: 模拟 kernel 的每处舍入
 from dlss5.net import LEVEL  # noqa: E402
+from acceptance import execute, parser  # noqa: E402
+from schedule_reference import ScheduleReference, arguments  # noqa: E402
 
 R = os.path.join(HERE, "..", "research")
 E4M3 = torch.arange(256, dtype=torch.uint8).view(torch.float8_e4m3fn).float().numpy()
+REFERENCE = None
 
 
 def raw(seq, size):
-    """第 seq 次发射后抓取的、大小不小于 size 的缓冲 (取最接近的一个，截到 size)"""
-    best = None
-    for d in ("tapsblk", "tapsdecb", "tapsnet", "taps8t", "taps"):
-        dd = os.path.join(R, d)
-        for f in sorted(os.listdir(dd)):
-            n = os.path.getsize(os.path.join(dd, f))
-            if f.startswith(f"tap_s{seq}_") and n >= size and (best is None or n < best[0]):
-                best = (n, os.path.join(dd, f))
-    return None if best is None else np.frombuffer(open(best[1], "rb").read(), np.uint8)[:size]
+    """Only the exact seq/size buffer declared by the validated manifest."""
+    if REFERENCE is None:
+        raise ValueError("Initialize a ScheduleReference explicitly; legacy tap search is disabled")
+    return np.frombuffer(REFERENCE.path(seq, size).read_bytes(), np.uint8)
 
 
 def tin(seq, C, H, W):
@@ -44,14 +42,16 @@ def img(seq, C, H, W):
     return E4M3[raw(seq, C * H * W)].reshape(C // 16, H, W, 16).transpose(1, 2, 0, 3).reshape(H * W, C)
 
 
-def report(name, r, k):
+def report(name, r, k, acceptance=None):
     r, k = r.cpu().numpy() if torch.is_tensor(r) else r, k
     a = float((r * k).sum() / (r * r).sum())
     print(f"{name}: 相关 {np.corrcoef(r.ravel(), k.ravel())[0, 1]:.5f}  精确 {(r == k).mean():.4f}  幅度比 {a:.4f}")
+    if acceptance is not None:
+        acceptance.compare(name, r, k)
     return a
 
 
-def run(net, levels=("4h", "8h")):
+def run(net, levels=("4h", "8h"), acceptance=None):
     dev = "cuda"
     T = lambda a: torch.tensor(a, device=dev)  # noqa: E731
     res = {}
@@ -59,8 +59,13 @@ def run(net, levels=("4h", "8h")):
         if st["kind"] != "swin" or st["level"] not in levels or i > 22:
             continue
         W, H, Wd = LEVEL[st["level"]]
-        if raw(i + 1, W * H * Wd) is None or raw(i, W * H * Wd if st["variant"] != "inpview" else W * H * Wd // 2) is None:
-            continue                                             # 缺抓取数据的块跳过
+        if (raw(i + 1, W * H * Wd) is None or raw(i, W * H * Wd) is None or
+                st["variant"] == "ds" and raw(i + 1, W * H * Wd // 2) is None):
+            if acceptance is not None:
+                acceptance.skip(f"seq{i + 1}/{st['level']}/{st['variant']}", "Missing input/output tap")
+                if st["variant"] == "ds":
+                    acceptance.skip(f"seq{i + 1}/{st['level']}/downsample", "Missing input/output tap")
+            continue
         seq = i + 1
         W, H, Wd = LEVEL[st["level"]]
         sh, var = tuple(st["shift"]), st["variant"]
@@ -71,8 +76,8 @@ def run(net, levels=("4h", "8h")):
             r = m(T(tin(seq - 1, W, H, Wd)), H, Wd, sh)
             if var == "ds":
                 r, ds = r
-                res[f"{seq}ds"] = report(f"seq{seq} {st['level']} 下采样", ds, img(seq, 2 * W, H // 2, Wd // 2))
-        res[seq] = report(f"seq{seq} {st['level']} {var:7s}", r, tin(seq, W, H, Wd))
+                res[f"{seq}ds"] = report(f"seq{seq} {st['level']} 下采样", ds, img(seq, 2 * W, H // 2, Wd // 2), acceptance)
+        res[seq] = report(f"seq{seq} {st['level']} {var:7s}", r, tin(seq, W, H, Wd), acceptance)
     return res
 
 
@@ -86,7 +91,7 @@ def seq_of_records():
 SKIP_SEQ = {"1h": 5, "2h": 9, "4h": 15, "8h": 23}      # 编码出口 (跳连) 的 kernel 序号
 
 
-def run_decoder(net, levels=("8h", "4h", "2h", "1h")):
+def run_decoder(net, levels=("8h", "4h", "2h", "1h"), acceptance=None):
     """解码段逐块: 上采样入口 = (低一级出口图像, 同级编码跳连)，其余以 kernel 上一块输出为输入"""
     T = lambda a: torch.tensor(a, device="cuda")  # noqa: E731
     sq = seq_of_records()
@@ -100,23 +105,46 @@ def run_decoder(net, levels=("8h", "4h", "2h", "1h")):
         W, H, Wd = LEVEL[st["level"]]
         sh = tuple(st["shift"])
         if st["variant"] == "up":
-            if raw(seq - 1, 2 * W * H * Wd // 4) is None or raw(SKIP_SEQ[st["level"]], W * H * Wd) is None:
+            if (raw(seq - 1, 2 * W * H * Wd // 4) is None or raw(SKIP_SEQ[st["level"]], W * H * Wd) is None
+                    or raw(seq, W * H * Wd) is None):
+                if acceptance is not None:
+                    acceptance.skip(f"seq{seq}/{st['level']}/up", "Missing input/skip/output tap")
                 continue
             r = m(T(img(seq - 1, 2 * W, H // 2, Wd // 2)), T(tin(SKIP_SEQ[st["level"]], W, H, Wd)), H, Wd, sh)
             k = tin(seq, W, H, Wd)
         else:
             if raw(seq - 1, W * H * Wd) is None or raw(seq, W * H * Wd) is None:
+                if acceptance is not None:
+                    acceptance.skip(f"seq{seq}/{st['level']}/{st['variant']}", "Missing input/output tap")
                 continue
             r = m(T(tin(seq - 1, W, H, Wd)), H, Wd, sh)
             if st["variant"] == "outview":
                 r, k = r[:, m.ci], img(seq, W, H, Wd)
             else:
                 k = tin(seq, W, H, Wd)
-        res[seq] = report(f"seq{seq} {st['level']} {st['variant']:7s}", r, k)
+        res[seq] = report(f"seq{seq} {st['level']} {st['variant']:7s}", r, k, acceptance)
     return res
 
 
-if __name__ == "__main__":
+def main(acceptance):
+    global REFERENCE
+    REFERENCE = ScheduleReference(acceptance.args.capture, acceptance.args.harness)
+    REFERENCE.annotate(acceptance)
+    acceptance.data["coverage_scope"] = "encoder 4h/8h and decoder 8h/4h/2h/1h swin blocks only"
+    acceptance.data["excluded"] = ["encoder 1h/2h", "split16", "vit", "block39", "pre", "post"]
     net = DLSS5(precise=True)
-    run(net)
-    run_decoder(net)
+    run(net, acceptance=acceptance)
+    run_decoder(net, acceptance=acceptance)
+
+
+if __name__ == "__main__":
+    p = arguments(parser(__doc__, tensors=True))
+    p.add_argument("--allow-missing-taps", action="store_true",
+                   help="Diagnostic only: allow incomplete coverage; JSON still reports passed=false")
+    args = p.parse_args()
+    from check_schedule import safe_report_destination
+    try:
+        safe_report_destination(args.report or args.reference_dir / "validation/check_blocks.json", args.capture, args.harness)
+    except ValueError as error:
+        p.error(str(error))
+    sys.exit(execute("check_blocks", args, main))

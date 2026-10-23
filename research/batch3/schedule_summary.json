@@ -1,0 +1,94 @@
+{
+  "scope": "71 schedule module boundaries for one 640x360 reset frame; f16 sm86 port regression only",
+  "passed": true,
+  "capture_manifest": "research\\batch3\\schedule_capture\\manifest.json",
+  "capture_manifest_sha256": "9db12b5337f1f3a5c3df74233e9f9e552012361489a230bfaad8cf579d3fbbce",
+  "capture_runs": 25,
+  "captured_named_buffers": 78,
+  "captured_chunks": 81,
+  "schedule_steps": {
+    "schedule_steps_total": 71,
+    "schedule_steps_compared": 71,
+    "schedule_steps_passed": 71
+  },
+  "kinds": {
+    "pre": 1,
+    "swin": 44,
+    "split16": 16,
+    "vit": 8,
+    "block39": 1,
+    "post": 1
+  },
+  "comparisons": 79,
+  "tensor_comparisons": 76,
+  "repack_bit_exact_comparisons": 2,
+  "tensor_min_correlation": 0.9990313889813797,
+  "tensor_max_nrmse": 0.04419263358133093,
+  "post": {
+    "step": 70,
+    "role": "output",
+    "reference": "final_srgb8",
+    "passed": true,
+    "correlation": 0.9999780990702722,
+    "mae": 0.17867332175925926,
+    "max_error": 4.0,
+    "exact_fraction": 0.8232928240740741,
+    "within_one_fraction": 0.9980642361111111,
+    "nrmse": 0.003393862724610107,
+    "units": "uint8_rgb",
+    "output_sha256": "6b4f4e4bed3f01afec2fad359d3218a524beacf4d72d2e27ff675b56e5cdf46c",
+    "reference_sha256": "a541f182967d4fe4f60e9a82f51a72def0db9b5ee8b42156732ebcdca15fc1e6"
+  },
+  "numerical_report": "research/batch3/check_schedule.json",
+  "numerical_report_sha256": "fa8c50f02708d92f5ce2528c9e8a3f61ca86e155e89328c7b9396b3f9f159a1d",
+  "cpu_tests": 21,
+  "cpu_report": "research/batch3/schedule_cpu.json",
+  "capture_tool_sha256": "3f9b93199bc18a7a1b8fa4d933f6e1642fb146c6c88b5410933801eec98fb0d5",
+  "current_validator_sha256": "835084b30bf59d72358145a115ec1e2dc33b6ce6553f1246c264e2257204d349",
+  "runtime_sha256": {
+    "nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+    "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+    "nvngx_dlssnr.dll": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+    "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b",
+    "tap.cubin": "080642fe9576c32924b4bf9746e350aa51b1a139c7a3adcc3294ffec985eada4"
+  },
+  "source_snapshots": {
+    "harness/nr-lab.cpp": {
+      "path": "sources\\harness\\nr-lab.cpp",
+      "sha256": "70af633ecd8bbbb4984b45baba345e5769800ed1632a9740da287f8c56a31a87"
+    },
+    "harness/nvprof.h": {
+      "path": "sources\\harness\\nvprof.h",
+      "sha256": "1390c21514e87def221543b6ef8dd3d32ca88219ae38a33901a3cdfbc2c40582"
+    },
+    "harness/tap.ptx": {
+      "path": "sources\\harness\\tap.ptx",
+      "sha256": "ce2cfe0a7deb86642d5da462d50ff1c02bf72aeb3da81af5c67bd4e8ea3d1e74"
+    },
+    "torch/dlss5/data/schedule.json": {
+      "path": "sources\\torch\\dlss5\\data\\schedule.json",
+      "sha256": "75552d7599504bda4d19d1032500dbd71c5bdbf980514fddb75e6e5a922b97d8"
+    },
+    "torch/dlss5/data/exec_order.json": {
+      "path": "sources\\torch\\dlss5\\data\\exec_order.json",
+      "sha256": "fbe2e4b0d28bf90f281e67bbb74cdf2efa9c0c7a415647fb9d1e277f43ed95d4"
+    },
+    "weights_map.json": {
+      "path": "sources\\weights_map.json",
+      "sha256": "3cc0d06eee61fee43e0fe07c06abc5332e44bb3688c4c772a00be581695a674b"
+    },
+    "tools/schedule_refs.py": {
+      "path": "sources\\tools\\schedule_refs.py",
+      "sha256": "3f9b93199bc18a7a1b8fa4d933f6e1642fb146c6c88b5410933801eec98fb0d5"
+    }
+  },
+  "limitations": [
+    "single size and reset frame only",
+    "71 module steps, not all 156 individual launch interiors",
+    "post output is final sRGB8, not internal floating-point surface",
+    "approximate gates, not bit-exact or official RTX50 equivalence",
+    "color input is generated from pinned harness contract, not texture readback"
+  ],
+  "numerics_gpu_scan_rerun": false
+}

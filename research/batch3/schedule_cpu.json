@@ -1,0 +1,26 @@
+{
+  "scope": "CPU provenance/failure paths and numerics CLI compatibility; no CUDA context initialized",
+  "passed": true,
+  "tests_run": 21,
+  "failures": 0,
+  "errors": 0,
+  "source_sha256": {
+    "tools/schedule_refs.py": "835084b30bf59d72358145a115ec1e2dc33b6ce6553f1246c264e2257204d349",
+    "tools/test_schedule_refs.py": "5402dbc987b18abd64ae9bfeb2adad08d8c322a2385e28b8c458aa99397edbc7",
+    "torch/check_schedule.py": "853cd2bbb47c03701742f91fb7471bf770c6f69e0c55da0394e9201e16f78b68",
+    "torch/schedule_reference.py": "c476c73861562bf4a85701e667859cc63d896cced01576d2d067ad0a598c4965",
+    "torch/check_blocks.py": "ced2612f74f75366da5428d433f25d51315ed666b5f3cb42be8724b478999839",
+    "torch/check_levels.py": "b79b3d69a7246166069d0f1a6491d6885a917091c6c8d72194a106c9900675bc",
+    "torch/check_numerics.py": "b680b42715024463e3cad7ca52d269bf83a4867a6e18b0316da1da102fa2d53d"
+  },
+  "output": "..FAIL: FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\admin\\\\AppData\\\\Local\\\\Temp\\\\tmpow1890vg\\\\missing\\\\manifest.json'\n...................\n----------------------------------------------------------------------\nRan 21 tests in 8.783s\n\nOK\n",
+  "legacy_reader_cpu": {
+    "level_paths_including_pre": 10,
+    "pre_exact_bytes": 1966080,
+    "pre_decoded_shape": [
+      61440,
+      32
+    ]
+  },
+  "numerics_gpu_scan_rerun": false
+}

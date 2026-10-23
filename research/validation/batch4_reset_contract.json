@@ -1,0 +1,130 @@
+{
+  "scope": "Static retained PTX resource contract plus CPU/GPU evidence index; not final fused-sampler verification",
+  "gpu_used_for_this_index": false,
+  "ptx_source": "fatbins\\fatbin_01.1.sm_120.ptx",
+  "ptx_sha256": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+  "pre_history_offset": 8,
+  "pre_motion_offset": 16,
+  "pre_optional_depth_offset": 24,
+  "post_history_offset": 88,
+  "post_motion_offset": 96,
+  "pre_predicate": {
+    "function": "cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+    "line_1based": 45951,
+    "instructions": [
+      "setp.eq.b64 %p8, %rd2, 0;",
+      "setp.eq.b64 %p9, %rd3, 0;",
+      "or.pred %p10, %p8, %p9;",
+      "mov.b16 %rs494, %rs3;",
+      "mov.b16 %rs495, %rs2;",
+      "mov.b16 %rs496, %rs4;",
+      "@%p10 bra $L__BB3_6;",
+      "setp.eq.b64 %p11, %rd4, 0;"
+    ]
+  },
+  "post_predicate": {
+    "function": "cc_tinlayout_fused_post_block_swin_1h_32_fp8",
+    "line_1based": 94349,
+    "instructions": [
+      "setp.lt.s32 %p263, %r5914, %r33;",
+      "setp.lt.s32 %p264, %r5913, %r31;",
+      "setp.ne.b64 %p265, %rd5, 0;",
+      "ld.param.b64 %rd10, [%rd11+88];",
+      "setp.ne.b64 %p266, %rd10, 0;",
+      "setp.ne.b32 %p267, %r30, 0;",
+      "setp.gt.ftz.f32 %p268, %r5956, 0f00000000;",
+      "and.pred %p269, %p267, %p266;",
+      "and.pred %p270, %p269, %p268;",
+      "and.pred %p271, %p264, %p263;",
+      "and.pred %p272, %p271, %p265;",
+      "and.pred %p273, %p270, %p272;",
+      "not.pred %p274, %p273;",
+      "@%p274 bra $L__BB5_71;",
+      "ld.param.b64 %rd438, [%rd11+112];"
+    ]
+  },
+  "contract": {
+    "raw_pre": "If History or Motion handle is zero, retain already sampled Color features as History and skip all reprojection",
+    "raw_post": "Both History and Motion resources are required before temporal composition",
+    "public_dlss5": "mv=None with supplied History remains a real zero-motion default for backward compatibility",
+    "graph": "History presence is fixed at capture; reset Graph accepts and ignores explicit MV, rejects supplied History",
+    "core": "Raw History/MV None disables temporal preprocessing and finish"
+  },
+  "baseline_sources": {
+    "torch/dlss5/net.py": "430721392ef74c11db7f264dde92e80836c9f9d6e931b3068f410993a098bebd",
+    "torch/dlss5/export.py": "944dda0f9ff635144760d14a47da88f8fb62776829b2c77a382c789c5061cf08"
+  },
+  "saved_run": {
+    "path": "research\\validation\\batch4_reset.json",
+    "sha256": "8e1216dd532807a526e5c620da321da2292cb32bd575c9bbd09339460fc39519",
+    "passed": true,
+    "suite_complete": true,
+    "source_sha256": {
+      "torch/check_reset.py": "8e8928ab99d09a3aca48c7e5975225d661a0fbe678018aae9ffb2b4d8dcff613",
+      "torch/test_reset.py": "d882134510908e90e976db537e2aec7fd45026b12d90e6f7f416b7d2e82322d0",
+      "torch/dlss5/net.py": "fbaa399b5dbdf86e1b5b43181acdbfe4a034787f8fbae54c942e7dbb54b5cabc",
+      "torch/dlss5/export.py": "0474195754644198b60cccb1025f43e928f00d4d84466adbe26b6969c1ef77e8",
+      "torch/dlss5/ops.py": "c13eb3dc3dfaddc8a07badf9f347bfff6a100003424ba3c835bad39c4b61a3d7",
+      "fatbins/fatbin_01.1.sm_120.ptx": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+      "sm86_port/fatbin_01.sm86.cubin": "2871d683d650d602aa7590927fce9ef0a27394685a7fe127efd357b8be506043",
+      "sm86_port/nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "harness/reference.py": "1cd0f5a333b9272755112839a715751e4d285cb0837d4fe70ba82ee6bd7ecbe8",
+      "research/klab.py": "30b01bbd75b73af6feb04bf28bf46e69718f6da2c71e08daf78c78fa2428dd25",
+      "research/tapspost/nr-trace.tsv": "a4778616e8d296c5bc200e3eb0da1c2cde12f984b54a922e50e42f4fb2ba7a58",
+      "WEIGHTS_HT.bin": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4",
+      "weights_map.json": "3cc0d06eee61fee43e0fe07c06abc5332e44bb3688c4c772a00be581695a674b",
+      "harness/batch3/nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+      "harness/nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+      "dlss5/nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+      "dlss5/nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+    },
+    "coverage": {
+      "cpu": {
+        "compared": 3,
+        "passed": 3
+      },
+      "kernel": {
+        "compared": 12,
+        "passed": 12
+      },
+      "graph": {
+        "compared": 2,
+        "passed": 2
+      },
+      "network": {
+        "baseline": {
+          "compared": 8,
+          "passed": 6
+        },
+        "candidate": {
+          "compared": 8,
+          "passed": 8
+        }
+      }
+    },
+    "history_control": {
+      "name": "same_fixed_history_and_fractional_mv",
+      "size_wh": [
+        53,
+        37
+      ],
+      "motion": [
+        3.25,
+        -1.5
+      ],
+      "input_sha256": "82dba72ce6c55a04c8d397acadc4644c04d487636d80f344d53adfcd787e6303",
+      "history_sha256": "c9305a8d457fffcb2fa6233aae42a052f3252f8da76f9b69850f42f5264ea4aa",
+      "motion_sha256": "0f80cb96ae69f57e42d40af79601dbfe4e8354e543baa58f0278aeeef884a1bb",
+      "baseline_sha256": "cbc084a3c0bb1e94c2d5e33b7744067935572b22c8d0b517547cde8965c91eda",
+      "output_sha256": "cbc084a3c0bb1e94c2d5e33b7744067935572b22c8d0b517547cde8965c91eda",
+      "passed": true
+    }
+  },
+  "compatibility_observation": {
+    "name": "zero_f0",
+    "baseline_mae_255": 1.859052372685185,
+    "candidate_mae_255": 2.0559982638888887,
+    "interpretation": "Default reset error is slightly higher for this pattern; still within unchanged .999 correlation / 3.0 MAE gates. The contract fix is not a universal numerical improvement."
+  },
+  "pending": "Root will rerun the complete Reset suite after both original pre/post samplers use verified fused arithmetic. Saved run identity must not be rewritten."
+}

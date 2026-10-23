@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "scope": "synthetic scene/reset regression within the same runtime; not official native equivalence",
+  "capture": "E:\\DLSS5\\harness\\captures\\port-batch2-temporal",
+  "capture_manifest_sha256": "54fae57951eb56d879a5d57b8e6cb643b7e98e82812e46892c5e41437abbf0f9",
+  "reference_kind": "port-sm86",
+  "runtime_sha256": {
+    "nr-lab.exe": "ba7ba59393c8562e502c363a34c14ff8496b48b63856f48d1901b5736e894625",
+    "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+    "nvngx_dlssnr.dll": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+    "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+  },
+  "checks": [
+    {
+      "name": "static_reset",
+      "left": "static_reset_f2",
+      "right": "fresh_a",
+      "output": "nr-lab-output-model1-srgb.ppm",
+      "expected_bit_exact": true,
+      "mae_255": 0.0,
+      "max_255": 0.0,
+      "p99_255": 0.0,
+      "exact_fraction": 1.0,
+      "psnr_db": null,
+      "correlation": 0.9999999999999998,
+      "bit_exact": true,
+      "passed": true
+    },
+    {
+      "name": "cut_reset_first",
+      "left": "cut_reset_f2",
+      "right": "fresh_b",
+      "output": "nr-lab-output-model1-srgb.ppm",
+      "expected_bit_exact": true,
+      "mae_255": 0.0,
+      "max_255": 0.0,
+      "p99_255": 0.0,
+      "exact_fraction": 1.0,
+      "psnr_db": null,
+      "correlation": 1.0,
+      "bit_exact": true,
+      "passed": true
+    },
+    {
+      "name": "cut_reset_second",
+      "left": "cut_reset_f3",
+      "right": "fresh_b_f1",
+      "output": "nr-lab-output-model1-srgb.ppm",
+      "expected_bit_exact": true,
+      "mae_255": 0.0,
+      "max_255": 0.0,
+      "p99_255": 0.0,
+      "exact_fraction": 1.0,
+      "psnr_db": null,
+      "correlation": 1.0,
+      "bit_exact": true,
+      "passed": true
+    },
+    {
+      "name": "longer_history_reset",
+      "left": "cut_reset_f8",
+      "right": "fresh_b",
+      "output": "nr-lab-output-model1-srgb.ppm",
+      "expected_bit_exact": true,
+      "mae_255": 0.0,
+      "max_255": 0.0,
+      "p99_255": 0.0,
+      "exact_fraction": 1.0,
+      "psnr_db": null,
+      "correlation": 1.0,
+      "bit_exact": true,
+      "passed": true
+    },
+    {
+      "name": "distinct_scenes",
+      "left": "fresh_a",
+      "right": "fresh_b",
+      "output": "nr-lab-output-model1-srgb.ppm",
+      "expected_bit_exact": false,
+      "mae_255": 94.91967881944444,
+      "max_255": 251.0,
+      "p99_255": 218.0,
+      "exact_fraction": 0.0004094328703703704,
+      "psnr_db": 7.562062376497401,
+      "correlation": -0.2427193009214763,
+      "bit_exact": false,
+      "passed": true
+    },
+    {
+      "name": "reset_has_effect",
+      "left": "cut_f2",
+      "right": "cut_reset_f2",
+      "output": "nr-lab-output-model1-srgb.ppm",
+      "expected_bit_exact": false,
+      "mae_255": 45.42075231481481,
+      "max_255": 152.0,
+      "p99_255": 106.0,
+      "exact_fraction": 0.0013845486111111111,
+      "psnr_db": 13.703598959856658,
+      "correlation": 0.6738712466909584,
+      "bit_exact": false,
+      "passed": true
+    }
+  ],
+  "observations": [
+    {
+      "left": "history_a_f3",
+      "right": "history_a_f15",
+      "mae_255": 1.7776085069444445,
+      "max_255": 14.0,
+      "p99_255": 6.0,
+      "exact_fraction": 0.18502604166666667,
+      "psnr_db": 40.874502644537486,
+      "correlation": 0.9993643424614237,
+      "bit_exact": false
+    },
+    {
+      "left": "cut_f3",
+      "right": "cut_reset_f3",
+      "mae_255": 7.08935474537037,
+      "max_255": 73.0,
+      "p99_255": 26.0,
+      "exact_fraction": 0.04898292824074074,
+      "psnr_db": 28.736636303249078,
+      "correlation": 0.9952848585687458,
+      "bit_exact": false
+    }
+  ],
+  "passed": true
+}

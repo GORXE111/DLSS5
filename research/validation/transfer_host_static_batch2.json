@@ -1,0 +1,618 @@
+{
+  "schema": 1,
+  "scope": "CPU static evidence only; original 310.8.0 image",
+  "source_dll": "E:\\DLSS5\\dlss5\\nvngx_dlssnr.dll",
+  "source_sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+  "image_base": "0x180000000",
+  "postprocess_host_entry": "0x18001c920",
+  "caller": {
+    "va": "0x180019884",
+    "function": [
+      "0x180018620",
+      "0x180019e67"
+    ],
+    "null_arg8_store": "0x180019862: [caller rsp+0x38] = rsi",
+    "null_arg9_store": "0x18001985d: [caller rsp+0x40] = rsi",
+    "zero_va": "0x1800188d9",
+    "zero_dominates_call_in_direct_cfg": true,
+    "call_reachable_in_direct_cfg": true,
+    "rsi_writes_on_paths_between_zero_and_call": [],
+    "abi_assumption": "Windows x64 callees preserve nonvolatile RSI"
+  },
+  "references": {
+    "decoded_direct_call_or_jump_sites": [
+      "0x180019884"
+    ],
+    "raw_rel32_call_or_jump_sites": [
+      "0x180019884"
+    ],
+    "absolute_64bit_pointer_sites": [],
+    "limitation": "This scan cannot exclude runtime-computed indirect targets, self-modifying code, or external callers into internal functions."
+  },
+  "parameter_contract": {
+    "stack_parameter_base": "rbp-0x30, zero-initialized 0x178 bytes",
+    "224": "texture from resource descriptor arg8, selector 0 via backend vtable+0xa8",
+    "256": "texture from resource descriptor arg9, selector 2 via backend vtable+0xa8",
+    "300": "set to 1 only after both textures are non-null and target subrect width/height are positive",
+    "304": "int conversion of target descriptor width",
+    "308": "int conversion of target descriptor height",
+    "descriptor_fields": "resource qword+0, base int2+8, optional extent uint2+16; builder emits base float2, extent float2, inverse native resource float2",
+    "descriptor_builder_va": "0x18001c520",
+    "sampler_selector_meaning": "D3D12 backend selector 0 is MIN_MAG_MIP_LINEAR with CLAMP; selector 2 is MIN_MAG_MIP_POINT with CLAMP (see d3d12_sampler_contract)",
+    "public_ngx_keys": "No public transfer-specific key has been established; the sole observed internal caller explicitly passes null transfer descriptors."
+  },
+  "d3d12_sampler_contract": {
+    "backend_vtable_va": "0x1800b6988",
+    "vtable_slots": {
+      "init": {
+        "slot_va": "0x1800b6990",
+        "target_va": "0x18005dca0"
+      },
+      "get_input_texture_view_handle64": {
+        "slot_va": "0x1800b6a30",
+        "target_va": "0x18005d640"
+      }
+    },
+    "get_input_texture_view_handle64_vtable_offset": "0xa8",
+    "get_input_texture_view_handle64_entry": "0x18005d640",
+    "init_entry": "0x18005dca0",
+    "init_method_name_string_va": "0x1800b6c88",
+    "sampler_heap": "Init creates three sampler descriptors per GPU node; CPU handles are stored at this+0x480, with a 24-byte stride per node",
+    "create_sampler_device_vtable_offset": "0xb0",
+    "creation_order": [
+      {
+        "call_va": "0x18005e09c",
+        "selector_slot": 2,
+        "constant": "point"
+      },
+      {
+        "call_va": "0x18005e0f0",
+        "selector_slot": 0,
+        "constant": "linear"
+      },
+      {
+        "call_va": "0x18005e145",
+        "selector_slot": 1,
+        "constant": "anisotropic"
+      }
+    ],
+    "lookup": "this+0x480 + (3*active_node_index + selector)*8; active_node_index is read from this+0x154",
+    "raw_path": "NvAPI_D3D12_GetCudaMergedTextureSamplerObject receives selected sampler at struct+0x20; call 0x18005d7f1",
+    "legacy_path": "NvAPI_D3D12_GetCudaTextureObject receives selected sampler in r8; call 0x18005d848",
+    "transfer_base_224": {
+      "selector": 0,
+      "filter": "MIN_MAG_MIP_LINEAR",
+      "address": "CLAMP"
+    },
+    "transfer_target_256": {
+      "selector": 2,
+      "filter": "MIN_MAG_MIP_POINT",
+      "address": "CLAMP"
+    },
+    "constants": {
+      "point": {
+        "va": "0x1800b7770",
+        "size": 16,
+        "sha256": "59a7d8f70a44b21972751495a3aebd0061906b4fcb3dc4129d2337e6dc44b2a6",
+        "filter": 0,
+        "address_u_v_w": [
+          3,
+          3,
+          3
+        ]
+      },
+      "linear": {
+        "va": "0x1800b7780",
+        "size": 16,
+        "sha256": "50245f96a3ca09c961ab91a0c0d54207bf832ce412e2072832103e7a02a91906",
+        "filter": 21,
+        "address_u_v_w": [
+          3,
+          3,
+          3
+        ]
+      },
+      "anisotropic": {
+        "va": "0x1800b7790",
+        "size": 16,
+        "sha256": "fab702a5d92f26be3f2eeace6cceaa31a14bdddf76088788e26e6c88d4cf6521",
+        "filter": 85,
+        "address_u_v_w": [
+          3,
+          3,
+          3
+        ]
+      }
+    },
+    "enum_basis": "Windows SDK d3d12.h: D3D12_FILTER values point=0, linear=0x15, anisotropic=0x55; D3D12_TEXTURE_ADDRESS_MODE_CLAMP=3",
+    "limitation": "Static D3D12 construction and lookup evidence. CUDA/D3D11/Vulkan sampler creation is not traced here; no enabled transfer dispatch was obtained through normal NGX Evaluate."
+  },
+  "conclusion": "The retained host helper can build transfer parameters, but its sole statically identified NGX Evaluate caller passes null arg8/arg9. This is evidence of a disconnected path in this build, not proof about other DLL versions or dynamically constructed calls.",
+  "dynamic_verification": "not performed by this tool",
+  "evidence": {
+    "caller_zero_and_null_slots": [
+      {
+        "va": "0x1800188d9",
+        "size": 2,
+        "sha256": "52ee7bc49cb2b8661e54f8103f068838ea4bf5089db7626cad08a85a8a6dce66"
+      },
+      {
+        "va": "0x18001985d",
+        "size": 5,
+        "sha256": "32ad5611dd4c5d75fed9af9f33b543882b0063070b3984613b030457d124d903"
+      },
+      {
+        "va": "0x180019862",
+        "size": 5,
+        "sha256": "fbeb35e2c28862b45f96124ba2ef81695840e1a4e49ff5349c25d566cc4d08f2"
+      },
+      {
+        "va": "0x180019884",
+        "size": 5,
+        "sha256": "670df911c421f310dafae67b37a55ff98d812f90aacf8bd12eba13d27f96567f"
+      }
+    ],
+    "callee_optional_descriptor_sources": [
+      {
+        "va": "0x18001c929",
+        "size": 8,
+        "sha256": "718ef5fa4394673842a913bc5e71e03bc0457aa5159a7dde31bdf5b8c8f83b70"
+      },
+      {
+        "va": "0x18001c949",
+        "size": 7,
+        "sha256": "76fbe4e0422469ca8d878ae201893c955c9369c44e8378e852a2a90a4a1fec64"
+      },
+      {
+        "va": "0x18001c953",
+        "size": 7,
+        "sha256": "e9e76732155ff13387b70132898994348a5479a4b956604da77646563ab5936f"
+      },
+      {
+        "va": "0x18001c970",
+        "size": 7,
+        "sha256": "a4e251def5827314153fb0dd7d9135e42082b0c4676a94eec09b8891b15671a3"
+      },
+      {
+        "va": "0x18001c980",
+        "size": 5,
+        "sha256": "f93e08eb92d94049bea3df98edd0d296ab51c69b8248b6fe7e297fa44ea973fc"
+      },
+      {
+        "va": "0x18001c985",
+        "size": 4,
+        "sha256": "129c51fafbb1704022042fe0bbeaf550f5e217b5e52f282fe5a00da8574130f6"
+      },
+      {
+        "va": "0x18001c989",
+        "size": 3,
+        "sha256": "1c31ee798a68c636396f73ac9646201424aaa544860de0a57454c10b8f0ee3f4"
+      },
+      {
+        "va": "0x18001c98e",
+        "size": 4,
+        "sha256": "8c7e061ce8a5f76c92ba7d4a2eaa38d5f87805cfd5cd25ca3b6b9fe54019fa19"
+      },
+      {
+        "va": "0x18001c994",
+        "size": 3,
+        "sha256": "769a0c9612d7def1a662fcf63027a7fca4fcd7abdeeb3c7f4cd8ea5aa7e05d52"
+      },
+      {
+        "va": "0x18001c999",
+        "size": 4,
+        "sha256": "4f7e34527a4ba3921ef9b08fd92ad6ce052942634402e4d53726cba968798e34"
+      },
+      {
+        "va": "0x18001c99f",
+        "size": 3,
+        "sha256": "d4764001cc331c3e3651af794f8caa1963e82b306912825bf3efe3e3054671e3"
+      }
+    ],
+    "parameter_base": [
+      {
+        "va": "0x18001cabf",
+        "size": 4,
+        "sha256": "6b5d5e5b5bdf4038da566b6f22fce69850b56897ff1a4ece5bf2e018339f097a"
+      },
+      {
+        "va": "0x18001caa0",
+        "size": 6,
+        "sha256": "b63659da852dd547c775799ccead2fc3d12a68b069cde9ed30b5f5c9335af264"
+      }
+    ],
+    "base_texture_and_sampler_selector": [
+      {
+        "va": "0x18001cdda",
+        "size": 5,
+        "sha256": "85d0e1dd54a3fc1c8ae11011bb2973a2b3abb155d2b70f44e17a8677cc319f91"
+      },
+      {
+        "va": "0x18001cde6",
+        "size": 3,
+        "sha256": "dc6e6941750c0dbe3a97f3bb418466eea7ce6660efcfda183bd16ca9d8ad08f5"
+      },
+      {
+        "va": "0x18001cdf6",
+        "size": 3,
+        "sha256": "088366596dc79794f4d9ec6a5398e6fddf2bcecc59d1b42e484e892ec9368f38"
+      },
+      {
+        "va": "0x18001cdfc",
+        "size": 7,
+        "sha256": "224cd61c0742afd3720b1ecbda4a50275d820ddaa7357fac2a7e916a917c475d"
+      },
+      {
+        "va": "0x18001ce03",
+        "size": 6,
+        "sha256": "e5947cdb7ac574e576d2674dbc535b91f6739454717fec2801903328212f21bd"
+      },
+      {
+        "va": "0x18001ce11",
+        "size": 7,
+        "sha256": "a5211a366cc7bf3521cd5b538864b7a76f9e65276e32a2d7f6c9709ca439afe4"
+      }
+    ],
+    "target_texture_and_sampler_selector": [
+      {
+        "va": "0x18001ce27",
+        "size": 4,
+        "sha256": "0b3baef121cdf19ef9484b2b0ddf8cf438a752eb78ec583743c28d38e21cda40"
+      },
+      {
+        "va": "0x18001ce36",
+        "size": 4,
+        "sha256": "bb74917758ebb522138a6a9d88abd91d73d658328af3a1c186d6f2d7d87a2f23"
+      },
+      {
+        "va": "0x18001ce5b",
+        "size": 3,
+        "sha256": "387ffa99cb90d8e0ce95d63f72b0ad4eb879426e90c98366a4c94d657ec2a8a4"
+      },
+      {
+        "va": "0x18001ce61",
+        "size": 7,
+        "sha256": "224cd61c0742afd3720b1ecbda4a50275d820ddaa7357fac2a7e916a917c475d"
+      },
+      {
+        "va": "0x18001ce68",
+        "size": 6,
+        "sha256": "893e216350f5f0933d4045ec7a2e5d8921cc022a7add5b13b1de1aa5152766c3"
+      },
+      {
+        "va": "0x18001ce76",
+        "size": 7,
+        "sha256": "4802d9a15d831c0aa2d18cf93be2b6f4115cce37c3c7440209a4e41735134dd7"
+      }
+    ],
+    "enable_and_transfer_grid": [
+      {
+        "va": "0x18001cea3",
+        "size": 7,
+        "sha256": "7b7d37675527c34eb987b70c5472c1be29c9034aeeeb041760464a5dbb7a7b36"
+      },
+      {
+        "va": "0x18001ceae",
+        "size": 4,
+        "sha256": "a137a6a0dd67229b58be8140b3009a2ef805b4ac35227245e8d5f1e7b3f044ea"
+      },
+      {
+        "va": "0x18001ceb2",
+        "size": 4,
+        "sha256": "200e8681aa297cdfb44de3e3b43496334cf5d64aa0ab2c956b34d2ba941543a5"
+      },
+      {
+        "va": "0x18001ceb6",
+        "size": 6,
+        "sha256": "2c1b4a54a56019074174ac50e6c1128d3c22badd3f4c18c2ddbb312bb5ac013d"
+      },
+      {
+        "va": "0x18001cebc",
+        "size": 6,
+        "sha256": "22aa790d145d1a3cec2791437a907b4ffb4b9e76f46e5b9e6630b3c416d59538"
+      },
+      {
+        "va": "0x18001cec2",
+        "size": 3,
+        "sha256": "777c97ac5036d0c4ee08e75c91b097e81dd4c60b57e5c22b8577e004cd086e45"
+      },
+      {
+        "va": "0x18001cecb",
+        "size": 3,
+        "sha256": "ba462945001a91cd6b63ffe6532444de02132e8678ee5c93662b0585de0f4a66"
+      },
+      {
+        "va": "0x18001ced4",
+        "size": 2,
+        "sha256": "043b5c16f0c4129abe8ea534766c2117090a2f144dcc6fe6f25719f50ea562e1"
+      },
+      {
+        "va": "0x18001cedc",
+        "size": 2,
+        "sha256": "a85236fbf7a5bb506bb3b9c29922262f96380dd5c97edf8bced6f3bebbf94b95"
+      },
+      {
+        "va": "0x18001cee4",
+        "size": 10,
+        "sha256": "a55044d1dcaf87712e99bb4d979321db04a1b03a7376d46a333581054f4ffbb6"
+      }
+    ],
+    "subrect_descriptor_builder": [
+      {
+        "va": "0x18001c53e",
+        "size": 3,
+        "sha256": "07f7ee0b0ed81050e08fd3ac264b59ec8712eae35461dade9e6dcd36f0f2b83e"
+      },
+      {
+        "va": "0x18001c574",
+        "size": 7,
+        "sha256": "a0dff9ce73f6d1142b56280d87f81e573ba3125c63e1a308e0153351ef1f034d"
+      },
+      {
+        "va": "0x18001c596",
+        "size": 3,
+        "sha256": "f908e1534f81370434db4ba6868fead797c56edb12cbef98a38ee1f095b7c7dd"
+      },
+      {
+        "va": "0x18001c5a0",
+        "size": 5,
+        "sha256": "c67b252d6550c6d65f873c328919acb1c49b8268dc18776d2c3dc470c0f45ffc"
+      },
+      {
+        "va": "0x18001c5af",
+        "size": 3,
+        "sha256": "324439755bf38ee1b1e95ee1d45815d38444cf5d7c7376a2b01ecd0943bf7274"
+      },
+      {
+        "va": "0x18001c5b4",
+        "size": 5,
+        "sha256": "cb0808c8221d4e6d6d6c9d4ac4ef73c93325460969e2fd484cdae8b65d711e6c"
+      },
+      {
+        "va": "0x18001c5bf",
+        "size": 4,
+        "sha256": "dba9a96d2558f5fbcd3e0193c5c55cffad10f6ae0a8cf13d23e00d7b0bbd6e65"
+      },
+      {
+        "va": "0x18001c5d0",
+        "size": 5,
+        "sha256": "98af5ead960661cacd0d52f9de85f1f467a3e3bb8698e951605f990ff5b5dbb4"
+      },
+      {
+        "va": "0x18001c5dd",
+        "size": 5,
+        "sha256": "d9da1f60fe67de3ffff59e788b84c321f566ad42ac7b75125349c4918a0d2f82"
+      },
+      {
+        "va": "0x18001c5ea",
+        "size": 5,
+        "sha256": "1b0788588c3be50249f489c61ba16654aa36a27133cd3df8e6773ae72cb32e2b"
+      },
+      {
+        "va": "0x18001c5ff",
+        "size": 4,
+        "sha256": "c0fe57fd67ad5ff70475e0f6cf7b02e69a074daaa414232907cbde5d0b612c95"
+      },
+      {
+        "va": "0x18001c608",
+        "size": 5,
+        "sha256": "5e984c1e7113640bef0590d651b82e39c6c8607fe17291ec8ca8213d813deb06"
+      },
+      {
+        "va": "0x18001c619",
+        "size": 4,
+        "sha256": "018296b487a4d8c6c64856f11bdc2b828060b0fb9be2e149f8959562e14d845d"
+      },
+      {
+        "va": "0x18001c622",
+        "size": 5,
+        "sha256": "faba1b0fc482061c1149fba6cb34917422b4f2c3c9590b18138ec753cbf621ef"
+      }
+    ],
+    "d3d12_sampler_heap_and_selector_slots": [
+      {
+        "va": "0x18005df6f",
+        "size": 7,
+        "sha256": "c79d0ec550018ad561f40bf57252198573dc927ab51c28df081aad462d418b60"
+      },
+      {
+        "va": "0x18005e004",
+        "size": 4,
+        "sha256": "fdb5ad924e780f2c5e1d766396f46e7f5892fa23181947e515b2c228830f5af5"
+      },
+      {
+        "va": "0x18005e026",
+        "size": 5,
+        "sha256": "e8c93c28f7637d119f646629933879b78f34a5651365d0e0f94025f96f137fa3"
+      },
+      {
+        "va": "0x18005e04d",
+        "size": 5,
+        "sha256": "b9485d228137082a7fea9a7930a405f2536f048ca56e1c95f7ade5be8f979f14"
+      },
+      {
+        "va": "0x18005e052",
+        "size": 8,
+        "sha256": "aed81285380b793e9a481580521cf268578e158b284f42a0c792563a5dd07fe6"
+      },
+      {
+        "va": "0x18005e095",
+        "size": 7,
+        "sha256": "9521e41589176b7672899a28d45bab2a04aca1d646ec4f1e50711714815dd300"
+      },
+      {
+        "va": "0x18005e09c",
+        "size": 6,
+        "sha256": "cb6648d3e99ad473762722caf5ca2a51fd3d08d363523422f3b37f46f45c4d6c"
+      },
+      {
+        "va": "0x18005e0a2",
+        "size": 8,
+        "sha256": "173e7de2cdc13a10b1f25395de8a45f1ad101e63b0e91870f41a3f95c9eae119"
+      },
+      {
+        "va": "0x18005e0e1",
+        "size": 4,
+        "sha256": "1a6a153c620d6582829ffd856c6bfbf6a858f60b1ca32bd17af1a93e961ba630"
+      },
+      {
+        "va": "0x18005e0f0",
+        "size": 6,
+        "sha256": "dc62fe9ddfcdf06bedb9a4546b46395a69503a6dd56784274c69694232e3de54"
+      },
+      {
+        "va": "0x18005e0f6",
+        "size": 8,
+        "sha256": "fac7481c7df17a74cbe6bd7421e48144ff656421fc90b37a2b77f9dae9489c43"
+      },
+      {
+        "va": "0x18005e135",
+        "size": 5,
+        "sha256": "e954914ed9a20d4d2f11ac848b7196d5a4c75bf1f787addcac0f341f491a3562"
+      },
+      {
+        "va": "0x18005e145",
+        "size": 6,
+        "sha256": "74ec56b553c2cada5ce0d9291150cf26aacd6a2dd8930b367a7f041d7d451472"
+      },
+      {
+        "va": "0x18005e170",
+        "size": 4,
+        "sha256": "c456a98ba78b35adb6874df9fceed3f4377cc98351c9d3c3d03b507193147f43"
+      }
+    ],
+    "d3d12_sampler_lookup_and_nvapi_binding": [
+      {
+        "va": "0x18005d6c4",
+        "size": 3,
+        "sha256": "48692f02155e29678917f0afdcbb6519cd2fccc69da73b94e872303449ab6dfd"
+      },
+      {
+        "va": "0x18005d7ac",
+        "size": 7,
+        "sha256": "018e90273fc2a90e334afb17752cab0e9840e43bdaecb38b2706cdd8523314d5"
+      },
+      {
+        "va": "0x18005d7bc",
+        "size": 6,
+        "sha256": "9255049af78f1686ef8ac55c9a9bbf3448152bd7cae58919d662ffa5ffc87f19"
+      },
+      {
+        "va": "0x18005d7da",
+        "size": 4,
+        "sha256": "b33e097e410335d017fffe5636b2a98f37d48af38991a940fda69894b50ab79b"
+      },
+      {
+        "va": "0x18005d7e2",
+        "size": 3,
+        "sha256": "34aebb6f07c472871f7566e764a0059bd8fb404b9a00e1398f57e500d54e4a0c"
+      },
+      {
+        "va": "0x18005d7e5",
+        "size": 4,
+        "sha256": "2acb08ec851bb1b0573c6664a3ef132f05b517144590db9f9c73b72cb6b5a21b"
+      },
+      {
+        "va": "0x18005d7ed",
+        "size": 4,
+        "sha256": "9214475527e8f0bf21f1e4c76ff17054fd3aa9aad2990bf3f6c7cfdb445ac0d8"
+      },
+      {
+        "va": "0x18005d7f1",
+        "size": 5,
+        "sha256": "5d65ad232fa04bdce06f2037f62f13201227d07e59a22c0cf44d030a175af68c"
+      },
+      {
+        "va": "0x18005d805",
+        "size": 7,
+        "sha256": "5a7ab69d2db68b684333ae4910302a874c9d2ee76d33225bf268a65a350bef80"
+      },
+      {
+        "va": "0x18005d823",
+        "size": 7,
+        "sha256": "7aedb60a3089224547da5191d975c695ae48af3310e790554dd8623d712283a4"
+      },
+      {
+        "va": "0x18005d83d",
+        "size": 4,
+        "sha256": "5e136859bd7ce08eccaa3234c86a1a99ff45b94f9cb2139ba414c6d39f2e9570"
+      },
+      {
+        "va": "0x18005d844",
+        "size": 4,
+        "sha256": "e07b324fb864bb53083dbf036a8119b5570efb7fcb73694dca7c46fca1d0535f"
+      },
+      {
+        "va": "0x18005d848",
+        "size": 5,
+        "sha256": "f42368a181edd9c370f95853503e7bd36fe7d22efb6f2a600acdec7fdc954c2f"
+      }
+    ],
+    "d3d12_backend_constructor_vtable": [
+      {
+        "va": "0x18005b53d",
+        "size": 7,
+        "sha256": "7ede3c8886b19337edb312d3cae3ad1228149bb75bc3f76aa8ca835be37030ca"
+      },
+      {
+        "va": "0x18005b544",
+        "size": 3,
+        "sha256": "4058632397e244f18a9b4b30e31cf17351844db0070e89fbb75a3f12c5508ed9"
+      }
+    ]
+  },
+  "port_host_comparison": {
+    "port_dll": "E:\\DLSS5\\sm86_port\\nvngx_dlssnr.dll",
+    "port_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "all_recorded_ranges_identical": true,
+    "ranges": [
+      {
+        "name": "evaluate",
+        "start_va": "0x180018620",
+        "end_va_exclusive": "0x180019e67",
+        "size": 6215,
+        "identical": true,
+        "original_sha256": "2e61734e62189bb30ebab42e4414045e6ce5290b45fac39ff05cde00056e96a6",
+        "port_sha256": "2e61734e62189bb30ebab42e4414045e6ce5290b45fac39ff05cde00056e96a6"
+      },
+      {
+        "name": "postprocess_binding",
+        "start_va": "0x18001c920",
+        "end_va_exclusive": "0x18001d1d2",
+        "size": 2226,
+        "identical": true,
+        "original_sha256": "6bc5e5264748c73d441c2f234dd8c0413617ac87f7af7e20f2088e34312effee",
+        "port_sha256": "6bc5e5264748c73d441c2f234dd8c0413617ac87f7af7e20f2088e34312effee"
+      },
+      {
+        "name": "descriptor_builder",
+        "start_va": "0x18001c520",
+        "end_va_exclusive": "0x18001c642",
+        "size": 290,
+        "identical": true,
+        "original_sha256": "ab5902490ecba9943721aabbf2588166b0fce80e5329c73fb1a9fa708a54434a",
+        "port_sha256": "ab5902490ecba9943721aabbf2588166b0fce80e5329c73fb1a9fa708a54434a"
+      },
+      {
+        "name": "sampler_init",
+        "start_va": "0x18005dca0",
+        "end_va_exclusive": "0x18005e274",
+        "size": 1492,
+        "identical": true,
+        "original_sha256": "3dd8bc622ec6d9839cdfab431960c79084b8ab604b0c9ce24ec9ff646864b7ee",
+        "port_sha256": "3dd8bc622ec6d9839cdfab431960c79084b8ab604b0c9ce24ec9ff646864b7ee"
+      },
+      {
+        "name": "sampler_binding",
+        "start_va": "0x18005d640",
+        "end_va_exclusive": "0x18005d88e",
+        "size": 590,
+        "identical": true,
+        "original_sha256": "15b90e1404b60e0e9bd89f6672e46da86104954e2cddd2070258964701c55f6e",
+        "port_sha256": "15b90e1404b60e0e9bd89f6672e46da86104954e2cddd2070258964701c55f6e"
+      }
+    ],
+    "limitation": "Equality covers the recorded host code ranges, not every DLL byte or native GPU behavior."
+  },
+  "tool_sha256": "6e7205f8b00052a3c4b6f1f99339d681b54b2c71ca3f649f2bbcc22cc379032c"
+}

@@ -1,0 +1,502 @@
+{
+  "passed": true,
+  "scope": "current source/runtime/report identity and syntax; not a numerical PASS for the known-failing sampling suite",
+  "source_identity_checks": [
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "tools/schedule_refs.py",
+      "expected": "835084b30bf59d72358145a115ec1e2dc33b6ce6553f1246c264e2257204d349",
+      "actual": "835084b30bf59d72358145a115ec1e2dc33b6ce6553f1246c264e2257204d349"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "torch/check_schedule.py",
+      "expected": "853cd2bbb47c03701742f91fb7471bf770c6f69e0c55da0394e9201e16f78b68",
+      "actual": "853cd2bbb47c03701742f91fb7471bf770c6f69e0c55da0394e9201e16f78b68"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "tools/test_schedule_refs.py",
+      "expected": "5402dbc987b18abd64ae9bfeb2adad08d8c322a2385e28b8c458aa99397edbc7",
+      "actual": "5402dbc987b18abd64ae9bfeb2adad08d8c322a2385e28b8c458aa99397edbc7"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "torch/schedule_reference.py",
+      "expected": "c476c73861562bf4a85701e667859cc63d896cced01576d2d067ad0a598c4965",
+      "actual": "c476c73861562bf4a85701e667859cc63d896cced01576d2d067ad0a598c4965"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "torch/dlss5/ops.py",
+      "expected": "7dc30959053b64447601c730fc141e0710b25a3c36688e75f39b17883d2a4f76",
+      "actual": "7dc30959053b64447601c730fc141e0710b25a3c36688e75f39b17883d2a4f76"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "torch/dlss5/net.py",
+      "expected": "430721392ef74c11db7f264dde92e80836c9f9d6e931b3068f410993a098bebd",
+      "actual": "430721392ef74c11db7f264dde92e80836c9f9d6e931b3068f410993a098bebd"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "torch/dlss5/export.py",
+      "expected": "944dda0f9ff635144760d14a47da88f8fb62776829b2c77a382c789c5061cf08",
+      "actual": "944dda0f9ff635144760d14a47da88f8fb62776829b2c77a382c789c5061cf08"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "torch/test_export_finish.py",
+      "expected": "c360e42223eb4722ea6fc61bf7a58a1cc5b161c633e0683a7f64debf6165b246",
+      "actual": "c360e42223eb4722ea6fc61bf7a58a1cc5b161c633e0683a7f64debf6165b246"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "tools/ptx86/rewrite.py",
+      "expected": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+      "actual": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "tools/ptx86/fuse.py",
+      "expected": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+      "actual": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "tools/ptx86/test_numeric_special.py",
+      "expected": "0127b8dfc0db1eb10a1da5560b6cbed62adf449c15b6fa99763d358a3882bc8a",
+      "actual": "0127b8dfc0db1eb10a1da5560b6cbed62adf449c15b6fa99763d358a3882bc8a"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "tools/ptx86/test_emu.py",
+      "expected": "71baaff2038b29a179ece4a64d2b22ea1d53be8231ecf78d64542f9bc1139ecf",
+      "actual": "71baaff2038b29a179ece4a64d2b22ea1d53be8231ecf78d64542f9bc1139ecf"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "tools/ptx86/test_emu_exit.py",
+      "expected": "12db5c186df5545fa64c6019bbf41c947760494aa40b2c2bbb717e00362218ed",
+      "actual": "12db5c186df5545fa64c6019bbf41c947760494aa40b2c2bbb717e00362218ed"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "harness/reference.py",
+      "expected": "1cd0f5a333b9272755112839a715751e4d285cb0837d4fe70ba82ee6bd7ecbe8",
+      "actual": "1cd0f5a333b9272755112839a715751e4d285cb0837d4fe70ba82ee6bd7ecbe8"
+    },
+    {
+      "report": "research/validation/batch3_independent_review.json",
+      "path": "torch/check_numerics.py",
+      "expected": "b680b42715024463e3cad7ca52d269bf83a4867a6e18b0316da1da102fa2d53d",
+      "actual": "b680b42715024463e3cad7ca52d269bf83a4867a6e18b0316da1da102fa2d53d"
+    },
+    {
+      "report": "research/validation/check_motion2d_batch3.json",
+      "path": "torch/check_motion2d.py",
+      "expected": "fa7edf0e734a58b5e5aff4b3e47b66d7ad41c4656fac42bbc5c1c67e24a36015",
+      "actual": "fa7edf0e734a58b5e5aff4b3e47b66d7ad41c4656fac42bbc5c1c67e24a36015"
+    },
+    {
+      "report": "research/validation/check_motion2d_batch3.json",
+      "path": "torch/check.py",
+      "expected": "94215f4797a6ed3a8cf4a0c1a9586905eddc2240235aab8aa8eb04e6eb7cb3f9",
+      "actual": "94215f4797a6ed3a8cf4a0c1a9586905eddc2240235aab8aa8eb04e6eb7cb3f9"
+    },
+    {
+      "report": "research/validation/check_motion2d_batch3.json",
+      "path": "torch/dlss5/net.py",
+      "expected": "430721392ef74c11db7f264dde92e80836c9f9d6e931b3068f410993a098bebd",
+      "actual": "430721392ef74c11db7f264dde92e80836c9f9d6e931b3068f410993a098bebd"
+    },
+    {
+      "report": "research/validation/check_motion2d_batch3.json",
+      "path": "torch/dlss5/ops.py",
+      "expected": "7dc30959053b64447601c730fc141e0710b25a3c36688e75f39b17883d2a4f76",
+      "actual": "7dc30959053b64447601c730fc141e0710b25a3c36688e75f39b17883d2a4f76"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "torch\\check_schedule.py",
+      "expected": "853cd2bbb47c03701742f91fb7471bf770c6f69e0c55da0394e9201e16f78b68",
+      "actual": "853cd2bbb47c03701742f91fb7471bf770c6f69e0c55da0394e9201e16f78b68"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "tools\\schedule_refs.py",
+      "expected": "835084b30bf59d72358145a115ec1e2dc33b6ce6553f1246c264e2257204d349",
+      "actual": "835084b30bf59d72358145a115ec1e2dc33b6ce6553f1246c264e2257204d349"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "torch\\acceptance.py",
+      "expected": "b2f2a210d0582315d7e06aae2ec4b3169683a00dc85425523f5f389ed044fd4f",
+      "actual": "b2f2a210d0582315d7e06aae2ec4b3169683a00dc85425523f5f389ed044fd4f"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "harness/reference.py",
+      "expected": "1cd0f5a333b9272755112839a715751e4d285cb0837d4fe70ba82ee6bd7ecbe8",
+      "actual": "1cd0f5a333b9272755112839a715751e4d285cb0837d4fe70ba82ee6bd7ecbe8"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "torch\\dlss5\\__init__.py",
+      "expected": "0435ed530c550ef36d6b978283138223c39025b7cb1431e70f2f49fdca7eb1da",
+      "actual": "0435ed530c550ef36d6b978283138223c39025b7cb1431e70f2f49fdca7eb1da"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "torch\\dlss5\\blocks.py",
+      "expected": "02e5de6579ae941fc745766e2e96596592eb958c7bc13290fe5a215245483e14",
+      "actual": "02e5de6579ae941fc745766e2e96596592eb958c7bc13290fe5a215245483e14"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "torch\\dlss5\\export.py",
+      "expected": "944dda0f9ff635144760d14a47da88f8fb62776829b2c77a382c789c5061cf08",
+      "actual": "944dda0f9ff635144760d14a47da88f8fb62776829b2c77a382c789c5061cf08"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "torch\\dlss5\\layout.py",
+      "expected": "7d88dfe89b95c6fd715d3484abeebd9006abbda598002ed275e55b62853b21ac",
+      "actual": "7d88dfe89b95c6fd715d3484abeebd9006abbda598002ed275e55b62853b21ac"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "torch\\dlss5\\net.py",
+      "expected": "430721392ef74c11db7f264dde92e80836c9f9d6e931b3068f410993a098bebd",
+      "actual": "430721392ef74c11db7f264dde92e80836c9f9d6e931b3068f410993a098bebd"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "torch\\dlss5\\ops.py",
+      "expected": "7dc30959053b64447601c730fc141e0710b25a3c36688e75f39b17883d2a4f76",
+      "actual": "7dc30959053b64447601c730fc141e0710b25a3c36688e75f39b17883d2a4f76"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "torch\\dlss5\\style.py",
+      "expected": "496220c379305fb4c09bd7f0187734d588f528d2775c44c78a0b4f6d990616ee",
+      "actual": "496220c379305fb4c09bd7f0187734d588f528d2775c44c78a0b4f6d990616ee"
+    },
+    {
+      "report": "research/batch3/check_schedule.json",
+      "path": "torch\\dlss5\\weights.py",
+      "expected": "e1bed28c8ab2136e9f9d36c01f19c011a16bf2c72e5b5313748c081d68740eae",
+      "actual": "e1bed28c8ab2136e9f9d36c01f19c011a16bf2c72e5b5313748c081d68740eae"
+    },
+    {
+      "report": "research/validation/batch3_sampling_current.json",
+      "path": "torch\\check_sampling.py",
+      "expected": "f702dbfccacfb69d803eeb5ae43e9f5484320a43541e94cdea8ccf49a7d1abfc",
+      "actual": "f702dbfccacfb69d803eeb5ae43e9f5484320a43541e94cdea8ccf49a7d1abfc"
+    },
+    {
+      "report": "research/validation/batch3_sampling_current.json",
+      "path": "torch\\dlss5\\ops.py",
+      "expected": "7dc30959053b64447601c730fc141e0710b25a3c36688e75f39b17883d2a4f76",
+      "actual": "7dc30959053b64447601c730fc141e0710b25a3c36688e75f39b17883d2a4f76"
+    },
+    {
+      "report": "research/validation/batch3_sampling_current.json",
+      "path": "torch\\dlss5\\net.py",
+      "expected": "430721392ef74c11db7f264dde92e80836c9f9d6e931b3068f410993a098bebd",
+      "actual": "430721392ef74c11db7f264dde92e80836c9f9d6e931b3068f410993a098bebd"
+    },
+    {
+      "report": "research/validation/batch3_sampling_current.json",
+      "path": "fatbins\\fatbin_01.1.sm_120.ptx",
+      "expected": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+      "actual": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a"
+    },
+    {
+      "report": "research/validation/batch3_sampling_current.json",
+      "path": "sm86_port\\fatbin_01.sm86.cubin",
+      "expected": "2871d683d650d602aa7590927fce9ef0a27394685a7fe127efd357b8be506043",
+      "actual": "2871d683d650d602aa7590927fce9ef0a27394685a7fe127efd357b8be506043"
+    },
+    {
+      "report": "research/validation/batch3_sampling_current.json",
+      "path": "research\\tapspost\\nr-trace.tsv",
+      "expected": "a4778616e8d296c5bc200e3eb0da1c2cde12f984b54a922e50e42f4fb2ba7a58",
+      "actual": "a4778616e8d296c5bc200e3eb0da1c2cde12f984b54a922e50e42f4fb2ba7a58"
+    },
+    {
+      "report": "research/validation/batch3_sampling_current.json",
+      "path": "torch\\test_sampling.py",
+      "expected": "759c0d48830d87318949fd6971d2c753fb46f184098c29ee72ad6c65bea308ae",
+      "actual": "759c0d48830d87318949fd6971d2c753fb46f184098c29ee72ad6c65bea308ae"
+    },
+    {
+      "report": "research/batch3_numeric_summary.json",
+      "path": "tools/ptx86/rewrite.py",
+      "expected": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+      "actual": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa"
+    },
+    {
+      "report": "research/batch3_numeric_summary.json",
+      "path": "tools/ptx86/fuse.py",
+      "expected": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+      "actual": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8"
+    },
+    {
+      "report": "research/batch3_numeric_summary.json",
+      "path": "tools/ptx86/test_emu.py",
+      "expected": "71baaff2038b29a179ece4a64d2b22ea1d53be8231ecf78d64542f9bc1139ecf",
+      "actual": "71baaff2038b29a179ece4a64d2b22ea1d53be8231ecf78d64542f9bc1139ecf"
+    },
+    {
+      "report": "research/batch3_numeric_summary.json",
+      "path": "tools/ptx86/test_numeric_special.py",
+      "expected": "0127b8dfc0db1eb10a1da5560b6cbed62adf449c15b6fa99763d358a3882bc8a",
+      "actual": "0127b8dfc0db1eb10a1da5560b6cbed62adf449c15b6fa99763d358a3882bc8a"
+    },
+    {
+      "report": "research/batch3_numeric_summary.json",
+      "path": "tools\\ptx86\\build_dll.py",
+      "expected": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+      "actual": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d"
+    },
+    {
+      "report": "research/batch3_numeric_summary.json",
+      "path": "tools\\ptx86\\verify_build.py",
+      "expected": "89e08f6091b771d61354c6c44a5e7c707b40f2560d1f2fbadeffa55d4e0ff73a",
+      "actual": "89e08f6091b771d61354c6c44a5e7c707b40f2560d1f2fbadeffa55d4e0ff73a"
+    },
+    {
+      "report": "research/batch3_numeric_summary.json",
+      "path": "tools\\ptx86\\flow.py",
+      "expected": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8",
+      "actual": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8"
+    }
+  ],
+  "python_syntax_files": [
+    {
+      "path": "harness/check_temporal.py",
+      "sha256": "0684295293c121dd14908cd65153d429ea2a4298a9f691ac00af4a5eb8eba2fd"
+    },
+    {
+      "path": "harness/reference.py",
+      "sha256": "1cd0f5a333b9272755112839a715751e4d285cb0837d4fe70ba82ee6bd7ecbe8"
+    },
+    {
+      "path": "harness/test_reference.py",
+      "sha256": "d4f8ddee3a7283187802b61f3331c87de1911c3f625c966638ce2f809016d93b"
+    },
+    {
+      "path": "harness/test_temporal.py",
+      "sha256": "ee2e8884326511f73118286e518577011a7e62f308ba929e67cfb5da77883617"
+    },
+    {
+      "path": "plugin/build_plugin.py",
+      "sha256": "c3a193f3ee3da34bce9767aab88abc0bf94b1028ac0c017be5a7b9ff55d534e5"
+    },
+    {
+      "path": "plugin/fallback/check_hdr.py",
+      "sha256": "025b8f4bb8f3afd0b14ceb7896c98df4208752abc7eba8d1206cdd7272e7a8e9"
+    },
+    {
+      "path": "plugin/test_release_safety.py",
+      "sha256": "17fe04bf6e2be9dd3b2164cbb5e564493e98fe37d20afb45ed9d31d12438f69f"
+    },
+    {
+      "path": "tools/dllq/__main__.py",
+      "sha256": "59102a46747a602741a933468faeb92a317ac383a530006e6e8523ed5a01cf73"
+    },
+    {
+      "path": "tools/host_trace.py",
+      "sha256": "c4ab6b1373f0f3db7aaf52374cd36b8e17ddefcdaf86c7d8d20abf2d2f54ffc3"
+    },
+    {
+      "path": "tools/ptx86/build_dll.py",
+      "sha256": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d"
+    },
+    {
+      "path": "tools/ptx86/fuse.py",
+      "sha256": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8"
+    },
+    {
+      "path": "tools/ptx86/rewrite.py",
+      "sha256": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa"
+    },
+    {
+      "path": "tools/ptx86/test_build_safety.py",
+      "sha256": "9e87313847a2a9db94372e7f8f000617a450769419f22e91ddfa5f2fdd9871e5"
+    },
+    {
+      "path": "tools/ptx86/test_cache.py",
+      "sha256": "7330c5ad17abb686d3a1dad9b2c0c1fabd920b931edab181be34452953b2afc9"
+    },
+    {
+      "path": "tools/ptx86/test_emu.py",
+      "sha256": "71baaff2038b29a179ece4a64d2b22ea1d53be8231ecf78d64542f9bc1139ecf"
+    },
+    {
+      "path": "tools/ptx86/test_emu_exit.py",
+      "sha256": "12db5c186df5545fa64c6019bbf41c947760494aa40b2c2bbb717e00362218ed"
+    },
+    {
+      "path": "tools/ptx86/test_numeric_special.py",
+      "sha256": "0127b8dfc0db1eb10a1da5560b6cbed62adf449c15b6fa99763d358a3882bc8a"
+    },
+    {
+      "path": "tools/ptx86/verify_build.py",
+      "sha256": "89e08f6091b771d61354c6c44a5e7c707b40f2560d1f2fbadeffa55d4e0ff73a"
+    },
+    {
+      "path": "tools/schedule_refs.py",
+      "sha256": "835084b30bf59d72358145a115ec1e2dc33b6ce6553f1246c264e2257204d349"
+    },
+    {
+      "path": "tools/test_schedule_refs.py",
+      "sha256": "5402dbc987b18abd64ae9bfeb2adad08d8c322a2385e28b8c458aa99397edbc7"
+    },
+    {
+      "path": "tools/trace_transfer_host.py",
+      "sha256": "6e7205f8b00052a3c4b6f1f99339d681b54b2c71ca3f649f2bbcc22cc379032c"
+    },
+    {
+      "path": "tools/trace_transfer_runtime.py",
+      "sha256": "0705fda671348152121c5acab22c97a590e4b6fac855f8aac0cdf24042183d39"
+    },
+    {
+      "path": "tools/verify_assets.py",
+      "sha256": "dd1c5a2237f442ebf923517fbb75531cf6ab220b633c36d5048f726d91b2e496"
+    },
+    {
+      "path": "torch/acceptance.py",
+      "sha256": "b2f2a210d0582315d7e06aae2ec4b3169683a00dc85425523f5f389ed044fd4f"
+    },
+    {
+      "path": "torch/check.py",
+      "sha256": "94215f4797a6ed3a8cf4a0c1a9586905eddc2240235aab8aa8eb04e6eb7cb3f9"
+    },
+    {
+      "path": "torch/check_blocks.py",
+      "sha256": "ced2612f74f75366da5428d433f25d51315ed666b5f3cb42be8724b478999839"
+    },
+    {
+      "path": "torch/check_controls.py",
+      "sha256": "7cb7f3c9b44b142f94b54be1a28c952f07a248882f4473e0d4864ca39cd93b6b"
+    },
+    {
+      "path": "torch/check_frames.py",
+      "sha256": "bf10ebdfa33de0522cb2ba8ef0e341b999260be2638dcea67d7b53b7f340a3e0"
+    },
+    {
+      "path": "torch/check_levels.py",
+      "sha256": "b79b3d69a7246166069d0f1a6491d6885a917091c6c8d72194a106c9900675bc"
+    },
+    {
+      "path": "torch/check_motion.py",
+      "sha256": "067531ff7bf8cdc2c2df771bce668743274b4ecc9ab5124483fcf29c80339a50"
+    },
+    {
+      "path": "torch/check_motion2d.py",
+      "sha256": "fa7edf0e734a58b5e5aff4b3e47b66d7ad41c4656fac42bbc5c1c67e24a36015"
+    },
+    {
+      "path": "torch/check_numerics.py",
+      "sha256": "b680b42715024463e3cad7ca52d269bf83a4867a6e18b0316da1da102fa2d53d"
+    },
+    {
+      "path": "torch/check_postprocess.py",
+      "sha256": "21017611a94d10abdd4611b027c9bdf5d2818b4a224798b5490ad81d126f6a55"
+    },
+    {
+      "path": "torch/check_res.py",
+      "sha256": "6c98d4d6e0b0a7baa10c4f049f7a71d9f7b40e34587ff2b5ece418aa54b5c73f"
+    },
+    {
+      "path": "torch/check_sampling.py",
+      "sha256": "f702dbfccacfb69d803eeb5ae43e9f5484320a43541e94cdea8ccf49a7d1abfc"
+    },
+    {
+      "path": "torch/check_schedule.py",
+      "sha256": "853cd2bbb47c03701742f91fb7471bf770c6f69e0c55da0394e9201e16f78b68"
+    },
+    {
+      "path": "torch/check_transfer.py",
+      "sha256": "ea30f0ef9eed15387ccaa73193f8db42aa400a34bf12b1b8d99ed975a6c0f0f9"
+    },
+    {
+      "path": "torch/dlss5/export.py",
+      "sha256": "944dda0f9ff635144760d14a47da88f8fb62776829b2c77a382c789c5061cf08"
+    },
+    {
+      "path": "torch/dlss5/net.py",
+      "sha256": "430721392ef74c11db7f264dde92e80836c9f9d6e931b3068f410993a098bebd"
+    },
+    {
+      "path": "torch/dlss5/ops.py",
+      "sha256": "7dc30959053b64447601c730fc141e0710b25a3c36688e75f39b17883d2a4f76"
+    },
+    {
+      "path": "torch/dlss5/style.py",
+      "sha256": "496220c379305fb4c09bd7f0187734d588f528d2775c44c78a0b4f6d990616ee"
+    },
+    {
+      "path": "torch/schedule_reference.py",
+      "sha256": "c476c73861562bf4a85701e667859cc63d896cced01576d2d067ad0a598c4965"
+    },
+    {
+      "path": "torch/test_acceptance.py",
+      "sha256": "d9a0dcd48d89c9e3cf301cfcb66e6bf53f5e37562c86b8b28e638b46a5b6ec7e"
+    },
+    {
+      "path": "torch/test_export_finish.py",
+      "sha256": "c360e42223eb4722ea6fc61bf7a58a1cc5b161c633e0683a7f64debf6165b246"
+    },
+    {
+      "path": "torch/test_motion2d.py",
+      "sha256": "64266c868c34895fa61b5c9a60e705cc2d3666a91d05d5bf097e9688c9f61ce5"
+    },
+    {
+      "path": "torch/test_sampling.py",
+      "sha256": "759c0d48830d87318949fd6971d2c753fb46f184098c29ee72ad6c65bea308ae"
+    }
+  ],
+  "diff_check_passed": true,
+  "reports_sha256": {
+    "research/validation/batch3_assets.json": "4915fad3f60405d268cb519abf1da170547faf17509fbce0887e406f922e5918",
+    "research/validation/batch3_harness_cpu.json": "f5a929017975a8ae43af17af9d2af594a708d22ee1461fc992e41225bcf0944c",
+    "research/validation/batch3_sampling.json": "ecf1e67d686d15f4bdba7b165ed57268c633f7f51c204cebf01bb474fa17558f",
+    "research/validation/batch3_sampling_current.json": "dd843d543e649ee3b2c2f2b2271bfaed11d5a99118eeb31d0c6c37fa58fa4378",
+    "research/validation/check_motion2d_batch3.json": "1ea3475416882e513830ed20feabc0f89dd94322370e15c4d763356c9ebaa340",
+    "research/validation/batch3_independent_review.json": "fc8820f38ca0301f16e1c97a6e1de870deb3ccdc438438e6599bc4b56dc9711c",
+    "research/validation/batch3_proxy_equivalence.json": "d78b8ca4b0b84d145457d774dcf5eab1f09414e47dc04873f221dd564a74b53a",
+    "research/validation/batch3_package_validation.json": "13825535088d62b1d67a31aa2c881b9552c273f921b912616dba904149b2a8dd",
+    "research/batch3/schedule_summary.json": "74f442bc2e92a089a454864cb2007a578867483d72a03fd275e6f130173f8a96",
+    "research/batch3/check_schedule.json": "fa8c50f02708d92f5ce2528c9e8a3f61ca86e155e89328c7b9396b3f9f159a1d",
+    "research/batch3/schedule_cpu.json": "135c661d991bf2de4eb8ab49e11d7d14fab4553a5ec8804a2c86cf157e499212",
+    "research/batch3_numeric_summary.json": "e954d80d1b483e89683928caf2dd31a64b996de1dea5f77c418c772ac62c37f7",
+    "research/batch3_numeric_cpu.json": "9de883602be54aea409a297655e07a85ad76e5614bea3f7a9e9711533b36c844",
+    "research/batch3_numeric_gpu.json": "3b304890b7f03052590b621fdb698fa82b3152487fb03dd4e1813e65efe0c6a8",
+    "research/batch3_numeric_ptxas.json": "1a17dc5db36c775bb15d7f0d6615c527c69e4dc4120ccef8e7b4bfd023ee2314",
+    "research/batch3_build_first.json": "f73be04f69146b7f827376c174c805bb305ff92a9695a8c2d222a802fd2802a2",
+    "research/batch3_build_second.json": "39aa3d62b2283574ac294505e6c7860a9d77c102e751a28bbb3342489903ebec",
+    "research/batch3_build_verified.json": "096be66cdecdb3a122f02fc27cbcaed5668bfb47b440719042dbb753bd2e534a",
+    "research/batch3_gpu_regressions.json": "b17bd5c9d8576307be965a56cd6b557f7f3e3e51f3b76de9ce0de724f38e7cd8",
+    "research/batch3_regression_full.json": "b8cb0cb1372845dd79302fc278694c9bba16ca2cf2a1cb9956becea40cefe023",
+    "research/batch3_regression_temporal.json": "112ecfe3b1e861a44bd0291745ef5b9c4b85a203d5c35954924f497371b1ef11",
+    "research/batch3_regression_motion2d.json": "7cf50bb9dc2b96a0ec4bbc2af780ac16d21eb91aeaccf135ccbd5c7144d60002",
+    "research/batch3_promotion.json": "d5640a4e248461ebea0fb8021652886ae38fd76a6842c43549c69c02c77c4fd0",
+    "research/batch3_promotion_revision.json": "674ce1e14d379a2c1e457774c83156022c17d72c9d7c6fcae736bb38da2e3780",
+    "research/batch3_promotion_verified.json": "cef9433dfa9006381225b9e0e304774b39e7576587112e92b62df244a66eb57d",
+    "research/validation/session_summary_batch1.json": "0de595897e67fcb3bb4404f6ff961f324c42b7617a21ab06ba1eb2545e9181e9",
+    "research/validation/session_summary_batch2.json": "8fbe4daee513a64becb898ac69c591adf78331fb1267444bd77f041fd614c7c8"
+  },
+  "historical_source_relocation": {
+    "sm86_port/fatbin_01.sm86.cubin": "E:\\DLSS5\\sm86_port.batch3-backup-0b84169e5487\\fatbin_01.sm86.cubin"
+  },
+  "documentation_sha256": {
+    "PLAN.md": "18c59d07de15c022f8944de187811872646f2bdb3ff0ef9e0a09cb24b3d43dcc",
+    "README.md": "1def975ea6ec919b9465b23df1e22ac5f1bb7f2eaf43f5e9ecaff84b12267e69",
+    "torch/README.md": "f83e585a1bc6f8948af5de181cb3339d6843585ba2d52dad6fca9c2dbde08b3f",
+    "tools/README.md": "8fdd6282294edb486bad06e1ca2a8c503082bbbc740aa414226e4d4fda57ea27",
+    "harness/README.md": "7ab4df2d017df6cac96b553ecda1b2304986d30489dfd1084d303a912d288ccd"
+  }
+}

@@ -1,0 +1,439 @@
+{
+  "status": "source_frozen_pending_root_integrated_regression",
+  "native_1_to_1": false,
+  "gpu_released_to_root": true,
+  "implementation": "_pre_rgb(rgb) = ((rgb.half() - 0.5) * 0.125).float(); concatenated Color/History six columns only; unconditional in fast/precise",
+  "raw_reset_contract_preserved": true,
+  "controls_or_noise_modified": false,
+  "special_case_control_values": false,
+  "thresholds_changed": false,
+  "original_pre_ptx": {
+    "path": "fatbins/fatbin_01.1.sm_120.ptx",
+    "sha256": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+    "channels": [
+      {
+        "channel": "colorR",
+        "operations": [
+          {
+            "line_1based": 45916,
+            "opcode": "cvt.rn.f16.f32",
+            "instruction_sha256": "f6425e348000db6c0542c08fa2886c4a7d2318b896d1c04384f10911c3b78531"
+          },
+          {
+            "line_1based": 45920,
+            "opcode": "sub.f16",
+            "instruction_sha256": "126f177e032d2fd238f03848ecdd22e255c6ef36106284cac6cb10481b609729"
+          },
+          {
+            "line_1based": 45924,
+            "opcode": "mul.f16",
+            "instruction_sha256": "7cc169541321d70d3707b20089802fbbb1a9a2119202eb9768bf08aee92f71f7"
+          }
+        ]
+      },
+      {
+        "channel": "colorG",
+        "operations": [
+          {
+            "line_1based": 45928,
+            "opcode": "cvt.rn.f16.f32",
+            "instruction_sha256": "9ffadb495bb2aa9245ae6c7cd2eb8191f13a6864fa65ef9d37d3dcb40cda63bd"
+          },
+          {
+            "line_1based": 45932,
+            "opcode": "sub.f16",
+            "instruction_sha256": "c413316ab3886518959df1df995bab3e70fc0aa2efcd026154073035c46a65b3"
+          },
+          {
+            "line_1based": 45936,
+            "opcode": "mul.f16",
+            "instruction_sha256": "dc62bbbdd2045a95d2cb3408b79fa40f00dd72199b122098fe56e534da9e38cd"
+          }
+        ]
+      },
+      {
+        "channel": "colorB",
+        "operations": [
+          {
+            "line_1based": 45940,
+            "opcode": "cvt.rn.f16.f32",
+            "instruction_sha256": "8458d2bf2f395cab683ed8478b321c31b1d512474c181063be56c042743c875c"
+          },
+          {
+            "line_1based": 45944,
+            "opcode": "sub.f16",
+            "instruction_sha256": "9ceefc10c75d4eb73938ff025ca544fa9f634f6bb0dc33dd02b09f77369aead4"
+          },
+          {
+            "line_1based": 45948,
+            "opcode": "mul.f16",
+            "instruction_sha256": "f1822c0c5b83a1c181d28623fb378587cf5233f2b7d901f2c16723c38212cffc"
+          }
+        ]
+      },
+      {
+        "channel": "historyR",
+        "operations": [
+          {
+            "line_1based": 46147,
+            "opcode": "cvt.rn.f16.f32",
+            "instruction_sha256": "0e6448425b14ea902810a533b13579322ab8d96fdf02683a4829d0b991b4ca2b"
+          },
+          {
+            "line_1based": 46151,
+            "opcode": "sub.f16",
+            "instruction_sha256": "54a043d159796d2b71b7b7752a367b75b3cfb97603b88058a9017d3c5ce7b435"
+          },
+          {
+            "line_1based": 46155,
+            "opcode": "mul.f16",
+            "instruction_sha256": "e8e73833d75de1b1833e0e0959a5a238542d9dbce9848cafd2dbb7a9772ddf78"
+          }
+        ]
+      },
+      {
+        "channel": "historyG",
+        "operations": [
+          {
+            "line_1based": 46159,
+            "opcode": "cvt.rn.f16.f32",
+            "instruction_sha256": "3027c4074aa9181f63f4c35f46d71bb2cfdee8dd27b11b61ee3a0f521396ca67"
+          },
+          {
+            "line_1based": 46163,
+            "opcode": "sub.f16",
+            "instruction_sha256": "9a6d2948c5461a894a9cb4e276f3a0534519f81627791bb29e846ca25330c9d1"
+          },
+          {
+            "line_1based": 46167,
+            "opcode": "mul.f16",
+            "instruction_sha256": "ebacaebc9a92d6debc69f224c3f6eeef7b372af42bdedd179a01c272a3dd73b5"
+          }
+        ]
+      },
+      {
+        "channel": "historyB",
+        "operations": [
+          {
+            "line_1based": 46171,
+            "opcode": "cvt.rn.f16.f32",
+            "instruction_sha256": "a115f5543be0b9b7276237e664aac77fb6bce58db05aee44fb90c1dcefae3e3f"
+          },
+          {
+            "line_1based": 46175,
+            "opcode": "sub.f16",
+            "instruction_sha256": "3dc6c5b4add4621bbb3534c87e5aa16499a8e6d5e9ba57ac8eb1a2479f5f6faf"
+          },
+          {
+            "line_1based": 46179,
+            "opcode": "mul.f16",
+            "instruction_sha256": "db3e97ddd04b8f48ed37609d3f78db527e6b9f9c5ac2f86cc497062adfa07d87"
+          }
+        ]
+      }
+    ]
+  },
+  "controls_diagnosis": {
+    "path": "research\\validation\\batch4_controls_diagnosis.json",
+    "sha256": "d4063ffd0bba9e0723a563ca366a18fa5ba602739a17a88974da46fc6225d721",
+    "complete": true,
+    "passed": false,
+    "original_failed_reference_preserved": true,
+    "current_and_previous_dll_high_outputs_identical": true,
+    "actual_reset_history_motion_handles_zero": true,
+    "variants": [
+      {
+        "name": "high/new_fast",
+        "metrics": {
+          "correlation": 0.9989892173605515,
+          "mae": 2.354681712962963,
+          "max_error": 18.0,
+          "exact_fraction": 0.1356640625,
+          "within_one_fraction": 0.38646122685185186,
+          "nrmse": 0.02372261503638582,
+          "units": "uint8_rgb"
+        },
+        "meets_fixed_acceptance": false,
+        "output_sha256": "a251525da5022e44a7404c63f97791494658b9e7ff8b73f0786178ba8b2696df"
+      },
+      {
+        "name": "high/old_fast",
+        "metrics": {
+          "correlation": 0.9990184727207793,
+          "mae": 2.2105164930555556,
+          "max_error": 20.0,
+          "exact_fraction": 0.14986689814814816,
+          "within_one_fraction": 0.42,
+          "nrmse": 0.022660821337040428,
+          "units": "uint8_rgb"
+        },
+        "meets_fixed_acceptance": true,
+        "output_sha256": "b54fe7892982e9380966bcee003f77b79d6ce6f09b90bfedd5661c70c82947d6"
+      },
+      {
+        "name": "high/new_precise",
+        "metrics": {
+          "correlation": 0.9990500858946901,
+          "mae": 2.286017071759259,
+          "max_error": 16.0,
+          "exact_fraction": 0.14234085648148148,
+          "within_one_fraction": 0.40141493055555555,
+          "nrmse": 0.023171105481413892,
+          "units": "uint8_rgb"
+        },
+        "meets_fixed_acceptance": true,
+        "output_sha256": "18808b9b514ef648e011c3068500721e2fdd0eb8705bc0a7958c82c431c21f41"
+      },
+      {
+        "name": "high/old_precise",
+        "metrics": {
+          "correlation": 0.9990200680625598,
+          "mae": 2.232038483796296,
+          "max_error": 16.0,
+          "exact_fraction": 0.14543258101851853,
+          "within_one_fraction": 0.41139612268518516,
+          "nrmse": 0.02270228587327806,
+          "units": "uint8_rgb"
+        },
+        "meets_fixed_acceptance": true,
+        "output_sha256": "107eee5fa129371a7106263acfbe748b0c75e04a62bbefce2afd839a1572eaa3"
+      },
+      {
+        "name": "high/rounded_fast",
+        "metrics": {
+          "correlation": 0.9990731813050597,
+          "mae": 2.201170428240741,
+          "max_error": 18.0,
+          "exact_fraction": 0.14743634259259258,
+          "within_one_fraction": 0.4151287615740741,
+          "nrmse": 0.022343883599290962,
+          "units": "uint8_rgb"
+        },
+        "meets_fixed_acceptance": true,
+        "output_sha256": "78275dbcfcb4b8cf70875b0423b8962f51ec9cfbd16c3877afd7d5091f2b844b"
+      },
+      {
+        "name": "high/rounded_precise",
+        "metrics": {
+          "correlation": 0.9990450266342799,
+          "mae": 2.1815364583333334,
+          "max_error": 17.0,
+          "exact_fraction": 0.14865162037037036,
+          "within_one_fraction": 0.42050925925925925,
+          "nrmse": 0.022202326551245266,
+          "units": "uint8_rgb"
+        },
+        "meets_fixed_acceptance": true,
+        "output_sha256": "526ee1f2be249d0757d6ed45aee0fb4167690077d14f0abe3d36e75e106065f9"
+      },
+      {
+        "name": "high/fast_f32",
+        "metrics": {
+          "correlation": 0.9990892125071901,
+          "mae": 2.187879050925926,
+          "max_error": 17.0,
+          "exact_fraction": 0.14890480324074074,
+          "within_one_fraction": 0.4202575231481481,
+          "nrmse": 0.022297801550328126,
+          "units": "uint8_rgb"
+        },
+        "meets_fixed_acceptance": true,
+        "output_sha256": "48f7028d369f46ed1fe21d4ecd373a62b830f2ad05705c1a45f3ac43c6f91184"
+      },
+      {
+        "name": "default/new_fast",
+        "metrics": {
+          "correlation": 0.9992729578530043,
+          "mae": 2.0559982638888887,
+          "max_error": 15.0,
+          "exact_fraction": 0.15980324074074073,
+          "within_one_fraction": 0.4465031828703704,
+          "nrmse": 0.02100279629054332,
+          "units": "uint8_rgb"
+        },
+        "meets_fixed_acceptance": true,
+        "output_sha256": "59653e5852c0c133f922c11ad23eb232feb62cb9bfe50b37315eb573d8df6a7b"
+      },
+      {
+        "name": "default/old_fast",
+        "metrics": {
+          "correlation": 0.9992729578530043,
+          "mae": 2.0559982638888887,
+          "max_error": 15.0,
+          "exact_fraction": 0.15980324074074073,
+          "within_one_fraction": 0.4465031828703704,
+          "nrmse": 0.02100279629054332,
+          "units": "uint8_rgb"
+        },
+        "meets_fixed_acceptance": true,
+        "output_sha256": "59653e5852c0c133f922c11ad23eb232feb62cb9bfe50b37315eb573d8df6a7b"
+      },
+      {
+        "name": "default/rounded_fast",
+        "metrics": {
+          "correlation": 0.9992922761587302,
+          "mae": 1.9887442129629629,
+          "max_error": 16.0,
+          "exact_fraction": 0.1649320023148148,
+          "within_one_fraction": 0.4589814814814815,
+          "nrmse": 0.02035540213912596,
+          "units": "uint8_rgb"
+        },
+        "meets_fixed_acceptance": true,
+        "output_sha256": "129b1c8267d549a7a5cf6be5f2095b68e7504d36b9c221b7f9135584938458d2"
+      }
+    ]
+  },
+  "odd_fraction_diagnosis": {
+    "path": "research\\validation\\batch4_pre_round_diagnosis.json",
+    "sha256": "c00767c0d4d5484f098cc7dd1a2d33a4a2191e4f7720b0b8366552f18eea4908",
+    "complete": true,
+    "passed": true,
+    "original_pre_feature_check": {
+      "size_wh": [
+        53,
+        37
+      ],
+      "probe_ptx_sha256": "acae11474b5781953117181f57f46ed2de11199826df0e8b92a4fe2ca3b6fc07",
+      "before_output_sha256": "02a07625033cb11567114661cb7a405f050562da8e8fec9a450296b242687560",
+      "output_sha256": "4c2791144ff8f050305d8c481fd5795291d303d7f5d35177b014f536e5312233",
+      "reference_sha256": "4c2791144ff8f050305d8c481fd5795291d303d7f5d35177b014f536e5312233",
+      "before_mismatch_values": 7064,
+      "after_mismatch_values": 0,
+      "noise_controls_bit_exact": true,
+      "passed": true
+    },
+    "checks": [
+      {
+        "name": "odd_reset",
+        "variant": "before",
+        "metrics": {
+          "correlation": 0.9993627211627626,
+          "mae": 1.8253954534912697,
+          "max_error": 14.0,
+          "exact_fraction": 0.18052644543454868,
+          "within_one_fraction": 0.495602871206261,
+          "nrmse": 0.01864944040160933,
+          "units": "uint8_rgb"
+        },
+        "output_sha256": "6f89225d3b80338dcecbf5bf7a078780f7ae225996045fb62c022adf03712b3b",
+        "passed": true
+      },
+      {
+        "name": "fraction_f0",
+        "variant": "before",
+        "metrics": {
+          "correlation": 0.9992729578530043,
+          "mae": 2.0559982638888887,
+          "max_error": 15.0,
+          "exact_fraction": 0.15980324074074073,
+          "within_one_fraction": 0.4465031828703704,
+          "nrmse": 0.02100279629054332,
+          "units": "uint8_rgb"
+        },
+        "output_sha256": "59653e5852c0c133f922c11ad23eb232feb62cb9bfe50b37315eb573d8df6a7b",
+        "input_sha256": "00313cf5720fbb4a5290683610eca9be0ae63a98c5c5b86b473d0b412e2e43d9",
+        "history_sha256": null,
+        "motion_sha256": "2538b3f02355a3df50af04898070d45bb61abf87bb95f24a024768a7c19eb9ee",
+        "passed": true
+      },
+      {
+        "name": "fraction_f1",
+        "variant": "before",
+        "metrics": {
+          "correlation": 0.9995745141084228,
+          "mae": 1.5769777199074073,
+          "max_error": 27.0,
+          "exact_fraction": 0.20549189814814814,
+          "within_one_fraction": 0.5593880208333334,
+          "nrmse": 0.01641222520484633,
+          "units": "uint8_rgb"
+        },
+        "output_sha256": "81e0f5c99d9843e6cefa923d054385cd03d814aedc00c809cde3793fbb612893",
+        "input_sha256": "dbcebdc477c3cc1625294945d2dea638270dfdfccdf1b041a4f9a1994e5c047c",
+        "history_sha256": "59653e5852c0c133f922c11ad23eb232feb62cb9bfe50b37315eb573d8df6a7b",
+        "motion_sha256": "2538b3f02355a3df50af04898070d45bb61abf87bb95f24a024768a7c19eb9ee",
+        "passed": true
+      },
+      {
+        "name": "odd_reset",
+        "variant": "rounded",
+        "metrics": {
+          "correlation": 0.9993660644128011,
+          "mae": 1.8173214463204568,
+          "max_error": 14.0,
+          "exact_fraction": 0.17918822016038535,
+          "within_one_fraction": 0.49503387337709576,
+          "nrmse": 0.01849233035222533,
+          "units": "uint8_rgb"
+        },
+        "output_sha256": "68ae26cf083416e391f7b1843ff69b66b170d6617d5e9d053617979a987b585e",
+        "passed": true
+      },
+      {
+        "name": "fraction_f0",
+        "variant": "rounded",
+        "metrics": {
+          "correlation": 0.9992922761587302,
+          "mae": 1.9887442129629629,
+          "max_error": 16.0,
+          "exact_fraction": 0.1649320023148148,
+          "within_one_fraction": 0.4589814814814815,
+          "nrmse": 0.02035540213912596,
+          "units": "uint8_rgb"
+        },
+        "output_sha256": "129b1c8267d549a7a5cf6be5f2095b68e7504d36b9c221b7f9135584938458d2",
+        "input_sha256": "00313cf5720fbb4a5290683610eca9be0ae63a98c5c5b86b473d0b412e2e43d9",
+        "history_sha256": null,
+        "motion_sha256": "2538b3f02355a3df50af04898070d45bb61abf87bb95f24a024768a7c19eb9ee",
+        "passed": true
+      },
+      {
+        "name": "fraction_f1",
+        "variant": "rounded",
+        "metrics": {
+          "correlation": 0.9995532845937258,
+          "mae": 1.6269126157407408,
+          "max_error": 36.0,
+          "exact_fraction": 0.19949652777777777,
+          "within_one_fraction": 0.5453747106481481,
+          "nrmse": 0.016915215742225577,
+          "units": "uint8_rgb"
+        },
+        "output_sha256": "d9d379f0bb4be7110b00248c03daafed1dc83f079656bd53819f48fa9b672c62",
+        "input_sha256": "dbcebdc477c3cc1625294945d2dea638270dfdfccdf1b041a4f9a1994e5c047c",
+        "history_sha256": "129b1c8267d549a7a5cf6be5f2095b68e7504d36b9c221b7f9135584938458d2",
+        "motion_sha256": "2538b3f02355a3df50af04898070d45bb61abf87bb95f24a024768a7c19eb9ee",
+        "passed": true
+      }
+    ]
+  },
+  "non_universal_improvement": "Fractional frame1 MAE changes 1.57697772 to 1.62691262 /255 and remains within the original .999 correlation /3 MAE gates; this is a contract correction, not a universal error reduction claim",
+  "cpu_tests": {
+    "command": "python -m unittest discover -s torch -p test_reset.py -v",
+    "tests": 9,
+    "passed": 9,
+    "new_tests": [
+      "test_pre_rgb_half_boundaries_in_both_modes_and_autocast",
+      "test_pre_rgb_rounding_leaves_noise_and_controls_float32"
+    ]
+  },
+  "frozen_source_sha256": {
+    "torch/dlss5/net.py": "848cc8b00d1efe066eca1f8b1783fa9aab6927a908bf2e7d779979397d079b6f",
+    "torch/test_reset.py": "0354e8fc56a1270595b19abf06d2c47c17a703c29d23ef2d38f25d105ac2a112",
+    "torch/check_reset.py": "c6698c5fd7149f20be1f136d3ceecc29a0f4acc5d2a627efbfc060651157c730",
+    "torch/dlss5/ops.py": "babf1b19a18e0b742603f0d6f594f4e7a2e9f67a8dbfb57c68eea7f7a0c80742",
+    "torch/dlss5/ptx_math.py": "0034713bcbdec10e1e0220e17fbfdc4d46d812f085c325139c5d3d58bddf9c59",
+    "torch/diagnose_controls.py": "03bc7d1b7310b77dad4b89dc49398b916bfe3678d83f9201c9f912f184ce4aa1",
+    "torch/diagnose_pre_round.py": "3a2943409121f0c0340ba0699b7f2f3661a6e2149742553d92f5f3bac35d4203"
+  },
+  "validation_scope": "Before/after numerical diagnosis used an in-process wrapper before production source update; root will run independent fresh full suites against the frozen production implementation. Historical source hashes were not rewritten.",
+  "publication_sanitization": {
+    "original_report_sha256": "0660dd913febcba85bf5300da4a5d3ef60949aafacaf19b09502095612aaa70a",
+    "removed_instruction_text_fields": 18,
+    "replacement": "opcode and SHA-256 of the previous UTF-8 instruction field, retaining the original one-based source line",
+    "reason": "Publish source identities and arithmetic operation types without reproducing original NVIDIA instruction text",
+    "numerical_conclusions_unchanged": true,
+    "historical_failure_reports_modified": false
+  }
+}

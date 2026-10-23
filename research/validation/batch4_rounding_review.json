@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "created_utc": "2026-10-23T12:03:47.040012+00:00",
+  "scope": "Independent CPU and structural review of six pre RGB/history normalization columns; no GPU execution",
+  "gpu_used": false,
+  "reviewer": "integration_finish",
+  "source_sha256": {
+    "torch/dlss5/net.py": "848cc8b00d1efe066eca1f8b1783fa9aab6927a908bf2e7d779979397d079b6f",
+    "torch/test_reset.py": "0354e8fc56a1270595b19abf06d2c47c17a703c29d23ef2d38f25d105ac2a112",
+    "torch/dlss5/export.py": "fd1d66e8d1e175da82bbcb716daf918b7178ab3dc33e6dc766da7bdd35c8a93b"
+  },
+  "previous_net_sha256": "fc5b33dad907b265ad8a09ef7c193e212854e38ae1a6ca097c3af2a27ef3d684",
+  "retained_original": {
+    "path": "fatbins\\fatbin_01.1.sm_120.ptx",
+    "sha256": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+    "color_conversion_lines": [
+      307,
+      319,
+      331
+    ],
+    "history_conversion_lines": [
+      538,
+      550,
+      562
+    ],
+    "contract": "Each sampled color/history channel is converted to f16 before f16 subtraction and f16 scale multiplication; the existing feature scale remains 0.125"
+  },
+  "arithmetic_reference": {
+    "path": "E:\\DLSS5\\_dl\\batch4_release_audit_f0025c7abd\\rounding_frozen_oracle_cpu.json",
+    "sha256": "fb0e33e74f655a0cc2aed5c61d10a88c5def1e934b3b811e6b710c0e54a02f51",
+    "evidence": {
+      "status": "passed",
+      "gpu_used": false,
+      "elements": 327680,
+      "half_input_encodings": 65536,
+      "tested_helper": "dlss5.net._pre_rgb",
+      "source_sha256": "848cc8b00d1efe066eca1f8b1783fa9aab6927a908bf2e7d779979397d079b6f",
+      "extra_f32_samples": 262144,
+      "random_seed": 4126,
+      "oracle": "NumPy explicit float16 conversion, float16 subtraction then float16 multiplication; NaN class only",
+      "modes": [
+        {
+          "precise": false,
+          "cpu_autocast": false,
+          "mismatches": 0
+        },
+        {
+          "precise": false,
+          "cpu_autocast": true,
+          "mismatches": 0
+        },
+        {
+          "precise": true,
+          "cpu_autocast": false,
+          "mismatches": 0
+        },
+        {
+          "precise": true,
+          "cpu_autocast": true,
+          "mismatches": 0
+        }
+      ],
+      "old_finite_bit_mismatches": 73737,
+      "scope": "CPU normalization arithmetic only; CUDA autocast and Graph are structurally reviewed separately"
+    },
+    "script": "E:\\DLSS5\\_dl\\batch4_release_audit_f0025c7abd\\rounding_oracle_cpu.py",
+    "script_sha256": "8831671f2f2d65ca68e36e7fef8d573b98dc8b3e4ac1c52af2aa2071398128a9"
+  },
+  "structural_checks": {
+    "pre_inputs_ast_matches_exact_reviewed_change": true,
+    "remaining_net_code_ast_unchanged_except_documentation": true,
+    "changed_columns": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "unchanged_columns": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "original_noise_controls_mask_cache_statements_unchanged": true,
+    "precise": "The six-column casts are unconditional and do not call ops.f16 or depend on PRECISE",
+    "autocast": "Explicit half conversion precedes pointwise half sub/mul and explicit float output; CPU autocast independently tested; CUDA behavior requires parent GPU regression",
+    "export": "Core.inputs delegates to the same Pre.inputs, then keeps its existing final half conversion",
+    "graph": "Only Torch tensor operators were added; no item(), host transfer, device/context mutation or new dynamic cache. Captured execution still needs parent GPU validation"
+  },
+  "evidence_identity": {
+    "historical_torch_cpu_log": "E:\\DLSS5\\_dl\\batch4_release_audit_f0025c7abd\\torch_cpu_frozen.log",
+    "historical_log_sha256": "5806eb4f21ee76d4a78b0aa6989e4e101d20f663d8e1dcd216a39f54304dde3c",
+    "historical_test_net_sha256": "fc5b33dad907b265ad8a09ef7c193e212854e38ae1a6ca097c3af2a27ef3d684",
+    "historical_methods": 31,
+    "warning": "The historical 31-method log and 121-method publication count predate this fix; neither is evidence that the new net passed integration. Parent records new rounded CPU/GPU reports separately."
+  },
+  "new_frozen_cpu_tests": {
+    "path": "E:\\DLSS5\\_dl\\batch4_release_audit_f0025c7abd\\rounding_final_reset_cpu.log",
+    "sha256": "4935faaa810a146928daec808e1c4920cb71930142bc0e94a27c753c38255690",
+    "methods": 9,
+    "test_source_sha256": "0354e8fc56a1270595b19abf06d2c47c17a703c29d23ef2d38f25d105ac2a112",
+    "model_source_sha256": "848cc8b00d1efe066eca1f8b1783fa9aab6927a908bf2e7d779979397d079b6f",
+    "result": "9/9 passed, including new four-mode half boundary and noise/control preservation cases"
+  },
+  "limitations": [
+    "No GPU, real game or native sm120 execution performed by this review",
+    "NaN payload and sign are not constrained; NaN category is checked",
+    "This review does not certify torch.compile fusion or alternate backends preserve rounding",
+    "Network control/motion/Reset/Graph acceptance belongs to new source-bound parent integration reports"
+  ]
+}

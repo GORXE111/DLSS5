@@ -1,0 +1,131 @@
+{
+  "status": "passed",
+  "scope": "Instruction-level FP8 conversion contract and source inventory, not MMA numerical parity",
+  "references": [
+    {
+      "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#alternate-floating-point-data-formats",
+      "claim": "E4M3 reserves magnitude 0x7f for NaN and has no infinity."
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cvt",
+      "claim": "RN ties to even; satfinite converts NaN to NaN, and Inf/out-of-range to sign-preserving MAX_NORM."
+    },
+    {
+      "url": "https://github.com/NVIDIA/cutlass/blob/main/include/cutlass/float8.h",
+      "claim": "NVIDIA CPU fallback and constants identify exponent biases E4M3=7/E5M2=15, finite maxima 0x7e/0x7b, and E5M2 infinity mask 0x7c; supports denormals."
+    }
+  ],
+  "formats": {
+    "e4m3": {
+      "positive_min_subnormal": "0x01 = 2^-9",
+      "positive_min_normal": "0x08 = 2^-6",
+      "positive_max": "0x7e = 448",
+      "negative_max": "0xfe = -448",
+      "nan_bytes": [
+        "0x7f",
+        "0xff"
+      ],
+      "inf": false
+    },
+    "e5m2": {
+      "positive_min_subnormal": "0x01 = 2^-16",
+      "positive_min_normal": "0x04 = 2^-14",
+      "positive_max": "0x7b = 57344",
+      "negative_max": "0xfb = -57344",
+      "infinity_bytes": [
+        "0x7c",
+        "0xfc"
+      ],
+      "nan_bytes": [
+        "0x7d",
+        "0x7e",
+        "0x7f",
+        "0xfd",
+        "0xfe",
+        "0xff"
+      ]
+    }
+  },
+  "source_inventory": {
+    "fatbins\\fatbin_01.1.sm_120.ptx": {
+      "sha256": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+      "e4m3_mentions": 17900,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_02.1.sm_120.ptx": {
+      "sha256": "ce7ddc731de4e6b90c59c10c100202d2781b7cb9d8c2d8faa9181ff965b1678d",
+      "e4m3_mentions": 12504,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_03.1.sm_120.ptx": {
+      "sha256": "c1b1fe55678d5a27414cb02d2a9a054e3239f2b6da8567e9420c4e8bd2dc1048",
+      "e4m3_mentions": 11416,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_04.1.sm_120.ptx": {
+      "sha256": "afca21c868f1c8df337de6f3ef9ac18c0b80a01bb0fbd2a5a5c05bfb5ff84b3d",
+      "e4m3_mentions": 11768,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_05.1.sm_120.ptx": {
+      "sha256": "ceb628025068799abb0c08ce37d19bb0ac91d84cd766cd36bdd9ee0d6a36df9b",
+      "e4m3_mentions": 7056,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_06.1.sm_120.ptx": {
+      "sha256": "98995d9949f07b464d69e1063e673aa48e2123d219b273104881ec38197631c5",
+      "e4m3_mentions": 7488,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_07.1.sm_120.ptx": {
+      "sha256": "1456260981c8d5c40c7d402f79c1a9c44bcae931f2b2f3d7062d0ca864e255e8",
+      "e4m3_mentions": 804,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_08.1.sm_120.ptx": {
+      "sha256": "6a2ecf58a7d012d77c86392e816b7fa2fe77d5fad4c86b26234c3781ee872e18",
+      "e4m3_mentions": 0,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_09.1.sm_120.ptx": {
+      "sha256": "e6c2374fc01f878f9e3e0fbed4137c29c6b02575a31373bf940ef23c0cfe90cd",
+      "e4m3_mentions": 0,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_10.1.sm_120.ptx": {
+      "sha256": "b108f54d3c4d766fbcbe037ffbcada536c55f3767f07fca38e092bff1420e3c7",
+      "e4m3_mentions": 0,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_11.1.sm_120.ptx": {
+      "sha256": "73b8b32e7c96778b6e87ac40a9e1d3c34a67dbc0f67cbc79fb0fd997fb0fca8b",
+      "e4m3_mentions": 0,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_12.1.sm_120.ptx": {
+      "sha256": "0a056a78544645c1795daa8d1bd0a8c4b6a16b9f9be5ec60b62d18177b926cb6",
+      "e4m3_mentions": 0,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_13.1.sm_120.ptx": {
+      "sha256": "c373100f91e7b6bc3041f7c827f759b2f0b2843dd2e40fe5b1d69f3ab072e4ce",
+      "e4m3_mentions": 0,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_14.1.sm_120.ptx": {
+      "sha256": "13640f51aec2492f88dd2ad50e603beaaae63f56de2ae6c3764bca624ffaf65b",
+      "e4m3_mentions": 0,
+      "e5m2_mentions": 0
+    },
+    "fatbins\\fatbin_15.1.sm_120.ptx": {
+      "sha256": "e3efb4f68797cad3bb9492431ca3c024b9eca70591cc39384d8c9f61c115c322",
+      "e4m3_mentions": 0,
+      "e5m2_mentions": 0
+    }
+  },
+  "limitations": [
+    "NaN payload and sign are not asserted by acceptance.",
+    "E5M2 is absent from all 15 source PTXs; no rewriter support was added, and E5M2 oracle landmark checks are research only.",
+    "No sm120 MMA accumulation or subnormal equivalence inferred from CPU conversion tests or RTX3060."
+  ]
+}

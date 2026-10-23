@@ -1,0 +1,27 @@
+{
+  "live_dll_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+  "fatbin_01_cache_matches_live_dll_embedded_fatbin": true,
+  "cache_sha256": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4",
+  "embedded_sha256": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4",
+  "note": "A test isolation error refreshed this one cache, but never rewrote the live DLL; comparing regenerated cache content to the existing DLL.",
+  "cause": "A newly added reporting test was temporarily assigned to the wrong test class; its inherited CUDA-tool mocks were absent.",
+  "affected_cache_files": [
+    "E:\\DLSS5\\sm86_port\\fatbin_01.1.sm_120.cubin",
+    "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.ptx",
+    "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.cubin",
+    "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.fatbin",
+    "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.fatbin.cache.json"
+  ],
+  "before_file_hashes_available": false,
+  "live_dll_never_written": true,
+  "package_model_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+  "package_manifest_verification": "passed; see batch2_build_package_preservation.log",
+  "fix": "Restored test class ownership; reporting tests now prohibit calls to real CUDA tools. Final CPU unit suite: 7 passed.",
+  "affected_cache_file_sha256_after_rebuild": {
+    "E:\\DLSS5\\sm86_port\\fatbin_01.1.sm_120.cubin": "feb368ff5279a7408b1e55554db6e468d7f114a24b18b2af8d7e6989a410c612",
+    "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.ptx": "2beb1b23aecf9aa55df12a327fb401a50e3515a2da8762a3590627942616703a",
+    "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.cubin": "0186cdf53222f9f586d19ea4f98f92d3b5928e3235d52f922e8dae047f8dceca",
+    "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.fatbin": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4",
+    "E:\\DLSS5\\sm86_port\\fatbin_01.sm86.fatbin.cache.json": "d8e190e9c921242165c18688499c305d78ac9a931b8eb8657174bd2f7bcd3707"
+  }
+}

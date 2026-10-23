@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "created_utc": "2026-10-23T11:46:14.304456+00:00",
+  "scope": "CPU temporary fixtures and read-only source review; no model or GPU execution",
+  "initial_failures": {
+    "path": "E:\\DLSS5\\_dl\\batch4_release_audit_f0025c7abd\\report_alias_findings.json",
+    "sha256": "4417740ebad33bb9c1ec80958f977aa9c792d955eba0984924a0ca08b86f8c3d",
+    "evidence": {
+      "scope": "CPU temporary fixtures only; real project files untouched",
+      "results": [
+        {
+          "component": "tools/verify_assets.py",
+          "fixture": "--report aliases root/weights_map.json",
+          "exit_code": 0,
+          "input_preserved": false,
+          "result_passed": true
+        },
+        {
+          "component": "torch/acceptance.py",
+          "fixture": "--report aliases a registered PPM reference",
+          "exit_code": 0,
+          "input_preserved": false,
+          "result_passed": true
+        }
+      ]
+    }
+  },
+  "after_fix": [
+    {
+      "component": "tools/verify_assets.py",
+      "fixture": "--report aliases root/weights_map.json",
+      "rejected_before_validation": true,
+      "input_preserved": true,
+      "original_sha256": "344b90c24257bad44dd9c5b7acff4aad1682c0fccb28b89540dd736ee85dcd0c",
+      "after_sha256": "344b90c24257bad44dd9c5b7acff4aad1682c0fccb28b89540dd736ee85dcd0c",
+      "reason": "Report aliases a source/reference/model input: C:\\Users\\admin\\AppData\\Local\\Temp\\dlss5-audit-after-cr7vvw7a\\weights_map.json"
+    },
+    {
+      "component": "torch/acceptance.py",
+      "fixture": "--report aliases a registered PPM reference",
+      "rejected_before_reference_read": true,
+      "input_preserved": true,
+      "original_sha256": "f7f61f7db8e5185115f264ded4e62a8064628b0ba5b1b94d491c3d2cf4673042",
+      "after_sha256": "f7f61f7db8e5185115f264ded4e62a8064628b0ba5b1b94d491c3d2cf4673042",
+      "reason": "Report aliases a source/reference/model input: C:\\Users\\admin\\AppData\\Local\\Temp\\dlss5-audit-after-cr7vvw7a\\reference.ppm"
+    }
+  ],
+  "frozen_source_sha256": {
+    "tools/report_paths.py": "88c0c40940267fcd0fe185bc87c37114a834da8e1c0a53bd8dd19a50d44dfb60",
+    "tools/test_report_paths.py": "c73f728119ac8321eb8ae09a69ee892147dcf8ce21f4fc5348b01628b92912e4",
+    "tools/verify_assets.py": "11caaa6176490c03c3d21af2aedbe6a1627990940a6d50367f61ef8d80bb9c88",
+    "tools/trace_transfer_host.py": "e5c84c52d59d6bebe2183866e3d89318c7d840db1cd9addb967d5a5b8115cfbd",
+    "torch/acceptance.py": "343df6ef367d2d93c3a710a7b00212ca0b5e902e504304aa84536c9a1b70812f",
+    "harness/check_temporal.py": "2892b16b8917e372a6f005c8d0ca29d885084ab71682b9ca9148226c6717ae36"
+  },
+  "regression_tests": {
+    "path": "E:\\DLSS5\\_dl\\batch4_release_audit_f0025c7abd\\report_path_tests_final.log",
+    "sha256": "6cab36fbf00f8a3bd511658ce8b5931f42e0e487f14f9625028ad02abc554f8e",
+    "methods": 13,
+    "wall_seconds": 16.716,
+    "status": "passed",
+    "gpu_used": false
+  },
+  "independent_review": {
+    "agent": "complete_model",
+    "result": "13/13 CPU methods passed; no blocking findings",
+    "reviewed_helper_sha256": "88c0c40940267fcd0fe185bc87c37114a834da8e1c0a53bd8dd19a50d44dfb60"
+  },
+  "properties": [
+    "Resolved and case-insensitive paths plus samefile detect direct paths and hardlinks",
+    "Report and .tmp cannot alias each other or source/runtime/model/reference inputs",
+    "Protected input directories reject report containment and outside hardlinks",
+    "Dynamic references are checked before registration and again before finish",
+    "Safe reports replace old PASS on validation failure",
+    "Exclusive temporary creation preserves user files; exception cleanup checks file identity",
+    "Strict serialization failure leaves no new temporary file and can be retried"
+  ],
+  "legal_cli_regressions": [
+    {
+      "path": "E:\\DLSS5\\_dl\\batch4_release_audit_f0025c7abd\\torch_cpu_final.log",
+      "sha256": "5c96504ae2f79256e8ca84762f885bb4a2cf6470b8639e197f0e56b616f85926",
+      "methods": 28,
+      "wall_seconds": 65.076,
+      "status": "passed",
+      "gpu_used": false
+    },
+    {
+      "path": "E:\\DLSS5\\_dl\\batch4_release_audit_f0025c7abd\\temporal_cpu_final.log",
+      "sha256": "eaaaaafc683691b535c0a41c5a71f45b54dc652a68f9529a4530c672d9241f74",
+      "methods": 4,
+      "wall_seconds": 4.118,
+      "status": "passed",
+      "gpu_used": false
+    },
+    {
+      "path": "E:\\DLSS5\\_dl\\batch4_release_audit_f0025c7abd\\schedule_cpu_final.log",
+      "sha256": "2e9d46e7c21efae4c27ed83c4807410cf16abac03cdc47d4ddc3d1de31201742",
+      "methods": 21,
+      "wall_seconds": 3.563,
+      "status": "passed",
+      "gpu_used": false
+    }
+  ],
+  "limitations": [
+    "CPU release safety tests do not certify official sm120 numerical parity",
+    "Hostile concurrent filesystem mutation is outside the local single-user validation contract"
+  ]
+}

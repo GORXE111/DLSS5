@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "artifacts": 26,
+  "model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+  "source_fingerprint": "1b73c55f1a2c9419c1fb451810d6b41dcf85d51f124afb0964b82a378b810a13",
+  "artifacts_fingerprint": "ed1130c53a67c05c3e13f758dfc009e10e3e5fe46ed9fd4a53fcef387b2d3193",
+  "manifest_sha256": "d19c1c8f96eb4c9349d11b54c58d83287c3ca3458243bf87cfd6bec5ac19ca20",
+  "package": "plugin/dist/DLSS5-RTX30",
+  "previous_package": "plugin/dist/DLSS5-RTX30.previous-zhf4pwbv",
+  "installer": {
+    "passed": 15,
+    "failed": 0,
+    "exit_code": 0,
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File plugin/test_install.ps1 -Work E:/DLSS5/_dl/batch3_install",
+    "scope": "owned fake-game workspace only; source session tool output records all 15 checks"
+  },
+  "native_equivalence_report": "research/validation/batch3_proxy_equivalence.json",
+  "plugin_29_case_gpu_suite_rerun": false,
+  "verified_utc": "2026-10-23T11:59:55.374036+00:00",
+  "command": [
+    "python",
+    "plugin/build_plugin.py",
+    "--verify-only"
+  ],
+  "exit_code": 0,
+  "verification_output": "Verified 26 artifacts; source 1b73c55f1a2c9419c1fb451810d6b41dcf85d51f124afb0964b82a378b810a13",
+  "current_model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+  "packaged_model_sha256": null,
+  "installer_note": "Installer and native equivalence rows are retained batch3 evidence, not rerun batch4.",
+  "scope": "Current local 26-artifact package verification only; independent PyTorch source updates do not rebuild or modify this native package.",
+  "packaged_models": [
+    {
+      "path": "plugin\\dist\\DLSS5-RTX30\\payload\\nvngx_dlssnr.dll",
+      "sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "bytes": 196982784
+    }
+  ]
+}

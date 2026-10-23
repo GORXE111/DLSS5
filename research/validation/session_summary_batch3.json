@@ -1,0 +1,170 @@
+{
+  "schema": 2,
+  "client_date": "2026-10-23",
+  "timezone": "Asia/Singapore",
+  "completed_utc": "2026-10-23T10:30:30.900466+00:00",
+  "status": "iteration_complete_with_known_gaps",
+  "target": "DLSS-NR 310.8.0",
+  "hardware": "RTX 3060 12 GB / driver 610.74",
+  "official_native_equivalence_verified": false,
+  "all_numerical_checks_passed": false,
+  "sampling": {
+    "passed": false,
+    "coverage": {
+      "isolated": {
+        "compared": 12,
+        "passed": 10,
+        "failed": 2
+      },
+      "full_kernel": {
+        "compared": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      "network": {
+        "compared": 20,
+        "passed": 20,
+        "failed": 0
+      }
+    },
+    "cuda_graph": {
+      "max_error": 0.0,
+      "mean_error": 0.0,
+      "passed": true,
+      "eager_sha256": "c6f8fb64e5cb00ca6d4a3e32666f6e0ffa941e9e3087f3810be6f20002ec73a5",
+      "graph_sha256": "c6f8fb64e5cb00ca6d4a3e32666f6e0ffa941e9e3087f3810be6f20002ec73a5"
+    },
+    "report": "research/validation/batch3_sampling_current.json",
+    "failed_cases": [
+      "post_53x37",
+      "post_640x360"
+    ]
+  },
+  "schedule": {
+    "passed": true,
+    "steps_passed": 71,
+    "steps_total": 71,
+    "comparisons_passed": 79,
+    "fp8_boundaries": 76,
+    "repack_bit_exact": 2,
+    "post_srgb8": 1,
+    "skipped": 0,
+    "runs": 25,
+    "buffers": 78,
+    "chunks": 81,
+    "cpu_tests": 21,
+    "scope": "71 schedule module boundaries for one 640x360 reset frame; f16 sm86 port regression only",
+    "report": "research/batch3/schedule_summary.json"
+  },
+  "motion2d": {
+    "passed": true,
+    "capture_cases": 19,
+    "numerical_checks": 32,
+    "input_bit_exact_checks": 3,
+    "checks": 35,
+    "skipped": 0,
+    "report": "research/validation/check_motion2d_batch3.json"
+  },
+  "fp8_special": {
+    "passed": true,
+    "cpu_special_groups": 7,
+    "gpu_variants": 6,
+    "cpu_build_and_special_unit_tests": 25,
+    "exit_fixture_subcases": 6,
+    "default_accumulation_changed": false,
+    "report": "research/batch3_numeric_summary.json"
+  },
+  "build": {
+    "passed": true,
+    "first_misses": 15,
+    "first_stages": 76,
+    "second_hits": 15,
+    "second_stages": 16,
+    "two_new_dlls_byte_identical": true,
+    "old_dll_binary_equal": false,
+    "report": "research/batch3_build_verified.json"
+  },
+  "finite_gpu_regression": {
+    "passed": true,
+    "scenarios": 52,
+    "output_files": 53,
+    "all_files_byte_identical": true,
+    "reference_kind": "port-sm86",
+    "report": "research/batch3_gpu_regressions.json"
+  },
+  "default_model": {
+    "sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "bytes": 196982784,
+    "artifacts": 76,
+    "cache_entries_verified": 15,
+    "backup": "E:\\DLSS5\\sm86_port.batch3-backup-0b84169e5487"
+  },
+  "package": {
+    "passed": true,
+    "artifacts": 26,
+    "model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "source_fingerprint": "1b73c55f1a2c9419c1fb451810d6b41dcf85d51f124afb0964b82a378b810a13",
+    "artifacts_fingerprint": "ed1130c53a67c05c3e13f758dfc009e10e3e5fe46ed9fd4a53fcef387b2d3193",
+    "manifest_sha256": "d19c1c8f96eb4c9349d11b54c58d83287c3ca3458243bf87cfd6bec5ac19ca20",
+    "package": "plugin/dist/DLSS5-RTX30",
+    "previous_package": "plugin/dist/DLSS5-RTX30.previous-zhf4pwbv",
+    "installer": {
+      "passed": 15,
+      "failed": 0,
+      "exit_code": 0,
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File plugin/test_install.ps1 -Work E:/DLSS5/_dl/batch3_install",
+      "scope": "owned fake-game workspace only; source session tool output records all 15 checks"
+    },
+    "native_equivalence_report": "research/validation/batch3_proxy_equivalence.json",
+    "plugin_29_case_gpu_suite_rerun": false
+  },
+  "cpu": {
+    "capture_compare": 16,
+    "temporal": 4,
+    "motion_checker": 4,
+    "sampling": 4,
+    "export_finish_combinations": 16,
+    "tap_address_cases": 26,
+    "tap_null_guards": 2,
+    "malformed_motion_arguments_rejected": 8
+  },
+  "syntax_files": 46,
+  "integrity_report": "research/validation/batch3_integrity.json",
+  "integrity_report_sha256": "d05b6b5b3a7dc0eee569773e56f988d2e97a8fbb4bffbcc5daf4b458c9c6976b",
+  "known_gaps": [
+    "Two arbitrary-coordinate Catmull post sampling failures remain at unchanged thresholds",
+    "Reset with explicit nonzero motion still differs in independent pre input semantics",
+    "No official RTX50 sm120 native output capture; FP16 split MMA remains approximate",
+    "Single-size reset schedule boundaries do not cover every launch interior or input branch",
+    "Commercial game matrix, Vulkan injection, newer model and training process are not complete"
+  ],
+  "reports_sha256": {
+    "research/validation/batch3_assets.json": "4915fad3f60405d268cb519abf1da170547faf17509fbce0887e406f922e5918",
+    "research/validation/batch3_harness_cpu.json": "f5a929017975a8ae43af17af9d2af594a708d22ee1461fc992e41225bcf0944c",
+    "research/validation/batch3_sampling.json": "ecf1e67d686d15f4bdba7b165ed57268c633f7f51c204cebf01bb474fa17558f",
+    "research/validation/batch3_sampling_current.json": "dd843d543e649ee3b2c2f2b2271bfaed11d5a99118eeb31d0c6c37fa58fa4378",
+    "research/validation/check_motion2d_batch3.json": "1ea3475416882e513830ed20feabc0f89dd94322370e15c4d763356c9ebaa340",
+    "research/validation/batch3_independent_review.json": "fc8820f38ca0301f16e1c97a6e1de870deb3ccdc438438e6599bc4b56dc9711c",
+    "research/validation/batch3_proxy_equivalence.json": "d78b8ca4b0b84d145457d774dcf5eab1f09414e47dc04873f221dd564a74b53a",
+    "research/validation/batch3_package_validation.json": "13825535088d62b1d67a31aa2c881b9552c273f921b912616dba904149b2a8dd",
+    "research/batch3/schedule_summary.json": "74f442bc2e92a089a454864cb2007a578867483d72a03fd275e6f130173f8a96",
+    "research/batch3/check_schedule.json": "fa8c50f02708d92f5ce2528c9e8a3f61ca86e155e89328c7b9396b3f9f159a1d",
+    "research/batch3/schedule_cpu.json": "135c661d991bf2de4eb8ab49e11d7d14fab4553a5ec8804a2c86cf157e499212",
+    "research/batch3_numeric_summary.json": "e954d80d1b483e89683928caf2dd31a64b996de1dea5f77c418c772ac62c37f7",
+    "research/batch3_numeric_cpu.json": "9de883602be54aea409a297655e07a85ad76e5614bea3f7a9e9711533b36c844",
+    "research/batch3_numeric_gpu.json": "3b304890b7f03052590b621fdb698fa82b3152487fb03dd4e1813e65efe0c6a8",
+    "research/batch3_numeric_ptxas.json": "1a17dc5db36c775bb15d7f0d6615c527c69e4dc4120ccef8e7b4bfd023ee2314",
+    "research/batch3_build_first.json": "f73be04f69146b7f827376c174c805bb305ff92a9695a8c2d222a802fd2802a2",
+    "research/batch3_build_second.json": "39aa3d62b2283574ac294505e6c7860a9d77c102e751a28bbb3342489903ebec",
+    "research/batch3_build_verified.json": "096be66cdecdb3a122f02fc27cbcaed5668bfb47b440719042dbb753bd2e534a",
+    "research/batch3_gpu_regressions.json": "b17bd5c9d8576307be965a56cd6b557f7f3e3e51f3b76de9ce0de724f38e7cd8",
+    "research/batch3_regression_full.json": "b8cb0cb1372845dd79302fc278694c9bba16ca2cf2a1cb9956becea40cefe023",
+    "research/batch3_regression_temporal.json": "112ecfe3b1e861a44bd0291745ef5b9c4b85a203d5c35954924f497371b1ef11",
+    "research/batch3_regression_motion2d.json": "7cf50bb9dc2b96a0ec4bbc2af780ac16d21eb91aeaccf135ccbd5c7144d60002",
+    "research/batch3_promotion.json": "d5640a4e248461ebea0fb8021652886ae38fd76a6842c43549c69c02c77c4fd0",
+    "research/batch3_promotion_revision.json": "674ce1e14d379a2c1e457774c83156022c17d72c9d7c6fcae736bb38da2e3780",
+    "research/batch3_promotion_verified.json": "cef9433dfa9006381225b9e0e304774b39e7576587112e92b62df244a66eb57d",
+    "research/validation/session_summary_batch1.json": "0de595897e67fcb3bb4404f6ff961f324c42b7617a21ab06ba1eb2545e9181e9",
+    "research/validation/session_summary_batch2.json": "8fbe4daee513a64becb898ac69c591adf78331fb1267444bd77f041fd614c7c8"
+  }
+}

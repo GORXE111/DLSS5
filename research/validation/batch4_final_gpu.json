@@ -1,0 +1,173 @@
+{
+  "passed": false,
+  "status": "failed",
+  "started_utc": "2026-10-23T11:48:28.817549+00:00",
+  "scope": "Current frozen independent model versus identified local port references; not official sm120 parity",
+  "jobs": [
+    {
+      "name": "reset",
+      "command": [
+        "C:\\Users\\admin\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+        "torch/check_reset.py",
+        "--capture",
+        "research/batch4/reset_capture",
+        "--report",
+        "E:\\DLSS5\\research\\validation\\batch4_reset_fused.json"
+      ],
+      "exit_code": 0,
+      "passed": true,
+      "report": "research\\validation\\batch4_reset_fused.json",
+      "report_sha256": "1a1e80efceeafe0c8e11019e3dd50e91eeabe26c0c83c9e335edd0522aef3e1a",
+      "log": "_dl\\batch4_final_gpu_logs\\reset.log",
+      "log_sha256": "0dce5c8351ec2c0ca502ce47de9fb4c9dac63fde660a938193054a5e928b8b3e",
+      "wall_seconds": 18.125,
+      "coverage": {
+        "cpu": {
+          "compared": 3,
+          "passed": 3
+        },
+        "kernel": {
+          "compared": 12,
+          "passed": 12
+        },
+        "graph": {
+          "compared": 2,
+          "passed": 2
+        },
+        "network": {
+          "baseline": {
+            "compared": 8,
+            "passed": 7
+          },
+          "candidate": {
+            "compared": 8,
+            "passed": 8
+          }
+        }
+      }
+    },
+    {
+      "name": "schedule",
+      "command": [
+        "C:\\Users\\admin\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+        "torch/check_schedule.py",
+        "--capture",
+        "research/batch3/schedule_capture",
+        "--harness",
+        "harness/batch3/nr-lab.exe",
+        "--report",
+        "E:\\DLSS5\\research\\validation\\batch4_schedule.json"
+      ],
+      "exit_code": 0,
+      "passed": true,
+      "report": "research\\validation\\batch4_schedule.json",
+      "report_sha256": "e2f067b3569968999762ebaaf298fa083b623250de01511ff08ad50f4fa96576",
+      "log": "_dl\\batch4_final_gpu_logs\\schedule.log",
+      "log_sha256": "8524a6168564a6afbc6938609a9af1b3d8dcb7f09c2ea99d8e71186d81bd240e",
+      "wall_seconds": 15.39000000001397,
+      "coverage": {
+        "schedule_steps_total": 71,
+        "schedule_steps_compared": 71,
+        "schedule_steps_passed": 71
+      }
+    },
+    {
+      "name": "motion2d",
+      "command": [
+        "C:\\Users\\admin\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+        "torch/check_motion2d.py",
+        "--capture",
+        "harness/captures/port-batch3-motion2d",
+        "--report",
+        "E:\\DLSS5\\research\\validation\\batch4_motion2d.json"
+      ],
+      "exit_code": 0,
+      "passed": true,
+      "report": "research\\validation\\batch4_motion2d.json",
+      "report_sha256": "2e8bbda7384dff04c1233f02552c33971f1309996f03a531cae46065c321561b",
+      "log": "_dl\\batch4_final_gpu_logs\\motion2d.log",
+      "log_sha256": "1acb8a51c7cc090c3e4d7a3172c3ffd5a8dc52f0ea5ce8e60dde5594e12b5367",
+      "wall_seconds": 54.57799999997951,
+      "coverage": {
+        "compared": 35,
+        "skipped": 0,
+        "fraction": 1.0
+      }
+    },
+    {
+      "name": "resolutions",
+      "command": [
+        "C:\\Users\\admin\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+        "torch/check_res.py",
+        "--report",
+        "E:\\DLSS5\\research\\validation\\batch4_resolutions.json"
+      ],
+      "exit_code": 0,
+      "passed": true,
+      "report": "research\\validation\\batch4_resolutions.json",
+      "report_sha256": "b907fbc01161eb81521ffb6ce0ecf07aaff2e4eba6f53e33196b384b44b9f9db",
+      "log": "_dl\\batch4_final_gpu_logs\\resolutions.log",
+      "log_sha256": "51c07513e239214ffe8e6762234862e2c771729826f41fe03ef9fcfd7d4552ec",
+      "wall_seconds": 21.23499999998603,
+      "coverage": {
+        "compared": 3,
+        "skipped": 0,
+        "fraction": 1.0
+      }
+    },
+    {
+      "name": "controls",
+      "command": [
+        "C:\\Users\\admin\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+        "torch/check_controls.py",
+        "--report",
+        "E:\\DLSS5\\research\\validation\\batch4_controls.json"
+      ],
+      "exit_code": 1,
+      "passed": false,
+      "report": "research\\validation\\batch4_controls.json",
+      "report_sha256": "492b58eed1c17729a1222ac25dbc6734a857f9454724bcb3cf4c87456bd64845",
+      "log": "_dl\\batch4_final_gpu_logs\\controls.log",
+      "log_sha256": "2e4f503fc212e9d93874f8258be0c3c34b4dadb312c05efda268b176e6b229d6",
+      "wall_seconds": 94.92200000002049,
+      "coverage": {
+        "compared": 18,
+        "skipped": 0,
+        "fraction": 1.0
+      }
+    },
+    {
+      "name": "postprocess",
+      "command": [
+        "C:\\Users\\admin\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+        "torch/check_postprocess.py",
+        "--report",
+        "E:\\DLSS5\\research\\validation\\batch4_postprocess.json"
+      ],
+      "exit_code": 0,
+      "passed": true,
+      "report": "research\\validation\\batch4_postprocess.json",
+      "report_sha256": "c301d88c557406f88600f832e22c0d930a5bc87955580bfb748b2a6f82894aa0",
+      "log": "_dl\\batch4_final_gpu_logs\\postprocess.log",
+      "log_sha256": "9a10285a751e45e13ecbd2cff9697a9be89ec409af93fe45fa6d272d5d9d2c6b",
+      "wall_seconds": 54.34299999999348
+    }
+  ],
+  "model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+  "source_sha256": {
+    "torch/dlss5/net.py": "fc5b33dad907b265ad8a09ef7c193e212854e38ae1a6ca097c3af2a27ef3d684",
+    "torch/dlss5/export.py": "fd1d66e8d1e175da82bbcb716daf918b7178ab3dc33e6dc766da7bdd35c8a93b",
+    "torch/dlss5/ops.py": "babf1b19a18e0b742603f0d6f594f4e7a2e9f67a8dbfb57c68eea7f7a0c80742",
+    "torch/dlss5/ptx_math.py": "0034713bcbdec10e1e0220e17fbfdc4d46d812f085c325139c5d3d58bddf9c59",
+    "torch/acceptance.py": "343df6ef367d2d93c3a710a7b00212ca0b5e902e504304aa84536c9a1b70812f",
+    "tools/report_paths.py": "88c0c40940267fcd0fe185bc87c37114a834da8e1c0a53bd8dd19a50d44dfb60",
+    "torch/check_motion2d.py": "261f7e2fed1db727dbe9ace2099cbb1103834bce6ffc1063c65bfcacf3ff09aa",
+    "torch/check_reset.py": "c6698c5fd7149f20be1f136d3ceecc29a0f4acc5d2a627efbfc060651157c730",
+    "torch/check_schedule.py": "853cd2bbb47c03701742f91fb7471bf770c6f69e0c55da0394e9201e16f78b68",
+    "torch/check_res.py": "6c98d4d6e0b0a7baa10c4f049f7a71d9f7b40e34587ff2b5ece418aa54b5c73f",
+    "torch/check_controls.py": "7cb7f3c9b44b142f94b54be1a28c952f07a248882f4473e0d4864ca39cd93b6b",
+    "torch/check_postprocess.py": "21017611a94d10abdd4611b027c9bdf5d2818b4a224798b5490ad81d126f6a55"
+  },
+  "source_identity_unchanged": true,
+  "finished_utc": "2026-10-23T11:52:47.563027+00:00"
+}

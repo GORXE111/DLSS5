@@ -1,0 +1,297 @@
+﻿{
+    "reference":  "A541F182967D4FE4F60E9A82F51A72DEF0DB9B5EE8B42156732EBCDCA15FC1E6",
+    "frames":  300,
+    "cases":  [
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "18.29",
+                      "name":  "rgba8",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "14.41",
+                      "name":  "bgra8",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "14.47",
+                      "name":  "rgb10",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  {
+                                  "highlight_mean_ratio":  0.8870185368140642,
+                                  "highlight_pixels":  126822,
+                                  "input_peak_nits":  80.0,
+                                  "mean_abs_nits":  5.375808821784125,
+                                  "output_peak_nits":  94.140625,
+                                  "status":  "pass"
+                              },
+                      "ms_per_frame":  "15.75",
+                      "name":  "rgba16f (= scRGB HDR)",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  {
+                                  "highlight_mean_ratio":  0.9226478944435388,
+                                  "highlight_pixels":  126822,
+                                  "input_peak_nits":  800.0,
+                                  "mean_abs_nits":  27.134243637626923,
+                                  "output_peak_nits":  800.0,
+                                  "status":  "pass"
+                              },
+                      "ms_per_frame":  "16.45",
+                      "name":  "scRGB HDR, highlights x4",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  {
+                                  "highlight_mean_ratio":  0.8760588291974092,
+                                  "highlight_pixels":  23178,
+                                  "input_peak_nits":  127.61409868556734,
+                                  "mean_abs_nits":  8.830041044460522,
+                                  "output_peak_nits":  136.45546142875105,
+                                  "status":  "pass"
+                              },
+                      "ms_per_frame":  "37.31",
+                      "name":  "HDR10 (PQ, Rec.2020)",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  {
+                                  "highlight_mean_ratio":  0.9743581960260378,
+                                  "highlight_pixels":  23178,
+                                  "input_peak_nits":  508.4672923117986,
+                                  "mean_abs_nits":  19.090480527586912,
+                                  "output_peak_nits":  508.4672923117986,
+                                  "status":  "pass"
+                              },
+                      "ms_per_frame":  "21.16",
+                      "name":  "HDR10 highlights x4",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "20.48",
+                      "name":  "Present1",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "18.49",
+                      "name":  "ResizeBuffers",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "16.03",
+                      "name":  "ResizeBuffers1",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "26.15",
+                      "name":  "recreate",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "19.65",
+                      "name":  "waitable",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "28.91",
+                      "name":  "two chains",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "28.30",
+                      "name":  "parallel Present two threads",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "14.66",
+                      "name":  "scale 0.5",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "15.19",
+                      "name":  "optical flow (moving)",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "14.17",
+                      "name":  "scene cut",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "14.98",
+                      "name":  "exact MV = nr-lab mvok",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "14.62",
+                      "name":  "UI protection",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "14.13",
+                      "name":  "UI protection off",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "13.24",
+                      "name":  "D3D11 blt + readback",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "13.24",
+                      "name":  "D3D11 legacy create",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "17.81",
+                      "name":  "D3D11 flip",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "12.69",
+                      "name":  "D3D11 bgra8",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "12.88",
+                      "name":  "D3D11 rgba8 sRGB (blt)",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "19.50",
+                      "name":  "D3D11 rgb10",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "23.43",
+                      "name":  "D3D11 ResizeBuffers",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "21.50",
+                      "name":  "D3D11 recreate",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  },
+                  {
+                      "hdr":  null,
+                      "ms_per_frame":  "19.29",
+                      "name":  "D3D11 optical flow",
+                      "reasons":  [
+
+                                  ],
+                      "passed":  true
+                  }
+              ],
+    "failed":  0,
+    "passed":  29
+}

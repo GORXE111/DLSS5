@@ -1,0 +1,135 @@
+{
+  "status": "passed",
+  "work": "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230",
+  "scope": "CPU ptxas acceptance only; no GPU execution",
+  "initial_failure": "Initial direct packed set immediate operand was rejected; replaced with register operand before any full build.",
+  "variants": [
+    {
+      "options": {
+        "mode": "f16",
+        "enc": "v1",
+        "dec": "v1",
+        "fuse": true
+      },
+      "command": [
+        "cuda_tools/bin/ptxas.exe",
+        "-arch=sm_86",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0.ptx",
+        "-o",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0.cubin"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "wall_seconds": 0.1041896000970155,
+      "ptx_sha256": "4c5ff01ea21fcf803a6943f37018b9a43bea6153d4ed2704fd9a701fe7715f1f",
+      "cubin_sha256": "f37d77e3fe955605eedf4a3b2742c935eac6e75af043a38637dd144d15898760"
+    },
+    {
+      "options": {
+        "mode": "f16",
+        "enc": "v2",
+        "dec": "v1",
+        "fuse": true
+      },
+      "command": [
+        "cuda_tools/bin/ptxas.exe",
+        "-arch=sm_86",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_1.ptx",
+        "-o",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_1.cubin"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "wall_seconds": 0.10996360005810857,
+      "ptx_sha256": "3881bb64c9d862ba7c52a4eaafa512b6bd64537af7ef0251560d601513b77e56",
+      "cubin_sha256": "413295f265a22a668a0a6e614b9483f84adcd36f8eab76c803baf40ffba51d57"
+    },
+    {
+      "options": {
+        "mode": "f16",
+        "enc": "v1",
+        "dec": "v1",
+        "fuse": true,
+        "encode": "f32"
+      },
+      "command": [
+        "cuda_tools/bin/ptxas.exe",
+        "-arch=sm_86",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_2.ptx",
+        "-o",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_2.cubin"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "wall_seconds": 0.11066859995480627,
+      "ptx_sha256": "805a21773539db3356bb32c70dd89db9658a0b23e44b5b9531849833bc646401",
+      "cubin_sha256": "d0156baed1fef8443a03c45f733de00fc2bcace0394f6ea487ee786a51bc82b2"
+    },
+    {
+      "options": {
+        "mode": "f16",
+        "enc": "v1",
+        "dec": "v2",
+        "fuse": true
+      },
+      "command": [
+        "cuda_tools/bin/ptxas.exe",
+        "-arch=sm_86",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_3.ptx",
+        "-o",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_3.cubin"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "wall_seconds": 0.13932519999798387,
+      "ptx_sha256": "c1b3744a00543b43e95ba6b54d509c51ff05622252004739bdb4d23d27ecd947",
+      "cubin_sha256": "98af39a4ff5151651a7d7224b61d5ab02c288402940b0413f1162a3e638f20bd"
+    },
+    {
+      "options": {
+        "mode": "f16",
+        "enc": "v1",
+        "dec": "v1",
+        "fuse": false
+      },
+      "command": [
+        "cuda_tools/bin/ptxas.exe",
+        "-arch=sm_86",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_4.ptx",
+        "-o",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_4.cubin"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "wall_seconds": 0.17263619997538626,
+      "ptx_sha256": "d4d79426ccd143504d92f26e6dee0a576ff85b8cfa758edfdeb62f6bbae61973",
+      "cubin_sha256": "237d3d0e2f1113bbb092f7ba69cf2b0e182e6afd4b1f076661a0955d01a28021"
+    },
+    {
+      "options": {
+        "mode": "f16",
+        "enc": "v1",
+        "dec": "v2",
+        "fuse": false
+      },
+      "command": [
+        "cuda_tools/bin/ptxas.exe",
+        "-arch=sm_86",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_5.ptx",
+        "-o",
+        "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_5.cubin"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "wall_seconds": 0.13053009996656328,
+      "ptx_sha256": "8c5225306f0780980f35b834851a4f8a9c66cd988fe3e106df385beb6af1e93c",
+      "cubin_sha256": "d6e8ee397af1db39c3d246642409d0694968e4e4b3e31ec9dd207ca511183928"
+    }
+  ]
+}

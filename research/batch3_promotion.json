@@ -1,0 +1,13 @@
+{
+  "status": "failed",
+  "started_utc": "2026-10-23T10:22:27.314208+00:00",
+  "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2",
+  "live": "E:\\DLSS5\\sm86_port",
+  "stage": "E:\\DLSS5\\sm86_port.batch3-stage-6d300acb28e7",
+  "backup": "E:\\DLSS5\\sm86_port.batch3-backup-6d300acb28e7",
+  "deletion_performed": false,
+  "scope": "Validated FP8 NaN generation replaces dedicated default directory; complete old directory preserved",
+  "error": "KeyError: 'research/batch3_build_verified.json'",
+  "renamed_old": false,
+  "installed_new": false
+}

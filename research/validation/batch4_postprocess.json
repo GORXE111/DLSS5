@@ -1,0 +1,251 @@
+{
+  "scope": "DLSS-NR 310.8.0 sm_86 port; no native RTX 50 baseline",
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "frame_tolerance": {
+    "mae_255_max": 2.5,
+    "correlation_min": 0.998
+  },
+  "kernel_max_255": 0.001,
+  "frames": [
+    {
+      "mae_255": 0.8817881941795349,
+      "max_255": 13.999999046325684,
+      "corr": 0.9997907451832359,
+      "equal_fraction": 0.42984375,
+      "name": "style1_mask",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "control-mask",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--ramp-channels",
+        "1",
+        "--style",
+        "1"
+      ],
+      "checksum_fnv1a64": "B3FE2DEC3DD842CB"
+    },
+    {
+      "mae_255": 1.0838758945465088,
+      "max_255": 13.00000286102295,
+      "corr": 0.9997446042843212,
+      "equal_fraction": 0.37188657407407405,
+      "name": "style2_mask",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "control-mask",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--ramp-channels",
+        "1",
+        "--style",
+        "2"
+      ],
+      "checksum_fnv1a64": "A1122413C0D87BF7"
+    },
+    {
+      "mae_255": 0.3616565465927124,
+      "max_255": 4.999999523162842,
+      "corr": 0.9999639253286416,
+      "equal_fraction": 0.6649406828703703,
+      "name": "style1_mask_intensity",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "control-mask",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--ramp-channels",
+        "1",
+        "--style",
+        "1",
+        "--intensity",
+        "0.4"
+      ],
+      "checksum_fnv1a64": "122D1685BD3CD03E"
+    },
+    {
+      "mae_255": 1.0401201248168945,
+      "max_255": 12.000006675720215,
+      "corr": 0.9997869212686068,
+      "equal_fraction": 0.39548177083333336,
+      "name": "ui_alpha",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "ui-alpha",
+        "--optional-format",
+        "r8",
+        "--optional-variant",
+        "3",
+        "--ui-correction",
+        "1"
+      ],
+      "checksum_fnv1a64": "6719DB1CE9C09EF8"
+    },
+    {
+      "mae_255": 0.8177936673164368,
+      "max_255": 12.999999046325684,
+      "corr": 0.9998196849698524,
+      "equal_fraction": 0.4469574652777778,
+      "name": "style1_ui_alpha",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "ui-alpha",
+        "--optional-format",
+        "r8",
+        "--optional-variant",
+        "3",
+        "--ui-correction",
+        "1",
+        "--style",
+        "1"
+      ],
+      "checksum_fnv1a64": "608CBEDD1912F3C7"
+    },
+    {
+      "mae_255": 0.5296368598937988,
+      "max_255": 12.000000953674316,
+      "corr": 0.9999537397296762,
+      "equal_fraction": 0.7023553240740741,
+      "name": "ui_bundle_priority_backbuffer",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "ui-bundle",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--bundle-backbuffer",
+        "1",
+        "--ui-correction",
+        "1"
+      ],
+      "checksum_fnv1a64": "D76C86342FA9AB85"
+    },
+    {
+      "mae_255": 0.2861443758010864,
+      "max_255": 9.000000953674316,
+      "corr": 0.9999843136758184,
+      "equal_fraction": 0.7728327546296296,
+      "name": "style2_ui_bundle",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "ui-bundle",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--bundle-backbuffer",
+        "1",
+        "--ui-correction",
+        "1",
+        "--style",
+        "2",
+        "--intensity",
+        "0.6"
+      ],
+      "checksum_fnv1a64": "7991F4F3E2450EDE"
+    },
+    {
+      "mae_255": 2.055999755859375,
+      "max_255": 14.999999046325684,
+      "corr": 0.9992729563742369,
+      "equal_fraction": 0.1598046875,
+      "name": "ui_disabled",
+      "passed": true,
+      "arguments": [
+        "--optional",
+        "ui-bundle",
+        "--optional-format",
+        "rgba16f",
+        "--optional-variant",
+        "3",
+        "--bundle-backbuffer",
+        "1",
+        "--ui-correction",
+        "0"
+      ],
+      "checksum_fnv1a64": "FF4996CEBF6E31B3"
+    }
+  ],
+  "kernels": [
+    {
+      "mae_255": 9.346494152850937e-06,
+      "max_255": 0.00021278858184814453,
+      "corr": 0.9999999999999624,
+      "equal_fraction": 0.5143634200237974,
+      "name": "style1_mask",
+      "passed": true
+    },
+    {
+      "mae_255": 6.601624590985011e-06,
+      "max_255": 0.0001519918441772461,
+      "corr": 0.999999999999976,
+      "equal_fraction": 0.5881353051164372,
+      "name": "style2_mask_intensity",
+      "passed": true
+    },
+    {
+      "mae_255": 9.372390195494518e-06,
+      "max_255": 0.0002887845039367676,
+      "corr": 0.9999999999999599,
+      "equal_fraction": 0.5267720550739419,
+      "name": "ui_alpha",
+      "passed": true
+    },
+    {
+      "mae_255": 9.501953172730282e-06,
+      "max_255": 0.00018998980522155762,
+      "corr": 0.9999999999999614,
+      "equal_fraction": 0.4733979262281149,
+      "name": "ui_rgba",
+      "passed": true
+    },
+    {
+      "mae_255": 6.009082426317036e-06,
+      "max_255": 0.00019758939743041992,
+      "corr": 0.9999999999999872,
+      "equal_fraction": 0.647628760836308,
+      "name": "ui_alpha_priority",
+      "passed": true
+    },
+    {
+      "mae_255": 3.195560793756158e-06,
+      "max_255": 0.00011779367923736572,
+      "corr": 0.9999999999999943,
+      "equal_fraction": 0.7535271120176781,
+      "name": "style2_ui_mask",
+      "passed": true
+    },
+    {
+      "mae_255": 1.2500961020123214e-05,
+      "max_255": 0.0002887845039367676,
+      "corr": 0.9999999999999651,
+      "equal_fraction": 0.563488016318205,
+      "name": "backbuffer_no_alpha",
+      "passed": true
+    },
+    {
+      "mae_255": 0.0,
+      "max_255": 0.0,
+      "corr": 0.9999999999999998,
+      "equal_fraction": 1.0,
+      "name": "zero_intensity_backbuffer",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

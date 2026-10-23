@@ -1,0 +1,16 @@
+{
+  "scope": "actual local compiler/cache integration for fatbin_08 only; no full DLL rebuild",
+  "passed": true,
+  "initial_tool_calls": [
+    "cuobjdump.exe",
+    "ptxas.exe",
+    "fatbinary.exe"
+  ],
+  "reuse_tool_calls": [],
+  "recovery_tool_calls": [
+    "ptxas.exe",
+    "fatbinary.exe"
+  ],
+  "rebuilt_fatbin_sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059",
+  "rebuild_after_corruption_identical": true
+}

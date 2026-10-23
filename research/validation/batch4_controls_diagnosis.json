@@ -1,0 +1,438 @@
+{
+  "passed": false,
+  "complete": true,
+  "diagnostic_complete": true,
+  "errors": [],
+  "variants": [
+    {
+      "name": "high/new_fast",
+      "precise": false,
+      "half": true,
+      "controls": {
+        "LocalTone": 1.5,
+        "StructureGate": 1.0,
+        "Skin": 1.5,
+        "Structure": 1.5,
+        "Style": 0.0,
+        "style": 0
+      },
+      "pre_experiment": "new",
+      "metrics": {
+        "correlation": 0.9989892173605515,
+        "mae": 2.354681712962963,
+        "max_error": 18.0,
+        "exact_fraction": 0.1356640625,
+        "within_one_fraction": 0.38646122685185186,
+        "nrmse": 0.02372261503638582,
+        "units": "uint8_rgb"
+      },
+      "meets_fixed_acceptance": false,
+      "output_sha256": "a251525da5022e44a7404c63f97791494658b9e7ff8b73f0786178ba8b2696df",
+      "seconds": 1.4946069000288844
+    },
+    {
+      "name": "high/old_fast",
+      "precise": false,
+      "half": true,
+      "controls": {
+        "LocalTone": 1.5,
+        "StructureGate": 1.0,
+        "Skin": 1.5,
+        "Structure": 1.5,
+        "Style": 0.0,
+        "style": 0
+      },
+      "pre_experiment": "old_color_history",
+      "metrics": {
+        "correlation": 0.9990184727207793,
+        "mae": 2.2105164930555556,
+        "max_error": 20.0,
+        "exact_fraction": 0.14986689814814816,
+        "within_one_fraction": 0.42,
+        "nrmse": 0.022660821337040428,
+        "units": "uint8_rgb"
+      },
+      "meets_fixed_acceptance": true,
+      "output_sha256": "b54fe7892982e9380966bcee003f77b79d6ce6f09b90bfedd5661c70c82947d6",
+      "seconds": 0.2641315000364557
+    },
+    {
+      "name": "high/new_precise",
+      "precise": true,
+      "half": false,
+      "controls": {
+        "LocalTone": 1.5,
+        "StructureGate": 1.0,
+        "Skin": 1.5,
+        "Structure": 1.5,
+        "Style": 0.0,
+        "style": 0
+      },
+      "pre_experiment": "new",
+      "metrics": {
+        "correlation": 0.9990500858946901,
+        "mae": 2.286017071759259,
+        "max_error": 16.0,
+        "exact_fraction": 0.14234085648148148,
+        "within_one_fraction": 0.40141493055555555,
+        "nrmse": 0.023171105481413892,
+        "units": "uint8_rgb"
+      },
+      "meets_fixed_acceptance": true,
+      "output_sha256": "18808b9b514ef648e011c3068500721e2fdd0eb8705bc0a7958c82c431c21f41",
+      "seconds": 0.381694000097923
+    },
+    {
+      "name": "high/old_precise",
+      "precise": true,
+      "half": false,
+      "controls": {
+        "LocalTone": 1.5,
+        "StructureGate": 1.0,
+        "Skin": 1.5,
+        "Structure": 1.5,
+        "Style": 0.0,
+        "style": 0
+      },
+      "pre_experiment": "old_color_history",
+      "metrics": {
+        "correlation": 0.9990200680625598,
+        "mae": 2.232038483796296,
+        "max_error": 16.0,
+        "exact_fraction": 0.14543258101851853,
+        "within_one_fraction": 0.41139612268518516,
+        "nrmse": 0.02270228587327806,
+        "units": "uint8_rgb"
+      },
+      "meets_fixed_acceptance": true,
+      "output_sha256": "107eee5fa129371a7106263acfbe748b0c75e04a62bbefce2afd839a1572eaa3",
+      "seconds": 0.4022257999749854
+    },
+    {
+      "name": "high/rounded_fast",
+      "precise": false,
+      "half": true,
+      "controls": {
+        "LocalTone": 1.5,
+        "StructureGate": 1.0,
+        "Skin": 1.5,
+        "Structure": 1.5,
+        "Style": 0.0,
+        "style": 0
+      },
+      "pre_experiment": "ptx_input_rounding",
+      "metrics": {
+        "correlation": 0.9990731813050597,
+        "mae": 2.201170428240741,
+        "max_error": 18.0,
+        "exact_fraction": 0.14743634259259258,
+        "within_one_fraction": 0.4151287615740741,
+        "nrmse": 0.022343883599290962,
+        "units": "uint8_rgb"
+      },
+      "meets_fixed_acceptance": true,
+      "output_sha256": "78275dbcfcb4b8cf70875b0423b8962f51ec9cfbd16c3877afd7d5091f2b844b",
+      "seconds": 0.28613480005878955
+    },
+    {
+      "name": "high/rounded_precise",
+      "precise": true,
+      "half": false,
+      "controls": {
+        "LocalTone": 1.5,
+        "StructureGate": 1.0,
+        "Skin": 1.5,
+        "Structure": 1.5,
+        "Style": 0.0,
+        "style": 0
+      },
+      "pre_experiment": "ptx_input_rounding",
+      "metrics": {
+        "correlation": 0.9990450266342799,
+        "mae": 2.1815364583333334,
+        "max_error": 17.0,
+        "exact_fraction": 0.14865162037037036,
+        "within_one_fraction": 0.42050925925925925,
+        "nrmse": 0.022202326551245266,
+        "units": "uint8_rgb"
+      },
+      "meets_fixed_acceptance": true,
+      "output_sha256": "526ee1f2be249d0757d6ed45aee0fb4167690077d14f0abe3d36e75e106065f9",
+      "seconds": 0.36080699996091425
+    },
+    {
+      "name": "high/fast_f32",
+      "precise": false,
+      "half": false,
+      "controls": {
+        "LocalTone": 1.5,
+        "StructureGate": 1.0,
+        "Skin": 1.5,
+        "Structure": 1.5,
+        "Style": 0.0,
+        "style": 0
+      },
+      "pre_experiment": "new",
+      "metrics": {
+        "correlation": 0.9990892125071901,
+        "mae": 2.187879050925926,
+        "max_error": 17.0,
+        "exact_fraction": 0.14890480324074074,
+        "within_one_fraction": 0.4202575231481481,
+        "nrmse": 0.022297801550328126,
+        "units": "uint8_rgb"
+      },
+      "meets_fixed_acceptance": true,
+      "output_sha256": "48f7028d369f46ed1fe21d4ecd373a62b830f2ad05705c1a45f3ac43c6f91184",
+      "seconds": 0.3507946999743581
+    },
+    {
+      "name": "default/new_fast",
+      "precise": false,
+      "half": true,
+      "controls": {
+        "LocalTone": 1.0,
+        "StructureGate": 1.0,
+        "Skin": 1.0,
+        "Structure": 1.0,
+        "Style": 0.0,
+        "style": 0
+      },
+      "pre_experiment": "new",
+      "metrics": {
+        "correlation": 0.9992729578530043,
+        "mae": 2.0559982638888887,
+        "max_error": 15.0,
+        "exact_fraction": 0.15980324074074073,
+        "within_one_fraction": 0.4465031828703704,
+        "nrmse": 0.02100279629054332,
+        "units": "uint8_rgb"
+      },
+      "meets_fixed_acceptance": true,
+      "output_sha256": "59653e5852c0c133f922c11ad23eb232feb62cb9bfe50b37315eb573d8df6a7b",
+      "seconds": 0.42829940002411604
+    },
+    {
+      "name": "default/old_fast",
+      "precise": false,
+      "half": true,
+      "controls": {
+        "LocalTone": 1.0,
+        "StructureGate": 1.0,
+        "Skin": 1.0,
+        "Structure": 1.0,
+        "Style": 0.0,
+        "style": 0
+      },
+      "pre_experiment": "old_color_history",
+      "metrics": {
+        "correlation": 0.9992729578530043,
+        "mae": 2.0559982638888887,
+        "max_error": 15.0,
+        "exact_fraction": 0.15980324074074073,
+        "within_one_fraction": 0.4465031828703704,
+        "nrmse": 0.02100279629054332,
+        "units": "uint8_rgb"
+      },
+      "meets_fixed_acceptance": true,
+      "output_sha256": "59653e5852c0c133f922c11ad23eb232feb62cb9bfe50b37315eb573d8df6a7b",
+      "seconds": 0.3217409000499174
+    },
+    {
+      "name": "default/rounded_fast",
+      "precise": false,
+      "half": true,
+      "controls": {
+        "LocalTone": 1.0,
+        "StructureGate": 1.0,
+        "Skin": 1.0,
+        "Structure": 1.0,
+        "Style": 0.0,
+        "style": 0
+      },
+      "pre_experiment": "ptx_input_rounding",
+      "metrics": {
+        "correlation": 0.9992922761587302,
+        "mae": 1.9887442129629629,
+        "max_error": 16.0,
+        "exact_fraction": 0.1649320023148148,
+        "within_one_fraction": 0.4589814814814815,
+        "nrmse": 0.02035540213912596,
+        "units": "uint8_rgb"
+      },
+      "meets_fixed_acceptance": true,
+      "output_sha256": "129b1c8267d549a7a5cf6be5f2095b68e7504d36b9c221b7f9135584938458d2",
+      "seconds": 0.5035233000526205
+    }
+  ],
+  "scope": "Bounded current port diagnosis; no native parity claim",
+  "thresholds": {
+    "min_correlation": 0.999,
+    "max_mae_255": 3.0
+  },
+  "frozen_model_sources_modified": false,
+  "device": "NVIDIA GeForce RTX 3060",
+  "source_sha256": {
+    "torch/diagnose_controls.py": "03bc7d1b7310b77dad4b89dc49398b916bfe3678d83f9201c9f912f184ce4aa1",
+    "torch/dlss5/net.py": "fc5b33dad907b265ad8a09ef7c193e212854e38ae1a6ca097c3af2a27ef3d684",
+    "torch/dlss5/ops.py": "babf1b19a18e0b742603f0d6f594f4e7a2e9f67a8dbfb57c68eea7f7a0c80742",
+    "torch/dlss5/ptx_math.py": "0034713bcbdec10e1e0220e17fbfdc4d46d812f085c325139c5d3d58bddf9c59",
+    "torch/dlss5/blocks.py": "02e5de6579ae941fc745766e2e96596592eb958c7bc13290fe5a215245483e14",
+    "harness/reference.py": "1cd0f5a333b9272755112839a715751e4d285cb0837d4fe70ba82ee6bd7ecbe8",
+    "harness/batch3/nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+    "harness/nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+    "sm86_port/nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "harness/rt_sm86/nvngx_dlssnr.dll": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "WEIGHTS_HT.bin": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4",
+    "weights_map.json": "3cc0d06eee61fee43e0fe07c06abc5332e44bb3688c4c772a00be581695a674b"
+  },
+  "reference": {
+    "current_high": {
+      "path": "E:\\DLSS5\\research\\batch4\\controls_diagnosis\\current_high",
+      "manifest_sha256": "b1e491dc092eb74c36febadc04434c5de7d0761beaf239b629c6d28eecf6ba3c",
+      "runtime_sha256": {
+        "nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+        "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+        "nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+        "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+        "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+      },
+      "output_sha256": "3b1246c39c00bd2df6bdf2fd74c1ac304548adc0c5cacddcab1f365ad043a38a",
+      "trace_sha256": "f1dc636e4a35e965622c0a5791c43d584ed03a22219a5ba7d27bee03c610ff05",
+      "parameters": [
+        {
+          "seq": 1,
+          "kernel": "cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+          "parameter_bytes": 264,
+          "history_handle_hex": "0x0",
+          "motion_handle_hex": "0x0",
+          "raw_parameters_sha256": "0bd2109b21cb04557bedfd8b198a4b9951d57167e02a2d6bd67b2382b07f419b",
+          "frame": 0,
+          "control_parameters": {
+            "172": 1.5,
+            "176": 1.5,
+            "180": 0.0,
+            "184": 1.5,
+            "188": 1.5
+          }
+        },
+        {
+          "seq": 154,
+          "kernel": "cc_tinlayout_fused_post_block_swin_1h_32_fp8",
+          "parameter_bytes": 184,
+          "history_handle_hex": "0x0",
+          "motion_handle_hex": "0x0",
+          "raw_parameters_sha256": "d2686e02509e78e456ad78ceb16da164905a0642671650e7ffd7d2fb322dd71e"
+        }
+      ]
+    },
+    "current_default": {
+      "path": "E:\\DLSS5\\research\\batch4\\controls_diagnosis\\current_default",
+      "manifest_sha256": "efe4df5a7ae2a5bc3f423ab175a2118ed4be6a3379d5d52d8c259709b7ecb458",
+      "runtime_sha256": {
+        "nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+        "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+        "nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+        "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+        "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+      },
+      "output_sha256": "a541f182967d4fe4f60e9a82f51a72def0db9b5ee8b42156732ebcdca15fc1e6",
+      "trace_sha256": "dc2497a3efb3facd4ff2e2597f1e28ab3c510b04ad03bfbc814f877479f66a63",
+      "parameters": [
+        {
+          "seq": 1,
+          "kernel": "cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+          "parameter_bytes": 264,
+          "history_handle_hex": "0x0",
+          "motion_handle_hex": "0x0",
+          "raw_parameters_sha256": "b6121990de2d5f3a23cca0868cfa3ba1fe2365998eaf12e6dc467425e53083dd",
+          "frame": 0,
+          "control_parameters": {
+            "172": 1.0,
+            "176": 1.0,
+            "180": 0.0,
+            "184": 1.0,
+            "188": 1.0
+          }
+        },
+        {
+          "seq": 154,
+          "kernel": "cc_tinlayout_fused_post_block_swin_1h_32_fp8",
+          "parameter_bytes": 184,
+          "history_handle_hex": "0x0",
+          "motion_handle_hex": "0x0",
+          "raw_parameters_sha256": "d2686e02509e78e456ad78ceb16da164905a0642671650e7ffd7d2fb322dd71e"
+        }
+      ]
+    },
+    "previous_high": {
+      "path": "E:\\DLSS5\\research\\batch4\\controls_diagnosis\\previous_high",
+      "manifest_sha256": "e2ada4661a5d520359bed79c485f0ebc62063d01bbe248924075b83a50be4aed",
+      "runtime_sha256": {
+        "nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+        "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+        "nvngx_dlssnr.dll": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+        "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+        "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+      },
+      "output_sha256": "3b1246c39c00bd2df6bdf2fd74c1ac304548adc0c5cacddcab1f365ad043a38a",
+      "trace_sha256": "360f2f6c4fb194ae81a78539343234f8044d60f035e3f888022f482d689dec55",
+      "parameters": [
+        {
+          "seq": 1,
+          "kernel": "cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+          "parameter_bytes": 264,
+          "history_handle_hex": "0x0",
+          "motion_handle_hex": "0x0",
+          "raw_parameters_sha256": "0bd2109b21cb04557bedfd8b198a4b9951d57167e02a2d6bd67b2382b07f419b",
+          "frame": 0,
+          "control_parameters": {
+            "172": 1.5,
+            "176": 1.5,
+            "180": 0.0,
+            "184": 1.5,
+            "188": 1.5
+          }
+        },
+        {
+          "seq": 154,
+          "kernel": "cc_tinlayout_fused_post_block_swin_1h_32_fp8",
+          "parameter_bytes": 184,
+          "history_handle_hex": "0x0",
+          "motion_handle_hex": "0x0",
+          "raw_parameters_sha256": "d2686e02509e78e456ad78ceb16da164905a0642671650e7ffd7d2fb322dd71e"
+        }
+      ]
+    }
+  },
+  "dll_output_comparison": {
+    "high_old_new_bit_exact": true,
+    "original_failed_case_reference_sha256": "3b1246c39c00bd2df6bdf2fd74c1ac304548adc0c5cacddcab1f365ad043a38a",
+    "current_matches_original_failed_reference": true
+  },
+  "input_sha256": "00313cf5720fbb4a5290683610eca9be0ae63a98c5c5b86b473d0b412e2e43d9",
+  "pairs": {
+    "high/old_fast": {
+      "mae_255": 1.8086321353912354,
+      "max_255": 14.1943359375,
+      "changed_values": 686001
+    },
+    "high/rounded_fast": {
+      "mae_255": 1.908105492591858,
+      "max_255": 18.0853271484375,
+      "changed_values": 686314
+    },
+    "default/old_fast": {
+      "mae_255": 0.0,
+      "max_255": 0.0,
+      "changed_values": 0
+    },
+    "default/rounded_fast": {
+      "mae_255": 1.6676197052001953,
+      "max_255": 15.672908782958984,
+      "changed_values": 686889
+    }
+  },
+  "unresolved_acceptance_failure": true,
+  "status": "unresolved"
+}

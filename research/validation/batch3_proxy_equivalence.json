@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "scope": "Native package code equivalent to the previously GPU-tested binaries except PE timestamps; no new plugin GPU run claimed",
+  "checks": [
+    {
+      "name": "dxgi.dll",
+      "tested": "plugin\\fallback\\test\\dxgi.dll",
+      "rebuilt": "plugin\\fallback\\bin\\dxgi.dll",
+      "tested_sha256": "2cb3743e3380fe81b2e9018781403e1deb4539eb9f246a46df5c939dfc6b7e81",
+      "rebuilt_sha256": "77f3016f127af55ecfed2bd2f540f8e7099ef80c4475761f453f8857a4963a53",
+      "ignored_timestamp_offsets": [
+        [
+          280,
+          264356,
+          250532
+        ],
+        [
+          280,
+          264356,
+          250532
+        ]
+      ],
+      "identical_except_pe_timestamps": true
+    },
+    {
+      "name": "dlss5_nvngx.dll",
+      "tested": "plugin\\fallback\\test\\dlss5_nvngx.dll",
+      "rebuilt": "plugin\\fallback\\bin\\dlss5_nvngx.dll",
+      "tested_sha256": "cda6f5468f31d312a308ff9eb22ceb31edef452cb9f8bbc6e8631d8ca226a3f9",
+      "rebuilt_sha256": "aa5ce89a61a41b4edd494f5fea24f94d4c91ab79ed0280dbb98f10c9a70d61d4",
+      "ignored_timestamp_offsets": [
+        [
+          280,
+          98292,
+          92468
+        ],
+        [
+          280,
+          98292,
+          92468
+        ]
+      ],
+      "identical_except_pe_timestamps": true
+    }
+  ]
+}

@@ -1,0 +1,281 @@
+{
+  "schema": 3,
+  "batch": 4,
+  "client_date": "2026-10-23",
+  "timezone": "Asia/Singapore",
+  "completed_utc": "2026-10-23T12:14:13.920486+00:00",
+  "status": "iteration_complete_with_external_equivalence_gaps",
+  "target": "DLSS-NR 310.8.0 feature18",
+  "hardware": "RTX 3060 12 GB / driver 610.74",
+  "official_native_equivalence_verified": false,
+  "current_frozen_acceptance_passed": true,
+  "acceptance_scope": "Seven finite local sm86 regression suites at their unchanged thresholds; historical failures remain false; not bit-exact, all-input, game or sm120 parity",
+  "implementation_changes": [
+    "Raw missing History/MV reset resource semantics; fixed-history Graph validation",
+    "Complete pre/post fused coordinate arithmetic and authored CUDA RCP.APPROX shim",
+    "Explicit original half conversion, subtraction and multiplication for Color/History six pre columns in both precision modes",
+    "Atomic report destination protection against input, hardlink and temporary aliases"
+  ],
+  "source_sha256": {
+    "torch/dlss5/net.py": "848cc8b00d1efe066eca1f8b1783fa9aab6927a908bf2e7d779979397d079b6f",
+    "torch/dlss5/export.py": "fd1d66e8d1e175da82bbcb716daf918b7178ab3dc33e6dc766da7bdd35c8a93b",
+    "torch/dlss5/ops.py": "babf1b19a18e0b742603f0d6f594f4e7a2e9f67a8dbfb57c68eea7f7a0c80742",
+    "torch/dlss5/ptx_math.py": "0034713bcbdec10e1e0220e17fbfdc4d46d812f085c325139c5d3d58bddf9c59",
+    "torch/acceptance.py": "343df6ef367d2d93c3a710a7b00212ca0b5e902e504304aa84536c9a1b70812f",
+    "tools/report_paths.py": "88c0c40940267fcd0fe185bc87c37114a834da8e1c0a53bd8dd19a50d44dfb60",
+    "torch/check_motion2d.py": "261f7e2fed1db727dbe9ace2099cbb1103834bce6ffc1063c65bfcacf3ff09aa",
+    "torch/check_reset.py": "c6698c5fd7149f20be1f136d3ceecc29a0f4acc5d2a627efbfc060651157c730",
+    "torch/check_schedule.py": "853cd2bbb47c03701742f91fb7471bf770c6f69e0c55da0394e9201e16f78b68",
+    "torch/check_res.py": "6c98d4d6e0b0a7baa10c4f049f7a71d9f7b40e34587ff2b5ece418aa54b5c73f",
+    "torch/check_controls.py": "7cb7f3c9b44b142f94b54be1a28c952f07a248882f4473e0d4864ca39cd93b6b",
+    "torch/check_postprocess.py": "21017611a94d10abdd4611b027c9bdf5d2818b4a224798b5490ad81d126f6a55"
+  },
+  "sampling": {
+    "passed": true,
+    "complete": true,
+    "coverage": {
+      "isolated": {
+        "compared": 16,
+        "passed": 16,
+        "failed": 0
+      },
+      "full_kernel": {
+        "compared": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      "network": {
+        "compared": 20,
+        "passed": 20,
+        "failed": 0
+      }
+    },
+    "cuda_graph": {
+      "max_error": 0.0,
+      "mean_error": 0.0,
+      "passed": true,
+      "eager_sha256": "e12286b1cd6b9562a346460845416c19604027d7107a2bdef0ca18913fd4cde2",
+      "graph_sha256": "e12286b1cd6b9562a346460845416c19604027d7107a2bdef0ca18913fd4cde2"
+    },
+    "report": "research/validation/batch4_sampling_rounded.json"
+  },
+  "reset": {
+    "passed": true,
+    "suite_complete": true,
+    "coverage": {
+      "cpu": {
+        "compared": 3,
+        "passed": 3
+      },
+      "kernel": {
+        "compared": 12,
+        "passed": 12
+      },
+      "graph": {
+        "compared": 2,
+        "passed": 2
+      },
+      "network": {
+        "baseline": {
+          "compared": 8,
+          "passed": 6
+        },
+        "candidate": {
+          "compared": 8,
+          "passed": 8
+        }
+      }
+    },
+    "history_control": {
+      "name": "same_fixed_history_and_fractional_mv",
+      "size_wh": [
+        53,
+        37
+      ],
+      "motion": [
+        3.25,
+        -1.5
+      ],
+      "input_sha256": "82dba72ce6c55a04c8d397acadc4644c04d487636d80f344d53adfcd787e6303",
+      "history_sha256": "c9305a8d457fffcb2fa6233aae42a052f3252f8da76f9b69850f42f5264ea4aa",
+      "motion_sha256": "0f80cb96ae69f57e42d40af79601dbfe4e8354e543baa58f0278aeeef884a1bb",
+      "baseline_sha256": "bc5ad38cbbb2304e2e8cc3268bfaaac62b94eb6d88455f2580c9d3d555aa667f",
+      "output_sha256": "bc5ad38cbbb2304e2e8cc3268bfaaac62b94eb6d88455f2580c9d3d555aa667f",
+      "passed": true
+    },
+    "baseline_is_diagnostic_not_acceptance": true,
+    "report": "research/validation/batch4_reset_fused_rounded.json"
+  },
+  "schedule": {
+    "passed": true,
+    "coverage": {
+      "schedule_steps_total": 71,
+      "schedule_steps_compared": 71,
+      "schedule_steps_passed": 71
+    },
+    "comparisons": 79,
+    "report": "research/validation/batch4_schedule_rounded.json"
+  },
+  "motion2d": {
+    "passed": true,
+    "coverage": {
+      "compared": 35,
+      "skipped": 0,
+      "fraction": 1.0
+    },
+    "report": "research/validation/batch4_motion2d_rounded.json"
+  },
+  "controls": {
+    "passed": true,
+    "coverage": {
+      "compared": 18,
+      "skipped": 0,
+      "fraction": 1.0
+    },
+    "report": "research/validation/batch4_controls_rounded.json"
+  },
+  "resolutions": {
+    "passed": true,
+    "coverage": {
+      "compared": 3,
+      "skipped": 0,
+      "fraction": 1.0
+    },
+    "report": "research/validation/batch4_resolutions_rounded.json"
+  },
+  "postprocess": {
+    "passed": true,
+    "frame_cases": 8,
+    "isolated_kernels": 8,
+    "report": "research/validation/batch4_postprocess_rounded.json"
+  },
+  "cpu": {
+    "passed": true,
+    "methods": 35,
+    "report": "research/validation/batch4_rounded_cpu.json",
+    "counting_policy": "This fresh 35-method run overlaps prior independent CPU runs; no aggregate repeated-test count is claimed",
+    "independent_half_oracle": "research/validation/batch4_rounding_review.json",
+    "shared_report_guard": "research/validation/batch4_report_paths.json"
+  },
+  "default_model": {
+    "sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "bytes": 196982784,
+    "artifacts": 76,
+    "cache_entries_verified": 15,
+    "backup": "E:\\DLSS5\\sm86_port.batch3-backup-0b84169e5487"
+  },
+  "package": {
+    "passed": true,
+    "artifacts": 26,
+    "model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "source_fingerprint": "1b73c55f1a2c9419c1fb451810d6b41dcf85d51f124afb0964b82a378b810a13",
+    "artifacts_fingerprint": "ed1130c53a67c05c3e13f758dfc009e10e3e5fe46ed9fd4a53fcef387b2d3193",
+    "manifest_sha256": "d19c1c8f96eb4c9349d11b54c58d83287c3ca3458243bf87cfd6bec5ac19ca20",
+    "package": "plugin/dist/DLSS5-RTX30",
+    "previous_package": "plugin/dist/DLSS5-RTX30.previous-zhf4pwbv",
+    "installer": {
+      "passed": 15,
+      "failed": 0,
+      "exit_code": 0,
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File plugin/test_install.ps1 -Work E:/DLSS5/_dl/batch3_install",
+      "scope": "owned fake-game workspace only; source session tool output records all 15 checks"
+    },
+    "native_equivalence_report": "research/validation/batch3_proxy_equivalence.json",
+    "plugin_29_case_gpu_suite_rerun": false,
+    "verified_utc": "2026-10-23T11:59:55.374036+00:00",
+    "command": [
+      "python",
+      "plugin/build_plugin.py",
+      "--verify-only"
+    ],
+    "exit_code": 0,
+    "verification_output": "Verified 26 artifacts; source 1b73c55f1a2c9419c1fb451810d6b41dcf85d51f124afb0964b82a378b810a13",
+    "current_model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "packaged_model_sha256": null,
+    "installer_note": "Installer and native equivalence rows are retained batch3 evidence, not rerun batch4.",
+    "scope": "Current local 26-artifact package verification only; independent PyTorch source updates do not rebuild or modify this native package.",
+    "packaged_models": [
+      {
+        "path": "plugin\\dist\\DLSS5-RTX30\\payload\\nvngx_dlssnr.dll",
+        "sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+        "bytes": 196982784
+      }
+    ]
+  },
+  "reference_identity_policy": "Installed model SHA below is metadata, not the identity of every reference. Reset uses retained f454 capture; schedule/motion use retained d442 captures; controls/postprocess use legacy d442 harness/rt_sm86; resolutions use legacy hashed PPMs. Each child report records its actual runtime/reference identity.",
+  "preserved_failed_integration": "research/validation/batch4_final_gpu.json",
+  "failed_control_resolution": {
+    "original": "research/validation/batch4_controls.json",
+    "old_corr": 0.9989892173605515,
+    "final_case": {
+      "name": "controls_5_--local-tone 1.5 --local-structure 1.5",
+      "passed": true,
+      "correlation": 0.9990731813050597,
+      "mae": 2.201170428240741,
+      "max_error": 18.0,
+      "exact_fraction": 0.14743634259259258,
+      "within_one_fraction": 0.4151287615740741,
+      "nrmse": 0.022343883599290962,
+      "units": "uint8_rgb",
+      "reference_path": "E:\\DLSS5\\harness\\rt_sm86\\nr-lab-output-model1-srgb.ppm",
+      "reference_sha256": "3b1246c39c00bd2df6bdf2fd74c1ac304548adc0c5cacddcab1f365ad043a38a"
+    },
+    "threshold_unchanged": true,
+    "no_control_value_special_case": true,
+    "evidence": "research/validation/batch4_pre_round_fix.json"
+  },
+  "known_gaps": [
+    "No official RTX50 sm120 capture; split FP16 MMA remains approximate and independent network is not bit-exact",
+    "Isolated sampler suite includes four legacy artificial split diagnostics; nine full-post tests isolate sampling with zero neural weights",
+    "Reset legacy baseline still has failed diagnostic cases; fixes do not improve every temporal error metric",
+    "Schedule references cover one 640x360 reset frame and final post sRGB8 boundary, not every launch interior or branch",
+    "CPU reciprocal is not a CUDA parity path; native texture model measured only on RTX3060",
+    "Commercial game matrix, Vulkan game injection, newer models and original training process remain incomplete"
+  ],
+  "integrity_report": "research/validation/batch4_integrity.json",
+  "integrity_report_sha256": "b8adaa1d32af187494aed930712e350c637fff7f74090e400ce4be4c7ad460b0",
+  "release_audit": "research/validation/batch4_release_audit.json",
+  "publication": {
+    "requested_commit_and_push": true,
+    "scope": "Consolidated authorized source, documents, structured evidence and own snapshots from batches1-4",
+    "base_commit": "6aa344a72ce18260cb1e9878af2188287424275c",
+    "excluded": "NVIDIA binaries/weights/PTX/cubin, raw captures, test images, copied runtimes and third-party packages; .gitattributes preserves hashed bytes"
+  },
+  "reports_sha256": {
+    "research/validation/batch4_assets.json": "4915fad3f60405d268cb519abf1da170547faf17509fbce0887e406f922e5918",
+    "research/validation/batch4_assets_final.json": "b9affd0627de2ca76157e2b4e2bbe8645552485b679653f19422a0b26c8cd8eb",
+    "research/validation/batch4_controls.json": "492b58eed1c17729a1222ac25dbc6734a857f9454724bcb3cf4c87456bd64845",
+    "research/validation/batch4_controls_diagnosis.json": "d4063ffd0bba9e0723a563ca366a18fa5ba602739a17a88974da46fc6225d721",
+    "research/validation/batch4_controls_rounded.json": "654037ef3162432b88f852dd45dc8b8050354a444e1c67fc7aa5cfc6fbbf2d15",
+    "research/validation/batch4_final_gpu.json": "4a6b4bf790b65e529f4839ee409073e7843dfd1dcefcc2c80df475d1109d1e9f",
+    "research/validation/batch4_independent_review.json": "77850dcf0d23b6fa961cee6adc3752348ba27fd5ec38c02a43e79cf968deda93",
+    "research/validation/batch4_motion2d.json": "2e8bbda7384dff04c1233f02552c33971f1309996f03a531cae46065c321561b",
+    "research/validation/batch4_motion2d_rounded.json": "77a70ddd9dad99e8ef96a60e07849c29ecd42c9509f29e3f196ef6b9d0540f0c",
+    "research/validation/batch4_package_final.json": "c5870fc7a4d3b6bb5e333a0cef382e4eb3d0991e6330af0a91e2ec26ad4ea24e",
+    "research/validation/batch4_postprocess.json": "c301d88c557406f88600f832e22c0d930a5bc87955580bfb748b2a6f82894aa0",
+    "research/validation/batch4_postprocess_rounded.json": "d023d607e72bca3709cea1c8826d6c3aa6fcaf23cf7cb9393c42288b0b8438e0",
+    "research/validation/batch4_pre_round_diagnosis.json": "c00767c0d4d5484f098cc7dd1a2d33a4a2191e4f7720b0b8366552f18eea4908",
+    "research/validation/batch4_pre_round_fix.json": "ea74348af759f99bd8458cd6ef4fcb8b41da139e3dd49ae28a630786be0d06c9",
+    "research/validation/batch4_publication_review.json": "76d9169aee4276d03baeea4722e9aad2e2b2f6d3e968cb2bb2e0dd45e7ec8de8",
+    "research/validation/batch4_report_paths.json": "1c27109fea14f816c23b7451669be1174903b9e869fa94ca07e74d5b50998fb4",
+    "research/validation/batch4_reset.json": "8e1216dd532807a526e5c620da321da2292cb32bd575c9bbd09339460fc39519",
+    "research/validation/batch4_reset_contract.json": "fabc256241ca75a2131cc7cbbdc0533578457302cd1918926bf87f0f783445a8",
+    "research/validation/batch4_reset_cpu.json": "5807ca1899de9adb3b467c40a3919075f40eecd9d532fa723f69e6eafe1f05ef",
+    "research/validation/batch4_reset_fused.json": "1a1e80efceeafe0c8e11019e3dd50e91eeabe26c0c83c9e335edd0522aef3e1a",
+    "research/validation/batch4_reset_fused_cpu.json": "d63ce5530c16b0011742de66e4f0f16cab84e00dda4326049fa55d8f8e4e9fad",
+    "research/validation/batch4_reset_fused_rcp_cpu.json": "7e84a2802e0d9ad036e23a7d35a07bda9824acf1739db6d28f41e9631af300c1",
+    "research/validation/batch4_reset_fused_rounded.json": "eb8f8edb1dab2cc922da4db5c7719f1682dc9b0033000d8a6e1624f6496304a6",
+    "research/validation/batch4_reset_initial.json": "e5e9cea2adc31d06b6e42df191f857781f14a99787d783238ef7e4bb4333d7d2",
+    "research/validation/batch4_reset_pre_guard.json": "b0df8e5768aeb901a4772c77a4fb9b7bd4bac082ce9836d416126de4811fc170",
+    "research/validation/batch4_resolutions.json": "b907fbc01161eb81521ffb6ce0ecf07aaff2e4eba6f53e33196b384b44b9f9db",
+    "research/validation/batch4_resolutions_rounded.json": "ff138af548c13c2398cc403ba0d1f25510605698ee857aa7f78b8f11d78a9495",
+    "research/validation/batch4_root_cpu.json": "cae22e7b065e4ffccb224bfbff41de6b94de1b9953765baf57ad9fe85d24ce71",
+    "research/validation/batch4_rounded_cpu.json": "b25a44186bdcbe189f15c34de8bb076bcf6fa5fdb6b176118ea2e87241a70c7c",
+    "research/validation/batch4_rounded_gpu.json": "db8d37d31e565c47eb4baa8112c4a7c79f70a5aa9cb6da7555ee9d0baec9c13a",
+    "research/validation/batch4_rounding_review.json": "329d69bd47eb0bae2619e4bd69ab1eca87292add2d9c700e1e73e22fe2c1cdd6",
+    "research/validation/batch4_sampling.json": "5e134985d54838cf3e529574b07d745493138fd91eda28795e7d705b72654a32",
+    "research/validation/batch4_sampling_rounded.json": "a2e032885645fddbedede83b2f6ac490566ca3fc265143dc33e464c99483a3af",
+    "research/validation/batch4_schedule.json": "e2f067b3569968999762ebaaf298fa083b623250de01511ff08ad50f4fa96576",
+    "research/validation/batch4_schedule_rounded.json": "24fe2c166847cbd64eebc9bb57224a8ce50839d7ab17113a7a21b263f49a4327"
+  }
+}

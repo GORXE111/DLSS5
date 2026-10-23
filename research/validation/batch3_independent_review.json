@@ -1,0 +1,319 @@
+{
+  "schema": 1,
+  "report_kind": "independent-cpu-review",
+  "status": "complete_with_known_api_gap",
+  "passed": true,
+  "review_scope": [
+    "schedule evidence identity and coverage",
+    "captured FP8 layout decoding",
+    "report invalidation and destination preservation",
+    "FP8 special-value rewrite and independent integer oracle",
+    "engine finish / PostBlock CPU parity",
+    "numeric scanner explicit-capture CLI compatibility; CPU only, scan not executed"
+  ],
+  "gpu_used": false,
+  "source_files_modified": false,
+  "schedule": {
+    "original_issues": [
+      {
+        "id": "report_inside_capture",
+        "before": "Confirmed: report=manifest.json overwrote capture evidence with a failed check_schedule report",
+        "after": "Independent final CPU recheck: rejected unsafe/contradictory input with nonzero exit or ValueError; evidence preserved"
+      },
+      {
+        "id": "invalid_cli_stale_pass",
+        "before": "Confirmed: --min-correlation nan exited 2 while old passed:true report survived",
+        "after": "Independent final CPU recheck: rejected unsafe/contradictory input with nonzero exit or ValueError; evidence preserved"
+      },
+      {
+        "id": "execution_contract",
+        "before": "Confirmed: model999, 1x1 dimensions and motion[100,100], with updated artifact hash, were accepted",
+        "after": "Independent final CPU recheck: rejected unsafe/contradictory input with nonzero exit or ValueError; evidence preserved"
+      },
+      {
+        "id": "outside_hardlink_to_capture",
+        "before": "Confirmed after first fix: outside.json hardlinked to capture manifest bypassed path containment and destroyed evidence",
+        "after": "Independent final CPU recheck: rejected unsafe/contradictory input with nonzero exit or ValueError; evidence preserved"
+      }
+    ],
+    "layout": {
+      "result": "Exact CPU equality against independent loop-based decoder and token transform",
+      "cases": [
+        {
+          "layout": "tin2d",
+          "shape_hwc": [
+            12,
+            20,
+            512
+          ]
+        },
+        {
+          "layout": "tin1d",
+          "shape_hwc": [
+            8,
+            12,
+            1024
+          ]
+        },
+        {
+          "layout": "image16",
+          "shape_hwc": [
+            192,
+            320,
+            32
+          ]
+        }
+      ]
+    },
+    "reference_cycle": "No helper-generated output is used as the kernel reference; each schedule module uses captured input and captured output",
+    "actual_capture": {
+      "path": "research/batch3/schedule_capture",
+      "validated_before_final_fix": true,
+      "steps": 71,
+      "named_buffers": 78,
+      "runs": 25,
+      "validated_after_final_fix": true,
+      "manifest_sha256": "9db12b5337f1f3a5c3df74233e9f9e552012361489a230bfaad8cf579d3fbbce",
+      "runtime_sha256": {
+        "nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+        "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+        "nvngx_dlssnr.dll": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+        "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+        "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b",
+        "tap.cubin": "080642fe9576c32924b4bf9746e350aa51b1a139c7a3adcc3294ffec985eada4"
+      },
+      "capture_tool_sha256": "3f9b93199bc18a7a1b8fa4d933f6e1642fb146c6c88b5410933801eec98fb0d5"
+    },
+    "tests_before_final_fix": {
+      "tests": 18,
+      "passed": 18
+    },
+    "final_rechecks": {
+      "inside": {
+        "exit_code": 2,
+        "capture_preserved_byte_exact": true
+      },
+      "hardlink": {
+        "exit_code": 2,
+        "capture_preserved_byte_exact": true
+      },
+      "nan_cli": {
+        "exit_code": 2,
+        "old_pass_invalidated": true
+      },
+      "model": {
+        "rehashed_bad_contract_rejected": true,
+        "error": "case schedule-reset report model does not match requested contract"
+      },
+      "input": {
+        "rehashed_bad_contract_rejected": true,
+        "error": "case schedule-reset report input does not match requested contract"
+      },
+      "output": {
+        "rehashed_bad_contract_rejected": true,
+        "error": "case schedule-reset report output does not match requested contract"
+      },
+      "motionVector": {
+        "rehashed_bad_contract_rejected": true,
+        "error": "case schedule-reset report motionVector does not match requested contract"
+      }
+    },
+    "tests_final": {
+      "tests": 19,
+      "passed": 19,
+      "command": "python -m unittest tools.test_schedule_refs -v",
+      "source_sha256_at_run": "eeeecc57cb19e8373250bae39d6143a5978ad3000165c401e1ba616f2eeb5271"
+    },
+    "actual_comparison_report": {
+      "path": "research\\batch3\\check_schedule.json",
+      "sha256": "fa8c50f02708d92f5ce2528c9e8a3f61ca86e155e89328c7b9396b3f9f159a1d",
+      "scope": "CPU integrity/coverage/source identity review of saved GPU comparison report; reviewer did not rerun GPU",
+      "passed": true,
+      "checks": 79,
+      "coverage": {
+        "schedule_steps_total": 71,
+        "schedule_steps_compared": 71,
+        "schedule_steps_passed": 71
+      },
+      "recorded_checker_sources_match_current_files": true
+    },
+    "historical_reader_review": "Frozen runtime files and source snapshots are hashed on load; named seq/exact byte length/optional shape+layout selection rejects missing or ambiguous references. Legacy blocks/levels explicitly select this manifest and no longer search tap directories."
+  },
+  "fp8": {
+    "official_sources": [
+      "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#alternate-floating-point-data-formats",
+      "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cvt"
+    ],
+    "contract": "E4M3 0x7f/0xff are NaN, no infinity; .rn ties even; .satfinite preserves NaN class and sign-preserved finite saturation",
+    "oracle_independence": "Exact integer values in units 2^-24 plus sorted nearest-even search; differs from packed bit-shift/half-grid rewrite and fuse. CPU interpreter executes emitted PTX without calling the oracle conversion.",
+    "numeric_special_tests": {
+      "tests": 7,
+      "passed": 7
+    },
+    "third_party_cpu_crosscheck": {
+      "implementation": "Installed Torch CPU: half -> float32 clamp(-448,448) -> float8_e4m3fn",
+      "half_bit_patterns": 65536,
+      "mismatches": 0,
+      "nan_acceptance": "category only; finite values and signed zero bit-exact"
+    },
+    "exit_fixture": {
+      "before": "Six subcases failed NameError argparse after main gained argument parsing",
+      "after": "Independent rerun PASS after argparse/ACC/argv fixture dependency update",
+      "subcases": 6,
+      "final_independent_rerun_passed": true
+    },
+    "no_numeric_blocker_found": true,
+    "limitation": "Conversion semantics do not prove sm120 native MMA parity or NaN payload/sign preservation"
+  },
+  "export_finish": {
+    "implementation": "Both current Core.finish and PostBlock invoke reproject_uv before Catmull sampling",
+    "independent_cpu_cases": [
+      {
+        "size_wh": [
+          53,
+          37
+        ],
+        "motion": [
+          0,
+          0
+        ]
+      },
+      {
+        "size_wh": [
+          53,
+          37
+        ],
+        "motion": [
+          3.25,
+          -1.5
+        ]
+      },
+      {
+        "size_wh": [
+          53,
+          37
+        ],
+        "motion": [
+          -2.375,
+          1.625
+        ]
+      },
+      {
+        "size_wh": [
+          47,
+          31
+        ],
+        "motion": [
+          650,
+          -370
+        ]
+      }
+    ],
+    "all_bit_exact": true,
+    "uses_weights_or_tensorrt": false,
+    "repository_cpu_fixture": {
+      "tests": 1,
+      "subcases": 16,
+      "passed": true,
+      "command": "python -m unittest discover -s torch -p test_export_finish.py -v"
+    }
+  },
+  "errors": [],
+  "new_unfixed_api_boundary": {
+    "name": "Reset (hist=None) with explicitly nonzero MV in Torch API",
+    "status": "known gap, not in passed API scope",
+    "default_suite_impact": "Current motion2d explicitly passes no MV for frame0; existing numerical reports unaffected",
+    "implementation": "DLSS5._forward passes Color as pre history when hist=None while retaining explicit MV, so PreBlock.inputs still reprojects it",
+    "ptx_contract": "Original pre checks history OR motion handle==0 and branches around Catmull, retaining sampled Color as history",
+    "ptx_evidence": {
+      "source": "fatbins\\fatbin_01.1.sm_120.ptx",
+      "source_sha256": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+      "first_line_1based": 45951,
+      "instructions": [
+        "setp.eq.b64 %p8, %rd2, 0;",
+        "setp.eq.b64 %p9, %rd3, 0;",
+        "or.pred %p10, %p8, %p9;",
+        "mov.b16 %rs494, %rs3;",
+        "mov.b16 %rs495, %rs2;",
+        "mov.b16 %rs496, %rs4;",
+        "@%p10 bra $L__BB3_6;",
+        "setp.eq.b64 %p11, %rd4, 0;"
+      ]
+    },
+    "cpu_observation": {
+      "scope": "Execute actual PreBlock.inputs on CPU with the exact Color-as-history argument substitution made by _forward; no full network or original kernel CPU execution",
+      "size_wh": [
+        53,
+        37
+      ],
+      "explicit_motion": [
+        3.25,
+        -1.5
+      ],
+      "pre_rows": 102400,
+      "history_channels_changed": 148849,
+      "max_history_input_difference": 0.0053038522601127625,
+      "color_inputs_bit_exact": true
+    },
+    "resolution": "Left unchanged this batch to freeze model/source identity; later audit should unify missing History/MV and CUDA Graph semantics"
+  },
+  "reviewed_source_sha256": {
+    "tools/schedule_refs.py": "835084b30bf59d72358145a115ec1e2dc33b6ce6553f1246c264e2257204d349",
+    "torch/check_schedule.py": "853cd2bbb47c03701742f91fb7471bf770c6f69e0c55da0394e9201e16f78b68",
+    "tools/test_schedule_refs.py": "5402dbc987b18abd64ae9bfeb2adad08d8c322a2385e28b8c458aa99397edbc7",
+    "torch/schedule_reference.py": "c476c73861562bf4a85701e667859cc63d896cced01576d2d067ad0a598c4965",
+    "torch/dlss5/ops.py": "7dc30959053b64447601c730fc141e0710b25a3c36688e75f39b17883d2a4f76",
+    "torch/dlss5/net.py": "430721392ef74c11db7f264dde92e80836c9f9d6e931b3068f410993a098bebd",
+    "torch/dlss5/export.py": "944dda0f9ff635144760d14a47da88f8fb62776829b2c77a382c789c5061cf08",
+    "torch/test_export_finish.py": "c360e42223eb4722ea6fc61bf7a58a1cc5b161c633e0683a7f64debf6165b246",
+    "tools/ptx86/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+    "tools/ptx86/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+    "tools/ptx86/test_numeric_special.py": "0127b8dfc0db1eb10a1da5560b6cbed62adf449c15b6fa99763d358a3882bc8a",
+    "tools/ptx86/test_emu.py": "71baaff2038b29a179ece4a64d2b22ea1d53be8231ecf78d64542f9bc1139ecf",
+    "tools/ptx86/test_emu_exit.py": "12db5c186df5545fa64c6019bbf41c947760494aa40b2c2bbb717e00362218ed",
+    "harness/reference.py": "1cd0f5a333b9272755112839a715751e4d285cb0837d4fe70ba82ee6bd7ecbe8",
+    "torch/check_numerics.py": "b680b42715024463e3cad7ca52d269bf83a4867a6e18b0316da1da102fa2d53d"
+  },
+  "review_completed": true,
+  "blocking_evidence_findings_resolved": true,
+  "full_model_equivalence_claim": false,
+  "claim": "Independent CPU review completed; schedule evidence blockers fixed, with Reset+explicit-MV model API gap deliberately unresolved and excluded from passed API scope",
+  "numeric_scanner_compatibility": {
+    "path": "torch/check_numerics.py",
+    "options_reviewed": [
+      "--capture required",
+      "--harness optional",
+      "--levels 1h 2h 4h 8h"
+    ],
+    "reader": "Explicit ScheduleReference validation runs before importing check_blocks or constructing DLSS5",
+    "independent_cpu_checks": [
+      {
+        "case": "--help",
+        "exit_code": 0,
+        "passed": true,
+        "options_visible": [
+          "--capture",
+          "--harness",
+          "--levels"
+        ]
+      },
+      {
+        "case": "missing required --capture",
+        "exit_code": 2,
+        "passed": true
+      },
+      {
+        "case": "nonexistent explicit --capture folder, --levels 1h",
+        "exit_code": 1,
+        "passed": true
+      }
+    ],
+    "gpu_or_model_import_attempts": 0,
+    "import_guard": "MetaPathFinder rejects torch, dlss5 and check_blocks imports if attempted during each CLI check; none attempted",
+    "gpu_used": false,
+    "scan_executed": false,
+    "claim": "CLI compatibility and pre-GPU input rejection independently checked; numeric option combinations were not scanned this batch",
+    "prior_independent_review_sha256": "febd9d125796b1e1dbb048f84b48b04e43a0b99836b73bec2606f19910f9160e",
+    "prior_test_schedule_refs_sha256": "eeeecc57cb19e8373250bae39d6143a5978ad3000165c401e1ba616f2eeb5271"
+  }
+}

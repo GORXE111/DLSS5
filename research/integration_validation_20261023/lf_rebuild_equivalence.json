@@ -1,0 +1,5 @@
+{
+  "tested_proxy": "plugin/fallback/test/dxgi.dll",
+  "rebuilt_proxy": "plugin/fallback/bin/dxgi.dll",
+  "identical_except_pe_timestamps": true
+}

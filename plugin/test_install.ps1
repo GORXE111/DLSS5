@@ -1,11 +1,41 @@
 ﻿# 安装器自测: 在临时假游戏目录里跑安装/卸载，检查备份还原逐字节一致、反作弊与重复 OptiScaler 会被拒绝。
 param([string]$Work = (Join-Path $env:TEMP 'dlss5_install_test'))
 $ErrorActionPreference = 'Stop'
+$workParent = [IO.Path]::GetFullPath($Work)
+# -Work is a parent only. Never delete an existing caller-supplied tree.
+for ($ancestor = $workParent; $ancestor; $ancestor = [IO.Path]::GetDirectoryName($ancestor)) {
+    if ((Test-Path -LiteralPath $ancestor) -and ((Get-Item -LiteralPath $ancestor -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+        throw "Test parent contains a reparse point: $ancestor"
+    }
+}
+New-Item -ItemType Directory -Path $workParent -Force | Out-Null
+$owner = [Guid]::NewGuid().ToString('N')
+$ownedWork = Join-Path $workParent ('run-' + $owner)
+New-Item -ItemType Directory -Path $ownedWork -ErrorAction Stop | Out-Null
+$ownerFile = Join-Path $ownedWork '.dlss5-install-test-owner'
+[IO.File]::WriteAllText($ownerFile, $owner)
+$Work = $ownedWork
+function Assert-OwnedPath([string]$dir, [switch]$Root) {
+    $full = [IO.Path]::GetFullPath($dir)
+    $prefix = $ownedWork + [IO.Path]::DirectorySeparatorChar
+    $inside = $full.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)
+    if ($Root) { $inside = $full.Equals($ownedWork, [StringComparison]::OrdinalIgnoreCase) }
+    if (-not $inside -or -not (Test-Path -LiteralPath $ownerFile -PathType Leaf) -or [IO.File]::ReadAllText($ownerFile) -ne $owner) {
+        throw "Refusing operation outside owned test workspace: $full"
+    }
+    if (Test-Path -LiteralPath $full) {
+        $items = @((Get-Item -LiteralPath $full -Force)) + @(Get-ChildItem -LiteralPath $full -Recurse -Force)
+        if ($items | Where-Object { $_.Attributes -band [IO.FileAttributes]::ReparsePoint }) {
+            throw "Refusing cleanup of reparse point in test workspace: $full"
+        }
+    }
+}
 $pkg = Join-Path $PSScriptRoot 'dist\DLSS5-RTX30'
 $installer = Join-Path $pkg 'install.ps1'
 function New-FakeGame([string]$dir) {
-    if (Test-Path $dir) { Remove-Item $dir -Recurse -Force }
-    New-Item -ItemType Directory -Force $dir | Out-Null
+    Assert-OwnedPath $dir
+    if (Test-Path -LiteralPath $dir) { throw "Test directory already exists: $dir" }
+    New-Item -ItemType Directory -Path $dir | Out-Null
     [IO.File]::WriteAllBytes((Join-Path $dir 'Game.exe'), [byte[]](0x4D, 0x5A))
     [IO.File]::WriteAllText((Join-Path $dir 'dxgi.dll'), 'pretend-reshade')
     [IO.File]::WriteAllText((Join-Path $dir 'OptiScaler.ini'), 'user-own-ini')
@@ -25,6 +55,7 @@ function Check([bool]$ok, [string]$what) {
     if ($ok) { $script:pass++; Write-Host "PASS  $what" -ForegroundColor Green } else { $script:fail++; Write-Host "FAIL  $what" -ForegroundColor Red }
 }
 
+try {
 # 1. 正常安装 + 卸载还原
 $g = Join-Path $Work 'game1'
 New-FakeGame $g
@@ -65,5 +96,8 @@ $r = Invoke-Installer @('-GameDir', $g3)
 Check ($r.code -ne 0 -and $r.out -match 'version.dll') 'foreign OptiScaler -> refused'
 
 Write-Host "`n$pass passed, $fail failed"
-Remove-Item $Work -Recurse -Force
+} finally {
+    Assert-OwnedPath $ownedWork -Root
+    Remove-Item -LiteralPath $ownedWork -Recurse -Force
+}
 if ($fail) { exit 1 }

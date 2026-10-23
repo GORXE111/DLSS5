@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "scope": "GPU scheduling/lifetime checks for the authored reciprocal shim.\n\nThis checks stream ordering, graph replay and cold-capture rejection; it is not\nan independent numerical reference for the NVIDIA sampling kernels.\n",
+  "checks": [
+    {
+      "name": "cold_capture_rejects_JIT",
+      "passed": true
+    },
+    {
+      "name": "nondefault_stream_waits_for_input_write",
+      "passed": true,
+      "reciprocal_37": 0.027027025818824768
+    },
+    {
+      "name": "warm_graph_new_input",
+      "value": 1.0625,
+      "passed": true,
+      "output_sha256": "71a75b7049cdd11fa2a95642f7c5ab291113f92dc247a14bc76a3c9afd64232c"
+    },
+    {
+      "name": "warm_graph_new_input",
+      "value": 1.124755859375,
+      "passed": true,
+      "output_sha256": "d6a0a85fb0742e4cb244009affddc32d5a2f7f38c3743d83bb62234fbebe7814"
+    }
+  ],
+  "errors": [],
+  "sources": {
+    "torch\\probe_sampling_rcp.py": "43ac7ffa67208593d6231cf2105390b4d32fd9e43243f84f74e1af4e62277cd2",
+    "torch\\dlss5\\ptx_math.py": "0034713bcbdec10e1e0220e17fbfdc4d46d812f085c325139c5d3d58bddf9c59",
+    "tools\\report_paths.py": "88c0c40940267fcd0fe185bc87c37114a834da8e1c0a53bd8dd19a50d44dfb60"
+  },
+  "device": "NVIDIA GeForce RTX 3060"
+}

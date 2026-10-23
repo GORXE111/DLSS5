@@ -12,14 +12,16 @@ import torch
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from dlss5 import DLSS5  # noqa: E402
+from acceptance import execute, parser, ppm  # noqa: E402
 
 RESEARCH = os.path.join(HERE, "..", "research")
 
 
-def color_pattern(W=640, H=360, offset_x=0):
-    """nr-lab 的合成输入 (MakeColorPattern, sRGB, R8G8B8A8_UNORM)。offset_x: --temporal-shift 下第 f 帧 = f*shift，图案右移"""
+def color_pattern(W=640, H=360, offset_x=0, offset_y=0):
+    """nr-lab 的合成输入 (sRGB R8G8B8A8_UNORM)。offset_x/y: 图案每帧水平/垂直位移，带环绕边缘。"""
     y, x = np.mgrid[0:H, 0:W]
     x = (x - offset_x % W + W) % W
+    y = (y - offset_y % H + H) % H
     checker = ((x // 12) ^ (y // 12)) & 1
     line = (x % 61 < 2) | (y % 47 < 2) | ((x + y) % 79 < 2)
     img = np.stack([np.where(line, 1.0, np.where(checker, 0.82, 0.06)),
@@ -34,17 +36,18 @@ def stats(name, o, ref):
           f"8 位一致 {(o8 == ref).mean():.4f}  差<=1 {(np.abs(o8 - ref) <= 1.01 / 255).mean():.4f}")
 
 
-def main():
+def main(report):
+    path = report.args.reference_dir / "out_f0.ppm"
+    ref = ppm(path, 640, 360)
+    report.reference(path)
     t0 = time.time()
     net = DLSS5()
     torch.cuda.synchronize()
     print(f"加载+解码权重: {time.time() - t0:.1f}s")
     color = color_pattern()
     out = net(color, frame=0).cpu().numpy()
-    raw = open(os.path.join(RESEARCH, "out_f0.ppm"), "rb").read()
-    ref = np.frombuffer(raw[-640 * 360 * 3:], np.uint8).reshape(360, 640, 3).astype(np.float32) / 255
-    stats("torch vs nr-lab 实际输出", out, ref)
-    p = os.path.join(RESEARCH, "net_frame0_out.npy")
+    report.compare("frame0_vs_port", out, ref, quantize=True)
+    p = report.args.reference_dir / "net_frame0_out.npy"
     if os.path.exists(p):
         stats("torch vs numpy 参考   ", out, np.floor(np.load(p) * 255 + 0.5) / 255)
     d, c = ref - color, np.floor(out * 255 + 0.5) / 255 - color
@@ -59,4 +62,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(execute("check", parser(__doc__).parse_args(), main))

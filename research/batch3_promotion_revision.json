@@ -1,0 +1,1354 @@
+{
+  "status": "passed",
+  "started_utc": "2026-10-23T10:22:46.462687+00:00",
+  "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2",
+  "live": "E:\\DLSS5\\sm86_port",
+  "stage": "E:\\DLSS5\\sm86_port.batch3-stage-0b84169e5487",
+  "backup": "E:\\DLSS5\\sm86_port.batch3-backup-0b84169e5487",
+  "deletion_performed": false,
+  "scope": "Validated FP8 NaN generation replaces dedicated default directory; complete old directory preserved",
+  "source_artifacts": {
+    "nvngx_dlssnr.dll": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+      "sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "bytes": 196982784
+    },
+    "fatbin_01.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_01.sm86.ptx",
+      "sha256": "ff32305789b53a9e54be00899808986872c697aeb2a575f939a46c5219874372",
+      "bytes": 29579780
+    },
+    "fatbin_01.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_01.sm86.cubin",
+      "sha256": "2871d683d650d602aa7590927fce9ef0a27394685a7fe127efd357b8be506043",
+      "bytes": 4144608
+    },
+    "fatbin_01.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_01.sm86.fatbin",
+      "sha256": "53773a3ec5f12416628a3ee376258c3617dcfdf0103fab3ff72e266857c6eb24",
+      "bytes": 6934184
+    },
+    "fatbin_01.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_01.1.sm_120.cubin",
+      "sha256": "feb368ff5279a7408b1e55554db6e468d7f114a24b18b2af8d7e6989a410c612",
+      "bytes": 2789376
+    },
+    "fatbin_01.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_01.sm86.fatbin.cache.json",
+      "sha256": "c7fbcdd6850c801a62055a52ae7909c4dbb6fa97041b7f1395ed57bbbd2d9211",
+      "bytes": 1526
+    },
+    "fatbin_02.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_02.sm86.ptx",
+      "sha256": "7e62558ba9d0796412d287b840226b8f09ade72430339c0cf27fb2d76fc82ea4",
+      "bytes": 22832487
+    },
+    "fatbin_02.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_02.sm86.cubin",
+      "sha256": "2937e4116ad7580ff5829595aac9946508868c2a8a423c94a1cccd654358aae4",
+      "bytes": 2959712
+    },
+    "fatbin_02.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_02.sm86.fatbin",
+      "sha256": "270dba8ec90981d24c86667f76150c70a850ecdff99a152606f35b6948d63a91",
+      "bytes": 4601416
+    },
+    "fatbin_02.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_02.1.sm_120.cubin",
+      "sha256": "a10a8083b9489622fe290d669f05f38db7308c3c10771d0f0d6f22718e3cb1ae",
+      "bytes": 1641504
+    },
+    "fatbin_02.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_02.sm86.fatbin.cache.json",
+      "sha256": "9d534324536c48822874c5ff9ace86d04d981e6ac9df58a0747c98d6989a3224",
+      "bytes": 1526
+    },
+    "fatbin_03.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_03.sm86.ptx",
+      "sha256": "0d54f99221dcc4fe7affd9e56a086d1e86ebff834679a2320e59693567fad5f0",
+      "bytes": 23357965
+    },
+    "fatbin_03.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_03.sm86.cubin",
+      "sha256": "45993e24b0d8e94d9a471caa14e824b4d120bcdea4695a0379e5ca38c13942c9",
+      "bytes": 2971616
+    },
+    "fatbin_03.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_03.sm86.fatbin",
+      "sha256": "864d123541f081d25c82c4be1161d3823fcd65d134edbea2ead7a9af02b5cd8f",
+      "bytes": 4562000
+    },
+    "fatbin_03.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_03.1.sm_120.cubin",
+      "sha256": "9cba6bc0001a80c902ee20fd5638bf442bdf0674aaada676d67a6d1b89ca0aaa",
+      "bytes": 1590184
+    },
+    "fatbin_03.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_03.sm86.fatbin.cache.json",
+      "sha256": "642ca597f4682ac38b1f91138b056a37c66c7fc4700550dad636ee9f8f806599",
+      "bytes": 1526
+    },
+    "fatbin_04.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_04.sm86.ptx",
+      "sha256": "d50cb31f69bebfdea035d553b47bcde78c44a14be632571ad93a313c8014425e",
+      "bytes": 24775721
+    },
+    "fatbin_04.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_04.sm86.cubin",
+      "sha256": "c80b58ecbe88f59f9dae89644f33a6df435047f25d52c2ab8b5abfc692c04aaf",
+      "bytes": 3009120
+    },
+    "fatbin_04.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_04.sm86.fatbin",
+      "sha256": "64bfe99cd0f7610fa5cf9926575f0e091ab66008cb8567557a76587e684b3d73",
+      "bytes": 4706496
+    },
+    "fatbin_04.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_04.1.sm_120.cubin",
+      "sha256": "46ad7753bfb3a70a92a3524a5e638bb2fe93edb37cf3389ad1fa524e4e19b084",
+      "bytes": 1697176
+    },
+    "fatbin_04.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_04.sm86.fatbin.cache.json",
+      "sha256": "0a41f0d9e0731f90b0f022866b68bf1273ae4ae3acb0da18dadf5b74f50e3ba7",
+      "bytes": 1526
+    },
+    "fatbin_05.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_05.sm86.ptx",
+      "sha256": "0cbb27dff122337adf7f4bb6f913f6f4eace99663491a7ba87c53a1044934fad",
+      "bytes": 16034932
+    },
+    "fatbin_05.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_05.sm86.cubin",
+      "sha256": "c17120cf09812329bef75031cfab34a63e948f84b21e515288a49f31e0f196d0",
+      "bytes": 2305632
+    },
+    "fatbin_05.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_05.sm86.fatbin",
+      "sha256": "a5df34f2ef0299e40435ba8345054c5b71fe49e85c77ec80764c0033388cdd4d",
+      "bytes": 3842960
+    },
+    "fatbin_05.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_05.1.sm_120.cubin",
+      "sha256": "97bdf9a571dec8bff41975fe670610b0a3363b49885ada171e61229578ecf569",
+      "bytes": 1537128
+    },
+    "fatbin_05.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_05.sm86.fatbin.cache.json",
+      "sha256": "df85ee17923cc50b77753a8c9595c2849deeac28686fc3b5829d109ad28af5e5",
+      "bytes": 1526
+    },
+    "fatbin_06.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_06.sm86.ptx",
+      "sha256": "7311792438154aada2b6da728f53b2a284923510eebd5fe5c3c895e2c4924326",
+      "bytes": 19118234
+    },
+    "fatbin_06.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_06.sm86.cubin",
+      "sha256": "eb17168e279935b4505d9dd5679a9b247076c76a887468314bcb2af06648f9cb",
+      "bytes": 3371360
+    },
+    "fatbin_06.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_06.sm86.fatbin",
+      "sha256": "d2f1be4a0721d244bb044b83236d2170cee693140908ef039311142c8e0d8a62",
+      "bytes": 5862792
+    },
+    "fatbin_06.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_06.1.sm_120.cubin",
+      "sha256": "bfb2ebe117b7c4d92a78e1885412acbb80233f2d9b11af1e854430eb3cc0a2a1",
+      "bytes": 2491232
+    },
+    "fatbin_06.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_06.sm86.fatbin.cache.json",
+      "sha256": "825cd87435d267f42c25a17e6d92b82771498f6413417e261b8981aff5961522",
+      "bytes": 1526
+    },
+    "fatbin_07.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_07.sm86.ptx",
+      "sha256": "20998ad9cfd22177833881153484ca7b28f7dfdef5921f3eac5c55f0abf59199",
+      "bytes": 1746210
+    },
+    "fatbin_07.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_07.sm86.cubin",
+      "sha256": "e03b311d2a759ae0d2dd2a60e204839bab50a5b5888d06881f3ea32a5781e16c",
+      "bytes": 305952
+    },
+    "fatbin_07.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_07.sm86.fatbin",
+      "sha256": "ea1f4a9c00adf9632ead32a7ddbb4a534184d72192cc1e8fbd84c39af3baa9cd",
+      "bytes": 477288
+    },
+    "fatbin_07.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_07.1.sm_120.cubin",
+      "sha256": "e67c8db5c29348f1650c532735b0d4740f6a003b7f932ae5c505a41ced082e7a",
+      "bytes": 171136
+    },
+    "fatbin_07.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_07.sm86.fatbin.cache.json",
+      "sha256": "70d1f26930246155b0ac0ee0c3cbd0788103b99c22833234e2d2c78903d3c8a9",
+      "bytes": 1526
+    },
+    "fatbin_08.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_08.sm86.ptx",
+      "sha256": "6e281013013387382a3abf6ffb0d822f20f74ab6964271e61ef41e1730d08438",
+      "bytes": 2610
+    },
+    "fatbin_08.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_08.sm86.cubin",
+      "sha256": "d7a360a13ff34d7716a61674cb8307a4d4830df12c91b67100e7363afcdfe4df",
+      "bytes": 4136
+    },
+    "fatbin_08.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_08.sm86.fatbin",
+      "sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059",
+      "bytes": 11216
+    },
+    "fatbin_08.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_08.1.sm_120.cubin",
+      "sha256": "7318a0e884d5fd92e1006f490b572eca90308d355b57663232f214e8fc460109",
+      "bytes": 6880
+    },
+    "fatbin_08.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_08.sm86.fatbin.cache.json",
+      "sha256": "95e628ee78fbc968a288c4d92d26b1fa56fd2bd901545d2281b4e0080cf005f3",
+      "bytes": 1526
+    },
+    "fatbin_09.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_09.sm86.ptx",
+      "sha256": "589d003fbe1a0f591e019421f94e8056f89a1a5feee21d85f4af24e95c6ade88",
+      "bytes": 3942
+    },
+    "fatbin_09.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_09.sm86.cubin",
+      "sha256": "410b364c86dc077f0322b9041c45cd4d3f68ed6c36dbc8d8a6c8825d9aec6be7",
+      "bytes": 5352
+    },
+    "fatbin_09.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_09.sm86.fatbin",
+      "sha256": "20d7ababfbbf7ad76ab5f66c97cd3b7874b64157594eecf1cc222858a7c7b809",
+      "bytes": 15312
+    },
+    "fatbin_09.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_09.1.sm_120.cubin",
+      "sha256": "81fe728b271e66911f0026ef517717516032fb14e53092764cfc568ccfea2b9b",
+      "bytes": 9760
+    },
+    "fatbin_09.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_09.sm86.fatbin.cache.json",
+      "sha256": "beb5ac394482514a6189bbacad5b573309f67d9b9ee68e902531b67b90fe8df5",
+      "bytes": 1526
+    },
+    "fatbin_10.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_10.sm86.ptx",
+      "sha256": "453ca7d30582be510df8720b2830d5ec41dd5297a4d0863c09343b3b38c2bfb9",
+      "bytes": 4718
+    },
+    "fatbin_10.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_10.sm86.cubin",
+      "sha256": "43b713ff791e99b054b47ec8d4438f38a5e41799f98af850e51cd9f050c6ccbb",
+      "bytes": 5864
+    },
+    "fatbin_10.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_10.sm86.fatbin",
+      "sha256": "3bba3d2f0b72d9b421ec3fba13a6866d28cf6d6506ea1d7c1e84691862fd2dc8",
+      "bytes": 16560
+    },
+    "fatbin_10.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_10.1.sm_120.cubin",
+      "sha256": "56151310361b82915f93d6ece0daea39ba169f0978defbebe4823e1f80bea065",
+      "bytes": 10496
+    },
+    "fatbin_10.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_10.sm86.fatbin.cache.json",
+      "sha256": "f9187193951c6213930411d363d244f4e78bc3c5c629a4abd67179cb192a37fb",
+      "bytes": 1526
+    },
+    "fatbin_11.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_11.sm86.ptx",
+      "sha256": "598b3ba95c543d3f13375a9fd53eded42fe2b794cd676828d19ec272f43fde88",
+      "bytes": 5136
+    },
+    "fatbin_11.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_11.sm86.cubin",
+      "sha256": "3998d4210cf0236836287496fd904c59b6bd5893efb9cfd8193acf1eafa677d8",
+      "bytes": 5408
+    },
+    "fatbin_11.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_11.sm86.fatbin",
+      "sha256": "084f4ffcbb56ce9b30f341dc704e3eb84d8de57674fa167ff61611f36a1b0a6b",
+      "bytes": 14584
+    },
+    "fatbin_11.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_11.1.sm_120.cubin",
+      "sha256": "c28089f55fcb9aa2c5ba5a9d788e434019f45ec7cbf75c485d2b9bed783af36c",
+      "bytes": 8976
+    },
+    "fatbin_11.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_11.sm86.fatbin.cache.json",
+      "sha256": "0a9325ac7113c67dfaebe42f57a3302911abb4ec59ec356917bf77e28a693256",
+      "bytes": 1526
+    },
+    "fatbin_12.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_12.sm86.ptx",
+      "sha256": "35f12669c0b75dd3801fa4c05f211042f930eccc61a59e67de5a45454cfd88fb",
+      "bytes": 4095
+    },
+    "fatbin_12.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_12.sm86.cubin",
+      "sha256": "8c673d574ff771e226f76362f7b1b5ed18606499ce2a040091ce5c6ff6ac8e55",
+      "bytes": 5416
+    },
+    "fatbin_12.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_12.sm86.fatbin",
+      "sha256": "8cf57cf1c75242d9ec53ca48b0c37afd9ee23ee23c5390011d2e31094c2f07be",
+      "bytes": 14336
+    },
+    "fatbin_12.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_12.1.sm_120.cubin",
+      "sha256": "33f7a107595087bd78767804ff52ac48fafe48cff117a2033abcf180f28df0c8",
+      "bytes": 8720
+    },
+    "fatbin_12.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_12.sm86.fatbin.cache.json",
+      "sha256": "316cd598adf02f1cc670cd673ac1ae28b08e4b4c74d12a2c4953f13b8d6cc65e",
+      "bytes": 1526
+    },
+    "fatbin_13.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_13.sm86.ptx",
+      "sha256": "9d2dba5c1a9e098bcf005463e2f2e8453122b020c0becec9f9321061b3dc03e9",
+      "bytes": 1005
+    },
+    "fatbin_13.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_13.sm86.cubin",
+      "sha256": "dfb6bc32f5fc7c20e33c90fc9764cd2aef267387d811a8c547010107c6b13050",
+      "bytes": 3496
+    },
+    "fatbin_13.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_13.sm86.fatbin",
+      "sha256": "9f74ea77fa2ab62aad28c9bb10b5189055ac8f1432beb72b424363e639412919",
+      "bytes": 9584
+    },
+    "fatbin_13.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_13.1.sm_120.cubin",
+      "sha256": "e1428deac41c43211dc7c752dc113a9c8b5e70e83a2b47444a31c9d3b17ad17c",
+      "bytes": 5888
+    },
+    "fatbin_13.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_13.sm86.fatbin.cache.json",
+      "sha256": "632fbdf357dd76f4fe81b4743f212a2abda3662d98a5881dabe0f9c878c9498c",
+      "bytes": 1526
+    },
+    "fatbin_14.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_14.sm86.ptx",
+      "sha256": "757842c49e23a69de45117b58f4a7063d8300d9432ef75ad443e1be2c43c656c",
+      "bytes": 72380
+    },
+    "fatbin_14.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_14.sm86.cubin",
+      "sha256": "66eb4f87344ef3929f972022eb08b2f49783e13a69ac123a78d7507bf93d77db",
+      "bytes": 32288
+    },
+    "fatbin_14.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_14.sm86.fatbin",
+      "sha256": "6f3ef48456b463a91b80f82e0005433273d80fea4f3701b307715a6756629664",
+      "bytes": 72360
+    },
+    "fatbin_14.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_14.1.sm_120.cubin",
+      "sha256": "58569c5f57907392ba644b66cb9e0870e4641ca52db47bab741a8ccae4a4000b",
+      "bytes": 39872
+    },
+    "fatbin_14.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_14.sm86.fatbin.cache.json",
+      "sha256": "2cf27376e39d95c8656da22d75b7801f5d2f453e597a30770ebcb1cf072bdd13",
+      "bytes": 1526
+    },
+    "fatbin_15.sm86.ptx": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_15.sm86.ptx",
+      "sha256": "2de19310aed0c17660be0e227fd41123c8cfd05915b28aa22d141f27f58ba8a9",
+      "bytes": 1564
+    },
+    "fatbin_15.sm86.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_15.sm86.cubin",
+      "sha256": "aa960832cabfc38ad57e6e7166910cee8f34f3bbe5f4413640bc67f96a089070",
+      "bytes": 3752
+    },
+    "fatbin_15.sm86.fatbin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_15.sm86.fatbin",
+      "sha256": "8eadb95c4d84b36d440c292ea7b4804349ebff48afcd687c261bc427aece0fab",
+      "bytes": 10064
+    },
+    "fatbin_15.1.sm_120.cubin": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_15.1.sm_120.cubin",
+      "sha256": "45b45cb9ddb9863c88b60efdabf502a2aaf02f6c02a85eb9e6925aa0046a6978",
+      "bytes": 6112
+    },
+    "fatbin_15.sm86.fatbin.cache.json": {
+      "source": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\fatbin_15.sm86.fatbin.cache.json",
+      "sha256": "41611c7cd0720d7b7c1a5828cfe2bded8080a9fa092d5502516c7ec896f07f78",
+      "bytes": 1526
+    }
+  },
+  "old_directory": {
+    "files": {
+      "01.log": {
+        "sha256": "2427ff8abbcc766064781f92596c3b4bd52ee92994f0821af4a44b60b90e45ea",
+        "bytes": 16
+      },
+      "02.log": {
+        "sha256": "61e26168a62ef36e611dab9278334c4677b4aae2d23773b6e90150bae20fcb90",
+        "bytes": 16
+      },
+      "03.log": {
+        "sha256": "ac26767517898d0825ac992961899830029284819ef93e663a20df2b475ac63b",
+        "bytes": 16
+      },
+      "04.log": {
+        "sha256": "631b62ba5a66ccc8c30af329ec0b168cab6e566f15281d6832101a912ecdd72d",
+        "bytes": 16
+      },
+      "05.log": {
+        "sha256": "0600b0586337543ab5922c206a56786efd1897687e717d45ec281f50172a782c",
+        "bytes": 16
+      },
+      "06.log": {
+        "sha256": "e47fcb53ba2d97a356fc94d6c5d14ee731f7828a567cac7426ed507fc5e5260a",
+        "bytes": 150
+      },
+      "07.log": {
+        "sha256": "953131c09a7ebde3c6a15964c6cd2fe1c778e443378d2aa959d65d32fccbb37d",
+        "bytes": 15
+      },
+      "14.log": {
+        "sha256": "f8cb284c7018d7b1a578964ef8e17f07abe2a10d3d6eb8bdcad826734e9b20d5",
+        "bytes": 14
+      },
+      "build.log": {
+        "sha256": "dc099797496b1b9c722290d38f8dd12a45a9d605c690dfab41c11365712525ba",
+        "bytes": 851
+      },
+      "fatbin_01.1.sm_120.cubin": {
+        "sha256": "feb368ff5279a7408b1e55554db6e468d7f114a24b18b2af8d7e6989a410c612",
+        "bytes": 2789376
+      },
+      "fatbin_01.sm86.cubin": {
+        "sha256": "0186cdf53222f9f586d19ea4f98f92d3b5928e3235d52f922e8dae047f8dceca",
+        "bytes": 3724768
+      },
+      "fatbin_01.sm86.fatbin": {
+        "sha256": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4",
+        "bytes": 6514344
+      },
+      "fatbin_01.sm86.fatbin.cache.json": {
+        "sha256": "d8e190e9c921242165c18688499c305d78ac9a931b8eb8657174bd2f7bcd3707",
+        "bytes": 1442
+      },
+      "fatbin_01.sm86.ptx": {
+        "sha256": "2beb1b23aecf9aa55df12a327fb401a50e3515a2da8762a3590627942616703a",
+        "bytes": 25341756
+      },
+      "fatbin_02.1.sm_120.cubin": {
+        "sha256": "a10a8083b9489622fe290d669f05f38db7308c3c10771d0f0d6f22718e3cb1ae",
+        "bytes": 1641504
+      },
+      "fatbin_02.sm86.cubin": {
+        "sha256": "6e3240cd57ba633af1c9dc13b9517780be36d00db8f0ff580b336a325c8b060e",
+        "bytes": 2586976
+      },
+      "fatbin_02.sm86.fatbin": {
+        "sha256": "a25a36a23e5fe1bb105227544fa45ce35d4bba8cbfe00af32611e95cc6e872de",
+        "bytes": 4228680
+      },
+      "fatbin_02.sm86.ptx": {
+        "sha256": "1f2080c85e269533babb785e1a695de2723cf2bd687440e3320d1c39adf4273f",
+        "bytes": 18604559
+      },
+      "fatbin_03.1.sm_120.cubin": {
+        "sha256": "9cba6bc0001a80c902ee20fd5638bf442bdf0674aaada676d67a6d1b89ca0aaa",
+        "bytes": 1590184
+      },
+      "fatbin_03.sm86.cubin": {
+        "sha256": "59ba95176032921f425e2ab0074cc69c2e7401670c1051c7ce05e3b5b2784b34",
+        "bytes": 2573536
+      },
+      "fatbin_03.sm86.fatbin": {
+        "sha256": "abcb261b28d64ea323ce4e25504412f67e6f221ae7af6cc4b2ecae24e0dbea55",
+        "bytes": 4163920
+      },
+      "fatbin_03.sm86.ptx": {
+        "sha256": "b5e8e2ae103377477229ed9759014289df17ae617fefa262463117d39964c1da",
+        "bytes": 18720821
+      },
+      "fatbin_04.1.sm_120.cubin": {
+        "sha256": "46ad7753bfb3a70a92a3524a5e638bb2fe93edb37cf3389ad1fa524e4e19b084",
+        "bytes": 1697176
+      },
+      "fatbin_04.sm86.cubin": {
+        "sha256": "b019f65ef6493a8bf79b73933625304ad0114f4bd4cf51b0659190b9e758ad5a",
+        "bytes": 2620256
+      },
+      "fatbin_04.sm86.fatbin": {
+        "sha256": "9aaf7f8e1d63daba638443d61a99279a845e60e63300b038ee09d328e38df662",
+        "bytes": 4317632
+      },
+      "fatbin_04.sm86.ptx": {
+        "sha256": "f007e3bfc44d51c40c83338abcc296d016aaa179d2c33c02ee380250b9882fe5",
+        "bytes": 19901513
+      },
+      "fatbin_05.1.sm_120.cubin": {
+        "sha256": "97bdf9a571dec8bff41975fe670610b0a3363b49885ada171e61229578ecf569",
+        "bytes": 1537128
+      },
+      "fatbin_05.sm86.cubin": {
+        "sha256": "288763a82c8ac38c1a20bca27c4ab2311bd64f946e181f106843d2f011568ff2",
+        "bytes": 2074720
+      },
+      "fatbin_05.sm86.fatbin": {
+        "sha256": "5a2e3faeeeafb7ee8f9878df243fffe298bef3aed5c9dc5098c8213b4810a638",
+        "bytes": 3612048
+      },
+      "fatbin_05.sm86.ptx": {
+        "sha256": "4a0c7fc943edd11a42bd884958bfd27eb8ed275b69ee3c1276b2b904b0b755f0",
+        "bytes": 12685276
+      },
+      "fatbin_06.1.sm_120.cubin": {
+        "sha256": "bfb2ebe117b7c4d92a78e1885412acbb80233f2d9b11af1e854430eb3cc0a2a1",
+        "bytes": 2491232
+      },
+      "fatbin_06.sm86.cubin": {
+        "sha256": "17d65fb5c40bd1fb76d9ef93de66d1c9b878f993702820675cf625335f62b405",
+        "bytes": 3141472
+      },
+      "fatbin_06.sm86.fatbin": {
+        "sha256": "86adf0a150e40ced017a4bd0945288867cfaafc9d01afa48aa97a73c8f491d50",
+        "bytes": 5632904
+      },
+      "fatbin_06.sm86.ptx": {
+        "sha256": "f5e28e2430a7bbeec5da488a1621a2b4d9f96d6c70ac69a3e0cb2950e4a42a2f",
+        "bytes": 15473972
+      },
+      "fatbin_07.1.sm_120.cubin": {
+        "sha256": "e67c8db5c29348f1650c532735b0d4740f6a003b7f932ae5c505a41ced082e7a",
+        "bytes": 171136
+      },
+      "fatbin_07.sm86.cubin": {
+        "sha256": "d756bda9a188d8a5799ba96d8f36425da8c4904c63382cc7e782a68d6ba7f3eb",
+        "bytes": 269600
+      },
+      "fatbin_07.sm86.fatbin": {
+        "sha256": "cee146f03fdf22e758a9c20a490b4ae502695dc5226d4cdb94c0f02991522471",
+        "bytes": 440936
+      },
+      "fatbin_07.sm86.ptx": {
+        "sha256": "4db1d8e5c5238fbbc320792b536390a7163362b52a5006e13fcbb9f6e3c2a969",
+        "bytes": 1460076
+      },
+      "fatbin_08.1.sm_120.cubin": {
+        "sha256": "7318a0e884d5fd92e1006f490b572eca90308d355b57663232f214e8fc460109",
+        "bytes": 6880
+      },
+      "fatbin_08.sm86.cubin": {
+        "sha256": "d7a360a13ff34d7716a61674cb8307a4d4830df12c91b67100e7363afcdfe4df",
+        "bytes": 4136
+      },
+      "fatbin_08.sm86.fatbin": {
+        "sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059",
+        "bytes": 11216
+      },
+      "fatbin_08.sm86.ptx": {
+        "sha256": "6e281013013387382a3abf6ffb0d822f20f74ab6964271e61ef41e1730d08438",
+        "bytes": 2610
+      },
+      "fatbin_09.1.sm_120.cubin": {
+        "sha256": "81fe728b271e66911f0026ef517717516032fb14e53092764cfc568ccfea2b9b",
+        "bytes": 9760
+      },
+      "fatbin_09.sm86.cubin": {
+        "sha256": "410b364c86dc077f0322b9041c45cd4d3f68ed6c36dbc8d8a6c8825d9aec6be7",
+        "bytes": 5352
+      },
+      "fatbin_09.sm86.fatbin": {
+        "sha256": "20d7ababfbbf7ad76ab5f66c97cd3b7874b64157594eecf1cc222858a7c7b809",
+        "bytes": 15312
+      },
+      "fatbin_09.sm86.ptx": {
+        "sha256": "589d003fbe1a0f591e019421f94e8056f89a1a5feee21d85f4af24e95c6ade88",
+        "bytes": 3942
+      },
+      "fatbin_10.1.sm_120.cubin": {
+        "sha256": "56151310361b82915f93d6ece0daea39ba169f0978defbebe4823e1f80bea065",
+        "bytes": 10496
+      },
+      "fatbin_10.sm86.cubin": {
+        "sha256": "43b713ff791e99b054b47ec8d4438f38a5e41799f98af850e51cd9f050c6ccbb",
+        "bytes": 5864
+      },
+      "fatbin_10.sm86.fatbin": {
+        "sha256": "3bba3d2f0b72d9b421ec3fba13a6866d28cf6d6506ea1d7c1e84691862fd2dc8",
+        "bytes": 16560
+      },
+      "fatbin_10.sm86.ptx": {
+        "sha256": "453ca7d30582be510df8720b2830d5ec41dd5297a4d0863c09343b3b38c2bfb9",
+        "bytes": 4718
+      },
+      "fatbin_11.1.sm_120.cubin": {
+        "sha256": "c28089f55fcb9aa2c5ba5a9d788e434019f45ec7cbf75c485d2b9bed783af36c",
+        "bytes": 8976
+      },
+      "fatbin_11.sm86.cubin": {
+        "sha256": "3998d4210cf0236836287496fd904c59b6bd5893efb9cfd8193acf1eafa677d8",
+        "bytes": 5408
+      },
+      "fatbin_11.sm86.fatbin": {
+        "sha256": "084f4ffcbb56ce9b30f341dc704e3eb84d8de57674fa167ff61611f36a1b0a6b",
+        "bytes": 14584
+      },
+      "fatbin_11.sm86.ptx": {
+        "sha256": "598b3ba95c543d3f13375a9fd53eded42fe2b794cd676828d19ec272f43fde88",
+        "bytes": 5136
+      },
+      "fatbin_12.1.sm_120.cubin": {
+        "sha256": "33f7a107595087bd78767804ff52ac48fafe48cff117a2033abcf180f28df0c8",
+        "bytes": 8720
+      },
+      "fatbin_12.sm86.cubin": {
+        "sha256": "8c673d574ff771e226f76362f7b1b5ed18606499ce2a040091ce5c6ff6ac8e55",
+        "bytes": 5416
+      },
+      "fatbin_12.sm86.fatbin": {
+        "sha256": "8cf57cf1c75242d9ec53ca48b0c37afd9ee23ee23c5390011d2e31094c2f07be",
+        "bytes": 14336
+      },
+      "fatbin_12.sm86.ptx": {
+        "sha256": "35f12669c0b75dd3801fa4c05f211042f930eccc61a59e67de5a45454cfd88fb",
+        "bytes": 4095
+      },
+      "fatbin_13.1.sm_120.cubin": {
+        "sha256": "e1428deac41c43211dc7c752dc113a9c8b5e70e83a2b47444a31c9d3b17ad17c",
+        "bytes": 5888
+      },
+      "fatbin_13.sm86.cubin": {
+        "sha256": "dfb6bc32f5fc7c20e33c90fc9764cd2aef267387d811a8c547010107c6b13050",
+        "bytes": 3496
+      },
+      "fatbin_13.sm86.fatbin": {
+        "sha256": "9f74ea77fa2ab62aad28c9bb10b5189055ac8f1432beb72b424363e639412919",
+        "bytes": 9584
+      },
+      "fatbin_13.sm86.ptx": {
+        "sha256": "9d2dba5c1a9e098bcf005463e2f2e8453122b020c0becec9f9321061b3dc03e9",
+        "bytes": 1005
+      },
+      "fatbin_14.1.sm_120.cubin": {
+        "sha256": "58569c5f57907392ba644b66cb9e0870e4641ca52db47bab741a8ccae4a4000b",
+        "bytes": 39872
+      },
+      "fatbin_14.sm86.cubin": {
+        "sha256": "66eb4f87344ef3929f972022eb08b2f49783e13a69ac123a78d7507bf93d77db",
+        "bytes": 32288
+      },
+      "fatbin_14.sm86.fatbin": {
+        "sha256": "6f3ef48456b463a91b80f82e0005433273d80fea4f3701b307715a6756629664",
+        "bytes": 72360
+      },
+      "fatbin_14.sm86.ptx": {
+        "sha256": "757842c49e23a69de45117b58f4a7063d8300d9432ef75ad443e1be2c43c656c",
+        "bytes": 72380
+      },
+      "fatbin_15.1.sm_120.cubin": {
+        "sha256": "45b45cb9ddb9863c88b60efdabf502a2aaf02f6c02a85eb9e6925aa0046a6978",
+        "bytes": 6112
+      },
+      "fatbin_15.sm86.cubin": {
+        "sha256": "aa960832cabfc38ad57e6e7166910cee8f34f3bbe5f4413640bc67f96a089070",
+        "bytes": 3752
+      },
+      "fatbin_15.sm86.fatbin": {
+        "sha256": "8eadb95c4d84b36d440c292ea7b4804349ebff48afcd687c261bc427aece0fab",
+        "bytes": 10064
+      },
+      "fatbin_15.sm86.ptx": {
+        "sha256": "2de19310aed0c17660be0e227fd41123c8cfd05915b28aa22d141f27f58ba8a9",
+        "bytes": 1564
+      },
+      "kstats.tsv": {
+        "sha256": "485f523d54eb4b519e8d6a6d3dcb421a56c43288998f97984f76098d82e65d23",
+        "bytes": 26114
+      },
+      "nvngx_dlssnr.dll": {
+        "sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+        "bytes": 194906112
+      },
+      "op_01.txt": {
+        "sha256": "53a21cc730ab6b490c3aa15cecf96c941cb00b74365d66db047b19ca15f87769",
+        "bytes": 915
+      },
+      "op_02.txt": {
+        "sha256": "b1687db4ae73549c78544e6dd589d2a47b938197d1e92ff65a99db93d4af66b1",
+        "bytes": 759
+      },
+      "op_03.txt": {
+        "sha256": "48b4aefbce291121a0e0974df2540b57eba5d10ba75be3770c72c26c73bfcc69",
+        "bytes": 746
+      },
+      "op_04.txt": {
+        "sha256": "1c467e00dfbf43fc4526d820cd3463b70824ef3a139ec20fc518863dddbe76ec",
+        "bytes": 744
+      },
+      "op_05.txt": {
+        "sha256": "a35716a0491d561156c748b4ce6cb66c20dbc28037f2eded4a29a90213ace806",
+        "bytes": 899
+      },
+      "op_06.txt": {
+        "sha256": "cc02f7d858d23ebd5bd1f834115962d93c7d2c4c47e7c6576bfcfa82aabc500e",
+        "bytes": 902
+      },
+      "op_07.txt": {
+        "sha256": "575561410131466958278170a263bdb3d5f3a7d5b3d70160bf9b34b736ab5c07",
+        "bytes": 826
+      }
+    },
+    "directories": []
+  },
+  "evidence_sha256": {
+    "E:\\DLSS5\\research\\batch3_gpu_regressions.json": "b17bd5c9d8576307be965a56cd6b557f7f3e3e51f3b76de9ce0de724f38e7cd8",
+    "E:\\DLSS5\\research\\batch3_numeric_gpu.json": "3b304890b7f03052590b621fdb698fa82b3152487fb03dd4e1813e65efe0c6a8",
+    "E:\\DLSS5\\research\\batch3_build_verified.json": "096be66cdecdb3a122f02fc27cbcaed5668bfb47b440719042dbb753bd2e534a"
+  },
+  "target_directory": {
+    "files": {
+      "fatbin_01.1.sm_120.cubin": {
+        "sha256": "feb368ff5279a7408b1e55554db6e468d7f114a24b18b2af8d7e6989a410c612",
+        "bytes": 2789376
+      },
+      "fatbin_01.sm86.cubin": {
+        "sha256": "2871d683d650d602aa7590927fce9ef0a27394685a7fe127efd357b8be506043",
+        "bytes": 4144608
+      },
+      "fatbin_01.sm86.fatbin": {
+        "sha256": "53773a3ec5f12416628a3ee376258c3617dcfdf0103fab3ff72e266857c6eb24",
+        "bytes": 6934184
+      },
+      "fatbin_01.sm86.fatbin.cache.json": {
+        "sha256": "c7fbcdd6850c801a62055a52ae7909c4dbb6fa97041b7f1395ed57bbbd2d9211",
+        "bytes": 1526
+      },
+      "fatbin_01.sm86.ptx": {
+        "sha256": "ff32305789b53a9e54be00899808986872c697aeb2a575f939a46c5219874372",
+        "bytes": 29579780
+      },
+      "fatbin_02.1.sm_120.cubin": {
+        "sha256": "a10a8083b9489622fe290d669f05f38db7308c3c10771d0f0d6f22718e3cb1ae",
+        "bytes": 1641504
+      },
+      "fatbin_02.sm86.cubin": {
+        "sha256": "2937e4116ad7580ff5829595aac9946508868c2a8a423c94a1cccd654358aae4",
+        "bytes": 2959712
+      },
+      "fatbin_02.sm86.fatbin": {
+        "sha256": "270dba8ec90981d24c86667f76150c70a850ecdff99a152606f35b6948d63a91",
+        "bytes": 4601416
+      },
+      "fatbin_02.sm86.fatbin.cache.json": {
+        "sha256": "9d534324536c48822874c5ff9ace86d04d981e6ac9df58a0747c98d6989a3224",
+        "bytes": 1526
+      },
+      "fatbin_02.sm86.ptx": {
+        "sha256": "7e62558ba9d0796412d287b840226b8f09ade72430339c0cf27fb2d76fc82ea4",
+        "bytes": 22832487
+      },
+      "fatbin_03.1.sm_120.cubin": {
+        "sha256": "9cba6bc0001a80c902ee20fd5638bf442bdf0674aaada676d67a6d1b89ca0aaa",
+        "bytes": 1590184
+      },
+      "fatbin_03.sm86.cubin": {
+        "sha256": "45993e24b0d8e94d9a471caa14e824b4d120bcdea4695a0379e5ca38c13942c9",
+        "bytes": 2971616
+      },
+      "fatbin_03.sm86.fatbin": {
+        "sha256": "864d123541f081d25c82c4be1161d3823fcd65d134edbea2ead7a9af02b5cd8f",
+        "bytes": 4562000
+      },
+      "fatbin_03.sm86.fatbin.cache.json": {
+        "sha256": "642ca597f4682ac38b1f91138b056a37c66c7fc4700550dad636ee9f8f806599",
+        "bytes": 1526
+      },
+      "fatbin_03.sm86.ptx": {
+        "sha256": "0d54f99221dcc4fe7affd9e56a086d1e86ebff834679a2320e59693567fad5f0",
+        "bytes": 23357965
+      },
+      "fatbin_04.1.sm_120.cubin": {
+        "sha256": "46ad7753bfb3a70a92a3524a5e638bb2fe93edb37cf3389ad1fa524e4e19b084",
+        "bytes": 1697176
+      },
+      "fatbin_04.sm86.cubin": {
+        "sha256": "c80b58ecbe88f59f9dae89644f33a6df435047f25d52c2ab8b5abfc692c04aaf",
+        "bytes": 3009120
+      },
+      "fatbin_04.sm86.fatbin": {
+        "sha256": "64bfe99cd0f7610fa5cf9926575f0e091ab66008cb8567557a76587e684b3d73",
+        "bytes": 4706496
+      },
+      "fatbin_04.sm86.fatbin.cache.json": {
+        "sha256": "0a41f0d9e0731f90b0f022866b68bf1273ae4ae3acb0da18dadf5b74f50e3ba7",
+        "bytes": 1526
+      },
+      "fatbin_04.sm86.ptx": {
+        "sha256": "d50cb31f69bebfdea035d553b47bcde78c44a14be632571ad93a313c8014425e",
+        "bytes": 24775721
+      },
+      "fatbin_05.1.sm_120.cubin": {
+        "sha256": "97bdf9a571dec8bff41975fe670610b0a3363b49885ada171e61229578ecf569",
+        "bytes": 1537128
+      },
+      "fatbin_05.sm86.cubin": {
+        "sha256": "c17120cf09812329bef75031cfab34a63e948f84b21e515288a49f31e0f196d0",
+        "bytes": 2305632
+      },
+      "fatbin_05.sm86.fatbin": {
+        "sha256": "a5df34f2ef0299e40435ba8345054c5b71fe49e85c77ec80764c0033388cdd4d",
+        "bytes": 3842960
+      },
+      "fatbin_05.sm86.fatbin.cache.json": {
+        "sha256": "df85ee17923cc50b77753a8c9595c2849deeac28686fc3b5829d109ad28af5e5",
+        "bytes": 1526
+      },
+      "fatbin_05.sm86.ptx": {
+        "sha256": "0cbb27dff122337adf7f4bb6f913f6f4eace99663491a7ba87c53a1044934fad",
+        "bytes": 16034932
+      },
+      "fatbin_06.1.sm_120.cubin": {
+        "sha256": "bfb2ebe117b7c4d92a78e1885412acbb80233f2d9b11af1e854430eb3cc0a2a1",
+        "bytes": 2491232
+      },
+      "fatbin_06.sm86.cubin": {
+        "sha256": "eb17168e279935b4505d9dd5679a9b247076c76a887468314bcb2af06648f9cb",
+        "bytes": 3371360
+      },
+      "fatbin_06.sm86.fatbin": {
+        "sha256": "d2f1be4a0721d244bb044b83236d2170cee693140908ef039311142c8e0d8a62",
+        "bytes": 5862792
+      },
+      "fatbin_06.sm86.fatbin.cache.json": {
+        "sha256": "825cd87435d267f42c25a17e6d92b82771498f6413417e261b8981aff5961522",
+        "bytes": 1526
+      },
+      "fatbin_06.sm86.ptx": {
+        "sha256": "7311792438154aada2b6da728f53b2a284923510eebd5fe5c3c895e2c4924326",
+        "bytes": 19118234
+      },
+      "fatbin_07.1.sm_120.cubin": {
+        "sha256": "e67c8db5c29348f1650c532735b0d4740f6a003b7f932ae5c505a41ced082e7a",
+        "bytes": 171136
+      },
+      "fatbin_07.sm86.cubin": {
+        "sha256": "e03b311d2a759ae0d2dd2a60e204839bab50a5b5888d06881f3ea32a5781e16c",
+        "bytes": 305952
+      },
+      "fatbin_07.sm86.fatbin": {
+        "sha256": "ea1f4a9c00adf9632ead32a7ddbb4a534184d72192cc1e8fbd84c39af3baa9cd",
+        "bytes": 477288
+      },
+      "fatbin_07.sm86.fatbin.cache.json": {
+        "sha256": "70d1f26930246155b0ac0ee0c3cbd0788103b99c22833234e2d2c78903d3c8a9",
+        "bytes": 1526
+      },
+      "fatbin_07.sm86.ptx": {
+        "sha256": "20998ad9cfd22177833881153484ca7b28f7dfdef5921f3eac5c55f0abf59199",
+        "bytes": 1746210
+      },
+      "fatbin_08.1.sm_120.cubin": {
+        "sha256": "7318a0e884d5fd92e1006f490b572eca90308d355b57663232f214e8fc460109",
+        "bytes": 6880
+      },
+      "fatbin_08.sm86.cubin": {
+        "sha256": "d7a360a13ff34d7716a61674cb8307a4d4830df12c91b67100e7363afcdfe4df",
+        "bytes": 4136
+      },
+      "fatbin_08.sm86.fatbin": {
+        "sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059",
+        "bytes": 11216
+      },
+      "fatbin_08.sm86.fatbin.cache.json": {
+        "sha256": "95e628ee78fbc968a288c4d92d26b1fa56fd2bd901545d2281b4e0080cf005f3",
+        "bytes": 1526
+      },
+      "fatbin_08.sm86.ptx": {
+        "sha256": "6e281013013387382a3abf6ffb0d822f20f74ab6964271e61ef41e1730d08438",
+        "bytes": 2610
+      },
+      "fatbin_09.1.sm_120.cubin": {
+        "sha256": "81fe728b271e66911f0026ef517717516032fb14e53092764cfc568ccfea2b9b",
+        "bytes": 9760
+      },
+      "fatbin_09.sm86.cubin": {
+        "sha256": "410b364c86dc077f0322b9041c45cd4d3f68ed6c36dbc8d8a6c8825d9aec6be7",
+        "bytes": 5352
+      },
+      "fatbin_09.sm86.fatbin": {
+        "sha256": "20d7ababfbbf7ad76ab5f66c97cd3b7874b64157594eecf1cc222858a7c7b809",
+        "bytes": 15312
+      },
+      "fatbin_09.sm86.fatbin.cache.json": {
+        "sha256": "beb5ac394482514a6189bbacad5b573309f67d9b9ee68e902531b67b90fe8df5",
+        "bytes": 1526
+      },
+      "fatbin_09.sm86.ptx": {
+        "sha256": "589d003fbe1a0f591e019421f94e8056f89a1a5feee21d85f4af24e95c6ade88",
+        "bytes": 3942
+      },
+      "fatbin_10.1.sm_120.cubin": {
+        "sha256": "56151310361b82915f93d6ece0daea39ba169f0978defbebe4823e1f80bea065",
+        "bytes": 10496
+      },
+      "fatbin_10.sm86.cubin": {
+        "sha256": "43b713ff791e99b054b47ec8d4438f38a5e41799f98af850e51cd9f050c6ccbb",
+        "bytes": 5864
+      },
+      "fatbin_10.sm86.fatbin": {
+        "sha256": "3bba3d2f0b72d9b421ec3fba13a6866d28cf6d6506ea1d7c1e84691862fd2dc8",
+        "bytes": 16560
+      },
+      "fatbin_10.sm86.fatbin.cache.json": {
+        "sha256": "f9187193951c6213930411d363d244f4e78bc3c5c629a4abd67179cb192a37fb",
+        "bytes": 1526
+      },
+      "fatbin_10.sm86.ptx": {
+        "sha256": "453ca7d30582be510df8720b2830d5ec41dd5297a4d0863c09343b3b38c2bfb9",
+        "bytes": 4718
+      },
+      "fatbin_11.1.sm_120.cubin": {
+        "sha256": "c28089f55fcb9aa2c5ba5a9d788e434019f45ec7cbf75c485d2b9bed783af36c",
+        "bytes": 8976
+      },
+      "fatbin_11.sm86.cubin": {
+        "sha256": "3998d4210cf0236836287496fd904c59b6bd5893efb9cfd8193acf1eafa677d8",
+        "bytes": 5408
+      },
+      "fatbin_11.sm86.fatbin": {
+        "sha256": "084f4ffcbb56ce9b30f341dc704e3eb84d8de57674fa167ff61611f36a1b0a6b",
+        "bytes": 14584
+      },
+      "fatbin_11.sm86.fatbin.cache.json": {
+        "sha256": "0a9325ac7113c67dfaebe42f57a3302911abb4ec59ec356917bf77e28a693256",
+        "bytes": 1526
+      },
+      "fatbin_11.sm86.ptx": {
+        "sha256": "598b3ba95c543d3f13375a9fd53eded42fe2b794cd676828d19ec272f43fde88",
+        "bytes": 5136
+      },
+      "fatbin_12.1.sm_120.cubin": {
+        "sha256": "33f7a107595087bd78767804ff52ac48fafe48cff117a2033abcf180f28df0c8",
+        "bytes": 8720
+      },
+      "fatbin_12.sm86.cubin": {
+        "sha256": "8c673d574ff771e226f76362f7b1b5ed18606499ce2a040091ce5c6ff6ac8e55",
+        "bytes": 5416
+      },
+      "fatbin_12.sm86.fatbin": {
+        "sha256": "8cf57cf1c75242d9ec53ca48b0c37afd9ee23ee23c5390011d2e31094c2f07be",
+        "bytes": 14336
+      },
+      "fatbin_12.sm86.fatbin.cache.json": {
+        "sha256": "316cd598adf02f1cc670cd673ac1ae28b08e4b4c74d12a2c4953f13b8d6cc65e",
+        "bytes": 1526
+      },
+      "fatbin_12.sm86.ptx": {
+        "sha256": "35f12669c0b75dd3801fa4c05f211042f930eccc61a59e67de5a45454cfd88fb",
+        "bytes": 4095
+      },
+      "fatbin_13.1.sm_120.cubin": {
+        "sha256": "e1428deac41c43211dc7c752dc113a9c8b5e70e83a2b47444a31c9d3b17ad17c",
+        "bytes": 5888
+      },
+      "fatbin_13.sm86.cubin": {
+        "sha256": "dfb6bc32f5fc7c20e33c90fc9764cd2aef267387d811a8c547010107c6b13050",
+        "bytes": 3496
+      },
+      "fatbin_13.sm86.fatbin": {
+        "sha256": "9f74ea77fa2ab62aad28c9bb10b5189055ac8f1432beb72b424363e639412919",
+        "bytes": 9584
+      },
+      "fatbin_13.sm86.fatbin.cache.json": {
+        "sha256": "632fbdf357dd76f4fe81b4743f212a2abda3662d98a5881dabe0f9c878c9498c",
+        "bytes": 1526
+      },
+      "fatbin_13.sm86.ptx": {
+        "sha256": "9d2dba5c1a9e098bcf005463e2f2e8453122b020c0becec9f9321061b3dc03e9",
+        "bytes": 1005
+      },
+      "fatbin_14.1.sm_120.cubin": {
+        "sha256": "58569c5f57907392ba644b66cb9e0870e4641ca52db47bab741a8ccae4a4000b",
+        "bytes": 39872
+      },
+      "fatbin_14.sm86.cubin": {
+        "sha256": "66eb4f87344ef3929f972022eb08b2f49783e13a69ac123a78d7507bf93d77db",
+        "bytes": 32288
+      },
+      "fatbin_14.sm86.fatbin": {
+        "sha256": "6f3ef48456b463a91b80f82e0005433273d80fea4f3701b307715a6756629664",
+        "bytes": 72360
+      },
+      "fatbin_14.sm86.fatbin.cache.json": {
+        "sha256": "2cf27376e39d95c8656da22d75b7801f5d2f453e597a30770ebcb1cf072bdd13",
+        "bytes": 1526
+      },
+      "fatbin_14.sm86.ptx": {
+        "sha256": "757842c49e23a69de45117b58f4a7063d8300d9432ef75ad443e1be2c43c656c",
+        "bytes": 72380
+      },
+      "fatbin_15.1.sm_120.cubin": {
+        "sha256": "45b45cb9ddb9863c88b60efdabf502a2aaf02f6c02a85eb9e6925aa0046a6978",
+        "bytes": 6112
+      },
+      "fatbin_15.sm86.cubin": {
+        "sha256": "aa960832cabfc38ad57e6e7166910cee8f34f3bbe5f4413640bc67f96a089070",
+        "bytes": 3752
+      },
+      "fatbin_15.sm86.fatbin": {
+        "sha256": "8eadb95c4d84b36d440c292ea7b4804349ebff48afcd687c261bc427aece0fab",
+        "bytes": 10064
+      },
+      "fatbin_15.sm86.fatbin.cache.json": {
+        "sha256": "41611c7cd0720d7b7c1a5828cfe2bded8080a9fa092d5502516c7ec896f07f78",
+        "bytes": 1526
+      },
+      "fatbin_15.sm86.ptx": {
+        "sha256": "2de19310aed0c17660be0e227fd41123c8cfd05915b28aa22d141f27f58ba8a9",
+        "bytes": 1564
+      },
+      "nvngx_dlssnr.dll": {
+        "sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+        "bytes": 196982784
+      }
+    },
+    "directories": []
+  },
+  "backup_directory": {
+    "files": {
+      "01.log": {
+        "sha256": "2427ff8abbcc766064781f92596c3b4bd52ee92994f0821af4a44b60b90e45ea",
+        "bytes": 16
+      },
+      "02.log": {
+        "sha256": "61e26168a62ef36e611dab9278334c4677b4aae2d23773b6e90150bae20fcb90",
+        "bytes": 16
+      },
+      "03.log": {
+        "sha256": "ac26767517898d0825ac992961899830029284819ef93e663a20df2b475ac63b",
+        "bytes": 16
+      },
+      "04.log": {
+        "sha256": "631b62ba5a66ccc8c30af329ec0b168cab6e566f15281d6832101a912ecdd72d",
+        "bytes": 16
+      },
+      "05.log": {
+        "sha256": "0600b0586337543ab5922c206a56786efd1897687e717d45ec281f50172a782c",
+        "bytes": 16
+      },
+      "06.log": {
+        "sha256": "e47fcb53ba2d97a356fc94d6c5d14ee731f7828a567cac7426ed507fc5e5260a",
+        "bytes": 150
+      },
+      "07.log": {
+        "sha256": "953131c09a7ebde3c6a15964c6cd2fe1c778e443378d2aa959d65d32fccbb37d",
+        "bytes": 15
+      },
+      "14.log": {
+        "sha256": "f8cb284c7018d7b1a578964ef8e17f07abe2a10d3d6eb8bdcad826734e9b20d5",
+        "bytes": 14
+      },
+      "build.log": {
+        "sha256": "dc099797496b1b9c722290d38f8dd12a45a9d605c690dfab41c11365712525ba",
+        "bytes": 851
+      },
+      "fatbin_01.1.sm_120.cubin": {
+        "sha256": "feb368ff5279a7408b1e55554db6e468d7f114a24b18b2af8d7e6989a410c612",
+        "bytes": 2789376
+      },
+      "fatbin_01.sm86.cubin": {
+        "sha256": "0186cdf53222f9f586d19ea4f98f92d3b5928e3235d52f922e8dae047f8dceca",
+        "bytes": 3724768
+      },
+      "fatbin_01.sm86.fatbin": {
+        "sha256": "c93ae1be7a6e51077f209ee5c795bb81a479510830d13366fa124781a9da42f4",
+        "bytes": 6514344
+      },
+      "fatbin_01.sm86.fatbin.cache.json": {
+        "sha256": "d8e190e9c921242165c18688499c305d78ac9a931b8eb8657174bd2f7bcd3707",
+        "bytes": 1442
+      },
+      "fatbin_01.sm86.ptx": {
+        "sha256": "2beb1b23aecf9aa55df12a327fb401a50e3515a2da8762a3590627942616703a",
+        "bytes": 25341756
+      },
+      "fatbin_02.1.sm_120.cubin": {
+        "sha256": "a10a8083b9489622fe290d669f05f38db7308c3c10771d0f0d6f22718e3cb1ae",
+        "bytes": 1641504
+      },
+      "fatbin_02.sm86.cubin": {
+        "sha256": "6e3240cd57ba633af1c9dc13b9517780be36d00db8f0ff580b336a325c8b060e",
+        "bytes": 2586976
+      },
+      "fatbin_02.sm86.fatbin": {
+        "sha256": "a25a36a23e5fe1bb105227544fa45ce35d4bba8cbfe00af32611e95cc6e872de",
+        "bytes": 4228680
+      },
+      "fatbin_02.sm86.ptx": {
+        "sha256": "1f2080c85e269533babb785e1a695de2723cf2bd687440e3320d1c39adf4273f",
+        "bytes": 18604559
+      },
+      "fatbin_03.1.sm_120.cubin": {
+        "sha256": "9cba6bc0001a80c902ee20fd5638bf442bdf0674aaada676d67a6d1b89ca0aaa",
+        "bytes": 1590184
+      },
+      "fatbin_03.sm86.cubin": {
+        "sha256": "59ba95176032921f425e2ab0074cc69c2e7401670c1051c7ce05e3b5b2784b34",
+        "bytes": 2573536
+      },
+      "fatbin_03.sm86.fatbin": {
+        "sha256": "abcb261b28d64ea323ce4e25504412f67e6f221ae7af6cc4b2ecae24e0dbea55",
+        "bytes": 4163920
+      },
+      "fatbin_03.sm86.ptx": {
+        "sha256": "b5e8e2ae103377477229ed9759014289df17ae617fefa262463117d39964c1da",
+        "bytes": 18720821
+      },
+      "fatbin_04.1.sm_120.cubin": {
+        "sha256": "46ad7753bfb3a70a92a3524a5e638bb2fe93edb37cf3389ad1fa524e4e19b084",
+        "bytes": 1697176
+      },
+      "fatbin_04.sm86.cubin": {
+        "sha256": "b019f65ef6493a8bf79b73933625304ad0114f4bd4cf51b0659190b9e758ad5a",
+        "bytes": 2620256
+      },
+      "fatbin_04.sm86.fatbin": {
+        "sha256": "9aaf7f8e1d63daba638443d61a99279a845e60e63300b038ee09d328e38df662",
+        "bytes": 4317632
+      },
+      "fatbin_04.sm86.ptx": {
+        "sha256": "f007e3bfc44d51c40c83338abcc296d016aaa179d2c33c02ee380250b9882fe5",
+        "bytes": 19901513
+      },
+      "fatbin_05.1.sm_120.cubin": {
+        "sha256": "97bdf9a571dec8bff41975fe670610b0a3363b49885ada171e61229578ecf569",
+        "bytes": 1537128
+      },
+      "fatbin_05.sm86.cubin": {
+        "sha256": "288763a82c8ac38c1a20bca27c4ab2311bd64f946e181f106843d2f011568ff2",
+        "bytes": 2074720
+      },
+      "fatbin_05.sm86.fatbin": {
+        "sha256": "5a2e3faeeeafb7ee8f9878df243fffe298bef3aed5c9dc5098c8213b4810a638",
+        "bytes": 3612048
+      },
+      "fatbin_05.sm86.ptx": {
+        "sha256": "4a0c7fc943edd11a42bd884958bfd27eb8ed275b69ee3c1276b2b904b0b755f0",
+        "bytes": 12685276
+      },
+      "fatbin_06.1.sm_120.cubin": {
+        "sha256": "bfb2ebe117b7c4d92a78e1885412acbb80233f2d9b11af1e854430eb3cc0a2a1",
+        "bytes": 2491232
+      },
+      "fatbin_06.sm86.cubin": {
+        "sha256": "17d65fb5c40bd1fb76d9ef93de66d1c9b878f993702820675cf625335f62b405",
+        "bytes": 3141472
+      },
+      "fatbin_06.sm86.fatbin": {
+        "sha256": "86adf0a150e40ced017a4bd0945288867cfaafc9d01afa48aa97a73c8f491d50",
+        "bytes": 5632904
+      },
+      "fatbin_06.sm86.ptx": {
+        "sha256": "f5e28e2430a7bbeec5da488a1621a2b4d9f96d6c70ac69a3e0cb2950e4a42a2f",
+        "bytes": 15473972
+      },
+      "fatbin_07.1.sm_120.cubin": {
+        "sha256": "e67c8db5c29348f1650c532735b0d4740f6a003b7f932ae5c505a41ced082e7a",
+        "bytes": 171136
+      },
+      "fatbin_07.sm86.cubin": {
+        "sha256": "d756bda9a188d8a5799ba96d8f36425da8c4904c63382cc7e782a68d6ba7f3eb",
+        "bytes": 269600
+      },
+      "fatbin_07.sm86.fatbin": {
+        "sha256": "cee146f03fdf22e758a9c20a490b4ae502695dc5226d4cdb94c0f02991522471",
+        "bytes": 440936
+      },
+      "fatbin_07.sm86.ptx": {
+        "sha256": "4db1d8e5c5238fbbc320792b536390a7163362b52a5006e13fcbb9f6e3c2a969",
+        "bytes": 1460076
+      },
+      "fatbin_08.1.sm_120.cubin": {
+        "sha256": "7318a0e884d5fd92e1006f490b572eca90308d355b57663232f214e8fc460109",
+        "bytes": 6880
+      },
+      "fatbin_08.sm86.cubin": {
+        "sha256": "d7a360a13ff34d7716a61674cb8307a4d4830df12c91b67100e7363afcdfe4df",
+        "bytes": 4136
+      },
+      "fatbin_08.sm86.fatbin": {
+        "sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059",
+        "bytes": 11216
+      },
+      "fatbin_08.sm86.ptx": {
+        "sha256": "6e281013013387382a3abf6ffb0d822f20f74ab6964271e61ef41e1730d08438",
+        "bytes": 2610
+      },
+      "fatbin_09.1.sm_120.cubin": {
+        "sha256": "81fe728b271e66911f0026ef517717516032fb14e53092764cfc568ccfea2b9b",
+        "bytes": 9760
+      },
+      "fatbin_09.sm86.cubin": {
+        "sha256": "410b364c86dc077f0322b9041c45cd4d3f68ed6c36dbc8d8a6c8825d9aec6be7",
+        "bytes": 5352
+      },
+      "fatbin_09.sm86.fatbin": {
+        "sha256": "20d7ababfbbf7ad76ab5f66c97cd3b7874b64157594eecf1cc222858a7c7b809",
+        "bytes": 15312
+      },
+      "fatbin_09.sm86.ptx": {
+        "sha256": "589d003fbe1a0f591e019421f94e8056f89a1a5feee21d85f4af24e95c6ade88",
+        "bytes": 3942
+      },
+      "fatbin_10.1.sm_120.cubin": {
+        "sha256": "56151310361b82915f93d6ece0daea39ba169f0978defbebe4823e1f80bea065",
+        "bytes": 10496
+      },
+      "fatbin_10.sm86.cubin": {
+        "sha256": "43b713ff791e99b054b47ec8d4438f38a5e41799f98af850e51cd9f050c6ccbb",
+        "bytes": 5864
+      },
+      "fatbin_10.sm86.fatbin": {
+        "sha256": "3bba3d2f0b72d9b421ec3fba13a6866d28cf6d6506ea1d7c1e84691862fd2dc8",
+        "bytes": 16560
+      },
+      "fatbin_10.sm86.ptx": {
+        "sha256": "453ca7d30582be510df8720b2830d5ec41dd5297a4d0863c09343b3b38c2bfb9",
+        "bytes": 4718
+      },
+      "fatbin_11.1.sm_120.cubin": {
+        "sha256": "c28089f55fcb9aa2c5ba5a9d788e434019f45ec7cbf75c485d2b9bed783af36c",
+        "bytes": 8976
+      },
+      "fatbin_11.sm86.cubin": {
+        "sha256": "3998d4210cf0236836287496fd904c59b6bd5893efb9cfd8193acf1eafa677d8",
+        "bytes": 5408
+      },
+      "fatbin_11.sm86.fatbin": {
+        "sha256": "084f4ffcbb56ce9b30f341dc704e3eb84d8de57674fa167ff61611f36a1b0a6b",
+        "bytes": 14584
+      },
+      "fatbin_11.sm86.ptx": {
+        "sha256": "598b3ba95c543d3f13375a9fd53eded42fe2b794cd676828d19ec272f43fde88",
+        "bytes": 5136
+      },
+      "fatbin_12.1.sm_120.cubin": {
+        "sha256": "33f7a107595087bd78767804ff52ac48fafe48cff117a2033abcf180f28df0c8",
+        "bytes": 8720
+      },
+      "fatbin_12.sm86.cubin": {
+        "sha256": "8c673d574ff771e226f76362f7b1b5ed18606499ce2a040091ce5c6ff6ac8e55",
+        "bytes": 5416
+      },
+      "fatbin_12.sm86.fatbin": {
+        "sha256": "8cf57cf1c75242d9ec53ca48b0c37afd9ee23ee23c5390011d2e31094c2f07be",
+        "bytes": 14336
+      },
+      "fatbin_12.sm86.ptx": {
+        "sha256": "35f12669c0b75dd3801fa4c05f211042f930eccc61a59e67de5a45454cfd88fb",
+        "bytes": 4095
+      },
+      "fatbin_13.1.sm_120.cubin": {
+        "sha256": "e1428deac41c43211dc7c752dc113a9c8b5e70e83a2b47444a31c9d3b17ad17c",
+        "bytes": 5888
+      },
+      "fatbin_13.sm86.cubin": {
+        "sha256": "dfb6bc32f5fc7c20e33c90fc9764cd2aef267387d811a8c547010107c6b13050",
+        "bytes": 3496
+      },
+      "fatbin_13.sm86.fatbin": {
+        "sha256": "9f74ea77fa2ab62aad28c9bb10b5189055ac8f1432beb72b424363e639412919",
+        "bytes": 9584
+      },
+      "fatbin_13.sm86.ptx": {
+        "sha256": "9d2dba5c1a9e098bcf005463e2f2e8453122b020c0becec9f9321061b3dc03e9",
+        "bytes": 1005
+      },
+      "fatbin_14.1.sm_120.cubin": {
+        "sha256": "58569c5f57907392ba644b66cb9e0870e4641ca52db47bab741a8ccae4a4000b",
+        "bytes": 39872
+      },
+      "fatbin_14.sm86.cubin": {
+        "sha256": "66eb4f87344ef3929f972022eb08b2f49783e13a69ac123a78d7507bf93d77db",
+        "bytes": 32288
+      },
+      "fatbin_14.sm86.fatbin": {
+        "sha256": "6f3ef48456b463a91b80f82e0005433273d80fea4f3701b307715a6756629664",
+        "bytes": 72360
+      },
+      "fatbin_14.sm86.ptx": {
+        "sha256": "757842c49e23a69de45117b58f4a7063d8300d9432ef75ad443e1be2c43c656c",
+        "bytes": 72380
+      },
+      "fatbin_15.1.sm_120.cubin": {
+        "sha256": "45b45cb9ddb9863c88b60efdabf502a2aaf02f6c02a85eb9e6925aa0046a6978",
+        "bytes": 6112
+      },
+      "fatbin_15.sm86.cubin": {
+        "sha256": "aa960832cabfc38ad57e6e7166910cee8f34f3bbe5f4413640bc67f96a089070",
+        "bytes": 3752
+      },
+      "fatbin_15.sm86.fatbin": {
+        "sha256": "8eadb95c4d84b36d440c292ea7b4804349ebff48afcd687c261bc427aece0fab",
+        "bytes": 10064
+      },
+      "fatbin_15.sm86.ptx": {
+        "sha256": "2de19310aed0c17660be0e227fd41123c8cfd05915b28aa22d141f27f58ba8a9",
+        "bytes": 1564
+      },
+      "kstats.tsv": {
+        "sha256": "485f523d54eb4b519e8d6a6d3dcb421a56c43288998f97984f76098d82e65d23",
+        "bytes": 26114
+      },
+      "nvngx_dlssnr.dll": {
+        "sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+        "bytes": 194906112
+      },
+      "op_01.txt": {
+        "sha256": "53a21cc730ab6b490c3aa15cecf96c941cb00b74365d66db047b19ca15f87769",
+        "bytes": 915
+      },
+      "op_02.txt": {
+        "sha256": "b1687db4ae73549c78544e6dd589d2a47b938197d1e92ff65a99db93d4af66b1",
+        "bytes": 759
+      },
+      "op_03.txt": {
+        "sha256": "48b4aefbce291121a0e0974df2540b57eba5d10ba75be3770c72c26c73bfcc69",
+        "bytes": 746
+      },
+      "op_04.txt": {
+        "sha256": "1c467e00dfbf43fc4526d820cd3463b70824ef3a139ec20fc518863dddbe76ec",
+        "bytes": 744
+      },
+      "op_05.txt": {
+        "sha256": "a35716a0491d561156c748b4ce6cb66c20dbc28037f2eded4a29a90213ace806",
+        "bytes": 899
+      },
+      "op_06.txt": {
+        "sha256": "cc02f7d858d23ebd5bd1f834115962d93c7d2c4c47e7c6576bfcfa82aabc500e",
+        "bytes": 902
+      },
+      "op_07.txt": {
+        "sha256": "575561410131466958278170a263bdb3d5f3a7d5b3d70160bf9b34b736ab5c07",
+        "bytes": 826
+      }
+    },
+    "directories": []
+  },
+  "cache_valid": 15,
+  "artifacts": 76,
+  "old_files_preserved": 79,
+  "new_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+  "old_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+  "finished_utc": "2026-10-23T10:22:59.809299+00:00"
+}

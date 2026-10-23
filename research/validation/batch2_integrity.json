@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "status": "batch2_verified",
+  "passed": true,
+  "scope": "Batch2 named model, host observation, temporal, guarded build and package evidence integrity. Not native sm120 output equivalence.",
+  "reports": [
+    {
+      "path": "research/validation/check_transfer_batch2.json",
+      "sha256": "7ea66745fbdf339b2c12982e2bba7c11a7c5c6b982f5c701e24d6d500459d058"
+    },
+    {
+      "path": "research/validation/transfer_host_static_batch2.json",
+      "sha256": "09e77162ceecd4b1a98affbbb3d8c8ee42b3aa5132e06a8e687ed9f20d2e780a"
+    },
+    {
+      "path": "research/transfer_host_runtime_batch2/report.json",
+      "sha256": "7bbea8044266fccf2ebf04ae9dd6ea49b693b76655da92eb1de94a3fdb1bb734"
+    },
+    {
+      "path": "research/validation/batch2_temporal.json",
+      "sha256": "f66b8ecfd6d622e96838ad9fe2d820ac4e91685ccdfaf636e63c286d855d99a8"
+    },
+    {
+      "path": "research/validation/batch2_harness_cpu.json",
+      "sha256": "fd6cd5104cb559e9eba1454688f6d3202fe42ec20ff5f2355f6f5caca4b76dff"
+    },
+    {
+      "path": "research/batch2_build_summary.json",
+      "sha256": "7040a1220f02ef19199ec5cdbbfbe5e34e8e4c11b49fde62137521d8826e40f9"
+    },
+    {
+      "path": "research/batch2_build_first_revision.json",
+      "sha256": "84dcb4bf6e26d90a49d5144aaea366a75302c8e9da5c96abbcb422c69fa782a9"
+    },
+    {
+      "path": "research/batch2_build_second_revision.json",
+      "sha256": "ed1d47451bf74917ff57bdd0ec25f919163c87965452750daf8b1028ef20dc53"
+    },
+    {
+      "path": "research/batch2_build_verified_revision.json",
+      "sha256": "ff52b8edc94cb5b90268ff472a6c0529be40c9f55f01680f22d877196fe3bdf6"
+    },
+    {
+      "path": "research/validation/session_summary_batch2.json",
+      "sha256": "8fbe4daee513a64becb898ac69c591adf78331fb1267444bd77f041fd614c7c8"
+    }
+  ],
+  "transfer_cases": 34,
+  "coordinate_samples": 6156,
+  "dynamic_artifacts_verified": 20,
+  "dynamic_executions_passed": 3,
+  "dynamic_execution_failed": 1,
+  "temporal_capture_cases": 12,
+  "temporal_relations": 6,
+  "build_current_inputs_revalidated": true,
+  "package_artifacts_verified": 26,
+  "python_syntax_files": 31
+}

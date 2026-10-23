@@ -1,0 +1,33 @@
+{
+  "cpu_safety": {
+    "passed": 10,
+    "failed": 0
+  },
+  "package": {
+    "source_fingerprint": "1b73c55f1a2c9419c1fb451810d6b41dcf85d51f124afb0964b82a378b810a13",
+    "hashes_verified": true,
+    "model_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "artifacts_fingerprint": "ab3199813c37046bc0bfa106d13d32dd1c8cb24d50486f39700780ec4cdc48dc",
+    "proxy_sha256": "28c8a7c17bb4e156d666a995fe8374f804e6b3419e64628c48f6f4677628cf78",
+    "package_matches_current_native_build": true,
+    "path": "plugin/dist/DLSS5-RTX30",
+    "artifacts": 26
+  },
+  "gpu_suite_status": "passed_29_of_29",
+  "installer_safety": {
+    "passed": 15,
+    "failed": 0,
+    "caller_parent_sentinel_preserved": true,
+    "only_owned_child_cleaned": true
+  },
+  "gpu_evidence": {
+    "rebuilt_after_lf_normalization": true,
+    "failed": 0,
+    "rebuilt_proxy_identical_except_pe_timestamps": true,
+    "fullscreen_case": "not_requested_not_run",
+    "frames_each": 300,
+    "proxy_sha256_during_gpu_suite": "2cb3743e3380fe81b2e9018781403e1deb4539eb9f246a46df5c939dfc6b7e81",
+    "passed": 29,
+    "source_fingerprint_during_gpu_suite": "26283bc3865a538a105cbbf2e844ffefb6619fe72e22cbece8efe37965a3fced"
+  }
+}

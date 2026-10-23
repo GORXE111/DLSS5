@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "client_date": "2026-10-23",
+  "timezone": "Asia/Singapore",
+  "status": "iteration_complete",
+  "target": "DLSS-NR 310.8.0",
+  "hardware": "RTX 3060 12 GB / driver 610.74",
+  "official_native_equivalence_verified": false,
+  "numerical_regression": {
+    "check": {
+      "passed": true,
+      "checks": 1,
+      "skipped": 0
+    },
+    "check_frames": {
+      "passed": true,
+      "checks": 8,
+      "skipped": 0
+    },
+    "check_motion": {
+      "passed": true,
+      "checks": 6,
+      "skipped": 0
+    },
+    "check_res": {
+      "passed": true,
+      "checks": 3,
+      "skipped": 0
+    },
+    "check_levels": {
+      "passed": true,
+      "checks": 9,
+      "skipped": 0
+    },
+    "check_blocks": {
+      "passed": true,
+      "checks": 38,
+      "skipped": 0
+    },
+    "check_controls": {
+      "passed": true,
+      "checks": 18,
+      "skipped": 0
+    }
+  },
+  "postprocess": {
+    "full_model_cases": 8,
+    "isolated_kernel_cases": 8,
+    "passed": true,
+    "maximum_isolated_error_255": 0.0002887845039367676
+  },
+  "plugin": {
+    "passed": 29,
+    "failed": 0,
+    "frames_per_case": 300,
+    "optional_fullscreen_run": false
+  },
+  "installer": {
+    "passed": 15,
+    "failed": 0,
+    "caller_parent_sentinel_preserved": true,
+    "only_owned_child_cleaned": true
+  },
+  "package": {
+    "source_fingerprint": "1b73c55f1a2c9419c1fb451810d6b41dcf85d51f124afb0964b82a378b810a13",
+    "hashes_verified": true,
+    "model_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "artifacts_fingerprint": "ab3199813c37046bc0bfa106d13d32dd1c8cb24d50486f39700780ec4cdc48dc",
+    "proxy_sha256": "28c8a7c17bb4e156d666a995fe8374f804e6b3419e64628c48f6f4677628cf78",
+    "package_matches_current_native_build": true,
+    "path": "plugin/dist/DLSS5-RTX30",
+    "artifacts": 26
+  },
+  "reference_capture": {
+    "full_cases": 21,
+    "capture_path": "harness/captures/port-3108-20261023-a",
+    "repeat_cases": 3,
+    "repeat_bit_exact": true,
+    "official_reference": false,
+    "cpu_integrity_tests": 12
+  },
+  "assets": {
+    "records": 153,
+    "steps": 71,
+    "passed": true
+  },
+  "real_build_cache": {
+    "passed": true,
+    "scope": "fatbin_08 only; full DLL rebuild not performed"
+  },
+  "remaining": [
+    "native RTX 50 reference and numerical alignment",
+    "OKLab sampler boundary failures and real NGX resource/filter bindings",
+    "commercial-game/latest-build soak and optional fullscreen matrix",
+    "newer DLSS 5 model version"
+  ],
+  "scope_note": "This engineering iteration is closed. The independent transfer experiment remains failed; no global one-to-one fidelity claim. Intermediate coverage is limited to the declared checkpoints.",
+  "experimental_transfer": {
+    "passed": false,
+    "connected_to_default_network": false,
+    "coverage": {
+      "transfer_checks_passed": 26,
+      "transfer_checks_total": 28,
+      "sampler_probes_passed": 15,
+      "sampler_probes_total": 17
+    },
+    "thresholds": {
+      "max_255": 0.005,
+      "mae_255": 0.0005
+    },
+    "failed_cases": [
+      {
+        "name": "linear_large_grid_fallback",
+        "mae_255": 0.0018531118919963682,
+        "max_255": 0.3531378507614136
+      },
+      {
+        "name": "point_outside_rect",
+        "mae_255": 1.6575663318509504,
+        "max_255": 255.0
+      }
+    ],
+    "report": "research/validation/check_transfer.json",
+    "ngx_binding_and_native_equivalence_verified": false
+  }
+}

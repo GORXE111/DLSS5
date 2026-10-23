@@ -1,0 +1,151 @@
+{
+  "scope": "Static original sm120 and current sm86 complete pre/post scalar instructions; not GPU execution parity",
+  "original_dll_sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+  "kernels": [
+    {
+      "kernel_role": "pre",
+      "path": "sm86_port/fatbin_01.1.sm_120.cubin",
+      "sha256": "feb368ff5279a7408b1e55554db6e468d7f114a24b18b2af8d7e6989a410c612",
+      "section": ".text.cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+      "instructions": [
+        {
+          "section_offset": "0x10d0",
+          "file_offset": "0x1a22d0",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "dcd11f533c32dbc48763415f62c14240095a48ed601f1843d132e55316efb745",
+          "role": "center_x=fma(u,width,-.5)"
+        },
+        {
+          "section_offset": "0x10e0",
+          "file_offset": "0x1a22e0",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "1c38ae088c2adae47391f96a13b9adcfa371141e3bd20943a22fab23490d7995",
+          "role": "center_y=fma(v,height,-.5)"
+        },
+        {
+          "section_offset": "0x1120",
+          "file_offset": "0x1a2320",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "c72bf4112188d006c9c50050447dc10ff4e45560ce17da5d2cd79c64500ff447",
+          "role": "fraction_x=fma(u,width,-center_x)"
+        },
+        {
+          "section_offset": "0x1150",
+          "file_offset": "0x1a2350",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "0926deedaadee3473ca0583482e651b6020d1891d1567b8f4dbac77ff798f8f4",
+          "role": "fraction_y=fma(v,height,-center_y)"
+        }
+      ]
+    },
+    {
+      "kernel_role": "pre",
+      "path": "sm86_port/fatbin_01.sm86.cubin",
+      "sha256": "2871d683d650d602aa7590927fce9ef0a27394685a7fe127efd357b8be506043",
+      "section": ".text.cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+      "instructions": [
+        {
+          "section_offset": "0xf80",
+          "file_offset": "0x387e80",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "8e685eca35d028278661bd289f16e0c9423b8ec0a4cedb9b6f28e316eeaa626f",
+          "role": "center_x=fma(u,width,-.5)"
+        },
+        {
+          "section_offset": "0xf90",
+          "file_offset": "0x387e90",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "22d8cb9ae5db58d3550af0b224926d3c9a5f6f5c76078c07f6008f6e109a3ff8",
+          "role": "center_y=fma(v,height,-.5)"
+        },
+        {
+          "section_offset": "0xfd0",
+          "file_offset": "0x387ed0",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "502adc5ac1257f178bdccaa2745ff04f7dfd12150ca79d6f4b86c1a733854fd6",
+          "role": "fraction_x=fma(u,width,-center_x)"
+        },
+        {
+          "section_offset": "0x1000",
+          "file_offset": "0x387f00",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "b00134d497f0c41cb49e583547f42a5b0bab1e4969c52beb0e6cb0c1c4f3297a",
+          "role": "fraction_y=fma(v,height,-center_y)"
+        }
+      ]
+    },
+    {
+      "kernel_role": "post",
+      "path": "sm86_port/fatbin_01.1.sm_120.cubin",
+      "sha256": "feb368ff5279a7408b1e55554db6e468d7f114a24b18b2af8d7e6989a410c612",
+      "section": ".text.cc_tinlayout_fused_post_block_swin_1h_32_fp8",
+      "instructions": [
+        {
+          "section_offset": "0xa290",
+          "file_offset": "0x191510",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "b505c4243eccc0516a3b6bb48583d1a11667d7ecb8fe11de4fec7f9c61af90c7",
+          "role": "center_x=fma(u,width,-.5)"
+        },
+        {
+          "section_offset": "0xa2a0",
+          "file_offset": "0x191520",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "4ad175f5a078bb445f7218a48833fdef3c24dbd0d28d81bb823aeb121c606182",
+          "role": "center_y=fma(v,height,-.5)"
+        },
+        {
+          "section_offset": "0xa2e0",
+          "file_offset": "0x191560",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "ed70b21020f3c490115215cefce901f815780ead12a1dd62f4a357813bc50208",
+          "role": "fraction_x=fma(u,width,-center_x)"
+        },
+        {
+          "section_offset": "0xa310",
+          "file_offset": "0x191590",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "546011cb79008a02f22b1a2b40ffe7c799073c1b0d58b9f4e0b3912d56854b66",
+          "role": "fraction_y=fma(v,height,-center_y)"
+        }
+      ]
+    },
+    {
+      "kernel_role": "post",
+      "path": "sm86_port/fatbin_01.sm86.cubin",
+      "sha256": "2871d683d650d602aa7590927fce9ef0a27394685a7fe127efd357b8be506043",
+      "section": ".text.cc_tinlayout_fused_post_block_swin_1h_32_fp8",
+      "instructions": [
+        {
+          "section_offset": "0x22670",
+          "file_offset": "0x374270",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "cb68636fb8de4bf8491657e02dd6cef2b284484703986aebd2aa1ee4168f2db1",
+          "role": "center_x=fma(u,width,-.5)"
+        },
+        {
+          "section_offset": "0x22680",
+          "file_offset": "0x374280",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "83b361b7ed78062d72f03eaea8fd0a68bc3243ed91c996ca26431933f21b43bd",
+          "role": "center_y=fma(v,height,-.5)"
+        },
+        {
+          "section_offset": "0x226c0",
+          "file_offset": "0x3742c0",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "c2f430ff57953bbe04491deecd311571ee9221e496e7f7bb61f7f878aee5b45d",
+          "role": "fraction_x=fma(u,width,-center_x)"
+        },
+        {
+          "section_offset": "0x226f0",
+          "file_offset": "0x3742f0",
+          "opcode": "FFMA.FTZ",
+          "instruction_sha256": "5e303c3a030b60baba776bce6bb00c9046a2842192a2b0badba4c028ceec6de1",
+          "role": "fraction_y=fma(v,height,-center_y)"
+        }
+      ]
+    }
+  ],
+  "cuobjdump_sha256": "cb72e7e353ed20320deb4770f75291a828c0b23ca8c2d27688c4eeced96543f5"
+}

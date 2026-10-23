@@ -1,0 +1,135 @@
+{
+  "passed": true,
+  "scope": "CPU publication evidence review only; no GPU execution, native sm120 parity or root final integration claim",
+  "gpu_used": false,
+  "reviewed_reports": {
+    "research/validation/batch4_controls_diagnosis.json": "d4063ffd0bba9e0723a563ca366a18fa5ba602739a17a88974da46fc6225d721",
+    "research/validation/batch4_pre_round_diagnosis.json": "c00767c0d4d5484f098cc7dd1a2d33a4a2191e4f7720b0b8366552f18eea4908",
+    "research/validation/batch4_pre_round_fix.json": "ea74348af759f99bd8458cd6ef4fcb8b41da139e3dd49ae28a630786be0d06c9",
+    "research/validation/batch4_rounding_review.json": "329d69bd47eb0bae2619e4bd69ab1eca87292add2d9c700e1e73e22fe2c1cdd6"
+  },
+  "payload_inventory": [
+    {
+      "path": "research/validation/batch4_controls_diagnosis.json",
+      "bytes": 15369,
+      "max_array_length": 10,
+      "raw_assembly_payload_fields": [],
+      "arrays_over_128": []
+    },
+    {
+      "path": "research/validation/batch4_pre_round_diagnosis.json",
+      "bytes": 9328,
+      "max_array_length": 19,
+      "raw_assembly_payload_fields": [],
+      "arrays_over_128": []
+    },
+    {
+      "path": "research/validation/batch4_pre_round_fix.json",
+      "bytes": 16909,
+      "max_array_length": 10,
+      "raw_assembly_payload_fields": [],
+      "arrays_over_128": []
+    },
+    {
+      "path": "research/validation/batch4_rounding_review.json",
+      "bytes": 5060,
+      "max_array_length": 9,
+      "raw_assembly_payload_fields": [],
+      "arrays_over_128": []
+    }
+  ],
+  "capture_checks": [
+    {
+      "name": "current_high",
+      "manifest_validated": true,
+      "runtime_equivalent_source_artifacts_verified": 5,
+      "dll_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "output_sha256": "3b1246c39c00bd2df6bdf2fd74c1ac304548adc0c5cacddcab1f365ad043a38a"
+    },
+    {
+      "name": "current_default",
+      "manifest_validated": true,
+      "runtime_equivalent_source_artifacts_verified": 5,
+      "dll_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "output_sha256": "a541f182967d4fe4f60e9a82f51a72def0db9b5ee8b42156732ebcdca15fc1e6"
+    },
+    {
+      "name": "previous_high",
+      "manifest_validated": true,
+      "runtime_equivalent_source_artifacts_verified": 5,
+      "dll_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+      "output_sha256": "3b1246c39c00bd2df6bdf2fd74c1ac304548adc0c5cacddcab1f365ad043a38a"
+    },
+    {
+      "name": "odd_reset",
+      "manifest_validated": true,
+      "runtime_equivalent_source_artifacts_verified": 5,
+      "dll_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "output_sha256": "3707490df7ded58dfa99fdefda18886ff0e4fc57f858c6faaa3fdefe2913a9e6"
+    },
+    {
+      "name": "fraction_f0",
+      "manifest_validated": true,
+      "runtime_equivalent_source_artifacts_verified": 5,
+      "dll_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "output_sha256": "a541f182967d4fe4f60e9a82f51a72def0db9b5ee8b42156732ebcdca15fc1e6"
+    },
+    {
+      "name": "fraction_f1",
+      "manifest_validated": true,
+      "runtime_equivalent_source_artifacts_verified": 5,
+      "dll_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "output_sha256": "f03a917ede3a40c69ddca3f507e244914521f2305b5a5941291acec5635e4db8"
+    }
+  ],
+  "historical_source_differences": [
+    {
+      "report": "batch4_controls_diagnosis",
+      "path": "torch/dlss5/net.py",
+      "recorded": "fc5b33dad907b265ad8a09ef7c193e212854e38ae1a6ca097c3af2a27ef3d684",
+      "current": "848cc8b00d1efe066eca1f8b1783fa9aab6927a908bf2e7d779979397d079b6f",
+      "interpretation": "Historical pre-fix net identity; report source hash intentionally remains unchanged"
+    },
+    {
+      "report": "batch4_pre_round_diagnosis",
+      "path": "torch/dlss5/net.py",
+      "recorded": "fc5b33dad907b265ad8a09ef7c193e212854e38ae1a6ca097c3af2a27ef3d684",
+      "current": "848cc8b00d1efe066eca1f8b1783fa9aab6927a908bf2e7d779979397d079b6f",
+      "interpretation": "Historical pre-fix net identity; report source hash intentionally remains unchanged"
+    }
+  ],
+  "runtime_verification_method": "Capture helper deletes copied executables after execution. Manifest/evidence/output/trace SHA were validated; identical retained source binaries were rehashed independently. This does not independently witness past execution.",
+  "historical_runtime_distinction": "Previous high uses d442; current high/default and odd/fraction use f454. Equal high output applies only to this named case, not universal DLL equivalence.",
+  "fraction_regression": {
+    "case": "fraction_f1",
+    "before": {
+      "correlation": 0.9995745141084228,
+      "mae": 1.5769777199074073,
+      "max_error": 27.0,
+      "exact_fraction": 0.20549189814814814,
+      "within_one_fraction": 0.5593880208333334,
+      "nrmse": 0.01641222520484633,
+      "units": "uint8_rgb"
+    },
+    "rounded": {
+      "correlation": 0.9995532845937258,
+      "mae": 1.6269126157407408,
+      "max_error": 36.0,
+      "exact_fraction": 0.19949652777777777,
+      "within_one_fraction": 0.5453747106481481,
+      "nrmse": 0.016915215742225577,
+      "units": "uint8_rgb"
+    },
+    "still_meets_fixed_acceptance": true,
+    "universal_improvement_claim": false
+  },
+  "publication_sanitization": {
+    "fix_report_sha256": "ea74348af759f99bd8458cd6ef4fcb8b41da139e3dd49ae28a630786be0d06c9",
+    "original_report_sha256": "0660dd913febcba85bf5300da4a5d3ef60949aafacaf19b09502095612aaa70a",
+    "instruction_fields_replaced": 18,
+    "replacement": "opcode plus SHA-256; original one-based line numbers retained",
+    "historical_failure_reports_modified": false,
+    "preexisting_reference_to_original_fix_sha_found": false
+  },
+  "conclusion": "No remaining publication blocker found. Historical diagnostic failure remains false/unresolved; production fix evidence is separate. Final full-suite status belongs to the parent index."
+}

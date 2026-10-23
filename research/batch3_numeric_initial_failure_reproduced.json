@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "scope": "Expected initial compiler failure reproduced on exact original PTX bytes; regression corrected before full build",
+  "original_report": "research/batch3_numeric_ptxas_initial_failure.json",
+  "original_report_sha256": "cbafb7ddd1741ac407a0a29a004b3b5a7f691246aa6617c8316e0e30331f16de",
+  "ptx": "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx",
+  "ptx_sha256": "b0b69f8e5cc42f96987c3537449f5be2881a0f82ff9d51db51712335c9cdb2e8",
+  "expected_exit": "nonzero",
+  "exit_code": 4294967295,
+  "command": [
+    "cuda_tools/bin/ptxas.exe",
+    "-arch=sm_86",
+    "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx",
+    "-o",
+    "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\initial_failure.cubin"
+  ],
+  "stdout": "ptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 20; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 119; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 131; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 145; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 157; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 171; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 183; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 197; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 209; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 223; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 235; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 249; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 261; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 827; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 839; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 853; error   : Arguments mismatch for instruction 'set'\nptxas E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230\\conversions_0_initial_failure.ptx, line 865; error   : Arguments mismatch for instruction 'set'\nptxas fatal   : Ptx assembly aborted due to errors\n",
+  "stderr": ""
+}

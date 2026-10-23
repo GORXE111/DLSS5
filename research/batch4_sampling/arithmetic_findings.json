@@ -1,0 +1,305 @@
+{
+  "scope": "RTX 3060 finite coordinate investigation; complete original kernel evidence refers to retained sm86-ported cubin, not execution of sm120 SASS",
+  "result": "Closed the recorded sampling boundaries without relaxing max .005/255 or MAE .0005/255 thresholds",
+  "thresholds": {
+    "isolated_max_255": 0.005,
+    "isolated_mae_255": 0.0005,
+    "min_correlation": 0.999,
+    "max_mae_255": 3.0
+  },
+  "reports": {
+    "before": {
+      "path": "research/batch4_sampling/isolated_initial.json",
+      "sha256": "94e6b4056eb1c56efa4b5896bc16262e93a8a2d11406d990ae98273a46a3e492"
+    },
+    "after": {
+      "path": "research/validation/batch4_sampling.json",
+      "sha256": "5e134985d54838cf3e529574b07d745493138fd91eda28795e7d705b72654a32"
+    },
+    "static_machine_code": {
+      "path": "research/batch4_sampling/post_arithmetic_static.json",
+      "sha256": "e9568755e7dd5d5a29b7f4a54344be31676b5d1595d302b3857b4b076ac484f4"
+    },
+    "stream_graph": {
+      "path": "research/batch4_sampling/rcp_stream_graph.json",
+      "sha256": "1d700ad4c62c08df227f2739f59881cd587783be1a9d29fb66344a41edb7edde"
+    }
+  },
+  "before_sources": {
+    "torch/check_sampling.py": {
+      "path": "research/batch4_sampling/before/sources/torch/check_sampling.py",
+      "sha256": "d7ee6c61a8b2be04a2a4a69c96a71b345cccffc5acb6b26791f5dee57b249855"
+    },
+    "torch/test_sampling.py": {
+      "path": "research/batch4_sampling/before/sources/torch/test_sampling.py",
+      "sha256": "a1344b9b7f00674c80a2e40cab02298c8cc458c8d03c9d070eefa33c347d873e"
+    },
+    "torch/dlss5/ops.py": {
+      "path": "research/batch4_sampling/before/sources/torch/dlss5/ops.py",
+      "sha256": "1027dde94aec6a1397065d7b348a9e94d8b44b1b1062fc814dbce363cd2bd91e"
+    }
+  },
+  "before_source_preservation": "Reconstructed authored source bytes were SHA-256 checked against all three recorded before-run identities; snapshots are identity evidence and must be restored at their original workspace paths for execution",
+  "before_failed": [
+    "pre_native_53x37",
+    "post_53x37",
+    "full_post/spatial_53x37",
+    "full_post/spatial_640x360"
+  ],
+  "original_batch3_failures": {
+    "path": "research/validation/batch3_sampling_current.json",
+    "sha256": "dd843d543e649ee3b2c2f2b2271bfaed11d5a99118eeb31d0c6c37fa58fa4378"
+  },
+  "legacy_probe_limit": "Original 4 pre slice probes omitted FTZ in the artificial setup and consequently used split multiply/add; retained diagnostically, not evidence for the complete pre arithmetic",
+  "coordinate_evidence": "Both original sm120 and current sm86 complete pre/post use FFMA.FTZ for centers and fractions; 16 section offsets and instruction hashes are recorded separately",
+  "failure_point": {
+    "case": "post_53x37",
+    "rng_seed": 2026102303,
+    "sample_index": 3099,
+    "uv": [
+      0.9054375886917114,
+      0.503434956073761
+    ],
+    "instrumented_rgb_bit_equal_to_uninstrumented_slice": true,
+    "center": [
+      47.5,
+      18.5
+    ],
+    "fraction": [
+      0.48819220066070557,
+      0.1270933747291565
+    ],
+    "w1": [
+      0.5786983966827393,
+      0.9626975655555725
+    ],
+    "w2": [
+      0.5462318658828735,
+      0.09277277439832687
+    ],
+    "w12": [
+      1.1249302625656128,
+      1.05547034740448
+    ],
+    "division": [
+      0.4855695366859436,
+      0.08789709210395813
+    ],
+    "reciprocal37_hardware": 0.027027025818824768,
+    "reciprocal37_rn": 0.027027027681469917,
+    "dimension_rcp_only_post53_max_255": 6.079673767089844e-05,
+    "w1_fma_only_post53_max_255": 0.3867356479167938,
+    "dimension_rcp_only_spatial640_max_255": 0.9132078476250172,
+    "dimension_and_dynamic_rcp_fma_spatial640_max_255": 0.00010639429092407227
+  },
+  "decomposition_method": "Preserve original body and RGB output, append register stores in a local diagnostic slice and confirm RGB bit identity. Compare center/fraction/polynomial/division stages; replace only image-dimension reciprocal, then dynamic w2/w12 approximate reciprocal plus contracted center addition. No dimensions or failed coordinates are hardcoded in production.",
+  "implementation": "Small authored PTX RCP.APPROX.FTZ via CUDA Driver, context cache retained for graph lifetime, current Torch stream; CPU uses ordinary reciprocal without hardware equivalence. Dimension constants are produced on the current stream each call, without host readback or a cross-stream tensor cache.",
+  "limits": [
+    "CUDA RCP uses a small authored PTX driver shim; CPU fallback is ordinary reciprocal without CUDA numerical parity",
+    "Catmull coefficient/accumulation rounding remains approximate; finite passing cases do not certify all coordinates/GPUs",
+    "PTX slices are re-JIT-compiled sampling instructions; full-kernel evidence is listed separately",
+    "Full post tests zero the neural weights and use blend=1, recovering history as 2*RGB output",
+    "Network comparisons are against the sm86 f16 port and are not official sm120 output parity"
+  ],
+  "comparisons": [
+    {
+      "name": "linear_2x2",
+      "before_passed": true,
+      "before_max_255": 3.039836883544922e-05,
+      "after_passed": true,
+      "after_max_255": 3.039836883544922e-05
+    },
+    {
+      "name": "pre_2x2",
+      "before_passed": true,
+      "before_max_255": 9.119510650634766e-05,
+      "after_passed": true,
+      "after_max_255": 9.119510650634766e-05
+    },
+    {
+      "name": "pre_native_2x2",
+      "before_passed": true,
+      "before_max_255": 9.119510650634766e-05,
+      "after_passed": true,
+      "after_max_255": 9.119510650634766e-05
+    },
+    {
+      "name": "post_2x2",
+      "before_passed": true,
+      "before_max_255": 9.119510650634766e-05,
+      "after_passed": true,
+      "after_max_255": 9.119510650634766e-05
+    },
+    {
+      "name": "linear_27x19",
+      "before_passed": true,
+      "before_max_255": 3.039836883544922e-05,
+      "after_passed": true,
+      "after_max_255": 3.039836883544922e-05
+    },
+    {
+      "name": "pre_27x19",
+      "before_passed": true,
+      "before_max_255": 9.119510650634766e-05,
+      "after_passed": true,
+      "after_max_255": 9.119510650634766e-05
+    },
+    {
+      "name": "pre_native_27x19",
+      "before_passed": true,
+      "before_max_255": 9.119510650634766e-05,
+      "after_passed": true,
+      "after_max_255": 9.119510650634766e-05
+    },
+    {
+      "name": "post_27x19",
+      "before_passed": true,
+      "before_max_255": 9.119510650634766e-05,
+      "after_passed": true,
+      "after_max_255": 9.119510650634766e-05
+    },
+    {
+      "name": "linear_53x37",
+      "before_passed": true,
+      "before_max_255": 3.039836883544922e-05,
+      "after_passed": true,
+      "after_max_255": 3.039836883544922e-05
+    },
+    {
+      "name": "pre_53x37",
+      "before_passed": true,
+      "before_max_255": 7.599592208862305e-05,
+      "after_passed": true,
+      "after_max_255": 7.599592208862305e-05
+    },
+    {
+      "name": "pre_native_53x37",
+      "before_passed": false,
+      "before_max_255": 0.3867356479167938,
+      "after_passed": true,
+      "after_max_255": 6.079673767089844e-05
+    },
+    {
+      "name": "post_53x37",
+      "before_passed": false,
+      "before_max_255": 0.3867356479167938,
+      "after_passed": true,
+      "after_max_255": 6.079673767089844e-05
+    },
+    {
+      "name": "linear_640x360",
+      "before_passed": true,
+      "before_max_255": 3.039836883544922e-05,
+      "after_passed": true,
+      "after_max_255": 3.039836883544922e-05
+    },
+    {
+      "name": "pre_640x360",
+      "before_passed": true,
+      "before_max_255": 9.119510650634766e-05,
+      "after_passed": true,
+      "after_max_255": 9.119510650634766e-05
+    },
+    {
+      "name": "pre_native_640x360",
+      "before_passed": true,
+      "before_max_255": 9.119510650634766e-05,
+      "after_passed": true,
+      "after_max_255": 9.119510650634766e-05
+    },
+    {
+      "name": "post_640x360",
+      "before_passed": true,
+      "before_max_255": 9.119510650634766e-05,
+      "after_passed": true,
+      "after_max_255": 9.119510650634766e-05
+    },
+    {
+      "name": "full_post/zero",
+      "before_passed": true,
+      "before_max_255": 3.039836883544922e-05,
+      "after_passed": true,
+      "after_max_255": 3.039836883544922e-05
+    },
+    {
+      "name": "full_post/integer",
+      "before_passed": true,
+      "before_max_255": 3.039836883544922e-05,
+      "after_passed": true,
+      "after_max_255": 3.039836883544922e-05
+    },
+    {
+      "name": "full_post/fractional",
+      "before_passed": true,
+      "before_max_255": 9.119510650634766e-05,
+      "after_passed": true,
+      "after_max_255": 9.119510650634766e-05
+    },
+    {
+      "name": "full_post/negative_fraction",
+      "before_passed": true,
+      "before_max_255": 0.00012159347534179688,
+      "after_passed": true,
+      "after_max_255": 0.00012159347534179688
+    },
+    {
+      "name": "full_post/outside",
+      "before_passed": true,
+      "before_max_255": 1.519918441772461e-05,
+      "after_passed": true,
+      "after_max_255": 1.519918441772461e-05
+    },
+    {
+      "name": "full_post/odd_53x37",
+      "before_passed": true,
+      "before_max_255": 0.0001519918441772461,
+      "after_passed": true,
+      "after_max_255": 0.0001519918441772461
+    },
+    {
+      "name": "full_post/odd_95x63",
+      "before_passed": true,
+      "before_max_255": 9.119510650634766e-05,
+      "after_passed": true,
+      "after_max_255": 9.119510650634766e-05
+    },
+    {
+      "name": "full_post/spatial_53x37",
+      "before_passed": false,
+      "before_max_255": 0.9222105145454407,
+      "after_passed": true,
+      "after_max_255": 0.0002434244379401207
+    },
+    {
+      "name": "full_post/spatial_640x360",
+      "before_passed": false,
+      "before_max_255": 0.9132078476250172,
+      "after_passed": true,
+      "after_max_255": 0.00010639429092407227
+    }
+  ],
+  "final_coverage": {
+    "isolated": {
+      "compared": 16,
+      "passed": 16,
+      "failed": 0
+    },
+    "full_kernel": {
+      "compared": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    "network": {
+      "compared": 20,
+      "passed": 20,
+      "failed": 0
+    }
+  },
+  "final_cuda_graph": {
+    "max_error": 0.0,
+    "mean_error": 0.0,
+    "passed": true,
+    "eager_sha256": "8e7b7c14fe8bfaadd5d9dfb8dcf90eb0ddedb0e7fcb571496ad73bcd8d6e1094",
+    "graph_sha256": "8e7b7c14fe8bfaadd5d9dfb8dcf90eb0ddedb0e7fcb571496ad73bcd8d6e1094"
+  }
+}

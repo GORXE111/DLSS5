@@ -1,0 +1,215 @@
+{
+  "status": "passed",
+  "started_utc": "2026-10-23T10:10:21.274817+00:00",
+  "scope": "Old/new port finite synthetic outputs; not official sm120 parity",
+  "suites": {
+    "full": {
+      "status": "passed",
+      "cases": 21,
+      "reference": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\baseline",
+      "candidate": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\candidate",
+      "all_output_files_byte_identical": true,
+      "output_files": 22,
+      "comparison_report": "E:\\DLSS5\\research\\batch3_regression_full.json",
+      "comparison_sha256": "b8cb0cb1372845dd79302fc278694c9bba16ca2cf2a1cb9956becea40cefe023"
+    },
+    "temporal": {
+      "status": "passed",
+      "cases": 12,
+      "reference": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\baseline",
+      "candidate": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\candidate",
+      "all_output_files_byte_identical": true,
+      "output_files": 12,
+      "comparison_report": "E:\\DLSS5\\research\\batch3_regression_temporal.json",
+      "comparison_sha256": "112ecfe3b1e861a44bd0291745ef5b9c4b85a203d5c35954924f497371b1ef11"
+    },
+    "motion2d": {
+      "status": "passed",
+      "cases": 19,
+      "reference": "E:\\DLSS5\\harness\\captures\\port-batch3-motion2d",
+      "candidate": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\motion2d\\candidate",
+      "all_output_files_byte_identical": true,
+      "output_files": 19,
+      "comparison_report": "E:\\DLSS5\\research\\batch3_regression_motion2d.json",
+      "comparison_sha256": "7cf50bb9dc2b96a0ec4bbc2af780ac16d21eb91aeaccf135ccbd5c7144d60002"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\run_numeric_gpu.py"
+      ],
+      "log": "E:\\DLSS5\\research\\batch3_numeric_gpu.log",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "-m",
+        "harness.reference",
+        "capture",
+        "--dll",
+        "E:\\DLSS5\\sm86_port\\nvngx_dlssnr.dll",
+        "--out",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\baseline",
+        "--kind",
+        "port-sm86",
+        "--suite",
+        "full",
+        "--harness",
+        "E:\\DLSS5\\harness\\batch3\\nr-lab.exe"
+      ],
+      "log": "E:\\DLSS5\\research\\batch3_full_baseline.log",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "-m",
+        "harness.reference",
+        "capture",
+        "--dll",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+        "--out",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\candidate",
+        "--kind",
+        "port-sm86",
+        "--suite",
+        "full",
+        "--harness",
+        "E:\\DLSS5\\harness\\batch3\\nr-lab.exe"
+      ],
+      "log": "E:\\DLSS5\\research\\batch3_full_candidate.log",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "-m",
+        "harness.reference",
+        "compare",
+        "--reference",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\baseline",
+        "--candidate",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\candidate",
+        "--criterion",
+        "bit-exact",
+        "--report",
+        "E:\\DLSS5\\research\\batch3_regression_full.json"
+      ],
+      "log": "E:\\DLSS5\\research\\batch3_full_compare.log",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "-m",
+        "harness.reference",
+        "capture",
+        "--dll",
+        "E:\\DLSS5\\sm86_port\\nvngx_dlssnr.dll",
+        "--out",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\baseline",
+        "--kind",
+        "port-sm86",
+        "--suite",
+        "temporal",
+        "--harness",
+        "E:\\DLSS5\\harness\\batch3\\nr-lab.exe"
+      ],
+      "log": "E:\\DLSS5\\research\\batch3_temporal_baseline.log",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "-m",
+        "harness.reference",
+        "capture",
+        "--dll",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+        "--out",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\candidate",
+        "--kind",
+        "port-sm86",
+        "--suite",
+        "temporal",
+        "--harness",
+        "E:\\DLSS5\\harness\\batch3\\nr-lab.exe"
+      ],
+      "log": "E:\\DLSS5\\research\\batch3_temporal_candidate.log",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "-m",
+        "harness.reference",
+        "compare",
+        "--reference",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\baseline",
+        "--candidate",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\candidate",
+        "--criterion",
+        "bit-exact",
+        "--report",
+        "E:\\DLSS5\\research\\batch3_regression_temporal.json"
+      ],
+      "log": "E:\\DLSS5\\research\\batch3_temporal_compare.log",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "-m",
+        "harness.reference",
+        "capture",
+        "--dll",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+        "--out",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\motion2d\\candidate",
+        "--kind",
+        "port-sm86",
+        "--suite",
+        "motion2d",
+        "--harness",
+        "E:\\DLSS5\\harness\\batch3\\nr-lab.exe"
+      ],
+      "log": "E:\\DLSS5\\research\\batch3_motion2d_candidate.log",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+        "-m",
+        "harness.reference",
+        "compare",
+        "--reference",
+        "E:\\DLSS5\\harness\\captures\\port-batch3-motion2d",
+        "--candidate",
+        "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\motion2d\\candidate",
+        "--criterion",
+        "bit-exact",
+        "--report",
+        "E:\\DLSS5\\research\\batch3_regression_motion2d.json"
+      ],
+      "log": "E:\\DLSS5\\research\\batch3_motion2d_compare.log",
+      "status": "passed",
+      "exit_code": 0
+    }
+  ],
+  "old_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+  "new_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+  "harness_sha256": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+  "numeric_report_sha256": "3b304890b7f03052590b621fdb698fa82b3152487fb03dd4e1813e65efe0c6a8",
+  "finished_utc": "2026-10-23T10:20:29.308304+00:00"
+}

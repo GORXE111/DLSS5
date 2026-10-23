@@ -1,5 +1,7 @@
 # DLSS5 兜底模式 (dxgi.dll 代理)
 
+更新：2026-10-23。本目录是使用 310.8.0 sm86 移植 DLL 的 DX11/DX12 兼容接入；图像光流、降分辨率改动回加及 HUD/HDR 处理是本项目的选择，尚未证明与官方引擎集成等价。
+
 给**没有超分**的 D3D12 / D3D11 游戏用的 DLSS5：不借助 OptiScaler，自己挂在交换链的 Present 上，每帧把游戏画面送进 DLSS-NR。
 由 DLSS5 Manager 安装 (`dlss5 install <游戏> --mode fallback`，没有超分的 DX12 / DX11 游戏会自动选它)。
 
@@ -114,7 +116,7 @@ plugin\fallback\build.bat     -> bin\dxgi.dll, bin\dlss5_nvngx.dll, bin\fbtest.e
 fbtest.exe image.ppm [帧数] [--pan N ...]   最小的 D3D12 "游戏"：每帧把图片拷进后缓冲再 Present (--pan: 每帧右移 N 像素)
 fbtest11.exe image.ppm [帧数] [--model flip|blt] [--legacy] [--readback out.ppm ...]   同样的 D3D11 "游戏"
                               (--readback: 最后一次 Present 之后从 D3D11 这边读回后缓冲，确认处理结果真的拷回来了)
-run_tests.ps1                 27 项回归: D3D12 18 项 (格式、HDR scRGB / HDR10、改大小、重建、多交换链、光流、场景切换、界面保护、
+run_tests.ps1                 29 项回归: D3D12 20 项 (格式、HDR scRGB / HDR10、改大小、重建、多交换链、光流、场景切换、界面保护、
                               精确运动矢量 = nr-lab) + D3D11 9 项 (blt / 翻转 / 老式创建、bgra8 / sRGB / rgb10、改大小、重建、光流)
 mv_check.ps1                  运动矢量校验: 与 nr-lab 的正确 / 零运动矢量参考比较
 motion_flicker.ps1            运动中的闪烁 (运动补偿后的帧间差)，各模式对比
@@ -153,4 +155,19 @@ RTX 3060 上的验证 (fbtest + nr-lab 的合成测试图)：
 | 历史 + 精确运动矢量 (上限) | 0.58/255 | 0% |
 
 Godot Sponza 1080p、模型分辨率 0.45：无 DLSS5 约 123 fps，每帧重置约 50 fps，光流历史约 42 fps (+3.7 ms)。
-静止镜头 40 帧帧间差 0.12/255 (输入本身 0.04)。真实游戏还没测过。
+静止镜头 40 帧帧间差 0.12/255 (输入本身 0.04)。已有 Godot / FFX 官方示例及 Superposition 测试，尚未建立商业游戏的完整验收矩阵；不能把样例和基准程序当作所有游戏兼容证明。
+
+## 2026-10-23 验收与并发修复
+
+- 全进程 NGX 参数表及片段运行时用全局锁保护：Init、Create、Release 和每帧完整 Set/Evaluate 事务不再在不同交换链之间交叉。锁顺序固定为交换链锁再 NGX 锁。硬件光流入口表也改为线程安全的一次初始化。
+- `fbtest --parallel-present` 使用两个 worker，在两条链都完成渲染、两线程都 ready 后统一放行 Present；与旧的同线程交替双链测试分开。
+- 回归脚本在开始时要求全部参考图存在，缺失直接失败；比较严格检查 PPM 尺寸和数据长度，不能缺参考仍 PASS。
+- HDR 的 `.f16` / `.pq` 原始输入输出由 `check_hdr.py` 校验有限性、不透明 alpha、亮部保留和有效改动；门槛是本兼容路径的回归包络，不是官方 HDR 保真度认证。
+- 默认 300 帧，最少 151 帧，以确保覆盖改大小、切场景和第 150 帧 HUD 转储。结果目录保存每例 stdout、插件日志、HDR dump 和 summary.json；每次执行应使用新结果目录，避免混淆历史数据。
+
+```powershell
+plugin\fallback\build.bat
+powershell -NoProfile -ExecutionPolicy Bypass -File plugin/fallback/run_tests.ps1
+```
+
+独占全屏可选测试仍需单独选择 `-Fullscreen`，默认套件不切换显示器模式。现有十分钟 Superposition 记录来自 10 月 10 日构建，不能替代当前版本的长跑验收。

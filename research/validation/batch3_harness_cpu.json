@@ -1,0 +1,106 @@
+{
+  "passed": true,
+  "motion_shift_invalid_cases": [
+    {
+      "args": [
+        "--temporal-shift-y",
+        "bad"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--temporal-shift-y",
+        "0.5"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--temporal-shift-y",
+        "2147483648"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--temporal-shift-y",
+        "-2147483649"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--temporal-shift-y",
+        "99999999999999999999"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--temporal-shift",
+        "bad"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--temporal-shift",
+        "-0.5"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--temporal-shift",
+        "2147483648"
+      ],
+      "exit_code": 64,
+      "passed": true
+    }
+  ],
+  "tap_address_cases": 26,
+  "tap_null_guards": 2,
+  "capture_compare_unit_tests": 16,
+  "source_sha256": {
+    "harness/nr-lab.cpp": "70af633ecd8bbbb4984b45baba345e5769800ed1632a9740da287f8c56a31a87",
+    "harness/nvprof.h": "1390c21514e87def221543b6ef8dd3d32ca88219ae38a33901a3cdfbc2c40582",
+    "harness/test_tap_address.cpp": "0cfea76aa03af965e5831ea80bf3e87df568dcaf03ff78138611c828ee166b04"
+  },
+  "harness_sha256": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+  "motion_checker_cpu_tests": 4,
+  "export_finish_cpu_tests": 1,
+  "export_finish_combinations": 16,
+  "sampling_cpu_tests": 4,
+  "harness_cpu_total": 20,
+  "additional_source_sha256": {
+    "harness\\reference.py": "1cd0f5a333b9272755112839a715751e4d285cb0837d4fe70ba82ee6bd7ecbe8",
+    "harness\\test_reference.py": "d4f8ddee3a7283187802b61f3331c87de1911c3f625c966638ce2f809016d93b",
+    "torch\\check_motion2d.py": "fa7edf0e734a58b5e5aff4b3e47b66d7ad41c4656fac42bbc5c1c67e24a36015",
+    "torch\\test_motion2d.py": "64266c868c34895fa61b5c9a60e705cc2d3666a91d05d5bf097e9688c9f61ce5",
+    "torch\\test_export_finish.py": "c360e42223eb4722ea6fc61bf7a58a1cc5b161c633e0683a7f64debf6165b246",
+    "torch\\dlss5\\export.py": "944dda0f9ff635144760d14a47da88f8fb62776829b2c77a382c789c5061cf08"
+  },
+  "test_invocations": [
+    {
+      "cwd": "harness",
+      "command": "python -m unittest test_reference test_temporal",
+      "passed": true,
+      "tests": 20
+    },
+    {
+      "cwd": "torch",
+      "command": "python -m unittest test_export_finish test_motion2d test_sampling",
+      "passed": true,
+      "tests": 8,
+      "note": "Prior to addition of one invalid-threshold case; motion checker 4 tests rerun separately and passed."
+    }
+  ]
+}

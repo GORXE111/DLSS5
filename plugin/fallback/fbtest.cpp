@@ -7,6 +7,7 @@
 //     --recreate N                         at frame N destroy the swap chain and create a new one on the same window
 //     --waitable                           FRAME_LATENCY_WAITABLE_OBJECT swap chain, wait on it every frame
 //     --chains 2                           two windows / swap chains presented alternately
+//     --parallel-present                   two chains presented from separate threads (shared NGX stress)
 //     --fullscreen N                       at frame N enter fullscreen, leave again 30 frames later
 //     --pan N                              shift the image N pixels right every frame (wrapping, like nr-lab --temporal-shift)
 //     --ui                                 a static "HUD" rectangle (x W/8.., y H/8.., size W/4 x H/6) drawn over the picture
@@ -24,11 +25,13 @@
 #include <dxgi1_6.h>
 
 #include <algorithm>
+#include <atomic>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <string>
+#include <thread>
 #include <vector>
 
 static bool ReadPpm(const char *path, UINT *w, UINT *h, std::vector<uint8_t> *rgb)
@@ -140,7 +143,7 @@ int main(int argc, char **argv)
     if (!ReadPpm(argv[1], &W, &H, &rgb)) { std::printf("cannot read %s\n", argv[1]); return 2; }
     int frames = 60, resize_at = -1, recreate_at = -1, fullscreen_at = -1, chains = 1, pan = 0, cut_at = -1;
     const char *cut_image = nullptr;
-    bool present1 = false, resize1 = false, waitable = false, ui = false;
+    bool present1 = false, resize1 = false, waitable = false, ui = false, parallel_present = false;
     DXGI_FORMAT fmt = DXGI_FORMAT_R8G8B8A8_UNORM;
     for (int i = 2; i < argc; ++i) {
         std::string a = argv[i];
@@ -156,6 +159,7 @@ int main(int argc, char **argv)
         else if (a == "--recreate") recreate_at = next();
         else if (a == "--waitable") waitable = true;
         else if (a == "--chains") chains = std::max(1, std::min(2, next()));
+        else if (a == "--parallel-present") { parallel_present = true; chains = 2; }
         else if (a == "--fullscreen") fullscreen_at = next();
         else if (a == "--pan") pan = next();
         else if (a == "--ui") ui = true;
@@ -334,6 +338,10 @@ int main(int argc, char **argv)
             sc[0].h = d1.Height;
         }
 
+        std::vector<std::thread> presenters;
+        std::atomic<HRESULT> present_error{S_OK};
+        std::atomic<int> present_ready{0};
+        std::atomic<bool> present_start{false};
         for (Chain &c : sc) {
             if (c.waitable) WaitForSingleObjectEx(c.waitable, 1000, TRUE);
             ID3D12Resource *bb = nullptr;
@@ -371,14 +379,36 @@ int main(int argc, char **argv)
             list->Close();
             queue->ExecuteCommandLists(1, lists);
             bb->Release();
-            if (present1) {
-                DXGI_PRESENT_PARAMETERS pp = {};
-                CHECK(c.sc->Present1(0, 0, &pp));
+            if (parallel_present) {
+                // Finish the shared renderer's allocator before the next chain.
+                // Each proxy Present records work in its own chain resources.
+                wait();
+                presenters.emplace_back([&, chain = c.sc] {
+                    present_ready.fetch_add(1, std::memory_order_release);
+                    while (!present_start.load(std::memory_order_acquire)) std::this_thread::yield();
+                    DXGI_PRESENT_PARAMETERS pp = {};
+                    HRESULT hr = present1 ? chain->Present1(0, 0, &pp) : chain->Present(0, 0);
+                    if (FAILED(hr)) present_error.store(hr);
+                });
             } else {
-                CHECK(c.sc->Present(0, 0));
+                if (present1) {
+                    DXGI_PRESENT_PARAMETERS pp = {};
+                    CHECK(c.sc->Present1(0, 0, &pp));
+                } else {
+                    CHECK(c.sc->Present(0, 0));
+                }
+                wait();
             }
-            wait();
         }
+        if (parallel_present) {
+            // Both chains must finish rendering and both workers must reach the
+            // start gate before either Present enters the proxy.
+            while (present_ready.load(std::memory_order_acquire) != chains) std::this_thread::yield();
+            present_start.store(true, std::memory_order_release);
+        }
+        for (auto &presenter : presenters) presenter.join();
+        CHECK(present_error.load());
+        if (parallel_present) wait();
     }
     QueryPerformanceCounter(&t1);
     std::printf("%d frames, %.2f ms/frame\n", frames, (t1.QuadPart - t0.QuadPart) * 1000.0 / freq.QuadPart / frames);

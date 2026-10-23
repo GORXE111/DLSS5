@@ -21,6 +21,7 @@
 #include <nvsdk_ngx_defs_dlssg.h>
 
 #include <algorithm>
+#include <climits>
 #include <cstdarg>
 #include <cstdint>
 #include <cstdio>
@@ -67,6 +68,10 @@ struct Options {
     int use_auto_mask = 1;
     int ui_correction = 0;
     int temporal_shift = 0;
+    int temporal_shift_y = 0;
+    int scene_variant = 0;
+    int scene_cut_frame = -1;
+    int reset_frame = -1;
     float motion_x = 0.0f;
     float motion_y = 0.0f;
 };
@@ -1142,7 +1147,7 @@ static bool UploadTexture(ID3D12Resource *texture, const std::vector<uint8_t> &s
 static float g_hdr_scale = 2.0f;   // --hdr-scale: scRGB/HDR10 pattern = sRGB pattern values x this
 
 static std::vector<uint8_t> MakeColorPattern(UINT width, UINT height, DXGI_FORMAT format,
-    ColorProfile profile, int offset_x = 0)
+    ColorProfile profile, int offset_x = 0, int scene_variant = 0, int offset_y = 0)
 {
     const UINT bpp = BytesPerPixel(format);
     std::vector<uint8_t> data(static_cast<size_t>(width) * height * bpp);
@@ -1150,11 +1155,17 @@ static std::vector<uint8_t> MakeColorPattern(UINT width, UINT height, DXGI_FORMA
         for (UINT x = 0; x < width; ++x) {
             const UINT sample_x = static_cast<UINT>((static_cast<int>(x) - offset_x % static_cast<int>(width) +
                 static_cast<int>(width)) % static_cast<int>(width));
-            const bool checker = ((sample_x / 12) ^ (y / 12)) & 1;
-            const bool line = (sample_x % 61 < 2) || (y % 47 < 2) || ((sample_x + y) % 79 < 2);
+            const UINT sample_y = static_cast<UINT>((static_cast<int>(y) - offset_y % static_cast<int>(height) +
+                static_cast<int>(height)) % static_cast<int>(height));
+            const bool checker = ((sample_x / 12) ^ (sample_y / 12)) & 1;
+            const bool line = (sample_x % 61 < 2) || (sample_y % 47 < 2) || ((sample_x + sample_y) % 79 < 2);
             float r = line ? 1.0f : (checker ? 0.82f : 0.06f);
             float gg = line ? 0.18f : (checker ? 0.11f : 0.68f);
             float b = line ? 0.04f : (checker ? 0.55f : 0.09f);
+            if (scene_variant == 1) {
+                const float previous_r = r;
+                r = b; b = gg; gg = previous_r;
+            }
             if (profile != ColorProfile::Srgb) { r *= g_hdr_scale; gg *= g_hdr_scale; b *= g_hdr_scale; }
             uint8_t *pixel = data.data() + (static_cast<size_t>(y) * width + x) * bpp;
             if (format == DXGI_FORMAT_R8G8B8A8_UNORM) {
@@ -1893,6 +1904,7 @@ static void WriteResultJson(const Options &o, bool created, UINT evaluations, co
         "  \"style\": %d,\n"
         "  \"requestedPerfQuality\": %d,\n"
         "  \"runtimeScaleOverride\": %.6f,\n"
+        "  \"intensity\": %.6f,\n"
         "  \"profile\": \"%s\",\n"
         "  \"pipeline\": \"%s\",\n"
         "  \"compactNrResources\": %s,\n"
@@ -1903,6 +1915,10 @@ static void WriteResultJson(const Options &o, bool created, UINT evaluations, co
         "  \"useAutoMask\": %d,\n"
         "  \"uiCorrection\": %d,\n"
         "  \"temporalShiftPixels\": %d,\n"
+        "  \"temporalShiftYPixels\": %d,\n"
+        "  \"sceneVariant\": %d,\n"
+        "  \"sceneCutFrame\": %d,\n"
+        "  \"resetFrame\": %d,\n"
         "  \"motionVector\": [%.6f, %.6f],\n"
         "  \"nrResolvedScalingRatio\": %.6f,\n"
         "  \"nrScalingCallbackResult\": \"0x%08X\",\n"
@@ -1914,21 +1930,25 @@ static void WriteResultJson(const Options &o, bool created, UINT evaluations, co
         "  \"changedPercent\": %.5f,\n"
         "  \"quadrantChangedPercent\": [%.5f, %.5f, %.5f, %.5f],\n"
         "  \"checksumFnv1a64\": \"%016llX\",\n"
-        "  \"upscalingValidated\": %s\n"
+        "  \"upscalingValidated\": %s,\n"
+        "  \"outputCoverageValidated\": %s,\n"
+        "  \"fidelityValidated\": false,\n"
+        "  \"validationScope\": \"feature execution and output coverage only\"\n"
         "}\n",
         created ? "true" : "false", evaluations, o.input_w, o.input_h, o.output_w, o.output_h,
-        o.model, o.style, o.perf_quality, o.runtime_scale, ProfileName(o.profile), o.nr_only ? "nr-only" :
+        o.model, o.style, o.perf_quality, o.runtime_scale, o.intensity, ProfileName(o.profile), o.nr_only ? "nr-only" :
             (o.framegen ? "nr-plus-dlss-sr-plus-framegen" : "nr-plus-dlss-sr"),
         o.compact_nr ? "true" : "false", OptionalProbeName(o.optional_probe),
         FormatName(DefaultOptionalFormat(o)), o.optional_variant, o.optional_channel,
-        o.use_auto_mask, o.ui_correction, o.temporal_shift, o.motion_x, o.motion_y,
+        o.use_auto_mask, o.ui_correction, o.temporal_shift, o.temporal_shift_y,
+        o.scene_variant, o.scene_cut_frame, o.reset_frame, o.motion_x, o.motion_y,
         g_nr_resolved_scaling_ratio,
         static_cast<unsigned>(g_nr_scaling_callback_result),
         g_nr_scaling_callback_succeeded ? "true" : "false",
         g_nr_stats_vram_bytes, g_nr_stats_opt_level, g_nr_stats_dev_branch, g_runtime_params_calls,
         coverage.total,
         coverage.quadrant[0], coverage.quadrant[1], coverage.quadrant[2], coverage.quadrant[3],
-        static_cast<unsigned long long>(coverage.checksum), pass ? "true" : "false");
+        static_cast<unsigned long long>(coverage.checksum), pass ? "true" : "false", pass ? "true" : "false");
     std::fclose(file);
     Log("wrote machine-readable result: %s", path);
 }
@@ -1968,7 +1988,8 @@ static int Run(const Options &o)
     // Color/Output rect configuration before the neural network is dispatched.
     ID3D12Resource *color = MakeTexture(nr_width, nr_height, input_format, false);
     std::vector<ID3D12Resource *> frame_colors(o.frames, color);
-    if (o.temporal_shift != 0) {
+    const bool dynamic_input = o.temporal_shift != 0 || o.temporal_shift_y != 0 || o.scene_cut_frame >= 0;
+    if (dynamic_input) {
         for (UINT frame = 1; frame < o.frames; ++frame)
             frame_colors[frame] = MakeTexture(nr_width, nr_height, input_format, false);
     }
@@ -2029,9 +2050,12 @@ static int Run(const Options &o)
     };
     bool color_uploads_ok = true;
     for (UINT frame = 0; frame < o.frames; ++frame) {
-        if (frame > 0 && o.temporal_shift == 0) break;
+        if (frame > 0 && !dynamic_input) break;
+        const int scene = o.scene_variant ^ (o.scene_cut_frame >= 0 && frame >= static_cast<UINT>(o.scene_cut_frame) ? 1 : 0);
+        const int offset_x = static_cast<int>((static_cast<int64_t>(frame) * o.temporal_shift) % o.input_w);
+        const int offset_y = static_cast<int>((static_cast<int64_t>(frame) * o.temporal_shift_y) % o.input_h);
         const auto frame_pattern = MakeColorPattern(o.input_w, o.input_h, input_format, o.profile,
-            static_cast<int>(frame) * o.temporal_shift);
+            offset_x, scene, offset_y);
         const auto frame_data = o.compact_nr ? frame_pattern :
             EmbedTopLeft(frame_pattern, o.input_w, o.input_h, o.output_w, o.output_h,
                 BytesPerPixel(input_format));
@@ -2072,10 +2096,13 @@ static int Run(const Options &o)
 
     UINT good = 0;
     for (UINT frame = 0; frame < o.frames; ++frame) {
-        if (!EvaluateFrame(o, frame_colors[frame], nr_output, depth, motion, optional, frame == 0, frame)) break;
-        if (!o.nr_only && !EvaluateSrFrame(o, nr_output, output, depth, motion, frame == 0, frame)) break;
+        const bool reset = frame == 0 || (o.reset_frame >= 0 && frame == static_cast<UINT>(o.reset_frame));
+        const int scene = o.scene_variant ^ (o.scene_cut_frame >= 0 && frame >= static_cast<UINT>(o.scene_cut_frame) ? 1 : 0);
+        Log("temporal input: frame=%u scene=%d reset=%d", frame, scene, reset ? 1 : 0);
+        if (!EvaluateFrame(o, frame_colors[frame], nr_output, depth, motion, optional, reset, frame)) break;
+        if (!o.nr_only && !EvaluateSrFrame(o, nr_output, output, depth, motion, reset, frame)) break;
         if (o.framegen && !EvaluateFgFrame(o, output, fg_output, depth, motion,
-            frame == 0, frame)) break;
+            reset, frame)) break;
         ++good;
     }
 
@@ -2146,6 +2173,24 @@ static bool ParseFloat(const char *text, float *value)
     const float parsed = strtof(text, &end);
     if (end == text || *end != '\0') return false;
     *value = parsed;
+    return true;
+}
+
+static bool ParseFrameOption(const char *text, int *value)
+{
+    char *end = nullptr;
+    const long long parsed = strtoll(text, &end, 10);
+    if (end == text || *end != '\0' || parsed < -1 || parsed > INT_MAX) return false;
+    *value = static_cast<int>(parsed);
+    return true;
+}
+
+static bool ParseMotionShift(const char *text, int *value)
+{
+    char *end = nullptr;
+    const long long parsed = strtoll(text, &end, 10);
+    if (end == text || *end != '\0' || parsed < INT_MIN || parsed > INT_MAX) return false;
+    *value = static_cast<int>(parsed);
     return true;
 }
 
@@ -2300,7 +2345,15 @@ int main(int argc, char **argv)
         } else if (strcmp(arg, "--ui-correction") == 0 && i + 1 < argc) {
             options.ui_correction = atoi(argv[++i]);
         } else if (strcmp(arg, "--temporal-shift") == 0 && i + 1 < argc) {
-            options.temporal_shift = atoi(argv[++i]);
+            if (!ParseMotionShift(argv[++i], &options.temporal_shift)) return 64;
+        } else if (strcmp(arg, "--temporal-shift-y") == 0 && i + 1 < argc) {
+            if (!ParseMotionShift(argv[++i], &options.temporal_shift_y)) return 64;
+        } else if (strcmp(arg, "--scene-variant") == 0 && i + 1 < argc) {
+            if (!ParseFrameOption(argv[++i], &options.scene_variant)) return 64;
+        } else if (strcmp(arg, "--scene-cut-frame") == 0 && i + 1 < argc) {
+            if (!ParseFrameOption(argv[++i], &options.scene_cut_frame)) return 64;
+        } else if (strcmp(arg, "--reset-frame") == 0 && i + 1 < argc) {
+            if (!ParseFrameOption(argv[++i], &options.reset_frame)) return 64;
         } else if (strcmp(arg, "--motion-x") == 0 && i + 1 < argc) {
             if (!ParseFloat(argv[++i], &options.motion_x)) return 64;
         } else if (strcmp(arg, "--motion-y") == 0 && i + 1 < argc) {
@@ -2323,7 +2376,9 @@ int main(int argc, char **argv)
                         "       [--optional-rgba r,g,b,a] [--ramp-channels mask]\n"
                         "       [--bundle 1..7 (1 UI, 2 UIAlpha, 4 Backbuffer)] [--bundle-backbuffer 0|1]\n"
                         "       [--auto-mask 0|1] [--ui-correction 0|1]\n"
-                        "       [--temporal-shift pixels-per-frame] [--motion-x F] [--motion-y F]\n");
+                        "       [--temporal-shift pixels-per-frame] [--motion-x F] [--motion-y F]\n"
+                        "       [--temporal-shift-y pixels-per-frame] (signed integer)\n"
+                        "       [--scene-variant 0|1] [--scene-cut-frame N] [--reset-frame N] (zero-based; -1 disables)\n");
             return 0;
         } else {
             Log("unknown argument: %s", arg);
@@ -2336,6 +2391,9 @@ int main(int argc, char **argv)
         options.optional_channel < -1 || options.optional_channel > 3 ||
         options.use_auto_mask < 0 || options.use_auto_mask > 1 ||
         options.ui_correction < 0 || options.ui_correction > 1 ||
+        options.scene_variant < 0 || options.scene_variant > 1 ||
+        (options.scene_cut_frame >= 0 && static_cast<UINT>(options.scene_cut_frame) >= options.frames) ||
+        (options.reset_frame >= 0 && static_cast<UINT>(options.reset_frame) >= options.frames) ||
         (options.runtime_scale != -1.0f && options.runtime_scale <= 0.0f) ||
         options.output_w < options.input_w || options.output_h < options.input_h) {
         Log("invalid contract: model 1..3, style >= -1, quality -1..5, optional variant 0..3, switches 0..1, positive runtime scale or -1, and output >= input are required");

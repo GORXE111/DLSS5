@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "report_kind": "fp8-cpu-numeric-special",
+  "status": "passed",
+  "scope": "CPU emitted-PTX conversion semantics; not sm120 MMA output parity",
+  "sources": [
+    {
+      "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#alternate-floating-point-data-formats",
+      "contract": "PTX E4M3 has no infinity; only 0x7f/0xff are NaN. E5M2 has 5 exponent and 2 mantissa bits."
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-cvt",
+      "contract": "cvt .rn ties to even; .satfinite preserves NaN class and saturates out-of-range magnitudes to sign-preserved MAX_NORM."
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#half-precision-floating-point-instructions",
+      "contract": "Half add/mul without .ftz support subnormals."
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-instructions-mma",
+      "contract": "MMA accumulation order, rounding and handling of subnormal inputs are unspecified; conversion checks do not establish sm120 MMA parity."
+    }
+  ],
+  "tests": 7,
+  "failures": 0,
+  "errors": 0,
+  "source_sha256": {
+    "E:\\DLSS5\\tools\\ptx86\\rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+    "E:\\DLSS5\\tools\\ptx86\\fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+    "E:\\DLSS5\\tools\\ptx86\\test_numeric_special.py": "0127b8dfc0db1eb10a1da5560b6cbed62adf449c15b6fa99763d358a3882bc8a"
+  },
+  "nan_acceptance": "category only; payload/sign unspecified",
+  "finite_acceptance": "bit exact including signed zero, saturation and subnormals",
+  "e5m2": "Independent oracle landmarks/roundtrip only; absent from source PTX and unsupported by current rewriter"
+}

@@ -1,0 +1,258 @@
+{
+  "schema": 1,
+  "created_utc": "2026-10-23T11:33:15.852540+00:00",
+  "target": "DLSS-NR 310.8.0",
+  "reference_kind": "port-sm86",
+  "suite": "batch4-reset",
+  "gpus": [
+    {
+      "name": "NVIDIA GeForce RTX 3060",
+      "uuid": "GPU-e3384b57-d106-2618-58c5-4772065f2891",
+      "compute_capability": "8.6",
+      "driver": "610.74"
+    }
+  ],
+  "runtime_sha256": {
+    "nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+    "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+    "nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+    "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+  },
+  "scope": "finite synthetic D3D12 cases; not a universal fidelity or game certification",
+  "cases": [
+    {
+      "id": "zero_f0",
+      "args": [
+        "--nr-only",
+        "--input",
+        "640x360",
+        "--output",
+        "640x360",
+        "--frames",
+        "1",
+        "--scene-variant",
+        "0",
+        "--motion-x",
+        "0",
+        "--motion-y",
+        "0"
+      ],
+      "passed": true,
+      "outputs": {
+        "nr-lab-output-model1-srgb.ppm": "a541f182967d4fe4f60e9a82f51a72def0db9b5ee8b42156732ebcdca15fc1e6"
+      },
+      "exit_code": 0,
+      "evidence": {
+        "nr-lab-result.json": "7937d4e63a756a3718496701631b9a4fdc4a3cd7834cbd50b3a233f3f0dfcd56",
+        "nr-lab.log": "547634a1fc946285949012e7be21bfeace76790ddeab0cca137d2f07561e1569",
+        "stdout.log": "547634a1fc946285949012e7be21bfeace76790ddeab0cca137d2f07561e1569",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "zero_f1",
+      "args": [
+        "--nr-only",
+        "--input",
+        "640x360",
+        "--output",
+        "640x360",
+        "--frames",
+        "2",
+        "--scene-variant",
+        "0",
+        "--motion-x",
+        "0",
+        "--motion-y",
+        "0"
+      ],
+      "passed": true,
+      "outputs": {
+        "nr-lab-output-model1-srgb.ppm": "cffc0640b59565496a05338af8ac3793bc0870b9b53003370f9a70209eb7e88c"
+      },
+      "exit_code": 0,
+      "evidence": {
+        "nr-lab-result.json": "1cd3bd9d464702f415def0f3aecd7609f334aa464fd5d8eb714ad294764ecc13",
+        "nr-lab.log": "6130a59b9c741734a82ec528a9593d401106ffd63dc2c34423307b012895fbea",
+        "stdout.log": "6130a59b9c741734a82ec528a9593d401106ffd63dc2c34423307b012895fbea",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "fraction_f0",
+      "args": [
+        "--nr-only",
+        "--input",
+        "640x360",
+        "--output",
+        "640x360",
+        "--frames",
+        "1",
+        "--scene-variant",
+        "0",
+        "--motion-x",
+        "3.25",
+        "--motion-y",
+        "-1.5"
+      ],
+      "passed": true,
+      "outputs": {
+        "nr-lab-output-model1-srgb.ppm": "a541f182967d4fe4f60e9a82f51a72def0db9b5ee8b42156732ebcdca15fc1e6"
+      },
+      "exit_code": 0,
+      "evidence": {
+        "nr-lab-result.json": "0890a1067b381f24d95f6a603ceb1f29ae33acf0c327e23c4f94fa2fc62a22c0",
+        "nr-lab.log": "54fce8be44258c8ba6ace62e5349615a6e4fdb1a522ee57d64f419e35135e882",
+        "stdout.log": "54fce8be44258c8ba6ace62e5349615a6e4fdb1a522ee57d64f419e35135e882",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "fraction_f1",
+      "args": [
+        "--nr-only",
+        "--input",
+        "640x360",
+        "--output",
+        "640x360",
+        "--frames",
+        "2",
+        "--scene-variant",
+        "0",
+        "--motion-x",
+        "3.25",
+        "--motion-y",
+        "-1.5"
+      ],
+      "passed": true,
+      "outputs": {
+        "nr-lab-output-model1-srgb.ppm": "6fe3252153ca9dba309fcd9ab733a41ef4e767e6ce78ce8af381a918955f6519"
+      },
+      "exit_code": 0,
+      "evidence": {
+        "nr-lab-result.json": "4fb01a27608162c64bf87f343894dd0e3de9f2bcdd6f237f2ecf04076272532e",
+        "nr-lab.log": "49c6a0dcfed8da8d84e87829abefbfc0353530c2a7d74f0c3fe0907a8f479a55",
+        "stdout.log": "49c6a0dcfed8da8d84e87829abefbfc0353530c2a7d74f0c3fe0907a8f479a55",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "negative_f0",
+      "args": [
+        "--nr-only",
+        "--input",
+        "640x360",
+        "--output",
+        "640x360",
+        "--frames",
+        "1",
+        "--scene-variant",
+        "0",
+        "--motion-x",
+        "-2.375",
+        "--motion-y",
+        "1.625"
+      ],
+      "passed": true,
+      "outputs": {
+        "nr-lab-output-model1-srgb.ppm": "a541f182967d4fe4f60e9a82f51a72def0db9b5ee8b42156732ebcdca15fc1e6"
+      },
+      "exit_code": 0,
+      "evidence": {
+        "nr-lab-result.json": "b72d0e93160e2fb40e8fd71d5c8d2fb4cb1468a7567d1f1706d4d4ac63dc250d",
+        "nr-lab.log": "febfd1700ea80f0d3b388f9d9329efd79df11fbaaa4007ca6b8fb2aed03b002d",
+        "stdout.log": "febfd1700ea80f0d3b388f9d9329efd79df11fbaaa4007ca6b8fb2aed03b002d",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "negative_f1",
+      "args": [
+        "--nr-only",
+        "--input",
+        "640x360",
+        "--output",
+        "640x360",
+        "--frames",
+        "2",
+        "--scene-variant",
+        "0",
+        "--motion-x",
+        "-2.375",
+        "--motion-y",
+        "1.625"
+      ],
+      "passed": true,
+      "outputs": {
+        "nr-lab-output-model1-srgb.ppm": "4acfbe3adba401c9611710a41187fb91285c6ab6060e28ad8e3a00833084823d"
+      },
+      "exit_code": 0,
+      "evidence": {
+        "nr-lab-result.json": "cee2432b4437da037ca90451a96306c7e9a25c34569f016a7e79cd05ecd06eb8",
+        "nr-lab.log": "35992ff841b43759c9c276eff4173ee3e668ded5074a4fa29cf439a402c8d4df",
+        "stdout.log": "35992ff841b43759c9c276eff4173ee3e668ded5074a4fa29cf439a402c8d4df",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "odd_f0",
+      "args": [
+        "--nr-only",
+        "--input",
+        "641x361",
+        "--output",
+        "641x361",
+        "--frames",
+        "1",
+        "--scene-variant",
+        "0",
+        "--motion-x",
+        "-2.375",
+        "--motion-y",
+        "1.625"
+      ],
+      "passed": true,
+      "outputs": {
+        "nr-lab-output-model1-srgb.ppm": "3707490df7ded58dfa99fdefda18886ff0e4fc57f858c6faaa3fdefe2913a9e6"
+      },
+      "exit_code": 0,
+      "evidence": {
+        "nr-lab-result.json": "2993c4e13d6541e67ce7c4ba5fbf5e0cdb8cdeac6c51c9b24a2adbbf82d8cf84",
+        "nr-lab.log": "f4a4ec30f3b34e30baabeb9fbe786118a73c4308fd8847492536a101682be862",
+        "stdout.log": "f4a4ec30f3b34e30baabeb9fbe786118a73c4308fd8847492536a101682be862",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "odd_f1",
+      "args": [
+        "--nr-only",
+        "--input",
+        "641x361",
+        "--output",
+        "641x361",
+        "--frames",
+        "2",
+        "--scene-variant",
+        "0",
+        "--motion-x",
+        "-2.375",
+        "--motion-y",
+        "1.625"
+      ],
+      "passed": true,
+      "outputs": {
+        "nr-lab-output-model1-srgb.ppm": "1cb7413d37b477bcbe4c604a8f3d126370a53b15a64a4c89f21ba34c11a6e514"
+      },
+      "exit_code": 0,
+      "evidence": {
+        "nr-lab-result.json": "5f8328b12d5cf079f83b7dcd805f97b210b72a89f740f4fc2656b383ed3b116c",
+        "nr-lab.log": "75bffe5173855bcd7108f872a371046b538860fd10c00513ce08db8eeacd4cdc",
+        "stdout.log": "75bffe5173855bcd7108f872a371046b538860fd10c00513ce08db8eeacd4cdc",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "passed": true
+}

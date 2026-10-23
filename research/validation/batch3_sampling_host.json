@@ -1,0 +1,78 @@
+{
+  "scope": "Static retained D3D12 network texture selector bindings, identified original 310.8.0 DLL; no GPU run",
+  "source_dll_sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+  "bindings": {
+    "color": {
+      "selector": 2,
+      "filter": "POINT",
+      "addressing": "CLAMP"
+    },
+    "history": {
+      "selector": 0,
+      "filter": "LINEAR",
+      "addressing": "CLAMP"
+    },
+    "motion": {
+      "selector": 2,
+      "filter": "POINT",
+      "addressing": "CLAMP"
+    }
+  },
+  "evidence": {
+    "color_point_selector": {
+      "va": "0x180021db4",
+      "instruction_sha256": "5bb41cfa10239ecaf1a0622fbc0290d3074117e3c5ae749298ac583b6c9bb14a",
+      "instruction": "mov r9d, 2"
+    },
+    "color_resource": {
+      "va": "0x180021dc2",
+      "instruction_sha256": "e19fe5bab46d86e97758fcc5148b5a107c38c694591056d4d6d21b0223653e80",
+      "instruction": "mov rdx, qword ptr [r14]"
+    },
+    "color_texture_call": {
+      "va": "0x180021dc5",
+      "instruction_sha256": "224cd61c0742afd3720b1ecbda4a50275d820ddaa7357fac2a7e916a917c475d",
+      "instruction": "mov rax, qword ptr [rax + 0xa8]"
+    },
+    "history_resource": {
+      "va": "0x180022067",
+      "instruction_sha256": "2fae73e04d7d269fd16755e3db3f8279e872461b88e2fea1c90cd551718d51ce",
+      "instruction": "mov rdx, qword ptr [r12 + 0x60]"
+    },
+    "history_linear_selector": {
+      "va": "0x18002208b",
+      "instruction_sha256": "088366596dc79794f4d9ec6a5398e6fddf2bcecc59d1b42e484e892ec9368f38",
+      "instruction": "xor r9d, r9d"
+    },
+    "history_texture_call": {
+      "va": "0x180022096",
+      "instruction_sha256": "224cd61c0742afd3720b1ecbda4a50275d820ddaa7357fac2a7e916a917c475d",
+      "instruction": "mov rax, qword ptr [rax + 0xa8]"
+    },
+    "motion_point_selector": {
+      "va": "0x1800220f6",
+      "instruction_sha256": "5bb41cfa10239ecaf1a0622fbc0290d3074117e3c5ae749298ac583b6c9bb14a",
+      "instruction": "mov r9d, 2"
+    },
+    "motion_resource": {
+      "va": "0x180022104",
+      "instruction_sha256": "ce69458dcf0b083e6d9360d9c1bb5e2a397da921ffdcfcc6743563fd0b4aa8d4",
+      "instruction": "mov rdx, qword ptr [rbx]"
+    },
+    "motion_texture_call": {
+      "va": "0x180022107",
+      "instruction_sha256": "224cd61c0742afd3720b1ecbda4a50275d820ddaa7357fac2a7e916a917c475d",
+      "instruction": "mov rax, qword ptr [rax + 0xa8]"
+    },
+    "motion_member": {
+      "va": "0x180021d9c",
+      "instruction_sha256": "86217c6af02cbc353ce1c70b6797881f1178c23adc21b0e68d60445006e5e910",
+      "instruction": "lea rbx, [r14 + 0x18]"
+    }
+  },
+  "sampler_decode_reference": {
+    "path": "research\\validation\\transfer_host_static_batch2.json",
+    "sha256": "09e77162ceecd4b1a98affbbb3d8c8ee42b3aa5132e06a8e687ed9f20d2e780a"
+  },
+  "note": "Full-resource pixel-center Color fetches agree with point sampling; Catmull history uses linear TEX. This does not certify other GPU numerical precision."
+}

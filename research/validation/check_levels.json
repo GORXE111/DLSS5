@@ -1,0 +1,135 @@
+{
+  "schema": 1,
+  "suite": "check_levels",
+  "reference_kind": "RTX3060_port",
+  "reference_accumulation": "f16_two_mma_approximation",
+  "claim": "port_regression_only",
+  "mode": "approximate",
+  "thresholds": {
+    "min_correlation": 0.98,
+    "max_mae": null,
+    "max_nrmse": 0.25
+  },
+  "checks": [
+    {
+      "name": "step4/seq5",
+      "passed": true,
+      "correlation": 0.998651596773042,
+      "mae": 0.14401776393254598,
+      "max_error": 2.0,
+      "exact_fraction": 0.4788920084635417,
+      "within_one_fraction": 0.9993001302083333,
+      "nrmse": 0.05191761055082881,
+      "units": "tensor"
+    },
+    {
+      "name": "step8/seq9",
+      "passed": true,
+      "correlation": 0.9959594373600453,
+      "mae": 0.4977019985516866,
+      "max_error": 6.0,
+      "exact_fraction": 0.28912760416666666,
+      "within_one_fraction": 0.9201131184895833,
+      "nrmse": 0.08985101167394405,
+      "units": "tensor"
+    },
+    {
+      "name": "step14/seq15",
+      "passed": true,
+      "correlation": 0.9944689050435954,
+      "mae": 0.5976117531458537,
+      "max_error": 6.0,
+      "exact_fraction": 0.2508056640625,
+      "within_one_fraction": 0.8699991861979167,
+      "nrmse": 0.10436026806873705,
+      "units": "tensor"
+    },
+    {
+      "name": "step22/seq23",
+      "passed": true,
+      "correlation": 0.9904849001843401,
+      "mae": 0.4739198843638102,
+      "max_error": 4.0,
+      "exact_fraction": 0.185986328125,
+      "within_one_fraction": 0.930859375,
+      "nrmse": 0.13813193906610918,
+      "units": "tensor"
+    },
+    {
+      "name": "step47/seq131",
+      "passed": true,
+      "correlation": 0.9846685257936666,
+      "mae": 0.19806596438090007,
+      "max_error": 2.25,
+      "exact_fraction": 0.169091796875,
+      "within_one_fraction": 0.9977457682291667,
+      "nrmse": 0.17440597597835128,
+      "units": "tensor"
+    },
+    {
+      "name": "step55/seq139",
+      "passed": true,
+      "correlation": 0.9849597019286388,
+      "mae": 0.39434568881988524,
+      "max_error": 4.375,
+      "exact_fraction": 0.16689046223958334,
+      "within_one_fraction": 0.9587320963541667,
+      "nrmse": 0.17297982742251494,
+      "units": "tensor"
+    },
+    {
+      "name": "step61/seq145",
+      "passed": true,
+      "correlation": 0.9894977048712458,
+      "mae": 1.0066516955693563,
+      "max_error": 14.5,
+      "exact_fraction": 0.20252482096354166,
+      "within_one_fraction": 0.67552490234375,
+      "nrmse": 0.14465101466600383,
+      "units": "tensor"
+    },
+    {
+      "name": "step65/seq149",
+      "passed": true,
+      "correlation": 0.9918098327627041,
+      "mae": 2.1557963669300078,
+      "max_error": 36.0,
+      "exact_fraction": 0.21089274088541668,
+      "within_one_fraction": 0.38770955403645835,
+      "nrmse": 0.12783771523173798,
+      "units": "tensor"
+    },
+    {
+      "name": "step69/seq153",
+      "passed": true,
+      "correlation": 0.9952988233069394,
+      "mae": 1.7926263521114985,
+      "max_error": 50.0,
+      "exact_fraction": 0.2465087890625,
+      "within_one_fraction": 0.5041524251302083,
+      "nrmse": 0.09742144842734558,
+      "units": "tensor"
+    }
+  ],
+  "skipped": [],
+  "errors": [],
+  "references": {
+    "E:\\DLSS5\\research\\tapsnet\\tap_s1_1c19b000.bin": "365d05345894214a2ee84cfec8cf31f76a1fde05ee5ed9c8b2d1c64136a4c461",
+    "E:\\DLSS5\\research\\tapsnet\\tap_s5_1cafb000.bin": "39affad4e1d1d9f7ffeb30aa46426480f14ee303f3f485d6ff42c2749df842ca",
+    "E:\\DLSS5\\research\\tapsnet\\tap_s9_1c55b000.bin": "ca1da606e43240341158fbf8e02f9f861a9fbf51f8b666387906bf33deb105b0",
+    "E:\\DLSS5\\research\\tapsnet\\tap_s15_1c3f3000.bin": "00fdc8d29f1545ef58bc1c6201bb68038cc51ecf5f704298aa02ab587b392a9d",
+    "E:\\DLSS5\\research\\taps8t\\tap_s23_1c33f000.bin": "31daa86a2514b8278e150e36b2b66ece510c57d4ce1a38b6c2a390179d15a6e4",
+    "E:\\DLSS5\\research\\taps8t\\tap_s131_1c64b000.bin": "c1e3d0e2656f263e8260006f0d0d0e11dc306d8a02636e0bba96f7655d05e154",
+    "E:\\DLSS5\\research\\tapsnet\\tap_s139_1c3f3000.bin": "be79e5cb8ffd6ff0eeb441cb6ea900598ae008c010f61c288edd774ca2b841e8",
+    "E:\\DLSS5\\research\\tapsnet\\tap_s145_1c55b000.bin": "17e3dcb514add394fb6f4ae0a89562900e27de5c5a7f4086d4fd20dcee76386b",
+    "E:\\DLSS5\\research\\tapsnet\\tap_s149_1cafb000.bin": "d759bae5ac146a2d6318c6995c3be3574c346677374ef0278c2c63b40e13f9a9",
+    "E:\\DLSS5\\research\\tapsnet\\tap_s153_1c73b000.bin": "9fa3ebf752d9d2d6eeeaca0d390492dd3f2ec553fc160890dcd1d4879c6a68ee"
+  },
+  "coverage": {
+    "compared": 9,
+    "skipped": 0,
+    "fraction": 1.0
+  },
+  "passed": true,
+  "status": "passed"
+}

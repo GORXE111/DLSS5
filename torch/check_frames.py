@@ -10,20 +10,25 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from check import color_pattern  # noqa: E402
 from dlss5 import DLSS5  # noqa: E402
+from acceptance import execute, parser, ppm as read_ppm  # noqa: E402
 
 R = os.path.join(HERE, "..", "research")
 
 
 def ppm(i):
-    raw = open(os.path.join(R, f"out_f{i}.ppm"), "rb").read()
-    return np.frombuffer(raw[-640 * 360 * 3:], np.uint8).reshape(360, 640, 3).astype(np.float32) / 255
+    return read_ppm(os.path.join(R, f"out_f{i}.ppm"), 640, 360)
 
 
 def q255(x):
     return torch.floor(x * 255 + 0.5) / 255
 
 
-if __name__ == "__main__":
+def main(report):
+    refs = []
+    for f in range(4):
+        path = report.args.reference_dir / f"out_f{f}.ppm"
+        refs.append(read_ppm(path, 640, 360))
+        report.reference(path)
     net = DLSS5()
     color = torch.tensor(color_pattern(), device="cuda")
     for mode in ("浮点历史", "8 位历史"):
@@ -31,8 +36,13 @@ if __name__ == "__main__":
         for f in range(4):
             out = net(color, hist=hist, frame=f)
             o8 = q255(out).cpu().numpy()
-            ref = ppm(f)
+            ref = refs[f]
+            report.compare(f"{mode}/frame{f}", o8, ref, quantize=True)
             d, c = ref - color.cpu().numpy(), o8 - color.cpu().numpy()
             print(f"{mode} 第 {f} 帧: 相关 {np.corrcoef(o8.ravel(), ref.ravel())[0, 1]:.5f}  平均差 {np.abs(o8 - ref).mean() * 255:.2f}/255"
                   f"  改动量相关 {np.corrcoef(d.ravel(), c.ravel())[0, 1]:.4f}  改动幅度 kernel {np.abs(d).mean():.4f} torch {np.abs(c).mean():.4f}")
             hist = out if mode == "浮点历史" else q255(out)
+
+
+if __name__ == "__main__":
+    sys.exit(execute("check_frames", parser(__doc__).parse_args(), main))

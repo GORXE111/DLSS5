@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "criterion": "bit-exact",
+  "official_reference": false,
+  "scope": "only the named synthetic cases and recorded runtime versions; correlation is not a restoration percentage",
+  "reference": "E:\\DLSS5\\harness\\captures\\port-3108-20261023-b",
+  "candidate": "E:\\DLSS5\\harness\\captures\\port-3108-20261023-c",
+  "cases": [
+    {
+      "case": "reset",
+      "output": "nr-lab-output-model1-srgb.ppm",
+      "mae_255": 0.0,
+      "max_255": 0.0,
+      "p99_255": 0.0,
+      "exact_fraction": 1.0,
+      "psnr_db": null,
+      "correlation": 0.9999999999999998,
+      "bit_exact": true,
+      "passed": true
+    },
+    {
+      "case": "history_f3",
+      "output": "nr-lab-output-model1-srgb.ppm",
+      "mae_255": 0.0,
+      "max_255": 0.0,
+      "p99_255": 0.0,
+      "exact_fraction": 1.0,
+      "psnr_db": null,
+      "correlation": 1.0,
+      "bit_exact": true,
+      "passed": true
+    },
+    {
+      "case": "intensity_zero",
+      "output": "nr-lab-output-model1-srgb.ppm",
+      "mae_255": 0.0,
+      "max_255": 0.0,
+      "p99_255": 0.0,
+      "exact_fraction": 1.0,
+      "psnr_db": null,
+      "correlation": 1.0,
+      "bit_exact": true,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

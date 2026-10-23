@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "suite": "check",
+  "reference_kind": "RTX3060_port",
+  "reference_accumulation": "f16_two_mma_approximation",
+  "claim": "port_regression_only",
+  "mode": "approximate",
+  "thresholds": {
+    "min_correlation": 0.999,
+    "max_mae": 3.0,
+    "max_nrmse": null
+  },
+  "checks": [
+    {
+      "name": "frame0_vs_port",
+      "passed": true,
+      "correlation": 0.9993113199484132,
+      "mae": 1.9154759837962962,
+      "max_error": 17.0,
+      "exact_fraction": 0.1717259837962963,
+      "within_one_fraction": 0.47499710648148147,
+      "nrmse": 0.01966512195687761,
+      "units": "uint8_rgb"
+    }
+  ],
+  "skipped": [],
+  "errors": [],
+  "references": {
+    "E:\\DLSS5\\research\\out_f0.ppm": "a541f182967d4fe4f60e9a82f51a72def0db9b5ee8b42156732ebcdca15fc1e6"
+  },
+  "coverage": {
+    "compared": 1,
+    "skipped": 0,
+    "fraction": 1.0
+  },
+  "passed": true,
+  "status": "passed"
+}

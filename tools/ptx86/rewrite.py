@@ -14,8 +14,8 @@ DLSS5 的 fatbin_01..07/14 用到 8 类 Ampere 没有的指令，这里逐条换
   min.relu.s32               -> min + max(.,0)
   fence.release.gpu          -> fence.acq_rel.gpu (更强，安全)
 
-已知偏差: e4m3 NaN(0x7F) 解码成 480 而不是 NaN；f16 输入 NaN 量化成 448；
-FP8 mma 的 f16 累加被拆成两次舍入。
+特殊值遵循 PTX cvt 的 NaN 类别与 satfinite 语义；不保证 NaN payload/sign。
+已知偏差: FP8 mma 的 f16 累加被拆成两次舍入。
 
 用法: python -m tools.ptx86.rewrite in.ptx out.ptx
 """
@@ -39,13 +39,18 @@ def _ops(s):
 def _dec_spread(dst, w):
     # w: 每半 = e4m3<<8。f16 位 = s<<15 | em<<7，再乘 256 修正指数偏置 7->15 (精确)
     return (
-        "{ .reg .b32 %x_s, %x_k;\n"
+        "{ .reg .b32 %x_s, %x_k, %x_n;\n"
         f"and.b32 %x_s, {w}, 0x80008000;\n"
         f"and.b32 {w}, {w}, 0x7F007F00;\n"
         f"shr.u32 {w}, {w}, 1;\n"
+        # Only |e4m3|=0x7f maps to this finite intermediate. Mark before scaling.
+        "mov.b32 %x_k, 0x3F803F80;\n"
+        f"set.eq.u32.f16x2 %x_n, {w}, %x_k;\n"
+        "and.b32 %x_n, %x_n, 0x20002000;\n"
         f"or.b32 {w}, {w}, %x_s;\n"
         "mov.b32 %x_k, 0x5C005C00;\n"
         f"mul.rn.f16x2 {dst}, {w}, %x_k;\n"
+        f"or.b32 {dst}, {dst}, %x_n;\n"
         "}\n"
     )
 
@@ -66,6 +71,7 @@ def _half_to_e4m3(h, out):
     # h: .b16 f16, out: .b32 结果字节 (0..0xFE)
     return (
         f"cvt.f32.f16 %y_f, {h};\n"
+        "setp.nan.f32 %y_n, %y_f, %y_f;\n"
         "abs.f32 %y_a, %y_f;\n"
         "min.f32 %y_a, %y_a, 0f43E00000;\n"          # 448
         "setp.lt.f32 %y_p, %y_a, 0f3C800000;\n"      # 2^-6 以下走次正规
@@ -83,6 +89,7 @@ def _half_to_e4m3(h, out):
         "shr.u32 %y_g, %y_g, 24;\n"
         "and.b32 %y_g, %y_g, 0x80;\n"
         f"or.b32 {out}, %y_u, %y_g;\n"
+        f"@%y_n or.b32 {out}, {out}, 1;\n"
     )
 
 
@@ -102,8 +109,10 @@ def _f16x2_to_e4m3x2(dst16, src):
     #   次正规: (a + 2.0) - 0x4000 的整数值 0..8 本来就在每半的低位
     #   符号: src >> 8 把 bit 15/31 送到 bit 7/23
     return (
-        "{ .reg .b32 %z_a, %z_l, %z_r, %z_s, %z_m, %z_k;\n"
+        "{ .reg .b32 %z_a, %z_l, %z_r, %z_s, %z_m, %z_k, %z_n;\n"
         f"and.b32 %z_a, {src}, 0x7FFF7FFF;\n"
+        "set.nan.u32.f16x2 %z_n, %z_a, %z_a;\n"
+        "and.b32 %z_n, %z_n, 0x00010001;\n"
         "mov.b32 %z_k, 0x5F005F00;\n"                     # 448
         "min.f16x2 %z_a, %z_a, %z_k;\n"
         "shr.u32 %z_l, %z_a, 7;\n"
@@ -120,6 +129,7 @@ def _f16x2_to_e4m3x2(dst16, src):
         "not.b32 %z_m, %z_m;\n"
         "and.b32 %z_r, %z_r, %z_m;\n"
         "or.b32 %z_r, %z_r, %z_s;\n"
+        "or.b32 %z_r, %z_r, %z_n;\n"
         f"shr.u32 %z_s, {src}, 8;\n"
         "and.b32 %z_s, %z_s, 0x00800080;\n"
         "or.b32 %z_r, %z_r, %z_s;\n"
@@ -132,8 +142,10 @@ def _f16x2_to_e4m3x2(dst16, src):
 def _f16x2_to_e4m3x2_v1(dst16, src):
     # 先右移再掩码/加偏置 (中间量少一个)
     return (
-        "{ .reg .b32 %z_a, %z_l, %z_r, %z_s, %z_m, %z_k;\n"
+        "{ .reg .b32 %z_a, %z_l, %z_r, %z_s, %z_m, %z_k, %z_n;\n"
         f"and.b32 %z_a, {src}, 0x7FFF7FFF;\n"
+        "set.nan.u32.f16x2 %z_n, %z_a, %z_a;\n"
+        "and.b32 %z_n, %z_n, 0x00010001;\n"
         "mov.b32 %z_k, 0x5F005F00;\n"
         "min.f16x2 %z_a, %z_a, %z_k;\n"
         "shr.u32 %z_l, %z_a, 7;\n"
@@ -152,6 +164,7 @@ def _f16x2_to_e4m3x2_v1(dst16, src):
         "not.b32 %z_m, %z_m;\n"
         "and.b32 %z_r, %z_r, %z_m;\n"
         "or.b32 %z_r, %z_r, %z_s;\n"
+        "or.b32 %z_r, %z_r, %z_n;\n"
         f"prmt.b32 %z_s, {src}, 0, 0x0031;\n"
         "and.b32 %z_s, %z_s, 0x8080;\n"
         "prmt.b32 %z_r, %z_r, 0, 0x0020;\n"
@@ -164,7 +177,7 @@ def _f16x2_to_e4m3x2_v1(dst16, src):
 def _f16x2_to_e4m3x2_f32(dst16, src):
     return (
         "{ .reg .b16 %y_h0, %y_h1; .reg .f32 %y_f, %y_a, %y_s;\n"
-        ".reg .b32 %y_u, %y_l, %y_v, %y_g, %y_o0, %y_o1; .reg .pred %y_p;\n"
+        ".reg .b32 %y_u, %y_l, %y_v, %y_g, %y_o0, %y_o1; .reg .pred %y_p, %y_n;\n"
         f"mov.b32 {{%y_h0, %y_h1}}, {src};\n"
         + _half_to_e4m3("%y_h0", "%y_o0")
         + _half_to_e4m3("%y_h1", "%y_o1")
@@ -204,7 +217,7 @@ def _unpack4_v2(reg, lo, hi):
       低字节 L  = (b&1)<<7              -> (reg<<7)&0x80808080
     两条 prmt 交错拼出 [L0,HS0,L1,HS1] / [L2,HS2,L3,HS3]，再乘 256 修正指数偏置"""
     return (
-        "{ .reg .b32 %u_h, %u_s, %u_l, %u_k;\n"
+        "{ .reg .b32 %u_h, %u_s, %u_l, %u_k, %u_n, %u_c;\n"
         f"shr.u32 %u_h, {reg}, 1;\n"
         "and.b32 %u_h, %u_h, 0x3F3F3F3F;\n"
         f"and.b32 %u_s, {reg}, 0x80808080;\n"
@@ -212,10 +225,19 @@ def _unpack4_v2(reg, lo, hi):
         f"shl.b32 %u_l, {reg}, 7;\n"
         "and.b32 %u_l, %u_l, 0x80808080;\n"
         "mov.b32 %u_k, 0x5C005C00;\n"
+        "mov.b32 %u_c, 0x3F803F80;\n"
         "prmt.b32 %u_s, %u_l, %u_h, 0x5140;\n"
+        "and.b32 %u_n, %u_s, 0x7FFF7FFF;\n"
+        "set.eq.u32.f16x2 %u_n, %u_n, %u_c;\n"
+        "and.b32 %u_n, %u_n, 0x20002000;\n"
         f"mul.rn.f16x2 {lo}, %u_s, %u_k;\n"
+        f"or.b32 {lo}, {lo}, %u_n;\n"
         "prmt.b32 %u_s, %u_l, %u_h, 0x7362;\n"
+        "and.b32 %u_n, %u_s, 0x7FFF7FFF;\n"
+        "set.eq.u32.f16x2 %u_n, %u_n, %u_c;\n"
+        "and.b32 %u_n, %u_n, 0x20002000;\n"
         f"mul.rn.f16x2 {hi}, %u_s, %u_k;\n"
+        f"or.b32 {hi}, {hi}, %u_n;\n"
         "}\n"
     )
 

@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "exit_code": 0,
+  "tests": 31,
+  "command": [
+    "C:\\Users\\admin\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+    "-m",
+    "unittest",
+    "test_acceptance",
+    "test_export_finish",
+    "test_motion2d",
+    "test_sampling",
+    "test_reset",
+    "-v"
+  ],
+  "cwd": "torch",
+  "source_sha256": {
+    "torch/test_acceptance.py": "9ffb9861c0c07b627981a5747f17e960bdd5e63e579949ac23d184238846f673",
+    "torch/test_export_finish.py": "c360e42223eb4722ea6fc61bf7a58a1cc5b161c633e0683a7f64debf6165b246",
+    "torch/test_motion2d.py": "64266c868c34895fa61b5c9a60e705cc2d3666a91d05d5bf097e9688c9f61ce5",
+    "torch/test_sampling.py": "2b3a3188f575e2005903e586ed35f6aa8d721c127192e40d4165f29fde2eea97",
+    "torch/test_reset.py": "aed5c23ad43d9e19652ed8a50741adaea94c30f7c61ae5343aca54ba040851c5",
+    "torch/acceptance.py": "343df6ef367d2d93c3a710a7b00212ca0b5e902e504304aa84536c9a1b70812f",
+    "tools/report_paths.py": "88c0c40940267fcd0fe185bc87c37114a834da8e1c0a53bd8dd19a50d44dfb60",
+    "torch/dlss5/net.py": "fc5b33dad907b265ad8a09ef7c193e212854e38ae1a6ca097c3af2a27ef3d684",
+    "torch/dlss5/ops.py": "babf1b19a18e0b742603f0d6f594f4e7a2e9f67a8dbfb57c68eea7f7a0c80742",
+    "torch/dlss5/export.py": "fd1d66e8d1e175da82bbcb716daf918b7178ab3dc33e6dc766da7bdd35c8a93b",
+    "torch/dlss5/ptx_math.py": "0034713bcbdec10e1e0220e17fbfdc4d46d812f085c325139c5d3d58bddf9c59",
+    "torch/check_sampling.py": "1a5de1c479e42215c2bf7289c51dc1fbfbb66d824b4857b9a9ef00b8a006ec82",
+    "torch/check_reset.py": "c6698c5fd7149f20be1f136d3ceecc29a0f4acc5d2a627efbfc060651157c730"
+  },
+  "source_identity_unchanged": true,
+  "log": "_dl\\batch4_root_cpu.log",
+  "log_sha256": "2820ccf12c2489396badbdda5e26cb7417b403ecb6c771d53c923e3911489496",
+  "additional_groups": [
+    {
+      "name": "test_sampling_probe",
+      "tests": 2,
+      "passed": true,
+      "exit_code": 0,
+      "source_sha256": "431a03c22b707be49ae8bbe51365fa302a0cb18c81c7f825367349ce4d8a091d",
+      "command": "python -m unittest test_sampling_probe -v",
+      "cwd": "torch",
+      "evidence": "Current session tool output records both cases passing; no GPU used."
+    }
+  ],
+  "total_tests": 33
+}

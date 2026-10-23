@@ -1,0 +1,592 @@
+{
+  "status": "passed",
+  "scope": "FP8 cvt NaN category repair; no default accumulation precision change and no sm120 MMA parity claim",
+  "sources": {
+    "tools/ptx86/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+    "tools/ptx86/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+    "tools/ptx86/test_emu.py": "71baaff2038b29a179ece4a64d2b22ea1d53be8231ecf78d64542f9bc1139ecf",
+    "tools/ptx86/test_numeric_special.py": "0127b8dfc0db1eb10a1da5560b6cbed62adf449c15b6fa99763d358a3882bc8a"
+  },
+  "cpu_special_report": "research/batch3_numeric_cpu.json",
+  "cpu_unit_tests": {
+    "passed": 25,
+    "failed": 0,
+    "log": "research/batch3_numeric_unit.log"
+  },
+  "ptxas_report": "research/batch3_numeric_ptxas.json",
+  "preserved_before_build": {
+    "sm86_port/nvngx_dlssnr.dll": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "plugin/dist/DLSS5-RTX30/payload/nvngx_dlssnr.dll": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "plugin/dist/DLSS5-RTX30/package.json": "0b5543f7ec87fbb78dbebe29ec03c8f547e3fe35fa59bcd5578e04ae6dcbebf9"
+  },
+  "pending": [],
+  "independent_review": "Root independently reviewed NaN correction and reran all 25 CPU tests; approved source freeze.",
+  "work": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2",
+  "build_commands": [
+    [
+      "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+      "-m",
+      "tools.ptx86.build_dll",
+      "--work",
+      "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2",
+      "--out",
+      "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+      "--report",
+      "E:\\DLSS5\\research\\batch3_build_first.json"
+    ],
+    [
+      "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+      "-m",
+      "tools.ptx86.build_dll",
+      "--work",
+      "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2",
+      "--out",
+      "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.second.dll",
+      "--report",
+      "E:\\DLSS5\\research\\batch3_build_second.json"
+    ]
+  ],
+  "frozen_build_sources": {
+    "tools\\ptx86\\build_dll.py": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+    "tools\\ptx86\\verify_build.py": "89e08f6091b771d61354c6c44a5e7c707b40f2560d1f2fbadeffa55d4e0ff73a",
+    "tools\\ptx86\\flow.py": "1b66a27564d2869d06fe6b22386cf5083380a854d60f291c234fc7d4e025a1b8"
+  },
+  "frozen_review_scope": "Root reviewed rewrite/fuse NaN handling and independent integer CPU oracle/PTX interpreter; independently reran 25 tests. GPU and full build not part of pre-freeze review.",
+  "baseline_policy": "verify_build baseline remains the preserved old live d442 DLL: record candidate_matches_existing_dll=false if binary changed; do not weaken independent second DLL, current-input, stage, cache, or original-weight checks. Same-executable GPU comparison separately establishes finite output regression.",
+  "initial_failure_report": "research/batch3_numeric_initial_failure_reproduced.json",
+  "gpu_harness": "E:/DLSS5/harness/batch3/nr-lab.exe",
+  "build_verification": {
+    "baseline_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "build_report_sha256": {
+      "first": "f73be04f69146b7f827376c174c805bb305ff92a9695a8c2d222a802fd2802a2",
+      "second": "39aa3d62b2283574ac294505e6c7860a9d77c102e751a28bbb3342489903ebec"
+    },
+    "cache_validation": {
+      "all_per_fatbin_decisions_and_stages_revalidated": true,
+      "compiled_sm86_cubins_embedded": 15,
+      "current_inputs_revalidated": true,
+      "first_misses": 15,
+      "first_wall_seconds": 630.2470099000493,
+      "numerical_options": {
+        "dec": "v1",
+        "enc": "v1",
+        "maxnreg": 0,
+        "maxnreg_floor": 0,
+        "mode": "f16"
+      },
+      "original_sm120_cubins_preserved": 15,
+      "second_compile_rewrite_extract_stages": 0,
+      "second_hits": 15,
+      "second_wall_seconds": 91.09791460004635,
+      "source_fatbins_match_original_dll": 15
+    },
+    "candidate": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+    "candidate_bytes": 196982784,
+    "candidate_matches_existing_dll": false,
+    "candidate_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "fatbins": [
+      {
+        "bytes": 6934184,
+        "offset_in_section": 0,
+        "sha256": "53773a3ec5f12416628a3ee376258c3617dcfdf0103fab3ff72e266857c6eb24"
+      },
+      {
+        "bytes": 4601416,
+        "offset_in_section": 6934272,
+        "sha256": "270dba8ec90981d24c86667f76150c70a850ecdff99a152606f35b6948d63a91"
+      },
+      {
+        "bytes": 4562000,
+        "offset_in_section": 11535872,
+        "sha256": "864d123541f081d25c82c4be1161d3823fcd65d134edbea2ead7a9af02b5cd8f"
+      },
+      {
+        "bytes": 4706496,
+        "offset_in_section": 16098048,
+        "sha256": "64bfe99cd0f7610fa5cf9926575f0e091ab66008cb8567557a76587e684b3d73"
+      },
+      {
+        "bytes": 3842960,
+        "offset_in_section": 20804608,
+        "sha256": "a5df34f2ef0299e40435ba8345054c5b71fe49e85c77ec80764c0033388cdd4d"
+      },
+      {
+        "bytes": 5862792,
+        "offset_in_section": 24647680,
+        "sha256": "d2f1be4a0721d244bb044b83236d2170cee693140908ef039311142c8e0d8a62"
+      },
+      {
+        "bytes": 477288,
+        "offset_in_section": 30510592,
+        "sha256": "ea1f4a9c00adf9632ead32a7ddbb4a534184d72192cc1e8fbd84c39af3baa9cd"
+      },
+      {
+        "bytes": 11216,
+        "offset_in_section": 30988032,
+        "sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059"
+      },
+      {
+        "bytes": 15312,
+        "offset_in_section": 30999296,
+        "sha256": "20d7ababfbbf7ad76ab5f66c97cd3b7874b64157594eecf1cc222858a7c7b809"
+      },
+      {
+        "bytes": 16560,
+        "offset_in_section": 31014656,
+        "sha256": "3bba3d2f0b72d9b421ec3fba13a6866d28cf6d6506ea1d7c1e84691862fd2dc8"
+      },
+      {
+        "bytes": 14584,
+        "offset_in_section": 31031296,
+        "sha256": "084f4ffcbb56ce9b30f341dc704e3eb84d8de57674fa167ff61611f36a1b0a6b"
+      },
+      {
+        "bytes": 14336,
+        "offset_in_section": 31045888,
+        "sha256": "8cf57cf1c75242d9ec53ca48b0c37afd9ee23ee23c5390011d2e31094c2f07be"
+      },
+      {
+        "bytes": 9584,
+        "offset_in_section": 31060224,
+        "sha256": "9f74ea77fa2ab62aad28c9bb10b5189055ac8f1432beb72b424363e639412919"
+      },
+      {
+        "bytes": 72360,
+        "offset_in_section": 31069952,
+        "sha256": "6f3ef48456b463a91b80f82e0005433273d80fea4f3701b307715a6756629664"
+      },
+      {
+        "bytes": 10064,
+        "offset_in_section": 31142400,
+        "sha256": "8eadb95c4d84b36d440c292ea7b4804349ebff48afcd687c261bc427aece0fab"
+      }
+    ],
+    "scope": "CPU build evidence consistency and resource identity; not official output parity",
+    "second_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "source_dll_sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+    "source_weights": {
+      "bytes": 147695410,
+      "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+    },
+    "started_utc": "2026-10-23T10:01:27.816906+00:00",
+    "status": "passed",
+    "two_builds_byte_identical": true,
+    "weights": {
+      "bytes": 147695410,
+      "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+    }
+  },
+  "build_runs": {
+    "first": {
+      "status": "passed",
+      "wall_seconds": 630.2470099000493,
+      "hits": 0,
+      "misses": 15,
+      "output": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+      "output_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "output_bytes": 196982784,
+      "stages": 76
+    },
+    "second": {
+      "status": "passed",
+      "wall_seconds": 91.09791460004635,
+      "hits": 15,
+      "misses": 0,
+      "output": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.second.dll",
+      "output_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "output_bytes": 196982784,
+      "stages": 16
+    }
+  },
+  "reports_sha256": {
+    "research\\batch3_build_first.json": "f73be04f69146b7f827376c174c805bb305ff92a9695a8c2d222a802fd2802a2",
+    "research\\batch3_build_second.json": "39aa3d62b2283574ac294505e6c7860a9d77c102e751a28bbb3342489903ebec",
+    "research\\batch3_build_verified.json": "096be66cdecdb3a122f02fc27cbcaed5668bfb47b440719042dbb753bd2e534a"
+  },
+  "independent_numeric_review": "complete_model checked official PTX, independently ran 7 CPU special tests and 65536-half Torch CPU cross-check: 0 mismatches. Exit fixture independent rerun passed after argparse environment adaptation.",
+  "exit_fixture": {
+    "tests": 1,
+    "subcases": 6,
+    "passed": true,
+    "log": "research/batch3_numeric_exit.log",
+    "source_sha256": "12db5c186df5545fa64c6019bbf41c947760494aa40b2c2bbb717e00362218ed"
+  },
+  "frozen_sources_preserved": true,
+  "motion2d_old_capture": "E:/DLSS5/harness/captures/port-batch3-motion2d",
+  "timing_note": "Recorded wall only; simultaneous research affected CPU load. No stable build-time speedup claim.",
+  "gpu_special": {
+    "status": "passed",
+    "report_kind": "batch3-fp8-device-conversions",
+    "started_utc": "2026-10-23T10:10:27.347136+00:00",
+    "scope": "RTX3060 emulated conversion semantics; not native sm120 MMA equivalence",
+    "sources": {
+      "tools/ptx86/rewrite.py": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+      "tools/ptx86/fuse.py": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+      "tools/ptx86/test_emu.py": "71baaff2038b29a179ece4a64d2b22ea1d53be8231ecf78d64542f9bc1139ecf",
+      "tools/ptx86/test_numeric_special.py": "0127b8dfc0db1eb10a1da5560b6cbed62adf449c15b6fa99763d358a3882bc8a"
+    },
+    "variants": [
+      {
+        "options": {
+          "mode": "f16",
+          "enc": "v1",
+          "dec": "v1",
+          "fuse": true
+        },
+        "status": "passed",
+        "rewritten_ptx_sha256": "4c5ff01ea21fcf803a6943f37018b9a43bea6153d4ed2704fd9a701fe7715f1f",
+        "tests": {
+          "decode_all_packed": true,
+          "encode_all_half": true,
+          "fused_roundtrip_all_half": true,
+          "mma_finite_200_rounds": true,
+          "mma_fused_integer_100_rounds": true
+        },
+        "wall_seconds": 2.157309699920006
+      },
+      {
+        "options": {
+          "mode": "f16",
+          "enc": "v2",
+          "dec": "v1",
+          "fuse": true
+        },
+        "status": "passed",
+        "rewritten_ptx_sha256": "3881bb64c9d862ba7c52a4eaafa512b6bd64537af7ef0251560d601513b77e56",
+        "tests": {
+          "decode_all_packed": true,
+          "encode_all_half": true,
+          "fused_roundtrip_all_half": true
+        },
+        "wall_seconds": 0.7891587000340223
+      },
+      {
+        "options": {
+          "mode": "f16",
+          "enc": "v1",
+          "encode": "f32",
+          "dec": "v1",
+          "fuse": true
+        },
+        "status": "passed",
+        "rewritten_ptx_sha256": "805a21773539db3356bb32c70dd89db9658a0b23e44b5b9531849833bc646401",
+        "tests": {
+          "decode_all_packed": true,
+          "encode_all_half": true,
+          "fused_roundtrip_all_half": true
+        },
+        "wall_seconds": 0.5840586998965591
+      },
+      {
+        "options": {
+          "mode": "f16",
+          "enc": "v1",
+          "dec": "v2",
+          "fuse": true
+        },
+        "status": "passed",
+        "rewritten_ptx_sha256": "c1b3744a00543b43e95ba6b54d509c51ff05622252004739bdb4d23d27ecd947",
+        "tests": {
+          "decode_all_packed": true,
+          "encode_all_half": true,
+          "fused_roundtrip_all_half": true,
+          "mma_finite_20_rounds": true,
+          "mma_fused_integer_20_rounds": true
+        },
+        "wall_seconds": 0.7688227000180632
+      },
+      {
+        "options": {
+          "mode": "f16",
+          "enc": "v1",
+          "dec": "v1",
+          "fuse": false
+        },
+        "status": "passed",
+        "rewritten_ptx_sha256": "d4d79426ccd143504d92f26e6dee0a576ff85b8cfa758edfdeb62f6bbae61973",
+        "tests": {
+          "decode_all_packed": true,
+          "encode_all_half": true,
+          "fused_roundtrip_all_half": true
+        },
+        "wall_seconds": 0.3661878000712022
+      },
+      {
+        "options": {
+          "mode": "f16",
+          "enc": "v1",
+          "dec": "v2",
+          "fuse": false
+        },
+        "status": "passed",
+        "rewritten_ptx_sha256": "8c5225306f0780980f35b834851a4f8a9c66cd988fe3e106df385beb6af1e93c",
+        "tests": {
+          "decode_all_packed": true,
+          "encode_all_half": true,
+          "fused_roundtrip_all_half": true,
+          "mma_finite_20_rounds": true,
+          "mma_fused_integer_20_rounds": true
+        },
+        "wall_seconds": 0.34729969990439713
+      }
+    ],
+    "device": "NVIDIA GeForce RTX 3060",
+    "finished_utc": "2026-10-23T10:10:32.503326+00:00"
+  },
+  "gpu_regressions": {
+    "status": "passed",
+    "started_utc": "2026-10-23T10:10:21.274817+00:00",
+    "scope": "Old/new port finite synthetic outputs; not official sm120 parity",
+    "suites": {
+      "full": {
+        "status": "passed",
+        "cases": 21,
+        "reference": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\baseline",
+        "candidate": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\candidate",
+        "all_output_files_byte_identical": true,
+        "output_files": 22,
+        "comparison_report": "E:\\DLSS5\\research\\batch3_regression_full.json",
+        "comparison_sha256": "b8cb0cb1372845dd79302fc278694c9bba16ca2cf2a1cb9956becea40cefe023"
+      },
+      "temporal": {
+        "status": "passed",
+        "cases": 12,
+        "reference": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\baseline",
+        "candidate": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\candidate",
+        "all_output_files_byte_identical": true,
+        "output_files": 12,
+        "comparison_report": "E:\\DLSS5\\research\\batch3_regression_temporal.json",
+        "comparison_sha256": "112ecfe3b1e861a44bd0291745ef5b9c4b85a203d5c35954924f497371b1ef11"
+      },
+      "motion2d": {
+        "status": "passed",
+        "cases": 19,
+        "reference": "E:\\DLSS5\\harness\\captures\\port-batch3-motion2d",
+        "candidate": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\motion2d\\candidate",
+        "all_output_files_byte_identical": true,
+        "output_files": 19,
+        "comparison_report": "E:\\DLSS5\\research\\batch3_regression_motion2d.json",
+        "comparison_sha256": "7cf50bb9dc2b96a0ec4bbc2af780ac16d21eb91aeaccf135ccbd5c7144d60002"
+      }
+    },
+    "commands": [
+      {
+        "argv": [
+          "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\run_numeric_gpu.py"
+        ],
+        "log": "E:\\DLSS5\\research\\batch3_numeric_gpu.log",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+          "-m",
+          "harness.reference",
+          "capture",
+          "--dll",
+          "E:\\DLSS5\\sm86_port\\nvngx_dlssnr.dll",
+          "--out",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\baseline",
+          "--kind",
+          "port-sm86",
+          "--suite",
+          "full",
+          "--harness",
+          "E:\\DLSS5\\harness\\batch3\\nr-lab.exe"
+        ],
+        "log": "E:\\DLSS5\\research\\batch3_full_baseline.log",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+          "-m",
+          "harness.reference",
+          "capture",
+          "--dll",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+          "--out",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\candidate",
+          "--kind",
+          "port-sm86",
+          "--suite",
+          "full",
+          "--harness",
+          "E:\\DLSS5\\harness\\batch3\\nr-lab.exe"
+        ],
+        "log": "E:\\DLSS5\\research\\batch3_full_candidate.log",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+          "-m",
+          "harness.reference",
+          "compare",
+          "--reference",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\baseline",
+          "--candidate",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\full\\candidate",
+          "--criterion",
+          "bit-exact",
+          "--report",
+          "E:\\DLSS5\\research\\batch3_regression_full.json"
+        ],
+        "log": "E:\\DLSS5\\research\\batch3_full_compare.log",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+          "-m",
+          "harness.reference",
+          "capture",
+          "--dll",
+          "E:\\DLSS5\\sm86_port\\nvngx_dlssnr.dll",
+          "--out",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\baseline",
+          "--kind",
+          "port-sm86",
+          "--suite",
+          "temporal",
+          "--harness",
+          "E:\\DLSS5\\harness\\batch3\\nr-lab.exe"
+        ],
+        "log": "E:\\DLSS5\\research\\batch3_temporal_baseline.log",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+          "-m",
+          "harness.reference",
+          "capture",
+          "--dll",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+          "--out",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\candidate",
+          "--kind",
+          "port-sm86",
+          "--suite",
+          "temporal",
+          "--harness",
+          "E:\\DLSS5\\harness\\batch3\\nr-lab.exe"
+        ],
+        "log": "E:\\DLSS5\\research\\batch3_temporal_candidate.log",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+          "-m",
+          "harness.reference",
+          "compare",
+          "--reference",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\baseline",
+          "--candidate",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\temporal\\candidate",
+          "--criterion",
+          "bit-exact",
+          "--report",
+          "E:\\DLSS5\\research\\batch3_regression_temporal.json"
+        ],
+        "log": "E:\\DLSS5\\research\\batch3_temporal_compare.log",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+          "-m",
+          "harness.reference",
+          "capture",
+          "--dll",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+          "--out",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\motion2d\\candidate",
+          "--kind",
+          "port-sm86",
+          "--suite",
+          "motion2d",
+          "--harness",
+          "E:\\DLSS5\\harness\\batch3\\nr-lab.exe"
+        ],
+        "log": "E:\\DLSS5\\research\\batch3_motion2d_candidate.log",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "E:\\DLSS5\\.venv-compile\\Scripts\\python.exe",
+          "-m",
+          "harness.reference",
+          "compare",
+          "--reference",
+          "E:\\DLSS5\\harness\\captures\\port-batch3-motion2d",
+          "--candidate",
+          "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\gpu\\motion2d\\candidate",
+          "--criterion",
+          "bit-exact",
+          "--report",
+          "E:\\DLSS5\\research\\batch3_regression_motion2d.json"
+        ],
+        "log": "E:\\DLSS5\\research\\batch3_motion2d_compare.log",
+        "status": "passed",
+        "exit_code": 0
+      }
+    ],
+    "old_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "new_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "harness_sha256": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+    "numeric_report_sha256": "3b304890b7f03052590b621fdb698fa82b3152487fb03dd4e1813e65efe0c6a8",
+    "finished_utc": "2026-10-23T10:20:29.308304+00:00"
+  },
+  "promotion": {
+    "status": "passed",
+    "report": "research/batch3_promotion_revision.json",
+    "report_sha256": "674ce1e14d379a2c1e457774c83156022c17d72c9d7c6fcae736bb38da2e3780",
+    "binding_report": "research/batch3_promotion_verified.json",
+    "binding_report_sha256": "cef9433dfa9006381225b9e0e304774b39e7576587112e92b62df244a66eb57d",
+    "live_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "old_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+    "backup": "E:\\DLSS5\\sm86_port.batch3-backup-0b84169e5487",
+    "artifacts": 76,
+    "old_files_preserved": 79,
+    "cache_valid": 15,
+    "deletion_performed": false
+  },
+  "initial_failures": [
+    {
+      "stage": "local ptxas conversion compilation",
+      "report": "research/batch3_numeric_ptxas_initial_failure.json",
+      "reproduction": "research/batch3_numeric_initial_failure_reproduced.json",
+      "fix": "Replaced unsupported packed half set immediate with register operand before source freeze/full compilation."
+    },
+    {
+      "stage": "promotion safety preflight",
+      "report": "research/batch3_promotion.json",
+      "log": "research/batch3_promotion.log",
+      "source_script": "_dl/batch3_build_20261023_66f0bc6fa2/promote.initial_failure.py",
+      "source_script_sha256": "3f4832b9eff3a880fe8fdd6a53999c12c86356c157ba72e1be8ad5b41978a209",
+      "fix": "Windows summary report key is normalized with str(Path(...)); original directory untouched before retry.",
+      "renamed_old": false,
+      "installed_new": false
+    }
+  ],
+  "orchestration_sha256": {
+    "_dl\\batch3_build_20261023_66f0bc6fa2\\run_numeric_gpu.py": "3042dfcd0491569a6443fb8ca9bdfc2eb69c72e4f7da30ca4b1b7989a467e277",
+    "_dl\\batch3_build_20261023_66f0bc6fa2\\run_regressions.py": "b9a43ef7728b65ab16eb16d646e678fa160553955e08d8b2c3635fecfbc22758",
+    "_dl\\batch3_build_20261023_66f0bc6fa2\\promote.py": "aebbe53be8049da38d085813a374ea51da30742162c6c4b0a34053a0d8a145d0"
+  },
+  "preserved_before_promotion_verified": true,
+  "gpu_released": true,
+  "handoff": "Root owns final check_sampling on new default cubin and release package rebuild; this task does not alter package.",
+  "package_model_at_handoff": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd"
+}

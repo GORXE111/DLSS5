@@ -1,0 +1,121 @@
+{
+  "baseline_sha256": "d442aaf801e5bb5ae1973b494995e9838f0a1dba8039cc79ab91dc9b6ea94ecd",
+  "build_report_sha256": {
+    "first": "f73be04f69146b7f827376c174c805bb305ff92a9695a8c2d222a802fd2802a2",
+    "second": "39aa3d62b2283574ac294505e6c7860a9d77c102e751a28bbb3342489903ebec"
+  },
+  "cache_validation": {
+    "all_per_fatbin_decisions_and_stages_revalidated": true,
+    "compiled_sm86_cubins_embedded": 15,
+    "current_inputs_revalidated": true,
+    "first_misses": 15,
+    "first_wall_seconds": 630.2470099000493,
+    "numerical_options": {
+      "dec": "v1",
+      "enc": "v1",
+      "maxnreg": 0,
+      "maxnreg_floor": 0,
+      "mode": "f16"
+    },
+    "original_sm120_cubins_preserved": 15,
+    "second_compile_rewrite_extract_stages": 0,
+    "second_hits": 15,
+    "second_wall_seconds": 91.09791460004635,
+    "source_fatbins_match_original_dll": 15
+  },
+  "candidate": "E:\\DLSS5\\_dl\\batch3_build_20261023_66f0bc6fa2\\nvngx_dlssnr.first.dll",
+  "candidate_bytes": 196982784,
+  "candidate_matches_existing_dll": false,
+  "candidate_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+  "fatbins": [
+    {
+      "bytes": 6934184,
+      "offset_in_section": 0,
+      "sha256": "53773a3ec5f12416628a3ee376258c3617dcfdf0103fab3ff72e266857c6eb24"
+    },
+    {
+      "bytes": 4601416,
+      "offset_in_section": 6934272,
+      "sha256": "270dba8ec90981d24c86667f76150c70a850ecdff99a152606f35b6948d63a91"
+    },
+    {
+      "bytes": 4562000,
+      "offset_in_section": 11535872,
+      "sha256": "864d123541f081d25c82c4be1161d3823fcd65d134edbea2ead7a9af02b5cd8f"
+    },
+    {
+      "bytes": 4706496,
+      "offset_in_section": 16098048,
+      "sha256": "64bfe99cd0f7610fa5cf9926575f0e091ab66008cb8567557a76587e684b3d73"
+    },
+    {
+      "bytes": 3842960,
+      "offset_in_section": 20804608,
+      "sha256": "a5df34f2ef0299e40435ba8345054c5b71fe49e85c77ec80764c0033388cdd4d"
+    },
+    {
+      "bytes": 5862792,
+      "offset_in_section": 24647680,
+      "sha256": "d2f1be4a0721d244bb044b83236d2170cee693140908ef039311142c8e0d8a62"
+    },
+    {
+      "bytes": 477288,
+      "offset_in_section": 30510592,
+      "sha256": "ea1f4a9c00adf9632ead32a7ddbb4a534184d72192cc1e8fbd84c39af3baa9cd"
+    },
+    {
+      "bytes": 11216,
+      "offset_in_section": 30988032,
+      "sha256": "6f85805c0c4d9492b6b8bb78aa52820f49173f0e998ab6b18376853f618e5059"
+    },
+    {
+      "bytes": 15312,
+      "offset_in_section": 30999296,
+      "sha256": "20d7ababfbbf7ad76ab5f66c97cd3b7874b64157594eecf1cc222858a7c7b809"
+    },
+    {
+      "bytes": 16560,
+      "offset_in_section": 31014656,
+      "sha256": "3bba3d2f0b72d9b421ec3fba13a6866d28cf6d6506ea1d7c1e84691862fd2dc8"
+    },
+    {
+      "bytes": 14584,
+      "offset_in_section": 31031296,
+      "sha256": "084f4ffcbb56ce9b30f341dc704e3eb84d8de57674fa167ff61611f36a1b0a6b"
+    },
+    {
+      "bytes": 14336,
+      "offset_in_section": 31045888,
+      "sha256": "8cf57cf1c75242d9ec53ca48b0c37afd9ee23ee23c5390011d2e31094c2f07be"
+    },
+    {
+      "bytes": 9584,
+      "offset_in_section": 31060224,
+      "sha256": "9f74ea77fa2ab62aad28c9bb10b5189055ac8f1432beb72b424363e639412919"
+    },
+    {
+      "bytes": 72360,
+      "offset_in_section": 31069952,
+      "sha256": "6f3ef48456b463a91b80f82e0005433273d80fea4f3701b307715a6756629664"
+    },
+    {
+      "bytes": 10064,
+      "offset_in_section": 31142400,
+      "sha256": "8eadb95c4d84b36d440c292ea7b4804349ebff48afcd687c261bc427aece0fab"
+    }
+  ],
+  "scope": "CPU build evidence consistency and resource identity; not official output parity",
+  "second_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+  "source_dll_sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+  "source_weights": {
+    "bytes": 147695410,
+    "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+  },
+  "started_utc": "2026-10-23T10:01:27.816906+00:00",
+  "status": "passed",
+  "two_builds_byte_identical": true,
+  "weights": {
+    "bytes": 147695410,
+    "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+  }
+}

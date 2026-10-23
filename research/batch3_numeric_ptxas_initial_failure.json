@@ -1,0 +1,27 @@
+{
+  "status": "failed",
+  "work": "E:\\DLSS5\\_dl\\batch3_numeric_20261023_90ad619230",
+  "scope": "CPU ptxas acceptance only; no GPU execution",
+  "variants": [
+    {
+      "options": {
+        "mode": "f16",
+        "enc": "v1",
+        "dec": "v1",
+        "fuse": true
+      },
+      "command": [
+        "cuda_tools/bin/ptxas.exe",
+        "-arch=sm_86",
+        "_dl\\batch3_numeric_20261023_90ad619230\\conversions_0.ptx",
+        "-o",
+        "_dl\\batch3_numeric_20261023_90ad619230\\conversions_0.cubin"
+      ],
+      "exit_code": 4294967295,
+      "stderr": "",
+      "wall_seconds": 0.6315381999593228,
+      "ptx_sha256": "b0b69f8e5cc42f96987c3537449f5be2881a0f82ff9d51db51712335c9cdb2e8"
+    }
+  ],
+  "error": "RuntimeError: ptxas failed"
+}

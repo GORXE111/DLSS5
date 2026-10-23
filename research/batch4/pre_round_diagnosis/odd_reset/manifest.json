@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "created_utc": "2026-10-23T12:00:07.425328+00:00",
+  "target": "DLSS-NR 310.8.0",
+  "reference_kind": "port-sm86",
+  "suite": "batch4-pre-round",
+  "gpus": [
+    {
+      "name": "NVIDIA GeForce RTX 3060",
+      "uuid": "GPU-e3384b57-d106-2618-58c5-4772065f2891",
+      "compute_capability": "8.6",
+      "driver": "610.74"
+    }
+  ],
+  "runtime_sha256": {
+    "nr-lab.exe": "f8ab763a726e66a1aeb16117c3f365fd950fe1faaa89907f32d599ab8d6dc20c",
+    "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+    "nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+    "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+    "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+  },
+  "scope": "finite synthetic D3D12 cases; not a universal fidelity or game certification",
+  "cases": [
+    {
+      "id": "odd_reset",
+      "args": [
+        "--nr-only",
+        "--model",
+        "1",
+        "--input",
+        "641x361",
+        "--output",
+        "641x361",
+        "--frames",
+        "1",
+        "--scene-variant",
+        "0",
+        "--temporal-shift",
+        "0",
+        "--temporal-shift-y",
+        "0",
+        "--motion-x",
+        "0",
+        "--motion-y",
+        "0"
+      ],
+      "passed": true,
+      "outputs": {
+        "nr-lab-output-model1-srgb.ppm": "3707490df7ded58dfa99fdefda18886ff0e4fc57f858c6faaa3fdefe2913a9e6"
+      },
+      "exit_code": 0,
+      "evidence": {
+        "nr-lab-result.json": "9e7b7df29a63866712327ab77840886a74cda151bff17729913b2d224ac809cd",
+        "nr-lab.log": "ba824314f2fda027218e0f0614e22181b0ef858c0bc9332b48e9b2e307513c58",
+        "stdout.log": "940fe2dd860a5c379bfa4c612260a56382d74429abd3a4ae59c6aeb10d44e79d",
+        "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "passed": true
+}

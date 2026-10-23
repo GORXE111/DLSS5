@@ -1,9 +1,11 @@
 # DLSS5 Manager
 
+更新：2026-10-23。当前交付是针对 DLSS-NR 310.8.0 移植版的管理器，兼容性和保真度按路径分别验收，不能据此宣称完整官方 DLSS 5 等价。
+
 给游戏装上 DLSS5 神经渲染的管理工具：扫描游戏库、检测游戏、一键安装/卸载、调参数。两种注入方式：
 
 - **OptiScaler** (游戏自带 DLSS / FSR2+ / XeSS)：注入与画面合成由 OptiScaler 的 DLSS Neural Rendering 分支完成
-  (GPL-3，github.com/Dagherbou/OptiScaler_DLSSNR)，本工具写 `OptiScaler.ini` 的 `[DlssNr]` 节。有深度、运动矢量与历史帧，效果最好。
+  (GPL-3，github.com/Dagherbou/OptiScaler_DLSSNR)，本工具写 `OptiScaler.ini` 的 `[DlssNr]` 节。可使用引擎提供的运动矢量和历史资源；输入质量取决于具体游戏与接入，不保证所有场景效果。
 - **兜底模式** (没有超分的 DX12 / DX11 游戏)：本仓库自己的 dxgi.dll 代理 (`plugin/fallback/`)，在 Present 时截取画面跑 DLSS-NR，
   参数在 `dlss5fb.ini`。没有深度；运动矢量来自硬件光流 (有历史帧)；画面运动时保持不变的界面 (HUD) 不处理。
 
@@ -48,3 +50,18 @@ LocalStructure / LocalTone / SkinStructure / AutoMask / Style 进网络的 pre_b
 
 兜底模式没有 OptiScaler 的合成参数 (TransferStrength / ColourStrength / MaxRatio)，另有 Temporal (保留历史帧) 与 Compare (左右对比)。
 它的 ini 在游戏运行中约 1 秒内重新读取，改参数不用重启游戏。原理与验证见 `plugin/fallback/README.md`。
+
+## 本地发布一致性
+
+`python plugin/build_plugin.py` 先验证目标为 `plugin/dist` 下的专属目录，构建 Manager/fallback，生成暂存包并核验全部文件，再替换正式目录。已有包保留为 `DLSS5-RTX30.previous-*`；遇到未知额外文件或用户修改则拒绝覆盖。新的 manifest 保存 26 个交付文件的 SHA-256、源码及构建指纹。
+
+```powershell
+python plugin/build_plugin.py
+python plugin/build_plugin.py --verify-only
+powershell -NoProfile -ExecutionPolicy Bypass -File plugin/test_install.ps1
+python -m unittest discover -s plugin -p test_release_safety.py
+```
+
+`--verify-only` 同时检查文件是否完整、内容是否被修改，以及当前构建输入是否已经改变。文档本身不属于编译输入；源码、构建脚本或 SDK 头文件改变后应重建。不要把旧版长跑日志当作新包通过全部兼容性验收。
+
+安装器测试只在调用者工作目录下面新建的独占 GUID 子目录中造假游戏，并检查归属标记、绝对路径和重解析点后清理自己；不会清空调用者传入的父目录。已有 15 项安装/卸载/拒装验收，当前包仍需与实际游戏测试分开。

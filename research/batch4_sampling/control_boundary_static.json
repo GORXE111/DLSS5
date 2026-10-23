@@ -1,0 +1,91 @@
+{
+  "scope": "Independent CPU/static control boundary review only; no GPU executed and no production source changed",
+  "conclusion": "No confirmed control packing or Reset presence bug; controls validation remains failed for this case pending bounded GPU attribution",
+  "case": {
+    "tone": 1.5,
+    "structure": 1.5,
+    "history": null,
+    "motion": null,
+    "frame": 0
+  },
+  "control_inputs": {
+    "LocalTone": 1.5,
+    "StructureGate": 1.0,
+    "Skin": 1.5,
+    "Structure": 1.5,
+    "Style": 0.0,
+    "style": 0
+  },
+  "pre_control_columns": [
+    [
+      1.5
+    ],
+    [
+      1.0
+    ],
+    [
+      1.5
+    ],
+    [
+      1.5
+    ],
+    [
+      0.0
+    ]
+  ],
+  "reset_history_color_bit_equal": true,
+  "pre_ptx_evidence": {
+    "path": "fatbins/fatbin_01.1.sm_120.ptx",
+    "kernel": "cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+    "control_loads": {
+      "structure_and_style_line": 45705,
+      "skin_and_structure_pair_line": 45742,
+      "tone_offset": 172,
+      "structure_offset": 176,
+      "style_offset": 180,
+      "skin_offset": 184,
+      "effective_structure_offset": 188
+    },
+    "control_condition": "max(skin,effective_structure)>=0: gate=1, negative component falls back to structure; otherwise gate=structure and both components=-1",
+    "resource_predicate": "History or MV zero copies normalized Color half registers directly to history before branch",
+    "color_rounding": "texture f32 -> cvt.rn.f16 -> sub.f16(.5) -> mul.f16(.125)"
+  },
+  "known_arithmetic_difference_candidate": {
+    "status": "Existing model approximation; not proven to cause this case failure",
+    "original": "half(half(half(color)-half(.5))*half(.125))",
+    "torch_adapter_input": "half((float32(color)-.5)*.125)",
+    "values": 691200,
+    "changed_values": 414444,
+    "max_abs": 3.0517578125e-05,
+    "mean_abs": 1.715434882498812e-05,
+    "rollback_reset_not_justified": true
+  },
+  "sources": {
+    "torch/dlss5/net.py": "fc5b33dad907b265ad8a09ef7c193e212854e38ae1a6ca097c3af2a27ef3d684",
+    "torch/check_controls.py": "7cb7f3c9b44b142f94b54be1a28c952f07a248882f4473e0d4864ca39cd93b6b",
+    "torch/check.py": "94215f4797a6ed3a8cf4a0c1a9586905eddc2240235aab8aa8eb04e6eb7cb3f9",
+    "torch/dlss5/data/control_map.json": "6a4e632763dd0dd393473e22566b1442e49450d044cf5b9025414e53b311fd85",
+    "fatbins/fatbin_01.1.sm_120.ptx": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+    "harness/nr-lab.cpp": "70af633ecd8bbbb4984b45baba345e5769800ed1632a9740da287f8c56a31a87"
+  },
+  "observed_report": {
+    "path": "research/validation/batch4_controls.json",
+    "sha256": "492b58eed1c17729a1222ac25dbc6734a857f9454724bcb3cf4c87456bd64845",
+    "passed": false,
+    "failures": [
+      {
+        "name": "controls_5_--local-tone 1.5 --local-structure 1.5",
+        "passed": false,
+        "correlation": 0.9989892173605515,
+        "mae": 2.354681712962963,
+        "max_error": 18.0,
+        "exact_fraction": 0.1356640625,
+        "within_one_fraction": 0.38646122685185186,
+        "nrmse": 0.02372261503638582,
+        "units": "uint8_rgb",
+        "reference_path": "E:\\DLSS5\\harness\\rt_sm86\\nr-lab-output-model1-srgb.ppm",
+        "reference_sha256": "3b1246c39c00bd2df6bdf2fd74c1ac304548adc0c5cacddcab1f365ad043a38a"
+      }
+    ]
+  }
+}

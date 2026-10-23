@@ -1,0 +1,97 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "args": [
+        "--reset-frame",
+        "bad"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--reset-frame",
+        "1.5"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--reset-frame",
+        "-2"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--reset-frame",
+        "999999999999999999999"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--reset-frame",
+        "4",
+        "--frames",
+        "4"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--scene-cut-frame",
+        "4",
+        "--frames",
+        "4"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--scene-cut-frame",
+        "-2"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--scene-variant",
+        "-1"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--scene-variant",
+        "2"
+      ],
+      "exit_code": 64,
+      "passed": true
+    },
+    {
+      "args": [
+        "--scene-variant",
+        "bad"
+      ],
+      "exit_code": 64,
+      "passed": true
+    }
+  ],
+  "harness_sha256": "ba7ba59393c8562e502c363a34c14ff8496b48b63856f48d1901b5736e894625",
+  "source_sha256": "f3edd813560ea7c47c68027f1e1b0bbfa6f5b05ea7c6eea59294c4ea841d2d5c",
+  "reference_cpu_tests": 15,
+  "dllq_module_entrypoints": {
+    "tools.dllq": true,
+    "dllq_from_tools_directory": true
+  },
+  "temporal_analysis_cpu_tests": 4
+}

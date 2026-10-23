@@ -43,6 +43,9 @@ __pycache__/
 /research/res_study_out/
 /research/behavior_out/
 /research/anatomy_out/
+# Captures retain their manifest outside the copied runtime and its scratch outputs.
+/research/**/runtime/
+/research/**/_runtime/
 /plugin/fallback/bin/
 /plugin/fallback/obj/
 /plugin/fallback/test/

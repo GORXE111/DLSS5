@@ -1,0 +1,6 @@
+{
+  "error": "[Errno 2] No such file or directory: 'E:\\\\DLSS5\\\\_dl\\\\never_produced_batch2_fixture.dll'",
+  "error_type": "FileNotFoundError",
+  "started_utc": "2026-10-23T08:26:22.173460+00:00",
+  "status": "failed"
+}

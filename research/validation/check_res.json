@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "suite": "check_res",
+  "reference_kind": "RTX3060_port",
+  "reference_accumulation": "f16_two_mma_approximation",
+  "claim": "port_regression_only",
+  "mode": "approximate",
+  "thresholds": {
+    "min_correlation": 0.999,
+    "max_mae": 3.0,
+    "max_nrmse": null
+  },
+  "checks": [
+    {
+      "name": "960x540",
+      "passed": true,
+      "correlation": 0.9993631790090549,
+      "mae": 1.7946598508230454,
+      "max_error": 15.0,
+      "exact_fraction": 0.1813278034979424,
+      "within_one_fraction": 0.5013490226337448,
+      "nrmse": 0.01836742885219805,
+      "units": "uint8_rgb"
+    },
+    {
+      "name": "1280x720",
+      "passed": true,
+      "correlation": 0.9993364012535633,
+      "mae": 1.8357877604166666,
+      "max_error": 16.0,
+      "exact_fraction": 0.17786024305555556,
+      "within_one_fraction": 0.4919552951388889,
+      "nrmse": 0.018711512902761584,
+      "units": "uint8_rgb"
+    },
+    {
+      "name": "1920x1080",
+      "passed": true,
+      "correlation": 0.9993390864173848,
+      "mae": 1.8411852173353909,
+      "max_error": 17.0,
+      "exact_fraction": 0.17838525591563786,
+      "within_one_fraction": 0.49253054269547325,
+      "nrmse": 0.018767119359272107,
+      "units": "uint8_rgb"
+    }
+  ],
+  "skipped": [],
+  "errors": [],
+  "references": {
+    "E:\\DLSS5\\research\\out_f0_960x540.ppm": "10c1b2cae4b4ca6fd251f95c99b1d790b46c148cb9899f478cd613bc2caa5d50",
+    "E:\\DLSS5\\research\\out_f0_1280x720.ppm": "15971bbf3d34c4d04e7487656018c9edf734fcb551291bc1315f50341ec796a6",
+    "E:\\DLSS5\\research\\out_f0_1920x1080.ppm": "2b078859a6384761b7704d0b98a44ff4507bdef4584fc2af12620c02945981b1"
+  },
+  "coverage": {
+    "compared": 3,
+    "skipped": 0,
+    "fraction": 1.0
+  },
+  "passed": true,
+  "status": "passed"
+}

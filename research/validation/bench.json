@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "variant": "rt_acceptance_20261023",
+  "referenceKind": "RTX3060_port",
+  "claim": "port_regression_only",
+  "mode": "fixed_checksum_bit_exact",
+  "dllSha256": "D442AAF801E5BB5AE1973B494995E9838F0A1DBA8039CC79AB91DC9B6EA94ECD",
+  "expected": {
+    "normal": "5B3A70119F21C9EE",
+    "intensity0": "D61DE47C7AECF78F"
+  },
+  "checks": [
+    {
+      "mode": "bit_exact_checksum",
+      "passed": true,
+      "expected": "5B3A70119F21C9EE",
+      "name": "360p/4frames",
+      "actual": "5B3A70119F21C9EE"
+    },
+    {
+      "mode": "bit_exact_checksum",
+      "passed": true,
+      "expected": "D61DE47C7AECF78F",
+      "name": "360p/intensity0",
+      "actual": "D61DE47C7AECF78F"
+    }
+  ],
+  "performance": [
+    {
+      "averageMs": 26.0,
+      "minimumMs": 26.0,
+      "samples": 1,
+      "resolution": "1280x720",
+      "frames": 6
+    },
+    {
+      "averageMs": 48.0,
+      "minimumMs": 48.0,
+      "samples": 1,
+      "resolution": "1920x1080",
+      "frames": 6
+    }
+  ],
+  "passed": true,
+  "errors": []
+}
