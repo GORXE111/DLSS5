@@ -1,0 +1,80 @@
+{
+  "schema": "october_nr_ffn_4k_tiles_v1",
+  "capture_seal_sha256": "a821a3e6a73aab88dc6353606881a36a6b826f24747c2399db2f43811bcb5a3a",
+  "frame": 0,
+  "shape_hwc": [
+    36,
+    60,
+    1024
+  ],
+  "storage_tokens": 2176,
+  "source_sha256": {
+    "check_october_ffn_4k_tiles.py": "c4be59a0559b64536c888393b92ddeec9aaad61128120f279b4750326c8fd596",
+    "probe_october_ffn_expand.py": "3443ffa4093e4d727fde1cfc89c4183ce72fdb0959b25019fae81b531c06e548",
+    "probe_october_ffn_contract.py": "c68b3e431da951f3c319ebce128adddfa37886a91b0b26de673b2a696574a652",
+    "check_october_attention.py": "5053148f747b565ab7dcdb2e6ad87cc6fa77416dd56151912a5ec861a1129bbf",
+    "check_october_attention_tensor.py": "9a78e3667cd8f596660a799e2c521be31cba817a079ee4ec71eff2d117e0daf5",
+    "mma_sm86_tiles.py": "419bfbbe18ce8a15b716ca7e5aad000235c0c52eea4d4a9acda2ccc865f36b80"
+  },
+  "original_dll_sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f",
+  "weight_layout_sha256": "22ae030815b56994199d6ec3555e4eb552b40d8fdb0dbd4ff9936a31baad77cc",
+  "tiles_m16": [
+    0,
+    15,
+    16,
+    127,
+    128,
+    134
+  ],
+  "cases": [
+    {
+      "block": 12,
+      "source_sha256": "74914706aa754aaa6a8ea6c4ba49bf64090031b2260aa3a3786c90525e14761d",
+      "target_sha256": "2548ab4a19fbbff418c6722d2bdef4b198d4a3b5f7c97db066f4f98e415f3119",
+      "input_tiles_sha256": "4ef5776a71c72a0a09d5be1cf2681d374780e2f7f13d67528e4e130a8455eda9",
+      "expand_tiles_sha256": "d088b5bdb560758bbc3630de6469fb6e07e443098385f05ced94ced225fc4ee7",
+      "contract_tiles_sha256": "ac3f3b0728e8341b56384f4b01198d6ccdd7306c9fb6e23c6e366dce6aa11447",
+      "observed_tiles_sha256": "ac3f3b0728e8341b56384f4b01198d6ccdd7306c9fb6e23c6e366dce6aa11447",
+      "weights_sha256": [
+        "5d34ba38cf0348733048c71d3f0c8e1c4e46c4afabb9f7d1f97bf674b3f7d701",
+        "85e463116156df1ddaebb9224f51cfd94e76ba0be8640dfa5b08f27bfe9a15ef"
+      ],
+      "bytes": 98304,
+      "different_byte_count": 0,
+      "different_numeric_count": 0,
+      "exact_numeric_fraction": 1.0,
+      "mae": 0.0,
+      "max_abs": 0.0,
+      "within_one_e4m3_step_fraction": 1.0,
+      "max_e4m3_steps": 0
+    },
+    {
+      "block": 18,
+      "source_sha256": "d1740d3baa5fe32c18902c0632d00f77cbb0e957c1b98bd2965e507e374b2a12",
+      "target_sha256": "7269f59b1f0f640b0296b15fa929c42251ddd8382dd755e99411ed04d1f2fed7",
+      "input_tiles_sha256": "f51f4420855aabc42e2ce412ebb44d169ce2426bf254d86cbceba02a323e5a0a",
+      "expand_tiles_sha256": "aedff9eeb5567c000f7fb4480d77ce96752f1544f9cb0aed55c2a40534df897b",
+      "contract_tiles_sha256": "f5ca164d527041cf6f6105da5e29ecccc180ba73e75dae299360a4a26eaba943",
+      "observed_tiles_sha256": "f5ca164d527041cf6f6105da5e29ecccc180ba73e75dae299360a4a26eaba943",
+      "weights_sha256": [
+        "2056533711e6ce80ca8b1f577a9db481b862fc3de2dded6df07534729724ee12",
+        "d03476925d59fd5ffc5e7ba245699bca69a2bcfd504c1f149e80b4c0af4cdc0a"
+      ],
+      "bytes": 98304,
+      "different_byte_count": 0,
+      "different_numeric_count": 0,
+      "exact_numeric_fraction": 1.0,
+      "mae": 0.0,
+      "max_abs": 0.0,
+      "within_one_e4m3_step_fraction": 1.0,
+      "max_e4m3_steps": 0
+    }
+  ],
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "compute_capability": [
+    8,
+    6
+  ],
+  "cuda_driver_api_version": 13030,
+  "passed": true
+}

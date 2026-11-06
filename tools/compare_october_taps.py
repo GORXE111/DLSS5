@@ -144,13 +144,19 @@ def boundaries(frame, rows, graph):
             if launches[-1].name == REPACK_OUT:
                 add(f"{prefix}.repack.input", launches[-1], 0, 16, 1024, "tin1d")
             position, = (i for i, launch in enumerate(launches) if launch.name.startswith("cc_vit_1d_attention_"))
-            contract, qkv, attention, projection = launches[position - 2:position + 2]
+            expand, contract, qkv, attention, projection = launches[position - 3:position + 2]
             pointers = [attention.pointer(offset) for offset in (0, 8, 16, 24)]
-            if (len(set(pointers)) != 4 or pointers[:3] != [qkv.pointer(offset) for offset in (8, 16, 24)]
+            if (not expand.pointer(16) == contract.pointer(0) or not expand.pointer(0) == contract.pointer(8)
+                    or expand.pointer(0) == expand.pointer(16) or not expand.params[64:72] == contract.params[64:72]
+                    or len(set(pointers)) != 4 or pointers[:3] != [qkv.pointer(offset) for offset in (8, 16, 24)]
                     or pointers[3] != projection.pointer(0)
                     or not contract.pointer(16) == qkv.pointer(0) == projection.pointer(8)
                     or not contract.params[64:72] == qkv.params[72:80] == attention.params[56:64] == projection.params[64:72]):
-                raise ValueError(f"{prefix}: inconsistent ViT attention inputs, output or geometry")
+                raise ValueError(f"{prefix}: inconsistent ViT FFN or attention inputs, outputs or geometry")
+            h, w = struct.unpack_from("<ii", expand.params, 64)
+            if h * w % 32 == 0:
+                add(f"{prefix}.ffn.expand.input", expand, 0, 64, 1024, "tin1d")
+                add(f"{prefix}.ffn.expand.output", expand, 16, 64, 4096, "tin1d")
             add(f"{prefix}.qkv.input", qkv, 0, 72, 1024, "tin1d")
             for role, offset in (("in0", 0), ("in1", 8), ("in2", 16), ("out", 24)):
                 add(f"{prefix}.attention.{role}", attention, offset, 56, 1024, "vit1d_attention_storage")

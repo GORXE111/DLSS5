@@ -1,0 +1,23 @@
+{
+  "schema": "october_nr_qkv_rsqrt_v1",
+  "source_sha256": "3ea7b7751e447ad4165c2f9d44f18ae0e425b54e828eb06698538d965de90c9e",
+  "ptx_sha256": "0f502405de3cd0784f2b799c4e192ababf07810b94f704748e2fef948d7f218d",
+  "ptx_spec": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#floating-point-instructions-rsqrt",
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "compute_capability": [
+    8,
+    6
+  ],
+  "cuda_driver_api_version": 13030,
+  "clamp_f32_bits": "0x388205ff",
+  "finite_inputs": 30704,
+  "tested_f16_codes_inclusive": [
+    "0x0410",
+    "0x7bff"
+  ],
+  "conservative_relative_error_bound": "2^-22",
+  "denominators_near_midpoint_under_bound": [],
+  "gpu_vs_host_f32_different_words": 0,
+  "gpu_vs_exact_rne_different_words": 0,
+  "differences": []
+}

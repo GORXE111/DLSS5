@@ -51,16 +51,22 @@ def weight_matrix(raw):
     return FP8[np.frombuffer(raw, np.uint8)[(tile // 2) * 512 + lane * 16 + (tile % 2) * 8 + byte]]
 
 
-def norm_inverse(values):
-    squares = f16(values * values).reshape(TOKENS, 32, 4, 4, 2)
-    local = f16(f16(squares[..., 0, :, :] + squares[..., 2, :, :]) +
-                f16(squares[..., 1, :, :] + squares[..., 3, :, :]))
+def norm_sum(values):
+    lanes = values.reshape(TOKENS, 32, 4, 4, 2)
+    lower = lanes[..., :2, :, :].astype(np.float64)
+    upper = lanes[..., 2:, :, :]
+    # The staged SASS contracts each lower square with the rounded upper square.
+    paired = f16(lower * lower + f16(upper * upper))
+    local = f16(paired[..., 0, :, :] + paired[..., 1, :, :])
     shuffled = f16(f16(local[..., 0, :] + local[..., 2, :]) + f16(local[..., 1, :] + local[..., 3, :]))
-    summed = f16(shuffled[..., :1] + shuffled[..., 1:])
-    return f16(1 / np.sqrt(np.maximum(summed, half_literal(0x388205FF))))
+    return f16(shuffled[..., :1] + shuffled[..., 1:])
 
 
-def predict(activation, weights, mma):
+def norm_inverse(values):
+    return f16(1 / np.sqrt(np.maximum(norm_sum(values), half_literal(0x388205FF))))
+
+
+def project_qkv(activation, weights, mma):
     matrix = weight_matrix(weights[128:])[None]
     value = FP8[np.frombuffer(activation, np.uint8)[input_offsets()]].transpose(1, 0, 2).reshape(1, TOKENS, WIDTH)
     halves = []
@@ -69,7 +75,11 @@ def predict(activation, weights, mma):
         for start in range(split, split + 512, 32):
             acc = mma(value[..., start:start + 32], matrix[:, start:start + 32], acc)
         halves.append(acc)
-    projected = f16(halves[0] + halves[1]).reshape(TOKENS, 32, 3, 32)
+    return f16(halves[0] + halves[1]).reshape(TOKENS, 32, 3, 32)
+
+
+def predict(activation, weights, mma):
+    projected = project_qkv(activation, weights, mma)
     q, k, v = (projected[:, :, i, :] for i in range(3))
     tau = f16(np.frombuffer(weights[:128], "<f4"))[None, :, None]
     q = f16(f16(f16(q * norm_inverse(q)) * np.float16(np.sqrt(32))) * tau)

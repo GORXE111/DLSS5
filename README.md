@@ -20,6 +20,7 @@
 - [十月版八块注意力独立重放](research/october_nr_attention_tensor_replay.md)。RTX 3060 实测的 786,432 个 FP8 输出字节及三组 FP16 中间张量全部逐位复现，覆盖已封存的 96-token 首帧输入。
 - [十月版跨尺寸与时序注意力复核](research/october_nr_attention_holdouts.md)。在 1080p 首帧和另一场景的时序帧逐位复现超过 600 万个 FP8 输出字节，直接采集 QK logits 与量化前概率。
 - [十月版 4K 原尺寸与投影实测](research/october_nr_attention_4k.md)。独立 NR 写满 3840×2160，八个注意力块的 17,825,792 个 FP8 字节及三组 FP16 中间值全部逐位复现。
+- [十月版 QKV 归一化与 ViT 串联](research/october_nr_vit_chain.md)。两组 96-token 输入各从块 11 连续算到块 18，126 个派生边界共 17,104,896 B 逐字节一致。
 - [离线同帧查看器](research/nr_viewer/README.md)：从本地捕获生成可拖动的前后对照、热图和原尺寸局部。已用同一次 Present 的 3840×2160 画面及 1920×1080 NR 工作纹理验证；[测量报告](research/validation/batch5_sponza_capture.json)。
 
 ## 数据与来源
