@@ -1,0 +1,124 @@
+{
+  "schema": "october_nr_attention_replay_v1",
+  "capture_seal_sha256": "ddea46226463a9384849289219d5c78c9e6226441635f48eb42b69572c9ecc52",
+  "source_sha256": "e91fb5c20a2b0ac956a980a5e467c432d1276ed103f712833f4807721885516b",
+  "trial_cubin_sha256": "61c9b4686e760369137608307641cff64c53e62960e26cbb2d5d916cca583183",
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "compute_capability": [
+    8,
+    6
+  ],
+  "cuda_driver_api_version": 13030,
+  "scope": "Isolated attention math on tapped Q/K/V; chained input flags start ready.",
+  "cases": [
+    {
+      "block_index": 11,
+      "sequence": 23,
+      "entry": "cc_vit_1d_attention_fp8",
+      "grid": [
+        32,
+        1,
+        1
+      ],
+      "block": [
+        32,
+        4,
+        1
+      ],
+      "token_hw": [
+        8,
+        12
+      ],
+      "output_sha256": "4668a61ca71189b18ced85e80188cbbb1bb996c7cd0db975a72353754a13ec14",
+      "expected_sha256": "4668a61ca71189b18ced85e80188cbbb1bb996c7cd0db975a72353754a13ec14",
+      "bytes": 98304,
+      "different_bytes": 0,
+      "source_unchanged": true,
+      "guards_intact": true,
+      "counter_check": null,
+      "passed": true
+    },
+    {
+      "block_index": 11,
+      "sequence": 23,
+      "entry": "cc_vit_1d_attention_chained_fp8",
+      "grid": [
+        32,
+        1,
+        1
+      ],
+      "block": [
+        32,
+        4,
+        1
+      ],
+      "token_hw": [
+        8,
+        12
+      ],
+      "output_sha256": "4668a61ca71189b18ced85e80188cbbb1bb996c7cd0db975a72353754a13ec14",
+      "expected_sha256": "4668a61ca71189b18ced85e80188cbbb1bb996c7cd0db975a72353754a13ec14",
+      "bytes": 98304,
+      "different_bytes": 0,
+      "source_unchanged": true,
+      "guards_intact": true,
+      "counter_check": true,
+      "passed": true
+    },
+    {
+      "block_index": 18,
+      "sequence": 58,
+      "entry": "cc_vit_1d_attention_fp8",
+      "grid": [
+        32,
+        1,
+        1
+      ],
+      "block": [
+        32,
+        4,
+        1
+      ],
+      "token_hw": [
+        8,
+        12
+      ],
+      "output_sha256": "fa59a410e1fa2f46e0986f7ef12f59ad060baa14b8694801ac53f813fe6cc5ba",
+      "expected_sha256": "fa59a410e1fa2f46e0986f7ef12f59ad060baa14b8694801ac53f813fe6cc5ba",
+      "bytes": 98304,
+      "different_bytes": 0,
+      "source_unchanged": true,
+      "guards_intact": true,
+      "counter_check": null,
+      "passed": true
+    },
+    {
+      "block_index": 18,
+      "sequence": 58,
+      "entry": "cc_vit_1d_attention_chained_fp8",
+      "grid": [
+        32,
+        1,
+        1
+      ],
+      "block": [
+        32,
+        4,
+        1
+      ],
+      "token_hw": [
+        8,
+        12
+      ],
+      "output_sha256": "fa59a410e1fa2f46e0986f7ef12f59ad060baa14b8694801ac53f813fe6cc5ba",
+      "expected_sha256": "fa59a410e1fa2f46e0986f7ef12f59ad060baa14b8694801ac53f813fe6cc5ba",
+      "bytes": 98304,
+      "different_bytes": 0,
+      "source_unchanged": true,
+      "guards_intact": true,
+      "counter_check": true,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

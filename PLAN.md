@@ -8,6 +8,11 @@
 
 本地约束：不启动联网游戏，不访问 `E:\ZZZ`；NVIDIA 二进制、权重、提取/改写后的 PTX、cubin 与测试画面不进入 Git。此次研究使用 RTX 3060 12 GB、驱动 610.74。
 
+## 2026-11-06 第九批 · 版本因子和自动采集
+
+- 两版大档的同源 4K 静止、平移及三组 scRGB 输出逐字节一致。固定十月运行时后，小档的 4K 合成 MAE 分别为 5.624/255 和 5.460/255。[版本因子实测](research/october_nr_version_factors.md)
+- 普通和 chained attention 对真实首尾 Q/K/V 的独立重放均逐字节匹配。已用独立 MMA 探针复现一处分组差和单次最近舍入差，另一处量化边界仍待分阶段取证。自动采集在 3060 上复现全部 73 个边界。[实测数据](research/validation/october_nr_version_factor_experiment.json)
+
 ## 2026-11-06 第八批 · 4K 接入和逐层数值
 
 - 真实提交确认 standalone 的 copy 限于 1920×1080。紧凑 NR 串 DLSS SR 写满 3840×2160。DXGI 代理通过预设 2 在真实 Sponza 同帧将 1080p 模型改动合成回 4K。[4K 接入实测](research/october_nr_render_pipeline.md)

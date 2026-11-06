@@ -1,0 +1,387 @@
+{
+  "schema": 1,
+  "date": "2026-11-06",
+  "status": "static_factor_mapping_and_replay_readiness_verified",
+  "scope": "Offline CPU verification of preset selectors, PE resources and retained Sponza captures. No new GPU execution.",
+  "images": {
+    "old_original": {
+      "path": "dlss5/nvngx_dlssnr.dll",
+      "sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+      "version": "310.8.0",
+      "resources": {
+        "WEIGHTS_HT": {
+          "bytes": 147695410,
+          "resource_type": 10,
+          "language": 1033,
+          "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+        }
+      },
+      "selector": {
+        "create_preset_read_rva": "0x1802f",
+        "rva": "0x23a40",
+        "first_128_bytes_sha256": "09513fae9285190002064edc311f89d42d654dbbdac0a9b2319fc7cd505143bd",
+        "descriptor_stride_bytes": 648,
+        "exact_presets": [
+          {
+            "preset": 1,
+            "descriptor_rva": "0xb0d80",
+            "resource": "WEIGHTS_HT",
+            "model": "CC_SILVER_AARDWOLD"
+          }
+        ],
+        "unmatched_fallback": 1
+      }
+    },
+    "october_original": {
+      "path": "_dl/october_nr_20261106/original/nvngx_dlssnr.dll",
+      "sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f",
+      "version": "310.9.16",
+      "resources": {
+        "WEIGHTS_CC_SMALL_FP8": {
+          "bytes": 113893343,
+          "resource_type": 10,
+          "language": 1033,
+          "sha256": "f743e8eb320f42bc9bdc992ee2bf51f7bb7c8688ced4ecf5ce6807ec4eef7962"
+        },
+        "WEIGHTS_HT": {
+          "bytes": 147695410,
+          "resource_type": 10,
+          "language": 1033,
+          "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+        }
+      },
+      "selector": {
+        "create_preset_read_rva": "0x17cfd",
+        "rva": "0x23c20",
+        "first_128_bytes_sha256": "16367058cb8d6b8a6db35652a1e9438ebcc1d04e92e6e709885b00210b5d16f1",
+        "descriptor_stride_bytes": 656,
+        "exact_presets": [
+          {
+            "preset": 1,
+            "descriptor_rva": "0xdbe30",
+            "resource": "WEIGHTS_HT",
+            "model": "CC_SILVER_AARDWOLD"
+          },
+          {
+            "preset": 2,
+            "descriptor_rva": "0xdc0c0",
+            "resource": "WEIGHTS_CC_SMALL_FP8",
+            "model": "CC_SMALL_FP8"
+          }
+        ],
+        "unmatched_fallback": 2
+      }
+    },
+    "old_ampere": {
+      "path": "_dl/october_nr_20261106/batch8/fbtest_legacy_default/nvngx_dlssnr.dll",
+      "sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "version": "310.8.0",
+      "resources": {
+        "WEIGHTS_HT": {
+          "bytes": 147695410,
+          "resource_type": 10,
+          "language": 1033,
+          "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+        }
+      },
+      "selector": {
+        "create_preset_read_rva": "0x1802f",
+        "rva": "0x23a40",
+        "first_128_bytes_sha256": "09513fae9285190002064edc311f89d42d654dbbdac0a9b2319fc7cd505143bd",
+        "descriptor_stride_bytes": 648,
+        "exact_presets": [
+          {
+            "preset": 1,
+            "descriptor_rva": "0xb0d80",
+            "resource": "WEIGHTS_HT",
+            "model": "CC_SILVER_AARDWOLD"
+          }
+        ],
+        "unmatched_fallback": 1
+      }
+    },
+    "october_ampere": {
+      "path": "_dl/october_nr_20261106/batch8/fbtest_october/nvngx_dlssnr.dll",
+      "sha256": "2d3e405535cfb574828a5940f62d14952044f4feb1013caf9e7b9240385506ed",
+      "version": "310.9.16",
+      "resources": {
+        "WEIGHTS_CC_SMALL_FP8": {
+          "bytes": 113893343,
+          "resource_type": 10,
+          "language": 1033,
+          "sha256": "f743e8eb320f42bc9bdc992ee2bf51f7bb7c8688ced4ecf5ce6807ec4eef7962"
+        },
+        "WEIGHTS_HT": {
+          "bytes": 147695410,
+          "resource_type": 10,
+          "language": 1033,
+          "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4"
+        }
+      },
+      "selector": {
+        "create_preset_read_rva": "0x17cfd",
+        "rva": "0x23c20",
+        "first_128_bytes_sha256": "16367058cb8d6b8a6db35652a1e9438ebcc1d04e92e6e709885b00210b5d16f1",
+        "descriptor_stride_bytes": 656,
+        "exact_presets": [
+          {
+            "preset": 1,
+            "descriptor_rva": "0xdbe30",
+            "resource": "WEIGHTS_HT",
+            "model": "CC_SILVER_AARDWOLD"
+          },
+          {
+            "preset": 2,
+            "descriptor_rva": "0xdc0c0",
+            "resource": "WEIGHTS_CC_SMALL_FP8",
+            "model": "CC_SMALL_FP8"
+          }
+        ],
+        "unmatched_fallback": 2
+      }
+    }
+  },
+  "architecture_and_entry_inventory": {
+    "original_kernel_target": "sm_120",
+    "replay_ampere_target": "sm_86",
+    "weights_serialization": {
+      "WEIGHTS_CC_SMALL_FP8": {
+        "records": 77,
+        "blocks": 31
+      },
+      "WEIGHTS_HT": {
+        "records": 153,
+        "blocks": 71
+      }
+    },
+    "october_small_static_graph_blocks": 31,
+    "changed_native_fatbin_modules": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "identical_native_fatbin_modules": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "removed_native_ptx_entries": 111,
+    "removed_entry_names_containing_fp8": 0,
+    "shared_fp8_pre_parameter_bytes": {
+      "310.8.0": 264,
+      "310.9.16": 272
+    },
+    "qualification": "Package inventory does not establish which changed entries a matched October preset 1 capture executes. Identical serialized HT does not establish equal host binding, dispatch, Ampere emulation or output."
+  },
+  "existing_sponza_replay": {
+    "source_live_present": 56,
+    "source_capture": {
+      "path": "_dl/october_nr_20261106/batch8/sponza_october_4k/dlss5fb_in_1.ppm",
+      "sha256": "4699bf5a4ae4ad2bc811f91b61871b1ffc9b11d6b167ee758d39d0fc22158cc3"
+    },
+    "comparison_manifest": {
+      "path": "_dl/october_nr_20261106/batch8/fbtest_comparison.json",
+      "sha256": "f70ca9b23124c9c023a0deca0f76aad381d9af819855978681bbfc1814614778"
+    },
+    "fixed_command": [
+      "fbtest.exe",
+      "scene.ppm",
+      "8"
+    ],
+    "common_ini_controls": {
+      "WorkingScale": 0.5,
+      "Temporal": 0,
+      "CutThreshold": 0,
+      "UiProtect": 0,
+      "Stabilize": 0,
+      "Smooth": 1,
+      "DumpFrame": 4,
+      "DumpCount": 2
+    },
+    "matched_inputs": [
+      "scene.ppm",
+      "dlss5fb_in_1.ppm",
+      "dlss5fb_lo_1.ppm"
+    ],
+    "cases": {
+      "fbtest_original_proxy": {
+        "preset": 1,
+        "preset_logged_on_create": false,
+        "manifest": {
+          "path": "_dl/october_nr_20261106/batch8/fbtest_original_proxy/process.json",
+          "sha256": "deaed3326d2c95caf348abe496d9dd26edbbf1778b0b23b458eb7d5f7605f0ce"
+        },
+        "ini": {
+          "path": "_dl/october_nr_20261106/batch8/fbtest_original_proxy/dlss5fb.ini",
+          "sha256": "20da5ed86ee0301a1b92fd3ac9929ca75d75e64c3d5f9f21fcb11cd58a6887e0"
+        },
+        "log": {
+          "path": "_dl/october_nr_20261106/batch8/fbtest_original_proxy/dlss5fb.log",
+          "sha256": "1e2add8423812aa1950a8fbad335795e5cfab3dc7dc445ac66534553fac56af2"
+        },
+        "runtime_sha256": {
+          "fbtest.exe": "fad2b03c8c6b8bd821c4f262fd41ce37961144a8a289788afa27edd80e3749ce",
+          "dlss5_nvngx.dll": "aa5ce89a61a41b4edd494f5fea24f94d4c91ab79ed0280dbb98f10c9a70d61d4",
+          "dxgi.dll": "77f3016f127af55ecfed2bd2f540f8e7099ef80c4475761f453f8857a4963a53",
+          "nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+          "scene.ppm": "4699bf5a4ae4ad2bc811f91b61871b1ffc9b11d6b167ee758d39d0fc22158cc3"
+        },
+        "capture_sha256": {
+          "dlss5fb_in_1.ppm": "4699bf5a4ae4ad2bc811f91b61871b1ffc9b11d6b167ee758d39d0fc22158cc3",
+          "dlss5fb_lo_1.ppm": "976c5933b489d5fdac02473c0913c40db3a9c6ea421e86d87b1a49db46540cad",
+          "dlss5fb_nr_1.ppm": "edc279ee5b522a05a38d476799e4e00677b11fcf714142194bb048052bbdf437",
+          "dlss5fb_out_1.ppm": "acf9579b6110e34b52b20466fbe0d53b480e88aef6c74afb89badff60a4c3f46"
+        }
+      },
+      "fbtest_legacy_default": {
+        "preset": 1,
+        "preset_logged_on_create": true,
+        "manifest": {
+          "path": "_dl/october_nr_20261106/batch8/fbtest_legacy_default/process.json",
+          "sha256": "17ba26b8fac25606cebeae667da98484f04b5d2125a6716a783f130a4038be88"
+        },
+        "ini": {
+          "path": "_dl/october_nr_20261106/batch8/fbtest_legacy_default/dlss5fb.ini",
+          "sha256": "cb0d90a9ec1856bfc965e0126496388ffc5c58d54e57ebb83d8efe403d38402e"
+        },
+        "log": {
+          "path": "_dl/october_nr_20261106/batch8/fbtest_legacy_default/dlss5fb.log",
+          "sha256": "f632fb5afb63418816b38e869b56b950bd662a564b3e3b60238180a9b813bdcd"
+        },
+        "runtime_sha256": {
+          "fbtest.exe": "fad2b03c8c6b8bd821c4f262fd41ce37961144a8a289788afa27edd80e3749ce",
+          "dlss5_nvngx.dll": "aa5ce89a61a41b4edd494f5fea24f94d4c91ab79ed0280dbb98f10c9a70d61d4",
+          "dxgi.dll": "9e55e2fed8b0cbd779f24fde9c3665c50a5d7f8f554654061e10c79bf0b39faa",
+          "nvngx_dlssnr.dll": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+          "scene.ppm": "4699bf5a4ae4ad2bc811f91b61871b1ffc9b11d6b167ee758d39d0fc22158cc3"
+        },
+        "capture_sha256": {
+          "dlss5fb_in_1.ppm": "4699bf5a4ae4ad2bc811f91b61871b1ffc9b11d6b167ee758d39d0fc22158cc3",
+          "dlss5fb_lo_1.ppm": "976c5933b489d5fdac02473c0913c40db3a9c6ea421e86d87b1a49db46540cad",
+          "dlss5fb_nr_1.ppm": "edc279ee5b522a05a38d476799e4e00677b11fcf714142194bb048052bbdf437",
+          "dlss5fb_out_1.ppm": "acf9579b6110e34b52b20466fbe0d53b480e88aef6c74afb89badff60a4c3f46"
+        }
+      },
+      "fbtest_october": {
+        "preset": 2,
+        "preset_logged_on_create": true,
+        "manifest": {
+          "path": "_dl/october_nr_20261106/batch8/fbtest_october/process.json",
+          "sha256": "e5ab751ae45690868e98d6c2e4a2c35b2ceb176418fca4f38bec6444f1f77e42"
+        },
+        "ini": {
+          "path": "_dl/october_nr_20261106/batch8/fbtest_october/dlss5fb.ini",
+          "sha256": "baa5dda3df7914bac7ec7802db62bcbb4adb9433160f824703424e2e24cedfbe"
+        },
+        "log": {
+          "path": "_dl/october_nr_20261106/batch8/fbtest_october/dlss5fb.log",
+          "sha256": "303149867660156482aa663fb825de275aef05513b513f259a669f7281406506"
+        },
+        "runtime_sha256": {
+          "fbtest.exe": "fad2b03c8c6b8bd821c4f262fd41ce37961144a8a289788afa27edd80e3749ce",
+          "dlss5_nvngx.dll": "aa5ce89a61a41b4edd494f5fea24f94d4c91ab79ed0280dbb98f10c9a70d61d4",
+          "dxgi.dll": "9e55e2fed8b0cbd779f24fde9c3665c50a5d7f8f554654061e10c79bf0b39faa",
+          "nvngx_dlssnr.dll": "2d3e405535cfb574828a5940f62d14952044f4feb1013caf9e7b9240385506ed",
+          "scene.ppm": "4699bf5a4ae4ad2bc811f91b61871b1ffc9b11d6b167ee758d39d0fc22158cc3"
+        },
+        "capture_sha256": {
+          "dlss5fb_in_1.ppm": "4699bf5a4ae4ad2bc811f91b61871b1ffc9b11d6b167ee758d39d0fc22158cc3",
+          "dlss5fb_lo_1.ppm": "976c5933b489d5fdac02473c0913c40db3a9c6ea421e86d87b1a49db46540cad",
+          "dlss5fb_nr_1.ppm": "d67ecf4a796b49958bc2b450679602352b2d848118ce4f7c129f24e587f68115",
+          "dlss5fb_out_1.ppm": "ea8055de2759ee9b4bd253175bd8c795d04c1b487e1afd38707fe6e7f9e41cbc"
+        }
+      }
+    },
+    "old1_vs_october2_combined": {
+      "dlss5fb_nr_1.ppm": {
+        "wh": [
+          1920,
+          1080
+        ],
+        "mae_rgb8_levels": 5.743980516975308,
+        "max_abs_rgb8_channel_levels": 65,
+        "changed_rgb_pixels": 2072101
+      },
+      "dlss5fb_out_1.ppm": {
+        "wh": [
+          3840,
+          2160
+        ],
+        "mae_rgb8_levels": 5.624442555619856,
+        "max_abs_rgb8_channel_levels": 65,
+        "changed_rgb_pixels": 8287079
+      }
+    },
+    "negative_control": "Previous proxy without a preset and updated proxy with malformed RenderPreset=2junk produce byte-identical input, model and composite _1 outputs on the old DLL. The actual old1/October2 replay contrast already uses the same updated proxy."
+  },
+  "existing_october1_smoke": {
+    "report": {
+      "path": "_dl/october_nr_20261106/batch8/fbtest_hot_reload/run.json",
+      "sha256": "ae01026af230854247ca8f5ebcdee54704f96702f7004e3153c55649e3f8b502"
+    },
+    "log": {
+      "path": "_dl/october_nr_20261106/batch8/fbtest_hot_reload/dlss5fb.log",
+      "sha256": "3e4c502cd9286040f4a4cea3aa8566e9f37c5e34a9eb9664b138c5864c795ffe"
+    },
+    "successful_feature_presets": [
+      2,
+      1
+    ],
+    "nr_wh": [
+      640,
+      360
+    ],
+    "released_frames": 360,
+    "qualification": "Hot reload confirms creation and continued output after switching. Its resolution, UI setting and timing differ from the frozen 4K Sponza replay."
+  },
+  "minimum_matched_experiment": {
+    "new_run": "Copy the fbtest_october runtime and scene into a fresh isolated sibling directory. Set only RenderPreset=1 and run fbtest.exe scene.ppm 8.",
+    "optional_controls": "Repeat October1 in another clean directory for repeatability. For explicit old1, replace the malformed RenderPreset=2junk with RenderPreset=1 in a copy of fbtest_legacy_default. Existing malformed/default control captures are byte-identical.",
+    "gates": [
+      "Keep GPU/driver, bridge, proxy, player, scene, all non-preset settings and capture index fixed. Verify runtime and exact source/model-input hashes.",
+      "Check successful requested preset creation, processed frames, no evaluate failures and complete eight-frame execution. Match same suffix _1, the second capture under the same two-dump procedure.",
+      "Measure both 1920x1080 model output and 3840x2160 composite RGB8, reporting MAE, maximum and changed pixels separately."
+    ],
+    "contrasts": {
+      "old1_vs_october1": "Version/implementation contrast with identical serialized HT, including host, code, ABI and Ampere port effects.",
+      "october1_vs_october2": "Preset contrast within one October build, including different serialized weights and graph/dispatch.",
+      "old1_vs_october2": "Combined contrast. Signed differences can telescope through October1 on matched samples. Scalar MAEs cannot be added or subtracted as causal contributions."
+    },
+    "limits": "Old preset 2 falls back to HT. A pure weight effect requires a supported same-architecture intervention with proven tensor compatibility. A separate matched nr-lab trace can compare selected entries without claiming to trace the Sponza run."
+  },
+  "evidence": [
+    {
+      "path": "research/validation/october_nr_remix_host.json",
+      "sha256": "d468afb134d9b0b623e8aed691a051556bff4437247a6afe6e8f63a4ec4d4448"
+    },
+    {
+      "path": "research/validation/october_nr_remix_weights.json",
+      "sha256": "077e136a0c18e1dffe965fb64f6dba27cd04ba61f71bb8fa7bd3a6a92c668ffa"
+    },
+    {
+      "path": "research/validation/october_nr_remix_kernels.json",
+      "sha256": "bbf13b4916193f94427021e016e08675fbdd6175016c187e812267dc4693e324"
+    },
+    {
+      "path": "research/validation/october_nr_small_host_graph.json",
+      "sha256": "01e3c597d638592da877d5c66b9bce019353bf79e453ff4785459b9050f3733f"
+    },
+    {
+      "path": "research/validation/october_nr_staged_host.json",
+      "sha256": "72d88471d4f87743a5ee719ec4494ef2f7d76a78d033eb4e586c0a7e162c868b"
+    },
+    {
+      "path": "research/validation/october_nr_4k_integration.json",
+      "sha256": "626d8d6aa33e9e2139dc4f1f09a790f373f69a623056e089e9f067e99b542b76"
+    }
+  ]
+}
