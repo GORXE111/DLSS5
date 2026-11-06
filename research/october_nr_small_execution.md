@@ -2,6 +2,8 @@
 
 2026-11-06。研究对象是 NVIDIA 官方 RTX Remix 1.6.1 中的 `nvngx_dlssnr.dll`，原件 SHA-256 为 `2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f`。以下分别记录静态重建、RTX 3060 实测和仍需原版运行才能确认的项目。公开仓库只保存分析工具、地址、尺寸、哈希和测试结果。[原件及版本调查](october_nr_remix.md)
 
+后续的隔离实验版已完成 RTX 3060 整网评估、GPU 权重回读、四帧逐层轨迹及同尺寸 4K 对照。本页记录此前的建图和原语阶段。[整网实测](october_nr_ampere_runtime.md)
+
 ## 小模型怎样执行
 
 310.9.16.0 的主机工厂把预设 **2** 绑定到 `WEIGHTS_CC_SMALL_FP8`，预设 **1** 绑定到原有的 `WEIGHTS_HT`。官方 Remix 固定提交里的 Vulkan 调用显式选择预设 B，也就是 2。画面风格使用独立的 `Style`，AutoMask 开启时 Remix 另把遮罩混合设为 Min。[固定版本的官方调用方](https://raw.githubusercontent.com/NVIDIAGameWorks/dxvk-remix/0a6cd5b1ee814ec390c358e0c9c32ece8895ddc0/src/dxvk/rtx_render/rtx_ngx_wrapper.cpp)

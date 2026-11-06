@@ -56,6 +56,7 @@ struct Options {
     int style = -1;
     int perf_quality = -1;
     bool nr_only = false;
+    bool create_only = false;
     bool compact_nr = false;
     bool framegen = false;
     OptionalProbe optional_probe = OptionalProbe::None;
@@ -66,6 +67,7 @@ struct Options {
     int bundle_backbuffer = 0;     // ui-bundle backbuffer: 0 = the colour input, 1 = green pattern (to tell it apart)
     int optional_channel = -1;
     int use_auto_mask = 1;
+    int mask_blend_mode = -1;       // Omit this October parameter for older runtimes.
     int ui_correction = 0;
     int temporal_shift = 0;
     int temporal_shift_y = 0;
@@ -1635,6 +1637,10 @@ static void SetEvaluationContract(const Options &o, ID3D12Resource *color, ID3D1
     // on values left behind by feature creation.
     g.params->Set("DLSSNR.Enabled", 1u);
     g.params->Set("DLSSNR.UseAutoMask", static_cast<unsigned int>(o.use_auto_mask));
+    if (o.mask_blend_mode >= 0) {
+        auto *params = g_traced_params != nullptr ? g_traced_params : g.params;
+        params->Set("DLSSNR.MaskBlendMode", o.mask_blend_mode);
+    }
     g.params->Set("DLSSNR.UICorrection", static_cast<unsigned int>(o.ui_correction));
 }
 
@@ -1913,6 +1919,12 @@ static void WriteResultJson(const Options &o, bool created, UINT evaluations, co
         "  \"optionalVariant\": %d,\n"
         "  \"optionalChannel\": %d,\n"
         "  \"useAutoMask\": %d,\n"
+        "  \"maskBlendModeRequested\": %d,\n"
+        "  \"rampChannels\": %d,\n"
+        "  \"optionalRgba\": [%.6f, %.6f, %.6f, %.6f],\n"
+        "  \"localTone\": %.6f,\n"
+        "  \"localStructure\": %.6f,\n"
+        "  \"skinStructure\": %.6f,\n"
         "  \"uiCorrection\": %d,\n"
         "  \"temporalShiftPixels\": %d,\n"
         "  \"temporalShiftYPixels\": %d,\n"
@@ -1940,7 +1952,10 @@ static void WriteResultJson(const Options &o, bool created, UINT evaluations, co
             (o.framegen ? "nr-plus-dlss-sr-plus-framegen" : "nr-plus-dlss-sr"),
         o.compact_nr ? "true" : "false", OptionalProbeName(o.optional_probe),
         FormatName(DefaultOptionalFormat(o)), o.optional_variant, o.optional_channel,
-        o.use_auto_mask, o.ui_correction, o.temporal_shift, o.temporal_shift_y,
+        o.use_auto_mask, o.mask_blend_mode, g_ramp_channels,
+        g_channel_scale[0], g_channel_scale[1], g_channel_scale[2], g_channel_scale[3],
+        o.local_tone, o.local_structure, o.skin_structure,
+        o.ui_correction, o.temporal_shift, o.temporal_shift_y,
         o.scene_variant, o.scene_cut_frame, o.reset_frame, o.motion_x, o.motion_y,
         g_nr_resolved_scaling_ratio,
         static_cast<unsigned>(g_nr_scaling_callback_result),
@@ -2080,6 +2095,12 @@ static int Run(const Options &o)
         WriteResultJson(o, false, 0, empty, false);
         Log("VERDICT FAIL: the runtime did not create raw feature 18; inspect this log and NVIDIA NGX logs");
         return 3;
+    }
+    if (o.create_only) {
+        Coverage empty;
+        WriteResultJson(o, true, 0, empty, false);
+        Log("VERDICT PASS: feature creation only, zero evaluations");
+        return 0;
     }
     if (!o.nr_only && !CreateSrFeature(o, flags)) {
         Coverage empty;
@@ -2342,6 +2363,13 @@ int main(int argc, char **argv)
             else { Log("invalid --optional-channel (use all, r, g, b, or a)"); return 64; }
         } else if (strcmp(arg, "--auto-mask") == 0 && i + 1 < argc) {
             options.use_auto_mask = atoi(argv[++i]);
+        } else if (strcmp(arg, "--mask-blend") == 0 && i + 1 < argc) {
+            const char *mode = argv[++i];
+            if (mode[0] < '0' || mode[0] > '3' || mode[1] != '\0') {
+                Log("invalid --mask-blend (use 0, 1, 2, or 3)");
+                return 64;
+            }
+            options.mask_blend_mode = mode[0] - '0';
         } else if (strcmp(arg, "--ui-correction") == 0 && i + 1 < argc) {
             options.ui_correction = atoi(argv[++i]);
         } else if (strcmp(arg, "--temporal-shift") == 0 && i + 1 < argc) {
@@ -2358,6 +2386,8 @@ int main(int argc, char **argv)
             if (!ParseFloat(argv[++i], &options.motion_x)) return 64;
         } else if (strcmp(arg, "--motion-y") == 0 && i + 1 < argc) {
             if (!ParseFloat(argv[++i], &options.motion_y)) return 64;
+        } else if (strcmp(arg, "--create-only") == 0) {
+            options.create_only = true;
         } else if (strcmp(arg, "--nr-only") == 0) {
             options.nr_only = true;
         } else if (strcmp(arg, "--compact-nr") == 0) {
@@ -2369,13 +2399,14 @@ int main(int argc, char **argv)
                         "       [--style N] [--perf-quality 0..5] [--runtime-scale F]\n"
                         "       [--profile srgb|scrgb|hdr10] [--intensity F] [--local-tone F]\n"
                         "       [--local-structure F] [--skin-structure F] [--nr-only] [--compact-nr] [--framegen]\n"
+                        "       [--create-only (requires --nr-only)]\n"
                         "       [--optional none|control-mask|ui|ui-alpha|backbuffer|distortion|ui-bundle]\n"
                         "       [--optional-format r8|r16f|rgba8|rgb10a2|rg16f|rgba16f|r32f|rg32f|rgba32f]\n"
                         "       [--optional-variant 0|1|2|3] [--optional-value F] [--optional-channel all|r|g|b|a]\n"
                         "       [--hdr-scale F (scRGB/HDR10 pattern = sRGB pattern x F, default 2)]\n"
                         "       [--optional-rgba r,g,b,a] [--ramp-channels mask]\n"
                         "       [--bundle 1..7 (1 UI, 2 UIAlpha, 4 Backbuffer)] [--bundle-backbuffer 0|1]\n"
-                        "       [--auto-mask 0|1] [--ui-correction 0|1]\n"
+                        "       [--auto-mask 0|1] [--mask-blend 0|1|2|3] [--ui-correction 0|1]\n"
                         "       [--temporal-shift pixels-per-frame] [--motion-x F] [--motion-y F]\n"
                         "       [--temporal-shift-y pixels-per-frame] (signed integer)\n"
                         "       [--scene-variant 0|1] [--scene-cut-frame N] [--reset-frame N] (zero-based; -1 disables)\n");
@@ -2406,6 +2437,10 @@ int main(int argc, char **argv)
     }
     if (options.nr_only && options.framegen) {
         Log("invalid contract: --framegen requires the DLSS SR stage");
+        return 64;
+    }
+    if (options.create_only && !options.nr_only) {
+        Log("invalid contract: --create-only requires --nr-only");
         return 64;
     }
     if (options.framegen) options.frames = std::max(options.frames, 2u);

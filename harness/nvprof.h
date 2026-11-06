@@ -7,12 +7,14 @@
 //   LaunchCuKernelChain -> 拆成逐个发射，每个前后各插一个 D3D12 时间戳查询
 // 每帧提交前 Resolve，等完 fence 后累计，进程退出时按总耗时排序打印。
 // 旧的 CreateCubinComputeShader* / LaunchCubinShader 接口也一并包装，dll 换版本时仍可用。
+// DLSS5_TRACE_ONLY=1 单独启用轨迹并原样转发提交，优先于计时和 tap。默认只记录第 0 帧。
 #pragma once
 #include <d3d12.h>
 #include <algorithm>
 #include <cerrno>
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <map>
 #include <limits>
 #include <string>
@@ -47,6 +49,7 @@ struct Launch { Handle h; unsigned gx, gy, gz; UINT q; };
 struct Acc { double ms = 0; unsigned launches = 0; std::string name; unsigned gx, gy, gz, bx, by, bz, smem; };
 
 inline bool g_on = false;
+inline bool g_trace_only = false;
 inline PfnQueryInterface g_real_qi;
 inline PfnCreateCuFunction g_real_create_cu_function;
 inline PfnLaunchCuKernelChain g_real_launch_chain;
@@ -321,6 +324,10 @@ inline void Who(const CuLaunch &k)
 inline int __cdecl LaunchCuKernelChain(ID3D12GraphicsCommandList *list, const CuLaunch *k, unsigned n)
 {
     // 初始化时 dll 会以空命令列表调一次 (能力探测)，原样透传
+    if (g_trace_only) {
+        if (list && k && n) TraceChain(k, n);
+        return g_real_launch_chain(list, k, n);
+    }
     if (!g_on || list == nullptr || k == nullptr || !EnsureHeap(list)) return g_real_launch_chain(list, k, n);
     TraceChain(k, n);
     for (unsigned i = 0; i < n; ++i) Who(k[i]);
@@ -355,6 +362,15 @@ inline int __cdecl CreateWithName(ID3D12Device *d, const void *c, unsigned s, un
 inline int __cdecl LaunchCubin(ID3D12GraphicsCommandList *list, Handle h, unsigned gx, unsigned gy, unsigned gz,
     const void *params, unsigned param_size)
 {
+    if (g_trace_only) {
+        if (list) {
+            const Kernel &kernel = g_kernels[h];
+            // 旧接口不传动态共享内存大小，记录的 0 仅为占位。
+            const CuLaunch launch{h, {gx, gy, gz}, {kernel.bx, kernel.by, kernel.bz}, 0, params, param_size};
+            TraceChain(&launch, 1);
+        }
+        return g_real_launch(list, h, gx, gy, gz, params, param_size);
+    }
     if (!g_on || list == nullptr || !EnsureHeap(list) || g_next + 2 > kMaxQueries)
         return g_real_launch(list, h, gx, gy, gz, params, param_size);
     const UINT q = g_next;
@@ -447,6 +463,19 @@ inline void Collect(ID3D12CommandQueue *queue, unsigned frame, unsigned warmup =
 // 机器可读: 每行 ms/帧 \t 次/帧 \t grid \t block \t smem \t kernel 名 (完整 mangled 名，便于 c++filt)
 inline void Report()
 {
+    if (g_trace_only) {
+        bool write_ok = false;
+        if (g_trace) {
+            write_ok = std::ferror(g_trace) == 0;
+            if (std::fclose(g_trace) != 0) write_ok = false;
+            g_trace = nullptr;
+        }
+        std::printf("[trace] chains=%u rows=%u file=%s chain_hook=%s legacy_hook=%s\n",
+            g_trace_chain, g_trace_seq, write_ok ? "written" : "missing-or-incomplete",
+            g_real_launch_chain ? "yes" : "no", g_real_launch ? "yes" : "no");
+        std::fflush(stdout);
+        return;
+    }
     if (!g_on) return;
     if (!g_frames) {
         std::printf("[prof] no data: QueryInterface %s, chain %s, kernels %zu, ids:", g_real_qi ? "hooked" : "missing",
@@ -475,14 +504,19 @@ inline void Report()
 inline void Install(HMODULE module, bool (*hook)(HMODULE, const char *, const char *, void *))
 {
     const char *env = std::getenv("DLSS5_PROF");
-    g_on = env && env[0] == '1';
-    if (!g_on) return;
+    const char *trace_only = std::getenv("DLSS5_TRACE_ONLY");
+    g_trace_only = trace_only && std::strcmp(trace_only, "1") == 0;
+    g_on = !g_trace_only && env && env[0] == '1';
+    if (!g_on && !g_trace_only) return;
+    g_trace_frame = g_trace_only ? 0 : -1;
     if (const char *t = std::getenv("DLSS5_TRACE")) g_trace_frame = std::atoi(t);
-    g_who = std::getenv("DLSS5_WHO");
+    if (g_on) {
+        g_who = std::getenv("DLSS5_WHO");
+        ParseTap();
+    }
     g_module = module;
-    ParseTap();
     const bool ok = hook(module, "KERNEL32.dll", "GetProcAddress", reinterpret_cast<void *>(&GetProcAddressHook));
-    std::printf("[prof] GetProcAddress hook %s\n", ok ? "installed" : "FAILED");
+    std::printf("[%s] GetProcAddress hook %s\n", g_trace_only ? "trace" : "prof", ok ? "installed" : "FAILED");
     std::atexit(Report);
 }
 

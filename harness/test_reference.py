@@ -120,6 +120,51 @@ class ReferenceTests(unittest.TestCase):
             reference.compare(args)
         self.assertFalse(json.loads(report.read_text())["passed"])
 
+    def test_october_mask_suite_pins_modes_frames_and_raw_output(self):
+        with self.assertRaisesRegex(ValueError, "310.9.16.0"):
+            reference.profiled_cases("october-mask", {})
+        profile = reference.capture_profile("official-sm120", reference.OCTOBER_VERSION, 2)
+        cases = reference.profiled_cases("october-mask", profile)
+        self.assertEqual(len(cases), 10)
+        fields, names = reference.case_contract(cases[5])
+        self.assertEqual((fields["model"], fields["maskBlendModeRequested"], fields["evaluationsSucceeded"]), (2, 2, 4))
+        self.assertEqual((fields["optionalRgba"], fields["rampChannels"]), ([1, 0.625, 1, 1], 4))
+        self.assertIn("nr-lab-output-model2-raw.f16", names)
+        reference.validate_report(cases[5], {**fields, "outputCoverageValidated": True}, names)
+        with self.assertRaisesRegex(ValueError, "maskBlendModeRequested"):
+            reference.validate_report(cases[5], {**fields, "maskBlendModeRequested": 0}, names)
+
+    def test_october_mask_requires_successful_getter_after_each_set(self):
+        case = reference.suite_cases("october-mask")[5]
+        set_mode = "PARAM Set I32 DLSSNR.MaskBlendMode=2\n"
+        read_mode = "PARAM Get I32 DLSSNR.MaskBlendMode -> 0x00000001 value=2\n"
+        reference.validate_mask_log(case, (set_mode + read_mode) * 4)
+        with self.assertRaisesRegex(ValueError, "missing per-frame"):
+            reference.validate_mask_log(case, (set_mode + read_mode) * 3 + set_mode)
+        with self.assertRaisesRegex(ValueError, "getter failed"):
+            reference.validate_mask_log(case, (set_mode + read_mode) * 3 + set_mode +
+                                        read_mode.replace("00000001", "BAD00004"))
+        with self.assertRaisesRegex(ValueError, "wrong value"):
+            reference.validate_mask_log(case, (set_mode + read_mode) * 3 + set_mode +
+                                        read_mode.replace("value=2", "value=0"))
+
+    def test_experimental_october_capture_is_bound_to_staged_runtime_and_ampere(self):
+        version, kind = reference.OCTOBER_VERSION, reference.OCTOBER_EXPERIMENT_KIND
+        profile = reference.capture_profile(kind, version, 2)
+        self.assertEqual(profile, reference.capture_profile("official-sm120", version, 2))
+        with self.assertRaisesRegex(ValueError, "requires 310.9.16.0"):
+            reference.capture_profile(kind, version, 1)
+        with self.assertRaisesRegex(ValueError, "staged DLL"):
+            reference.verify_dll_identity(kind, version, reference.OCTOBER_SHA256)
+        with self.assertRaisesRegex(ValueError, "explicit 310.9.16.0"):
+            reference.verify_dll_identity("port-sm86", "310.8.0", reference.OCTOBER_EXPERIMENT_SHA256)
+        blackwell = [{"compute_capability": "12.0", "name": "NVIDIA GeForce RTX 5090"}]
+        with self.assertRaisesRegex(ValueError, "requires an Ampere"):
+            reference.verify_execution_gpu(kind, version, blackwell, reference.OCTOBER_EXPERIMENT_SHA256)
+        ampere = [{"compute_capability": "8.6", "name": "NVIDIA GeForce RTX 3060"}]
+        reference.verify_execution_gpu(kind, version, ampere, reference.OCTOBER_EXPERIMENT_SHA256,
+                                       "GPU: NVIDIA GeForce RTX 3060 (vendor=10DE)")
+
     def test_nonfinite_output_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "non-finite"):
             reference.metrics(np.array([float("nan")]), np.array([0.0]))

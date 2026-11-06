@@ -12,6 +12,7 @@ import hashlib
 import io
 import json
 import math
+import os
 import re
 import shutil
 import subprocess
@@ -25,6 +26,8 @@ ROOT = Path(__file__).resolve().parents[1]
 ORIGINAL_SHA256 = "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e"
 OCTOBER_VERSION = "310.9.16.0"
 OCTOBER_SHA256 = "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f"
+OCTOBER_EXPERIMENT_SHA256 = "2d3e405535cfb574828a5940f62d14952044f4feb1013caf9e7b9240385506ed"
+OCTOBER_EXPERIMENT_KIND = "experimental-sm86"
 NATIVE_SHA256 = {"310.8.0": ORIGINAL_SHA256, OCTOBER_VERSION: OCTOBER_SHA256}
 OCTOBER_PRESETS = {1: "WEIGHTS_HT", 2: "WEIGHTS_CC_SMALL_FP8"}
 SCHEMA = 1
@@ -46,6 +49,16 @@ def suite_cases(suite):
     def case(name, frames=1, size="640x360", extra=()):
         return {"id": name, "args": ["--nr-only", "--input", size, "--output", size,
                                       "--frames", str(frames), *extra]}
+    if suite == "october-mask":
+        common = ("--profile", "scrgb", "--scene-variant", "0", "--local-tone", "0.75",
+                  "--local-structure", "0.5", "--skin-structure", "0.25")
+        mask = ("--optional", "control-mask", "--optional-format", "rgba16f", "--optional-variant", "3",
+                "--optional-rgba", "1,0.625,1,1", "--ramp-channels", "4")
+        cases = [case(f"blend{mode}_f{frames - 1}", frames,
+                      extra=(*common, *mask, "--auto-mask", "1", "--mask-blend", str(mode)))
+                 for mode in range(4) for frames in (1, 4)]
+        return [*cases, case("no_control_mask_f3", 4, extra=(*common, "--auto-mask", "1", "--mask-blend", "2")),
+                case("auto_mask_disabled_f3", 4, extra=(*common, *mask, "--auto-mask", "0", "--mask-blend", "2"))]
     if suite == "motion2d":
         groups = [("diagonal", 3, 2, -3, -2, "640x360"),
                   ("negative", -3, -2, 3, 2, "640x360"),
@@ -121,6 +134,14 @@ def case_contract(case):
     if "--temporal-shift-y" in args:
         fields["temporalShiftYPixels"] = int(option("--temporal-shift-y", "0"))
         fields["intensity"] = float(option("--intensity", "1"))
+    if "--mask-blend" in args:
+        fields.update(maskBlendModeRequested=int(option("--mask-blend", "-1")),
+                      rampChannels=int(option("--ramp-channels", "15")),
+                      optionalRgba=list(map(float, option("--optional-rgba", "1,1,1,1").split(","))),
+                      localTone=float(option("--local-tone", "1")),
+                      localStructure=float(option("--local-structure", "1")),
+                      skinStructure=float(option("--skin-structure", "-1")),
+                      intensity=float(option("--intensity", "1")))
     names = {f"nr-lab-output-model{model}-{profile}.ppm"}
     if profile != "srgb":
         names.add(f"nr-lab-output-model{model}-raw.f16")
@@ -148,6 +169,28 @@ def validate_temporal_log(case, log):
     observed = [tuple(map(int, row)) for row in re.findall(r"temporal input: frame=(\d+) scene=(\d+) reset=(\d+)", log)]
     if observed != expected:
         raise ValueError(f"case {case['id']} temporal input/reset events do not match requested contract")
+
+
+def validate_mask_log(case, log):
+    """Check the requested value actually reached the runtime's parameter getter each frame."""
+    if "--mask-blend" not in case["args"]:
+        return
+    fields, _ = case_contract(case)
+    mode, frames = fields["maskBlendModeRequested"], fields["evaluationsSucceeded"]
+    events = re.findall(r"PARAM (?:Set I32 DLSSNR\.MaskBlendMode=(\d+)|"
+                        r"Get I32 DLSSNR\.MaskBlendMode -> 0x([0-9A-Fa-f]{8}) value=(\d+))", log)
+    reads = []
+    for setting, result, value in events:
+        if setting:
+            if int(setting) != mode:
+                raise ValueError(f"case {case['id']} mask blend set the wrong value")
+            reads.append(0)
+        elif reads:
+            if int(result, 16) != 1 or int(value) != mode:
+                raise ValueError(f"case {case['id']} mask blend getter failed or returned the wrong value")
+            reads[-1] += 1
+    if len(reads) != frames or not all(reads):
+        raise ValueError(f"case {case['id']} mask blend is missing per-frame set/get evidence")
 
 
 def validate_pixels(path, report):
@@ -212,11 +255,13 @@ def gpu_inventory():
 
 
 def capture_profile(kind, version, model_preset):
-    if kind not in ("official-sm120", "port-sm86") or not isinstance(version, str) or version not in NATIVE_SHA256:
+    if kind not in ("official-sm120", "port-sm86", OCTOBER_EXPERIMENT_KIND) or not isinstance(version, str) or version not in NATIVE_SHA256:
         raise ValueError("unknown capture kind or NR version")
+    if kind == OCTOBER_EXPERIMENT_KIND and (version != OCTOBER_VERSION or type(model_preset) is not int or model_preset != 2):
+        raise ValueError("experimental-sm86 requires 310.9.16.0 and --model-preset 2")
     if version == OCTOBER_VERSION:
-        if kind != "official-sm120":
-            raise ValueError("310.9.16.0 supports only official capture; no validated sm86 port is registered")
+        if kind == "port-sm86":
+            raise ValueError("no validated sm86 port is registered for 310.9.16.0; use the dedicated experimental profile")
         if type(model_preset) is not int or model_preset not in OCTOBER_PRESETS:
             raise ValueError("310.9.16.0 requires explicit --model-preset 1 (HT) or 2 (Small FP8)")
         return {"nr_version": version, "requested_model_preset": model_preset,
@@ -227,6 +272,8 @@ def capture_profile(kind, version, model_preset):
 
 
 def profiled_cases(suite, profile):
+    if suite == "october-mask" and (not profile or profile.get("nr_version") != OCTOBER_VERSION):
+        raise ValueError("october-mask requires the explicit 310.9.16.0 capture profile")
     cases = suite_cases(suite)
     if not profile:
         return cases
@@ -243,11 +290,17 @@ def manifest_profile(manifest):
     if expected != profile or manifest.get("target", f"DLSS-NR {version}") != f"DLSS-NR {version}":
         raise ValueError("inconsistent capture profile or target")
     dll_hash = manifest.get("runtime_sha256", {}).get("nvngx_dlssnr.dll")
+    verify_dll_identity(kind, version, dll_hash)
+    return profile
+
+
+def verify_dll_identity(kind, version, dll_hash):
     if kind == "official-sm120" and dll_hash != NATIVE_SHA256[version]:
         raise ValueError(f"official-sm120 requires the known unmodified {version} DLL SHA-256")
-    if version != OCTOBER_VERSION and dll_hash == OCTOBER_SHA256:
+    if kind == OCTOBER_EXPERIMENT_KIND and dll_hash != OCTOBER_EXPERIMENT_SHA256:
+        raise ValueError("experimental-sm86 requires the pinned October staged DLL SHA-256")
+    if version != OCTOBER_VERSION and dll_hash in (OCTOBER_SHA256, OCTOBER_EXPERIMENT_SHA256):
         raise ValueError("the October DLL requires its explicit 310.9.16.0 profile")
-    return profile
 
 
 def verify_native(gpus, dll_hash, log=None, *, nr_version="310.8.0"):
@@ -256,15 +309,30 @@ def verify_native(gpus, dll_hash, log=None, *, nr_version="310.8.0"):
     supported = [gpu for gpu in gpus if gpu["compute_capability"].startswith("12.")]
     if not supported:
         raise ValueError("official-sm120 requires a Blackwell compute capability 12.x GPU; this machine cannot supply that reference")
+    verify_gpu_log(supported, log, "Blackwell")
+
+
+def verify_gpu_log(supported, log, family):
     if log is not None:
         names = re.findall(r"GPU: (.+?) \(vendor=", log)
         if len(names) != 1 or names[0] not in {gpu["name"] for gpu in supported}:
-            raise ValueError("execution log does not identify the selected Blackwell GPU")
+            raise ValueError(f"execution log does not identify the selected {family} GPU")
+
+
+def verify_execution_gpu(kind, version, gpus, dll_hash, log=None):
+    if kind == "official-sm120":
+        verify_native(gpus, dll_hash, log, nr_version=version)
+    elif kind == OCTOBER_EXPERIMENT_KIND:
+        supported = [gpu for gpu in gpus if gpu["compute_capability"] == "8.6"]
+        if not supported:
+            raise ValueError("experimental-sm86 requires an Ampere compute capability 8.6 GPU")
+        verify_gpu_log(supported, log, "Ampere")
 
 
 def capture(args):
     version = getattr(args, "nr_version", "310.8.0")
     profile = capture_profile(args.kind, version, getattr(args, "model_preset", None))
+    cases = profiled_cases(args.suite, profile)
     files = {"nr-lab.exe": args.harness.resolve(), "nvngx.dll": args.bridge.resolve(),
              "nvngx_dlssnr.dll": args.dll.resolve(),
              "nvngx_dlss.dll": (args.support / "nvngx_dlss.dll").resolve(),
@@ -274,10 +342,8 @@ def capture(args):
             raise ValueError(f"missing capture dependency: {source}")
     gpus = gpu_inventory()
     hashes = {name: digest(path) for name, path in files.items()}
-    if version != OCTOBER_VERSION and hashes["nvngx_dlssnr.dll"] == OCTOBER_SHA256:
-        raise ValueError("the October DLL requires its explicit 310.9.16.0 profile")
-    if args.kind == "official-sm120":
-        verify_native(gpus, hashes["nvngx_dlssnr.dll"], nr_version=version)
+    verify_dll_identity(args.kind, version, hashes["nvngx_dlssnr.dll"])
+    verify_execution_gpu(args.kind, version, gpus, hashes["nvngx_dlssnr.dll"])
     output = args.out.resolve()
     if output.exists():
         raise ValueError(f"capture output must be a new directory: {output}")
@@ -292,11 +358,12 @@ def capture(args):
     if profile:
         manifest["capture_profile"] = profile
         manifest["scope"] += "; preset is the verified requested option, not an observed weight-load or kernel trace"
+    env = {key: value for key, value in os.environ.items() if not key.upper().startswith("DLSS5_")} if profile else None
     failed = False
     try:
         for name, source in files.items():
             shutil.copy2(source, runtime / name)
-        for case in profiled_cases(args.suite, profile):
+        for case in cases:
             destination = output / case["id"]
             destination.mkdir()
             for name in ("nr-lab-result.json", "nr-lab.log"):
@@ -307,7 +374,7 @@ def capture(args):
             command = [str(runtime / "nr-lab.exe"), *case["args"]]
             row = {**case, "passed": False, "outputs": {}}
             try:
-                result = subprocess.run(command, cwd=runtime, capture_output=True, timeout=args.timeout)
+                result = subprocess.run(command, cwd=runtime, env=env, capture_output=True, timeout=args.timeout)
                 (destination / "stdout.log").write_bytes(result.stdout)
                 (destination / "stderr.log").write_bytes(result.stderr)
                 row["exit_code"] = result.returncode
@@ -317,10 +384,10 @@ def capture(args):
                 if result.returncode != 0:
                     raise ValueError(f"nr-lab exited {result.returncode}")
                 report = json.loads((destination / "nr-lab-result.json").read_text(encoding="utf-8"))
-                validate_temporal_log(case, (destination / "nr-lab.log").read_text(errors="replace"))
-                if args.kind == "official-sm120":
-                    verify_native(gpus, hashes["nvngx_dlssnr.dll"], (destination / "nr-lab.log").read_text(errors="replace"),
-                                  nr_version=version)
+                log = (destination / "nr-lab.log").read_text(errors="replace")
+                validate_temporal_log(case, log)
+                validate_mask_log(case, log)
+                verify_execution_gpu(args.kind, version, gpus, hashes["nvngx_dlssnr.dll"], log)
                 outputs = list(runtime.glob("nr-lab-output-*.ppm")) + list(runtime.glob("nr-lab-output-*-raw.f16"))
                 validate_report(case, report, [path.name for path in outputs])
                 for source in outputs:
@@ -370,17 +437,21 @@ def load_capture(folder):
                 raise ValueError(f"case evidence was modified: {path}")
         report = json.loads((folder / case["id"] / "nr-lab-result.json").read_text(encoding="utf-8"))
         validate_report(case, report, case["outputs"])
-        validate_temporal_log(case, (folder / case["id"] / "nr-lab.log").read_text(errors="replace"))
+        log = (folder / case["id"] / "nr-lab.log").read_text(errors="replace")
+        validate_temporal_log(case, log)
+        validate_mask_log(case, log)
         for name, checksum in case["outputs"].items():
             path = (folder / case["id"] / name).resolve()
             if not path.is_relative_to(folder) or digest(path) != checksum:
                 raise ValueError(f"capture output was modified: {path}")
             validate_pixels(path, report)
-    if manifest["reference_kind"] == "official-sm120":
-        verify_native(manifest["gpus"], manifest["runtime_sha256"]["nvngx_dlssnr.dll"], nr_version=version)
+    if manifest["reference_kind"] in ("official-sm120", OCTOBER_EXPERIMENT_KIND):
+        kind = manifest["reference_kind"]
+        hashes = manifest["runtime_sha256"]
+        verify_execution_gpu(kind, version, manifest["gpus"], hashes["nvngx_dlssnr.dll"])
         for case in manifest["cases"]:
-            verify_native(manifest["gpus"], manifest["runtime_sha256"]["nvngx_dlssnr.dll"],
-                          (folder / case["id"] / "nr-lab.log").read_text(errors="replace"), nr_version=version)
+            verify_execution_gpu(kind, version, manifest["gpus"], hashes["nvngx_dlssnr.dll"],
+                                 (folder / case["id"] / "nr-lab.log").read_text(errors="replace"))
     return manifest
 
 
@@ -435,11 +506,11 @@ def main():
     cap = sub.add_parser("capture")
     cap.add_argument("--dll", type=Path, required=True)
     cap.add_argument("--out", type=Path, required=True)
-    cap.add_argument("--kind", choices=("official-sm120", "port-sm86"), required=True)
+    cap.add_argument("--kind", choices=("official-sm120", "port-sm86", OCTOBER_EXPERIMENT_KIND), required=True)
     cap.add_argument("--nr-version", choices=tuple(NATIVE_SHA256), default="310.8.0")
     cap.add_argument("--model-preset", choices=(1, 2), type=int,
                      help="required for 310.9.16.0: 1 uses HT, 2 requests Small FP8")
-    cap.add_argument("--suite", choices=("smoke", "core", "full", "temporal", "motion2d"), default="core")
+    cap.add_argument("--suite", choices=("smoke", "core", "full", "temporal", "motion2d", "october-mask"), default="core")
     cap.add_argument("--harness", type=Path, default=ROOT / "harness" / "nr-lab.exe")
     cap.add_argument("--bridge", type=Path, default=ROOT / "harness" / "nvngx.dll")
     cap.add_argument("--support", type=Path, default=ROOT / "dlss5")

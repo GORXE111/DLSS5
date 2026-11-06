@@ -1,0 +1,151 @@
+{
+  "schema": "dlssnr_october_pre_mask_slices_v1",
+  "scope": "Standalone slices from original PTX with synthetic post-texture values; no vendor DLL execution",
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "compute_capability": [
+    8,
+    6
+  ],
+  "cuda_driver_api_version": 13030,
+  "original_ptx_sha256": "cf24a2f92c2b398764de29474d66ee996bd54a07be0bdfee1239885f74fbefa4",
+  "probe_source_sha256": "ea38492eafcf4b262e7bb832e67d49865fdb46995fededeb83eefaa666046334",
+  "driver_helper_source_sha256": "896829c257ae3a929e865eb1044907d1db470c8239328658aef632ed4c6a3737",
+  "parameter_bytes": 272,
+  "mask_blend_mode_offset": 40,
+  "style_lane_selector_offset": 196,
+  "cases_per_entry": 450,
+  "cases_per_mode": {
+    "0": 112,
+    "1": 112,
+    "2": 112,
+    "3": 112,
+    "4": 1,
+    "4294967295": 1
+  },
+  "expected_output_sha256": "46575d655a320fc7177354857b9d5404c6b6eeda9fc44a7a2df41a9e842aa09f",
+  "output_fields": [
+    "local_tone",
+    "structure_gate",
+    "skin",
+    "structure",
+    "style_lane_0",
+    "style_lane_1",
+    "style_lane_2"
+  ],
+  "example_inputs": {
+    "mask_g": 0.25,
+    "mask_b": 0.75,
+    "base_tone": 0.75,
+    "base_structure": 0.5,
+    "auto_skin": 0.25,
+    "auto_structure": 0.75,
+    "automatic_enabled_for_mode_zero": false
+  },
+  "entries": [
+    {
+      "entry": "cc_tinlayout_fused_pre_block_swin_1h_32_1_fp8",
+      "source_line_range": [
+        19,
+        627
+      ],
+      "generated_ptx_sha256": "d14b767736178f57164bf41e77e1a959a93e47ab97c95f880d7c6eadde283ffb",
+      "fp16_values_compared": 3150,
+      "differing_fp16_values": 0,
+      "first_difference_indices": [],
+      "output_sha256": "46575d655a320fc7177354857b9d5404c6b6eeda9fc44a7a2df41a9e842aa09f",
+      "mismatches_if_using_G_for_structure": 716,
+      "mismatches_if_using_greater_or_equal_15_for_style": 87,
+      "example": {
+        "0": {
+          "local_tone": 0.1875,
+          "structure_gate": 0.375,
+          "skin": 0.0,
+          "structure": 0.0,
+          "style_lane_0": 0.0,
+          "style_lane_1": 0.0,
+          "style_lane_2": 0.0
+        },
+        "1": {
+          "local_tone": 0.1875,
+          "structure_gate": 1.0,
+          "skin": 0.3125,
+          "structure": 0.5625,
+          "style_lane_0": 0.3125,
+          "style_lane_1": 0.5625,
+          "style_lane_2": 0.0
+        },
+        "2": {
+          "local_tone": 0.1875,
+          "structure_gate": 1.0,
+          "skin": 0.25,
+          "structure": 0.375,
+          "style_lane_0": 0.25,
+          "style_lane_1": 0.375,
+          "style_lane_2": 0.0
+        },
+        "3": {
+          "local_tone": 0.1875,
+          "structure_gate": 1.0,
+          "skin": 0.375,
+          "structure": 0.75,
+          "style_lane_0": 0.375,
+          "style_lane_1": 0.75,
+          "style_lane_2": 0.0
+        }
+      }
+    },
+    {
+      "entry": "cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+      "source_line_range": [
+        14458,
+        15066
+      ],
+      "generated_ptx_sha256": "6a98021c55aa78475a5c21f806288512861d7976989fb97792875563c7fff565",
+      "fp16_values_compared": 3150,
+      "differing_fp16_values": 0,
+      "first_difference_indices": [],
+      "output_sha256": "46575d655a320fc7177354857b9d5404c6b6eeda9fc44a7a2df41a9e842aa09f",
+      "mismatches_if_using_G_for_structure": 716,
+      "mismatches_if_using_greater_or_equal_15_for_style": 87,
+      "example": {
+        "0": {
+          "local_tone": 0.1875,
+          "structure_gate": 0.375,
+          "skin": 0.0,
+          "structure": 0.0,
+          "style_lane_0": 0.0,
+          "style_lane_1": 0.0,
+          "style_lane_2": 0.0
+        },
+        "1": {
+          "local_tone": 0.1875,
+          "structure_gate": 1.0,
+          "skin": 0.3125,
+          "structure": 0.5625,
+          "style_lane_0": 0.3125,
+          "style_lane_1": 0.5625,
+          "style_lane_2": 0.0
+        },
+        "2": {
+          "local_tone": 0.1875,
+          "structure_gate": 1.0,
+          "skin": 0.25,
+          "structure": 0.375,
+          "style_lane_0": 0.25,
+          "style_lane_1": 0.375,
+          "style_lane_2": 0.0
+        },
+        "3": {
+          "local_tone": 0.1875,
+          "structure_gate": 1.0,
+          "skin": 0.375,
+          "structure": 0.75,
+          "style_lane_0": 0.375,
+          "style_lane_1": 0.75,
+          "style_lane_2": 0.0
+        }
+      }
+    }
+  ],
+  "passed": true
+}
