@@ -2,6 +2,8 @@
 
 日期：2026-11-06。已下载并分析 NVIDIA 官方 RTX Remix 1.6.1 的 Windows x64 发布包。现用 310.8.0 3060 移植与安装包不变。本报告把官方发布口径、可复算的静态证据、编译探针和仍缺的动态证据分开。
 
+后续已完成小档的逻辑图、字段台账和遮罩参数绑定，并在 RTX 3060 上执行两个真实重排入口。下文记录原件调查阶段的结果，后续证据及复算命令见 [Small FP8 执行研究](october_nr_small_execution.md)。
+
 ## 原件与出处
 
 NVIDIA [十月公告](https://www.nvidia.com/en-us/geforce/news/dlss-5-faster-ai-model-hogwarts-legacy-rtx-spark-laptops/)把约 1.18 亿参数、较九月 GPU 开销约减半的 NR 模型列入 10 月 23 日 RTX Remix 更新。[RTX Remix 官方 1.6.1](https://github.com/NVIDIAGameWorks/rtx-remix/releases/tag/remix-1.6.1)提供公开运行时；本地只提取目标 DLL，没有安装或执行该 DLL。校验详见[来源记录](validation/october_nr_remix_provenance.json)。

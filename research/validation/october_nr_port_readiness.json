@@ -1,0 +1,730 @@
+{
+  "schema": "dlssnr_october_port_readiness_v1",
+  "date": "2026-11-06",
+  "status": "static_host_map_verified_runtime_not_validated",
+  "scope": "Read-only PE/module layout, external release pins and local driver file identity. No vendor DLL was loaded, changed or executed; no GPU, game, SDK bootstrap or driver installation was performed.",
+  "analysis_reproduction": {
+    "script": "_dl/october_nr_port_readiness_08da28ba5e/verify_map.py",
+    "script_sha256": "4434668c7476d2a462b089893b4bf2e7c234f613afcc2ae9015ea8503b472ac6",
+    "method": "Read-only file mapping checks both exact DLL hashes, PE32+ addresses, 15 fatbin headers, RIP-relative LEA and length loads, relocation type 10 for the two absolute data pointers, export directory and app-ID return. October disassembly independently confirms all 13 decoded pointer and length targets.",
+    "output_sha256": "c370c41addbda58f8163d5b38432610a36ffa22a1b8c2c8eebd8b3f6092287a8",
+    "disassembly_sha256": "0dba6bb1bc8c5458feaf7c29cdc5c86e0a06b6bf5669936019032e4238607234"
+  },
+  "inputs_and_host_map": {
+    "old": {
+      "path": "dlss5/nvngx_dlssnr.dll",
+      "sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+      "bytes": 165840496,
+      "image_base": "0x180000000",
+      "architecture": {
+        "probe_va": "0x180017e9a",
+        "accepted_block_va": "0x180017f2b",
+        "gate_range_bytes": 154,
+        "gate_range_sha256": "ae4062a176a9d616345bec57dd2820217483739829bac7a6361f9da3ff0fc003",
+        "old_offset_prefix_matches": true
+      },
+      "modules": [
+        {
+          "module": 1,
+          "file_offset": "0xdf0e0",
+          "va": "0x1800e06e0",
+          "bytes": 3944768,
+          "sha256": "c11e2eb6f6eeabadffe340dba74ec8c3f474f4ac4a8ed601d59e04d1d49bda3d",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18003d8ca",
+          "pointer_instruction_sha256": "44343d7c9fe4d26448b2cb9903627b3df11c3fe7ded64667372e3fa57b767da3",
+          "length_bytes": 8,
+          "length_va": "0x181122590",
+          "length_load_va": "0x18003d8c3",
+          "length_load_sha256": "4b774dcc596210d7ed1e5f7585f646d63d65cee2fa52b90d3ea81acc15297254"
+        },
+        {
+          "module": 2,
+          "file_offset": "0x4a2220",
+          "va": "0x1804a3820",
+          "bytes": 2473688,
+          "sha256": "2a2627a5c3b2e9f2d3143c39322af284b03540caa7bd246e0a5481949aca7eb7",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18003d8e2",
+          "pointer_instruction_sha256": "47acd0f7ecdf1200b0c49d99cac3134807f6bb50de300aa23b394005793da531",
+          "length_bytes": 8,
+          "length_va": "0x181122598",
+          "length_load_va": "0x18003d8db",
+          "length_load_sha256": "066f46bade8d74a4286c96c8f7828660ca06d775afc742fb6f3247dd374b8bb6"
+        },
+        {
+          "module": 3,
+          "file_offset": "0x6fe100",
+          "va": "0x1806ff700",
+          "bytes": 2419288,
+          "sha256": "13f9782f9fcc2757a2273231fef4642672b3bcfcd74be8bf7407b31cef634631",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18003d8fd",
+          "pointer_instruction_sha256": "0236f30bd78649b125f018ed5d572d1c97f1aeb8b6abee6973af61cc08b88cbe",
+          "length_bytes": 8,
+          "length_va": "0x1811225a0",
+          "length_load_va": "0x18003d8f6",
+          "length_load_sha256": "0ba61fbc157fee2b78cf0b36720c90b0656a887beeb97190a40d6c3309af5864"
+        },
+        {
+          "module": 4,
+          "file_offset": "0x94cb60",
+          "va": "0x18094e160",
+          "bytes": 2637352,
+          "sha256": "32f9331ca703a2b908e7aaab4f40012993b93b919898f6c50cfb2e0d1569e25d",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18003d918",
+          "pointer_instruction_sha256": "0e516d958fbbe4bdb6a538b21072105c7766adb8354d2a549436c74278b2a564",
+          "length_bytes": 8,
+          "length_va": "0x1811225a8",
+          "length_load_va": "0x18003d911",
+          "length_load_sha256": "6b2e596edadfca9f1bc566c1d0c15f3d1a3fc8c202b19807c2f77cc8ead46fb7"
+        },
+        {
+          "module": 5,
+          "file_offset": "0xbd0990",
+          "va": "0x180bd1f90",
+          "bytes": 2114088,
+          "sha256": "d0eea04aa187686c34d42f77e5fbcd6f1a8ff604b0d45108ac76d02cc9a5581a",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18003d933",
+          "pointer_instruction_sha256": "5a880f6f2d342793f8fa62edbedd7ba2d139fef489401e2e438d917b2f722635",
+          "length_bytes": 8,
+          "length_va": "0x1811225b0",
+          "length_load_va": "0x18003d92c",
+          "length_load_sha256": "60acdb28dfb5361899efa0e8864bde7be585c08c7387871b43663705336558ad"
+        },
+        {
+          "module": 6,
+          "file_offset": "0xdd4bc0",
+          "va": "0x180dd61c0",
+          "bytes": 3202680,
+          "sha256": "3fa6f076eecfbb6e19c378f84bbb7025cd805ed4de9a2f9c9b995eb34a7f3d76",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18003d94e",
+          "pointer_instruction_sha256": "9ae1f765adf9181cfffc4042e740622ccd4e65010baf1b146ca26cce481967c2",
+          "length_bytes": 8,
+          "length_va": "0x1811225b8",
+          "length_load_va": "0x18003d947",
+          "length_load_sha256": "60a3826d27b987baa9e61a51cf669c19241effda5f8118f5662175a88fec872e"
+        },
+        {
+          "module": 7,
+          "file_offset": "0x10e2a40",
+          "va": "0x1810e4040",
+          "bytes": 255312,
+          "sha256": "661970ae2e3970b2d1541255c96ffabe241b4d3c5c2a59a895be1fde5db0dbe8",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18003d969",
+          "pointer_instruction_sha256": "f080adcc2eed54e743a5b2f33b561551984fe0eb81030a74cc7c9f8ae72771d1",
+          "length_bytes": 8,
+          "length_va": "0x1811225c0",
+          "length_load_va": "0x18003d962",
+          "length_load_sha256": "61ae20b0dd4c935415f670328d272fce3913ab2e7d51e9bfa3bdd2d9c443ec3d"
+        },
+        {
+          "module": 8,
+          "file_offset": "0x1121b90",
+          "va": "0x181123190",
+          "bytes": 8016,
+          "sha256": "779c283266c3ee724d2942b19465e702ebb4c8d057e3664cef070b3e1c81f056",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18004ad98",
+          "pointer_instruction_sha256": "ecd1e12b049059a107aa3b75b9cc76ddcaba56a1f2ef419f69c276d773b6ae75",
+          "length_bytes": 4,
+          "length_va": "0x1811250e0",
+          "length_load_va": "0x18004ada2",
+          "length_load_sha256": "70291afa65e85c1e20a85ba7472a662ad0343cea2375b9ba3d70b6c2dbd1d486"
+        },
+        {
+          "module": 9,
+          "file_offset": "0x1123af0",
+          "va": "0x1811250f0",
+          "bytes": 10904,
+          "sha256": "ed1a4c0f392922c42ea6b7344485271fa7e35aa462b3406f266957f9f718c2c5",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18004adab",
+          "pointer_instruction_sha256": "7c0f7215830ef6136155f97dd879907ec414d03353e6d996faa3e3a58058d3af",
+          "length_bytes": 4,
+          "length_va": "0x181127b88",
+          "length_load_va": "0x18004adb6",
+          "length_load_sha256": "7788ca25af119e9a19231e995d20e341c4a7409985860ee5a9059b8e5e8cd5d1"
+        },
+        {
+          "module": 10,
+          "file_offset": "0x1126590",
+          "va": "0x181127b90",
+          "bytes": 11792,
+          "sha256": "5d97bb668347b521aa814ba533b522072e8b87a570943a912fe9df58a9baeaff",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18004adbf",
+          "pointer_instruction_sha256": "1e27b6840b0b1063ca26e3384c490614e5882ac48d796daea6867fe5afb9873a",
+          "length_bytes": 4,
+          "length_va": "0x18112a9a0",
+          "length_load_va": "0x18004adca",
+          "length_load_sha256": "f59ea8d8898acc02250bdb2cb6dd4345057b40a42c77771bfaec03f48c1043ee"
+        },
+        {
+          "module": 11,
+          "file_offset": "0x11293b0",
+          "va": "0x18112a9b0",
+          "bytes": 10560,
+          "sha256": "823a224929b8fac30f765cbe3bf1a9afcd50ed5f3b1e15be9ff0fd46410fac75",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18004add3",
+          "pointer_instruction_sha256": "3f8bd416261cc25afab0be00bce6e986a6fb60a90ce2aede789e91ef5721d96e",
+          "length_bytes": 4,
+          "length_va": "0x18112d2f0",
+          "length_load_va": "0x18004adde",
+          "length_load_sha256": "6c32bae44de1062527ace66cab2355cead7813746421a2923d7782db062a73f9"
+        },
+        {
+          "module": 12,
+          "file_offset": "0x112bd00",
+          "va": "0x18112d300",
+          "bytes": 9960,
+          "sha256": "19538d2ed39a9a09b847f9840943ab1d874d5837b97986b9312fb6a288c1be6c",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18004ade7",
+          "pointer_instruction_sha256": "02e05d3a22661b18772c7bd429f3c37001ca25f0ce595d7771c363bfa5ef3fd8",
+          "length_bytes": 4,
+          "length_va": "0x18112f9e8",
+          "length_load_va": "0x18004adf2",
+          "length_load_sha256": "fb90ee7d551400af53e8cbba7d20ecd7e16594fafe4238c9b98a8ca6f8abd2b8"
+        },
+        {
+          "module": 13,
+          "file_offset": "0x112e3f0",
+          "va": "0x18112f9f0",
+          "bytes": 6552,
+          "sha256": "6325f8342464cc0958d8e403b3242c163156542a193c348ae2212c749b5db51b",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18004adfb",
+          "pointer_instruction_sha256": "de52cd726226889a6a6aa236b1d0f09e37d61f7cc96527769fc39969aadf96dc",
+          "length_bytes": 4,
+          "length_va": "0x181131388",
+          "length_load_va": "0x18004ae06",
+          "length_load_sha256": "4858e2fc427f6d4d8a76b84f3b82e0ff326998dea450557f844ec70be5738417"
+        },
+        {
+          "module": 14,
+          "file_offset": "0x112fd90",
+          "va": "0x181131390",
+          "bytes": 54824,
+          "sha256": "33a80ea097cedc532fdc62dec5b4fe3f4975142458047eec797cb6671b6dfdc2",
+          "pointer_ref_kind": "absolute_dir64",
+          "pointer_ref_va": "0x1800e00c8",
+          "descriptor_va": "0x1800e00c0",
+          "descriptor_sha256": "912b617eca2532922ee3b74180f7b10f12743abe516f9745c379c9f48700cd60",
+          "length_bytes": null,
+          "length_va": null
+        },
+        {
+          "module": 15,
+          "file_offset": "0x113d3c0",
+          "va": "0x18113e9c0",
+          "bytes": 6936,
+          "sha256": "bdaebb6d803f5990c63c67e2e4afa2dcb64a68fd2a864543f46d3e91e47d3101",
+          "pointer_ref_kind": "absolute_dir64",
+          "pointer_ref_va": "0x1800e0100",
+          "descriptor_va": "0x1800e00f8",
+          "descriptor_sha256": "84af842544f0e9d1870b3923c876987f9e06d9a6bbc4a3205a67f7fb0ca9cdcb",
+          "length_bytes": null,
+          "length_va": null
+        }
+      ],
+      "number_of_sections": 7,
+      "sections": {
+        ".text": {
+          "rva": 4096,
+          "offset": 1024,
+          "bytes": 699904,
+          "virtual_bytes": 699900
+        },
+        ".rdata": {
+          "rva": 704512,
+          "offset": 700928,
+          "bytes": 210944,
+          "virtual_bytes": 210462
+        },
+        ".data": {
+          "rva": 917504,
+          "offset": 911872,
+          "bytes": 17180672,
+          "virtual_bytes": 17279620
+        },
+        ".pdata": {
+          "rva": 18198528,
+          "offset": 18092544,
+          "bytes": 34816,
+          "virtual_bytes": 34368
+        },
+        "_RDATA": {
+          "rva": 18235392,
+          "offset": 18127360,
+          "bytes": 512,
+          "virtual_bytes": 244
+        },
+        ".rsrc": {
+          "rva": 18239488,
+          "offset": 18127872,
+          "bytes": 147697152,
+          "virtual_bytes": 147696792
+        },
+        ".reloc": {
+          "rva": 165937152,
+          "offset": 165825024,
+          "bytes": 5120,
+          "virtual_bytes": 4716
+        }
+      },
+      "export_count": 55,
+      "selected_exports": {
+        "NVSDK_NGX_D3D12_CreateFeature": "0x180015750",
+        "NVSDK_NGX_D3D12_EvaluateFeature": "0x1800159c0",
+        "NVSDK_NGX_D3D12_Init_Ext": "0x180015df0",
+        "NVSDK_NGX_D3D12_ReleaseFeature": "0x180016040",
+        "NVSDK_NGX_GetApplicationId": "0x180016340",
+        "NVSDK_NGX_VULKAN_CreateFeature": "0x180024a20",
+        "NVSDK_NGX_VULKAN_EvaluateFeature": "0x180024c80",
+        "NVSDK_NGX_VULKAN_Init_Ext": "0x180025050",
+        "NVSDK_NGX_VULKAN_ReleaseFeature": "0x180025410"
+      },
+      "application_id_simple_return": "0xe658703",
+      "certificate_offset": "0x9e25e00",
+      "certificate_bytes": 10352,
+      "can_fit_one_more_section_header": true
+    },
+    "october": {
+      "path": "_dl/october_nr_20261106/original/nvngx_dlssnr.dll",
+      "sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f",
+      "bytes": 266424944,
+      "image_base": "0x180000000",
+      "architecture": {
+        "probe_va": "0x180017b9a",
+        "accepted_block_va": "0x180017c2b",
+        "gate_range_bytes": 154,
+        "gate_range_sha256": "4edbb8838fdca00aa5fc70882c1aa5aadc795305c7bb4467941f1d4fa496f618",
+        "old_offset_prefix_matches": false,
+        "switch_destinations": {
+          "0x140": "0x180017bc5",
+          "0x160": "0x180017bcc",
+          "0x170": "0x180017bd3",
+          "0x180": "0x180017be1",
+          "0x190": "0x180017bda",
+          "0x1a0": "0x180017be8",
+          "0x1b0": "0x180017c2b"
+        },
+        "unsupported_log_call_va": "0x180017c1c",
+        "unsupported_return_va": "0x180017c21",
+        "unsupported_return": "0xbad00001",
+        "reported_minimum_arch": "0x1b0"
+      },
+      "modules": [
+        {
+          "module": 1,
+          "file_offset": "0x10e6d0",
+          "va": "0x1801106d0",
+          "bytes": 841720,
+          "sha256": "1c8112d5da97ca6f5478c91781cad3bde7f7dc64f3de791789f455c9286a3fa6",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x1800605f3",
+          "pointer_instruction_sha256": "69b3c6e18e53a814f62b555bc6a765f64382e84dc2ab5f010c176fbcf8be5732",
+          "length_bytes": 8,
+          "length_va": "0x180470540",
+          "length_load_va": "0x1800605ec",
+          "length_load_sha256": "5b2149e243570a0dff7282da610686e2662d48ca2216177ec72c5aecd9747a70",
+          "matches_3108_fatbin": false
+        },
+        {
+          "module": 2,
+          "file_offset": "0x1dbed0",
+          "va": "0x1801dded0",
+          "bytes": 557032,
+          "sha256": "7463290d8e0ef83f26373e861b0972e63ec83ff75a3f6261c03ea5a61707e035",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18006060b",
+          "pointer_instruction_sha256": "cc883372d6f0a762508f048e5870c880b6708ed47ef7571683f741e2d8aba036",
+          "length_bytes": 8,
+          "length_va": "0x180470548",
+          "length_load_va": "0x180060604",
+          "length_load_sha256": "a01e6bc7acb149c4bfbee53aac757d9981b210906263649caeb6e4141b458ced",
+          "matches_3108_fatbin": false
+        },
+        {
+          "module": 3,
+          "file_offset": "0x263ec0",
+          "va": "0x180265ec0",
+          "bytes": 506464,
+          "sha256": "3ec4e502298616375fe8e7ace1463afebf0f43f9805562262abde7cbce43b8a9",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x180060626",
+          "pointer_instruction_sha256": "a1940c7101cecb2769edbf3c7fd77846ee294231508de3a4dd3ad0a6a3017138",
+          "length_bytes": 8,
+          "length_va": "0x180470550",
+          "length_load_va": "0x18006061f",
+          "length_load_sha256": "c5118846c6e400f7393d6b3389fce5e3f0cd2ee8ddcad2ae137dd30ab22c0011",
+          "matches_3108_fatbin": false
+        },
+        {
+          "module": 4,
+          "file_offset": "0x2df920",
+          "va": "0x1802e1920",
+          "bytes": 586832,
+          "sha256": "717312209827b9ebed1c2acc91da69369c8db8ffe5c4a6f0908e3636def0e2b4",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x180060641",
+          "pointer_instruction_sha256": "b194acd49e75b4715ccfca06bdeea74b77248200fe6d2d6bd61e423341ffd397",
+          "length_bytes": 8,
+          "length_va": "0x180470558",
+          "length_load_va": "0x18006063a",
+          "length_load_sha256": "98e87b6c96190f3aa584c22d5dd853ba494ec25280a1b0990760fa691f4df470",
+          "matches_3108_fatbin": false
+        },
+        {
+          "module": 5,
+          "file_offset": "0x36ed70",
+          "va": "0x180370d70",
+          "bytes": 433184,
+          "sha256": "788d2d92db717fd1c6ad22481b58971e5052ab587a33a4a5b08afad873ad567f",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18006065c",
+          "pointer_instruction_sha256": "1e5d9f07aa1fa34c3088e7de7b9ab1d35580bc61dd9d987bbcd50488721d2586",
+          "length_bytes": 8,
+          "length_va": "0x180470560",
+          "length_load_va": "0x180060655",
+          "length_load_sha256": "1b2b95b47f4443c8d620f56cd81b88103c51a8d2ee8297952ffa351797407949",
+          "matches_3108_fatbin": false
+        },
+        {
+          "module": 6,
+          "file_offset": "0x3d8990",
+          "va": "0x1803da990",
+          "bytes": 542960,
+          "sha256": "bb18bcbe33213f177931a3e42b9285071209877bf321964ea65dce1a0655f623",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x180060677",
+          "pointer_instruction_sha256": "9cc524fdca9243c1121a6cb808dd34171705c0b4443dfcaadb0c0862c83fe1c1",
+          "length_bytes": 8,
+          "length_va": "0x180470568",
+          "length_load_va": "0x180060670",
+          "length_load_sha256": "ac58fc0ff31c85f17b69eeafe6e6b4b155a29fcc3db6310230069094e0b1958b",
+          "matches_3108_fatbin": false
+        },
+        {
+          "module": 7,
+          "file_offset": "0x45d280",
+          "va": "0x18045f280",
+          "bytes": 70336,
+          "sha256": "b5b2f07a30db5d293be6a56f540c5cf4e55ec124b645556ae731d3959c46f647",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x180060692",
+          "pointer_instruction_sha256": "d2bffe0bf379ec4e76f3f02e20863428879b788e307d1cca07570320e58b2d09",
+          "length_bytes": 8,
+          "length_va": "0x180470570",
+          "length_load_va": "0x18006068b",
+          "length_load_sha256": "26f1cc694a048eaa4caffdb76ad1df25477067d8c16d4daa505d8d15d85c8a28",
+          "matches_3108_fatbin": false
+        },
+        {
+          "module": 8,
+          "file_offset": "0x46f140",
+          "va": "0x180471140",
+          "bytes": 8016,
+          "sha256": "779c283266c3ee724d2942b19465e702ebb4c8d057e3664cef070b3e1c81f056",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18006d528",
+          "pointer_instruction_sha256": "ed9bf2c13643781e6a62cf470ce017183e9274add1d97601845750dae2526650",
+          "length_bytes": 4,
+          "length_va": "0x180473090",
+          "length_load_va": "0x18006d532",
+          "length_load_sha256": "3b6156d9dc25306eb55999f35b80fac25280b033589955755631bdd32bead6e4",
+          "matches_3108_fatbin": true
+        },
+        {
+          "module": 9,
+          "file_offset": "0x4710a0",
+          "va": "0x1804730a0",
+          "bytes": 10904,
+          "sha256": "ed1a4c0f392922c42ea6b7344485271fa7e35aa462b3406f266957f9f718c2c5",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18006d53b",
+          "pointer_instruction_sha256": "f3c75fbe91af40c367936af31fc9178a31546b72561a6d9be6078503b263b96d",
+          "length_bytes": 4,
+          "length_va": "0x180475b38",
+          "length_load_va": "0x18006d546",
+          "length_load_sha256": "4eb4d3977e39791790da6e8121bc7f32ec789941617b8da5de34d79e858dffa0",
+          "matches_3108_fatbin": true
+        },
+        {
+          "module": 10,
+          "file_offset": "0x473b40",
+          "va": "0x180475b40",
+          "bytes": 11792,
+          "sha256": "5d97bb668347b521aa814ba533b522072e8b87a570943a912fe9df58a9baeaff",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18006d54f",
+          "pointer_instruction_sha256": "7102eedbc0e5e7c2f5c723e26a1eb16f68bf99c7fb6b92e7d5815ade2636b22e",
+          "length_bytes": 4,
+          "length_va": "0x180478950",
+          "length_load_va": "0x18006d55a",
+          "length_load_sha256": "50a4b4308ab3211613e82820e95f893259cd81a11f0b561e1724c5c207a81532",
+          "matches_3108_fatbin": true
+        },
+        {
+          "module": 11,
+          "file_offset": "0x476960",
+          "va": "0x180478960",
+          "bytes": 10560,
+          "sha256": "823a224929b8fac30f765cbe3bf1a9afcd50ed5f3b1e15be9ff0fd46410fac75",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18006d563",
+          "pointer_instruction_sha256": "d7551a1191c0855c6823f6917f02637a3b74dda47fa79ce53fa0eaf33bf3711d",
+          "length_bytes": 4,
+          "length_va": "0x18047b2a0",
+          "length_load_va": "0x18006d56e",
+          "length_load_sha256": "5e8b041832cff391cadd99478af31f33bd103f9a8d545da2f75607599b1b4f06",
+          "matches_3108_fatbin": true
+        },
+        {
+          "module": 12,
+          "file_offset": "0x4792b0",
+          "va": "0x18047b2b0",
+          "bytes": 9960,
+          "sha256": "19538d2ed39a9a09b847f9840943ab1d874d5837b97986b9312fb6a288c1be6c",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18006d577",
+          "pointer_instruction_sha256": "0078ae2706fc8d3582d25271723e0eefd43e3218aff6ffc8bb5583d8c89e74ba",
+          "length_bytes": 4,
+          "length_va": "0x18047d998",
+          "length_load_va": "0x18006d582",
+          "length_load_sha256": "4586798b0e57c839cd525b08f9c6ad1d59ece5e0f51743fb8d0cb74fc1609bb3",
+          "matches_3108_fatbin": true
+        },
+        {
+          "module": 13,
+          "file_offset": "0x47b9a0",
+          "va": "0x18047d9a0",
+          "bytes": 6552,
+          "sha256": "6325f8342464cc0958d8e403b3242c163156542a193c348ae2212c749b5db51b",
+          "pointer_ref_kind": "rip_lea",
+          "pointer_ref_va": "0x18006d58b",
+          "pointer_instruction_sha256": "96bf6e6a5ed0e650637dcf582330101682811aa2d1712605a8e19308bb7c2779",
+          "length_bytes": 4,
+          "length_va": "0x18047f338",
+          "length_load_va": "0x18006d596",
+          "length_load_sha256": "c5eeb3d163e7b52cf132655a6455b797e49cb6f91cdadfdb534c95b6336dd2bc",
+          "matches_3108_fatbin": true
+        },
+        {
+          "module": 14,
+          "file_offset": "0x47d340",
+          "va": "0x18047f340",
+          "bytes": 54824,
+          "sha256": "33a80ea097cedc532fdc62dec5b4fe3f4975142458047eec797cb6671b6dfdc2",
+          "pointer_ref_kind": "absolute_dir64",
+          "pointer_ref_va": "0x1801100c8",
+          "descriptor_va": "0x1801100c0",
+          "descriptor_sha256": "fc0f987f996ae82f080d0e5e31d2e5f48a336143327e8a31ea41278769462b5b",
+          "length_bytes": null,
+          "length_va": null,
+          "matches_3108_fatbin": true
+        },
+        {
+          "module": 15,
+          "file_offset": "0x48a970",
+          "va": "0x18048c970",
+          "bytes": 6936,
+          "sha256": "bdaebb6d803f5990c63c67e2e4afa2dcb64a68fd2a864543f46d3e91e47d3101",
+          "pointer_ref_kind": "absolute_dir64",
+          "pointer_ref_va": "0x180110100",
+          "descriptor_va": "0x1801100f8",
+          "descriptor_sha256": "0e2fb9a9d23b37a5c1d0368392f189c1ed333faef6ba222c4dbbad4058e41951",
+          "length_bytes": null,
+          "length_va": null,
+          "matches_3108_fatbin": true
+        }
+      ],
+      "number_of_sections": 7,
+      "sections": {
+        ".text": {
+          "rva": 4096,
+          "offset": 1024,
+          "bytes": 873472,
+          "virtual_bytes": 873452
+        },
+        ".rdata": {
+          "rva": 880640,
+          "offset": 874496,
+          "bytes": 231424,
+          "virtual_bytes": 231038
+        },
+        ".data": {
+          "rva": 1114112,
+          "offset": 1105920,
+          "bytes": 3672576,
+          "virtual_bytes": 3771780
+        },
+        ".pdata": {
+          "rva": 4886528,
+          "offset": 4778496,
+          "bytes": 39936,
+          "virtual_bytes": 39900
+        },
+        "_RDATA": {
+          "rva": 4927488,
+          "offset": 4818432,
+          "bytes": 512,
+          "virtual_bytes": 244
+        },
+        ".rsrc": {
+          "rva": 4931584,
+          "offset": 4818944,
+          "bytes": 261590528,
+          "virtual_bytes": 261590224
+        },
+        ".reloc": {
+          "rva": 266522624,
+          "offset": 266409472,
+          "bytes": 5120,
+          "virtual_bytes": 4932
+        }
+      },
+      "export_count": 55,
+      "selected_exports": {
+        "NVSDK_NGX_D3D12_CreateFeature": "0x180015010",
+        "NVSDK_NGX_D3D12_EvaluateFeature": "0x180015280",
+        "NVSDK_NGX_D3D12_Init_Ext": "0x1800156b0",
+        "NVSDK_NGX_D3D12_ReleaseFeature": "0x180015900",
+        "NVSDK_NGX_GetApplicationId": "0x180015c00",
+        "NVSDK_NGX_VULKAN_CreateFeature": "0x180024c10",
+        "NVSDK_NGX_VULKAN_EvaluateFeature": "0x180024e70",
+        "NVSDK_NGX_VULKAN_Init_Ext": "0x180025240",
+        "NVSDK_NGX_VULKAN_ReleaseFeature": "0x180025600"
+      },
+      "application_id_simple_return": "0xe658703",
+      "certificate_offset": "0xfe12a00",
+      "certificate_bytes": 10352,
+      "can_fit_one_more_section_header": true
+    },
+    "archive": {
+      "sha256": "7dd1d44492a609050e44b0e3581cec31135d1ed88b4a91123b4faae91955716a",
+      "bytes": 557087446,
+      "model_member": "nvngx_dlssnr.dll",
+      "model_member_crc32": "820ff100",
+      "includes_driver_core": false,
+      "includes_nr_header": false
+    }
+  },
+  "released_caller": {
+    "release": "https://github.com/NVIDIAGameWorks/rtx-remix/releases/tag/remix-1.6.1",
+    "release_commit": "a63740a8d62485dea601f91108ce5d70d90eabab",
+    "mode_160000_gitlink_evidence": "https://github.com/NVIDIAGameWorks/rtx-remix/commit/a63740a8d62485dea601f91108ce5d70d90eabab.patch",
+    "dxvk_commit": "0a6cd5b1ee814ec390c358e0c9c32ece8895ddc0",
+    "toolkit_commit": "6b89a023a4e11942374b040d617cb64bb78ce43c",
+    "packman_manifest": "https://raw.githubusercontent.com/NVIDIAGameWorks/dxvk-remix/0a6cd5b1ee814ec390c358e0c9c32ece8895ddc0/packman-external.xml",
+    "packman_dependency": "ngx_sdk_dlnr",
+    "packman_package": "rtx-remix-ngx_sdk_dlnr",
+    "packman_package_version": "2",
+    "packman_link_directory": "external/ngx_sdk_dlnr",
+    "packman_actual_download_or_header_hash_verified": false,
+    "headers_used_by_pinned_wrapper": [
+      "nvsdk_ngx_defs_dlssnr.h",
+      "nvsdk_ngx_helpers_dlssnr_vk.h"
+    ],
+    "pinned_wrapper": "https://raw.githubusercontent.com/NVIDIAGameWorks/dxvk-remix/0a6cd5b1ee814ec390c358e0c9c32ece8895ddc0/src/dxvk/rtx_render/rtx_ngx_wrapper.cpp",
+    "creation_lines_1_based": [
+      989,
+      999
+    ],
+    "evaluation_lines_1_based": [
+      1025,
+      1074
+    ],
+    "capability_lines_1_based": [
+      380,
+      413
+    ],
+    "contract": {
+      "backend": "Vulkan, not proof of D3D12 helper ABI equivalence",
+      "create_model": "Preset B selected explicitly, independent of appearance style; local binary maps integer 2 to WEIGHTS_CC_SMALL_FP8 and 1 to WEIGHTS_HT",
+      "evaluation": "Color/Output, MotionVectors, Depth, ControlMask resource views with per-resource full subrects; Reset, Enabled, Intensity, Tone/Structure/Skin, separate Style, AutoMask, mask blend, MV scales and jitter offsets",
+      "auto_mask_policy": "MaskBlendMode Min with AutoMask, None otherwise; source uses named SDK enums, whose numeric Min/None values are independently inferred from the binary/PTX map",
+      "capability_keys_by_sdk_symbol": [
+        "NVSDK_NGX_Parameter_DLSSNR_NeedsUpdatedDriver",
+        "NVSDK_NGX_Parameter_DLSSNR_MinDriverVersionMajor",
+        "NVSDK_NGX_Parameter_DLSSNR_MinDriverVersionMinor",
+        "NVSDK_NGX_Parameter_DLSSNR_Available",
+        "NVSDK_NGX_Parameter_DLSSNR_FeatureInitResult"
+      ],
+      "threading": "Official wrapper serializes NGX calls; preserve per-device/session binding and client-side synchronization."
+    }
+  },
+  "driver_and_architecture": {
+    "remix_release_minimum": "616.92",
+    "remix_release_notes": "https://docs.omniverse.nvidia.com/kit/docs/rtx_remix/1.6.1-0/docs/changelog/remix-releasenotes.html",
+    "bare_310_9_16_minimum_verified": false,
+    "local_device": "NVIDIA GeForce RTX 3060",
+    "local_version_from_display_class_registry": "32.0.16.1074",
+    "local_nvidia_driver_display_version": "610.74",
+    "local_nvapi64_file_sha256": "67330db7a2129e6d33e47c46ca5102b71ad996e14655600d553c6de6efbf2717",
+    "local_driver_store_ngx_file_sha256": "b8028e75daed29a2fecc3009a03d8ca3bd115825dfd8472fbd55e570099e1fd6",
+    "local_system_and_ngx_file_versions": "32.0.16.1074",
+    "qualification": "Remix product-level driver requirement is not a proved floor for the bare feature DLL; installed driver can be identified without loading it. A qualifying RTX 30 card for the rest of Remix is not proof of native NR support.",
+    "october_shared_host_subroutine_va": "0x180017b20",
+    "direct_callsite_vas": [
+      "0x18001336b",
+      "0x180015212",
+      "0x180023f54",
+      "0x1800259e4"
+    ],
+    "october_static_branch": "Recognized Ampere architecture 0x170 routes to the unsupported path; 0x1b0 routes to the accepted block. This observation is independent of the driver-version gate and not a runtime test.",
+    "new_loader_diagnostic_vas": {
+      "d3d12_NvAPI_CreateCuModule": "0x18007ec8a",
+      "vk_NVX_binary_import_required": "0x180070e2b",
+      "cuda_cuModuleLoadData": "0x1800a0a3a"
+    }
+  },
+  "blocked_reuse": {
+    "build_source": "tools/ptx86/build_dll.py",
+    "build_source_sha256": "a9a7ea4dd393be448e9c307a52e7adcaba24983aa5715c14c502e2d6ce40c66d",
+    "verifier_source": "tools/ptx86/verify_build.py",
+    "verifier_source_sha256": "89e08f6091b771d61354c6c44a5e7c707b40f2560d1f2fbadeffa55d4e0ff73a",
+    "reasons": [
+      "Builder rejects any original hash other than 310.8.0; passing that guard alone would leave old PTX, architecture and host length offsets.",
+      "Both images have 15 modules, but modules 1–7 changed and every registration pointer moved. Only 8–15 match bytewise as input fatbins.",
+      "RIP-relative pointer relocation must use each new address and 13 matched lengths; preserve the two DIR64 relocation entries when changing their targets in an eventual isolated test image.",
+      "Existing verifier validates only the old pinned HT weights. Any versioned October verifier must protect both original resource hashes and the original sm_120 cubins for all 15 modules.",
+      "Current 310.8 harness headers are not authenticated as Packman version 2. Export names and identical app ID do not establish identical helper ABI or runtime provider keys.",
+      "The fallback package currently uses the old model and a back-buffer contract. Do not install a partial October candidate over it."
+    ],
+    "nr_lab_sha256": "70af633ecd8bbbb4984b45baba345e5769800ed1632a9740da287f8c56a31a87",
+    "nrvk_sha256": "4e1cfcbda48fbf0d93fb5febfea7f034dad67dedce64ff4d76ecc8b3b1bcdc56",
+    "current_ngx_header_sha256": {
+      "nvsdk_ngx.h": "dc38e7467cf415379c9d12ae1b6e4a494c453ed92720fb53e92aecb523e7b848",
+      "nvsdk_ngx_defs.h": "ea23f33497cd274860d1c25a97644fce807dcb0037c594547203343103fad03e"
+    },
+    "harness_default_model": 1,
+    "native_capture_version_switch_present_in_current_source": true
+  },
+  "gated_follow_up": [
+    {
+      "step": "SDK identity",
+      "action": "Obtain only the pinned source and Packman dependency version 2 into a new ignored work/cache location if available. Record actual file/hash, architecture and header/library manifest; compare official Vulkan helper parameter setters/types to the versioned candidate harness. Do not infer a matching SDK from the private header name alone. The signed release archive is sufficient for the DLL, not for these headers or the installed driver core."
+    },
+    {
+      "step": "Native reference",
+      "action": "On a separate qualifying RTX 50 environment, preserve the signed original and use an official-supported driver baseline. Capture explicit preset 1 and 2 separately with identical harness, driver identity and shape; log SDK availability/minimum-driver/init fields, selected resource, dispatch order and outputs. Do not relabel RTX3060 output official. Stock local 610.74 is below the published Remix baseline."
+    },
+    {
+      "step": "Isolated port candidate",
+      "action": "Only after the synchronization hypothesis is exercised, build a versioned candidate in a fresh ignored directory from validated host map and original/rewritten module pairs. Keep baseline/cache isolated, preserve both weight resources and 15 original sm_120 cubins, verify each pointer+length and relocation after PE serialization and keep failure evidence."
+    },
+    {
+      "step": "Runtime and installation",
+      "action": "First use synthetic D3D12 and Vulkan probes with pinned parameters, caller identity, capability results and isolated runtime folders. Recreate/reset, mask modes, HDR/SDR and long sequences precede any app install; distribution and driver updates are separate decisions."
+    }
+  ],
+  "preserved_existing_reference": "research/validation/october_nr_remix_host.json",
+  "vendor_payload_embedded": false
+}

@@ -16,24 +16,30 @@ class ReferenceTests(unittest.TestCase):
         self.root = Path(self.directory.name)
         self.addCleanup(self.directory.cleanup)
 
-    def bundle(self, name):
+    def bundle(self, name, profile=None):
         root = self.root / name
         root.mkdir()
         rows = []
-        for case in reference.suite_cases("smoke"):
+        for case in reference.profiled_cases("smoke", profile):
             folder = root / case["id"]
             folder.mkdir()
-            output = folder / "nr-lab-output-model1-srgb.ppm"
+            fields, names = reference.case_contract(case)
+            self.assertEqual(len(names), 1)
+            output = folder / next(iter(names))
             output.write_bytes(b"P6\n640 360\n255\n" + b"\x0a\x20\xff" * (640 * 360))
-            fields, _ = reference.case_contract(case)
             reference.write_json(folder / "nr-lab-result.json", {**fields, "outputCoverageValidated": True})
             for name in ("nr-lab.log", "stdout.log", "stderr.log"):
-                (folder / name).write_text("fixture\n")
+                (folder / name).write_text("GPU: NVIDIA GeForce RTX 5090 (vendor=10DE)\n" if profile else "fixture\n")
             evidence = {name: reference.digest(folder / name) for name in ("nr-lab-result.json", "nr-lab.log", "stdout.log", "stderr.log")}
             rows.append({**case, "passed": True, "outputs": {output.name: reference.digest(output)}, "evidence": evidence})
         manifest = {"schema": reference.SCHEMA, "passed": True, "suite": "smoke", "reference_kind": "port-sm86",
                     "runtime_sha256": {key: "test" for key in ("nr-lab.exe", "nvngx.dll", "nvngx_dlss.dll", "nvngx_dlssg.dll")},
                     "cases": rows}
+        if profile:
+            manifest.update(capture_profile=profile, target=f"DLSS-NR {reference.OCTOBER_VERSION}",
+                            reference_kind="official-sm120",
+                            gpus=[{"compute_capability": "12.0", "name": "NVIDIA GeForce RTX 5090"}])
+            manifest["runtime_sha256"]["nvngx_dlssnr.dll"] = reference.OCTOBER_SHA256
         reference.write_json(root / "manifest.json", manifest)
         return root, manifest
 
@@ -64,6 +70,55 @@ class ReferenceTests(unittest.TestCase):
         blackwell = [{"compute_capability": "12.0", "name": "NVIDIA GeForce RTX 5090"}]
         with self.assertRaisesRegex(ValueError, "execution log"):
             reference.verify_native(blackwell, reference.ORIGINAL_SHA256, "GPU: NVIDIA GeForce RTX 3060 (vendor=10DE)")
+
+    def test_october_requires_explicit_model_and_native_kind(self):
+        for preset in (None, True, 0, 3):
+            with self.assertRaisesRegex(ValueError, "explicit --model-preset"):
+                reference.capture_profile("official-sm120", reference.OCTOBER_VERSION, preset)
+        with self.assertRaisesRegex(ValueError, "no validated sm86 port"):
+            reference.capture_profile("port-sm86", reference.OCTOBER_VERSION, 2)
+
+    def test_october_accepts_only_its_original_dll_on_blackwell(self):
+        blackwell = [{"compute_capability": "12.0", "name": "NVIDIA GeForce RTX 5090"}]
+        reference.verify_native(blackwell, reference.OCTOBER_SHA256, nr_version=reference.OCTOBER_VERSION)
+        with self.assertRaisesRegex(ValueError, "unmodified"):
+            reference.verify_native(blackwell, reference.ORIGINAL_SHA256, nr_version=reference.OCTOBER_VERSION)
+        with self.assertRaisesRegex(ValueError, "unmodified"):
+            reference.verify_native(blackwell, reference.OCTOBER_SHA256)
+
+    def test_october_preset_2_capture_rejects_model_1_case(self):
+        profile = reference.capture_profile("official-sm120", reference.OCTOBER_VERSION, 2)
+        root, manifest = self.bundle("october", profile)
+        valid = reference.load_capture(root)
+        self.assertEqual(valid["capture_profile"]["statically_mapped_weight_resource"], "WEIGHTS_CC_SMALL_FP8")
+        self.assertEqual(valid["cases"][0]["args"][-2:], ["--model", "2"])
+        manifest["cases"][0]["args"][-1] = "1"
+        reference.write_json(root / "manifest.json", manifest)
+        with self.assertRaisesRegex(ValueError, "coverage"):
+            reference.load_capture(root)
+
+    def test_october_profile_cannot_be_relabelled_or_omitted(self):
+        profile = reference.capture_profile("official-sm120", reference.OCTOBER_VERSION, 2)
+        root, manifest = self.bundle("october", profile)
+        manifest["capture_profile"]["statically_mapped_weight_resource"] = "WEIGHTS_HT"
+        reference.write_json(root / "manifest.json", manifest)
+        with self.assertRaisesRegex(ValueError, "inconsistent capture profile"):
+            reference.load_capture(root)
+        manifest.pop("capture_profile")
+        manifest["target"] = "DLSS-NR 310.8.0"
+        manifest["reference_kind"] = "port-sm86"
+        reference.write_json(root / "manifest.json", manifest)
+        with self.assertRaisesRegex(ValueError, "October DLL"):
+            reference.load_capture(root)
+
+    def test_october_comparison_rejects_different_presets(self):
+        left, right = [self.bundle(f"preset{n}", reference.capture_profile("official-sm120", reference.OCTOBER_VERSION, n))[0]
+                       for n in (1, 2)]
+        report = self.root / "comparison.json"
+        args = argparse.Namespace(reference=left, candidate=right, report=report, criterion="bit-exact", max_mae=None, min_psnr=None)
+        with self.assertRaisesRegex(ValueError, "requested model presets differ"):
+            reference.compare(args)
+        self.assertFalse(json.loads(report.read_text())["passed"])
 
     def test_nonfinite_output_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "non-finite"):

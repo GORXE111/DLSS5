@@ -1,0 +1,1556 @@
+{
+  "schema": "october_nr_small_host_graph_v1",
+  "scope": "Static reconstruction of the 310.9.16.0 preset-2 Crazy Cuckoo block graph and host launch binding. No DLL execution, runtime trace, GPU measurement or cross-version numerical equivalence.",
+  "source": {
+    "dll": {
+      "version": "310.9.16.0",
+      "path": "_dl/october_nr_20261106/original/nvngx_dlssnr.dll",
+      "bytes": 266424944,
+      "sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f",
+      "image_base_va": "0x180000000"
+    },
+    "previous_release_host_report": {
+      "path": "research/validation/october_nr_remix_host.json",
+      "sha256": "d468afb134d9b0b623e8aed691a051556bff4437247a6afe6e8f63a4ec4d4448"
+    },
+    "previous_release_weights_report": {
+      "path": "research/validation/october_nr_remix_weights.json",
+      "sha256": "077e136a0c18e1dffe965fb64f6dba27cd04ba61f71bb8fa7bd3a6a92c668ffa"
+    },
+    "resource": {
+      "name": "WEIGHTS_CC_SMALL_FP8",
+      "language": "1033",
+      "file_offset": 152515824,
+      "bytes": 113893343,
+      "sha256": "f743e8eb320f42bc9bdc992ee2bf51f7bb7c8688ced4ecf5ce6807ec4eef7962",
+      "serialized_records": 77,
+      "serialized_blocks": 31,
+      "record_payload_bytes": 113887490
+    },
+    "prior_310_8_schedule_used_only_to_crosscheck_shift_convention": {
+      "path": "torch/dlss5/data/schedule.json",
+      "sha256": "75552d7599504bda4d19d1032500dbd71c5bdbf980514fddb75e6e5a922b97d8"
+    }
+  },
+  "preset_selection": {
+    "id": 2,
+    "descriptor_name": "hnet-crazy-cuckoo-small-fp8",
+    "model": "CC_SMALL_FP8",
+    "descriptor": {
+      "va": "0x1800dc0c0",
+      "bytes": 656,
+      "sha256": "1738cd00ccef88cd2bce953a529f9ddbd3e091c03fe923aeed2a2ef86037a66d"
+    },
+    "descriptor_name_matches_factory_config": true,
+    "registry_construction": {
+      "va": "0x18006031c",
+      "bytes": 147,
+      "sha256": "064c0fe43fdf524dbaf9747f6d9df7bf451ff73b3ebefb3b8d243ab918ddf93b"
+    },
+    "registry_call": {
+      "va": "0x180021150",
+      "bytes": 12,
+      "sha256": "1ea3c442ca70e494e6d52641b1a05a1a8c41174e3755a792c6675d48c3064a27"
+    },
+    "selected_name_lookup": {
+      "va": "0x18002184a",
+      "bytes": 237,
+      "sha256": "2ac16c5ddbc1698a086e6c6e28b44218514be3d8d72aa0ebf3e335db31e341bf"
+    },
+    "factory_start": "0x18005c5a0",
+    "large_swin_depths": {
+      "va": "0x1800de990",
+      "bytes": 20,
+      "sha256": "71d73a6509b8ddfda8b69bf99412bdc71b6a58bff969e660b4c75cf0841c8010",
+      "values": [
+        4,
+        4,
+        6,
+        8,
+        8
+      ]
+    },
+    "small_swin_depths": {
+      "va": "0x1800de9a8",
+      "bytes": 20,
+      "sha256": "cf9f4a4c8e8fa27f5b64870518c85d88d98fb016d6aa49af672d0e295735d728",
+      "values": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    "swins_depth_order": [
+      "1h",
+      "2h",
+      "4h",
+      "8h",
+      "16h"
+    ],
+    "fixed_bottleneck_depth": 8,
+    "factory_selects_vit_1d": true,
+    "evidence": "The second registry construction passes the short depths and zero as the second argument to the shared factory, then assigns the same model name returned by preset selection. The create path matches the returned descriptor name against the registry. The fourth fused stage has 256 channels and the split stage uses 512. ViT loop bound 8 is independent of the five stage depths."
+  },
+  "stages": [
+    {
+      "stage": "pre",
+      "first_block": 0,
+      "last_block": 0,
+      "code": {
+        "va": "0x18005ca59",
+        "bytes": 461,
+        "sha256": "ded08c5be0ded4d6c3c65db68249ab383ff7d8a365ec53505418ec7a71f2f3aa"
+      }
+    },
+    {
+      "stage": "encoder_1h",
+      "first_block": 1,
+      "last_block": 2,
+      "code": {
+        "va": "0x18005cc26",
+        "bytes": 861,
+        "sha256": "96d2fb042b7d3e9942ee5575d80e06462a2a8357dfbca4c8b204b8aecadadb54"
+      }
+    },
+    {
+      "stage": "encoder_2h",
+      "first_block": 3,
+      "last_block": 4,
+      "code": {
+        "va": "0x18005cfa8",
+        "bytes": 512,
+        "sha256": "082f2765f3bedfdb9a90a649a0d9dc569b1297abb3d24abbc4e178376536a8ff"
+      }
+    },
+    {
+      "stage": "encoder_4h",
+      "first_block": 5,
+      "last_block": 6,
+      "code": {
+        "va": "0x18005d1cf",
+        "bytes": 497,
+        "sha256": "58cf4afb673f9c624695ea39e02b9c1fe621c814dd040aca975c200f7e480ae7"
+      }
+    },
+    {
+      "stage": "encoder_8h",
+      "first_block": 7,
+      "last_block": 8,
+      "code": {
+        "va": "0x18005d3e7",
+        "bytes": 503,
+        "sha256": "05b6cbef20a31504cd8de2cfab221c94f2d61657fc488f2ae31a9c6edfd5ce05"
+      }
+    },
+    {
+      "stage": "encoder_split16",
+      "first_block": 9,
+      "last_block": 10,
+      "code": {
+        "va": "0x18005d603",
+        "bytes": 207,
+        "sha256": "a5717bf7dbcf98191baa318e26867d3ed1d96bb07fd7f7fec1f10b4da82fc404"
+      }
+    },
+    {
+      "stage": "vit_1d",
+      "first_block": 11,
+      "last_block": 18,
+      "code": {
+        "va": "0x18005d6f1",
+        "bytes": 208,
+        "sha256": "086391cec0c2d9e562856af48994a05b202a2c7fa5fb740a9e746565087562d8"
+      }
+    },
+    {
+      "stage": "decoder_bridge",
+      "first_block": 19,
+      "last_block": 19,
+      "code": {
+        "va": "0x18005d7de",
+        "bytes": 470,
+        "sha256": "f643db1e9a4113166599b1167cb0f3abfdaa27bb273643a925e743a1f3353a19"
+      }
+    },
+    {
+      "stage": "decoder_split16",
+      "first_block": 20,
+      "last_block": 21,
+      "code": {
+        "va": "0x18005d9c3",
+        "bytes": 196,
+        "sha256": "ab51d4297bcce8101e9113b8b9711ef750019c59585052b92d523a71d59daa7e"
+      }
+    },
+    {
+      "stage": "decoder_8h",
+      "first_block": 22,
+      "last_block": 23,
+      "code": {
+        "va": "0x18005daa8",
+        "bytes": 576,
+        "sha256": "3907d2b33946734475254364cd4119a2230a198573a921400afb1d7390dc7d8e"
+      }
+    },
+    {
+      "stage": "decoder_4h",
+      "first_block": 24,
+      "last_block": 25,
+      "code": {
+        "va": "0x18005dd09",
+        "bytes": 575,
+        "sha256": "42bb73e8b0ae199ff41b073d9ee36753acbfa51e723b9220d19f9c9d9001f2cd"
+      }
+    },
+    {
+      "stage": "decoder_2h",
+      "first_block": 26,
+      "last_block": 27,
+      "code": {
+        "va": "0x18005df69",
+        "bytes": 591,
+        "sha256": "1f5181a7c54beb4c6be008f3e3a1fb4ca634190d9ab34cb583354094397bdcb7"
+      }
+    },
+    {
+      "stage": "decoder_1h",
+      "first_block": 28,
+      "last_block": 29,
+      "code": {
+        "va": "0x18005e1c9",
+        "bytes": 573,
+        "sha256": "52ba781cf728c9c119566421eb45dba539a611a12e5d59e9b7ec2e9b716c4b10"
+      }
+    },
+    {
+      "stage": "post",
+      "first_block": 30,
+      "last_block": 30,
+      "code": {
+        "va": "0x18005e423",
+        "bytes": 263,
+        "sha256": "1b20f91ecb3158711957a4915b9fcb45a7714a20a91e0d8d081789ddb4a32d5b"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "index": 0,
+      "stage": "pre",
+      "kind": "fused_pre_swin_1h",
+      "variant": "downsample",
+      "inputs": [
+        {
+          "external": "color_history_motion_mask_and_pre_controls"
+        }
+      ],
+      "window_phase_xy": null,
+      "shift_yx": null,
+      "records": [
+        {
+          "name": "block0.layer0.layer",
+          "payload_bytes": 21696,
+          "component": "pre_with_swin"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "stage": "encoder_1h",
+      "kind": "fused_swin_1h",
+      "variant": "inpview",
+      "inputs": [
+        {
+          "block": 0,
+          "selection": "previous_canonical_output"
+        }
+      ],
+      "window_phase_xy": [
+        -1,
+        -1
+      ],
+      "shift_yx": [
+        0,
+        0
+      ],
+      "records": [
+        {
+          "name": "block1.layer0.layer",
+          "payload_bytes": 20672,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "stage": "encoder_1h",
+      "kind": "fused_swin_1h",
+      "variant": "downsample",
+      "inputs": [
+        {
+          "block": 1,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        1,
+        1
+      ],
+      "shift_yx": [
+        -4,
+        -4
+      ],
+      "records": [
+        {
+          "name": "block2.layer0.layer",
+          "payload_bytes": 22720,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "stage": "encoder_2h",
+      "kind": "fused_swin_2h",
+      "variant": "inpview",
+      "inputs": [
+        {
+          "block": 2,
+          "selection": "previous_canonical_output"
+        }
+      ],
+      "window_phase_xy": [
+        -1,
+        -1
+      ],
+      "shift_yx": [
+        0,
+        0
+      ],
+      "records": [
+        {
+          "name": "block3.layer0.layer",
+          "payload_bytes": 61760,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "stage": "encoder_2h",
+      "kind": "fused_swin_2h",
+      "variant": "downsample",
+      "inputs": [
+        {
+          "block": 3,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        1,
+        1
+      ],
+      "shift_yx": [
+        -4,
+        -4
+      ],
+      "records": [
+        {
+          "name": "block4.layer0.layer",
+          "payload_bytes": 69936,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "stage": "encoder_4h",
+      "kind": "fused_swin_4h",
+      "variant": "inpview",
+      "inputs": [
+        {
+          "block": 4,
+          "selection": "previous_canonical_output"
+        }
+      ],
+      "window_phase_xy": [
+        -1,
+        -1
+      ],
+      "shift_yx": [
+        0,
+        0
+      ],
+      "records": [
+        {
+          "name": "block5.layer0.layer",
+          "payload_bytes": 197184,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "stage": "encoder_4h",
+      "kind": "fused_swin_4h",
+      "variant": "downsample",
+      "inputs": [
+        {
+          "block": 5,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        1,
+        1
+      ],
+      "shift_yx": [
+        -4,
+        -4
+      ],
+      "records": [
+        {
+          "name": "block6.layer0.layer",
+          "payload_bytes": 229936,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "stage": "encoder_8h",
+      "kind": "fused_swin_8h",
+      "variant": "inpview",
+      "inputs": [
+        {
+          "block": 6,
+          "selection": "previous_canonical_output"
+        }
+      ],
+      "window_phase_xy": [
+        -1,
+        -1
+      ],
+      "shift_yx": [
+        0,
+        0
+      ],
+      "records": [
+        {
+          "name": "block7.layer0.layer",
+          "payload_bytes": 689232,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "stage": "encoder_8h",
+      "kind": "fused_swin_8h",
+      "variant": "downsample",
+      "inputs": [
+        {
+          "block": 7,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        1,
+        1
+      ],
+      "shift_yx": [
+        -4,
+        -4
+      ],
+      "records": [
+        {
+          "name": "block8.layer0.layer",
+          "payload_bytes": 820288,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "stage": "encoder_split16",
+      "kind": "split_swin_16h",
+      "variant": "inpview",
+      "inputs": [
+        {
+          "block": 8,
+          "selection": "previous_canonical_output"
+        }
+      ],
+      "window_phase_xy": [
+        -1,
+        -1
+      ],
+      "shift_yx": [
+        0,
+        0
+      ],
+      "records": [
+        {
+          "name": "block9.layer0.layer",
+          "payload_bytes": 524288,
+          "component": "ffwd"
+        },
+        {
+          "name": "block9.layer1.layer",
+          "payload_bytes": 263168,
+          "component": "ffwd_projection"
+        },
+        {
+          "name": "block9.layer2.layer",
+          "payload_bytes": 917568,
+          "component": "qkv_attention"
+        },
+        {
+          "name": "block9.layer3.layer",
+          "payload_bytes": 263168,
+          "component": "projection"
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "stage": "encoder_split16",
+      "kind": "split_swin_16h",
+      "variant": "projection_pool_and_final_head",
+      "inputs": [
+        {
+          "block": 9,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        1,
+        1
+      ],
+      "shift_yx": [
+        -4,
+        -4
+      ],
+      "records": [
+        {
+          "name": "block10.layer0.layer",
+          "payload_bytes": 524288,
+          "component": "ffwd"
+        },
+        {
+          "name": "block10.layer1.layer",
+          "payload_bytes": 263168,
+          "component": "ffwd_projection"
+        },
+        {
+          "name": "block10.layer2.layer",
+          "payload_bytes": 917568,
+          "component": "qkv_attention"
+        },
+        {
+          "name": "block10.layer3.layer",
+          "payload_bytes": 263168,
+          "component": "projection_pool"
+        },
+        {
+          "name": "block10.layer4.layer",
+          "payload_bytes": 524304,
+          "component": "final_head"
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "stage": "vit_1d",
+      "kind": "vit_1d",
+      "variant": "repack_input",
+      "inputs": [
+        {
+          "block": 10,
+          "selection": "previous_canonical_output"
+        }
+      ],
+      "window_phase_xy": null,
+      "shift_yx": null,
+      "records": [
+        {
+          "name": "block11.layer0.layer",
+          "payload_bytes": 4194320,
+          "component": "ffn_expand"
+        },
+        {
+          "name": "block11.layer1.layer",
+          "payload_bytes": 4196352,
+          "component": "ffn_contract"
+        },
+        {
+          "name": "block11.layer2.layer",
+          "payload_bytes": 3145856,
+          "component": "qkv"
+        },
+        {
+          "name": "block11.layer3.layer",
+          "payload_bytes": 2,
+          "component": "attention"
+        },
+        {
+          "name": "block11.layer4.layer",
+          "payload_bytes": 1050624,
+          "component": "projection"
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "stage": "vit_1d",
+      "kind": "vit_1d",
+      "variant": "middle",
+      "inputs": [
+        {
+          "block": 11,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": null,
+      "shift_yx": null,
+      "records": [
+        {
+          "name": "block12.layer0.layer",
+          "payload_bytes": 4194320,
+          "component": "ffn_expand"
+        },
+        {
+          "name": "block12.layer1.layer",
+          "payload_bytes": 4196352,
+          "component": "ffn_contract"
+        },
+        {
+          "name": "block12.layer2.layer",
+          "payload_bytes": 3145856,
+          "component": "qkv"
+        },
+        {
+          "name": "block12.layer3.layer",
+          "payload_bytes": 2,
+          "component": "attention"
+        },
+        {
+          "name": "block12.layer4.layer",
+          "payload_bytes": 1050624,
+          "component": "projection"
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "stage": "vit_1d",
+      "kind": "vit_1d",
+      "variant": "middle",
+      "inputs": [
+        {
+          "block": 12,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": null,
+      "shift_yx": null,
+      "records": [
+        {
+          "name": "block13.layer0.layer",
+          "payload_bytes": 4194320,
+          "component": "ffn_expand"
+        },
+        {
+          "name": "block13.layer1.layer",
+          "payload_bytes": 4196352,
+          "component": "ffn_contract"
+        },
+        {
+          "name": "block13.layer2.layer",
+          "payload_bytes": 3145856,
+          "component": "qkv"
+        },
+        {
+          "name": "block13.layer3.layer",
+          "payload_bytes": 2,
+          "component": "attention"
+        },
+        {
+          "name": "block13.layer4.layer",
+          "payload_bytes": 1050624,
+          "component": "projection"
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "stage": "vit_1d",
+      "kind": "vit_1d",
+      "variant": "middle",
+      "inputs": [
+        {
+          "block": 13,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": null,
+      "shift_yx": null,
+      "records": [
+        {
+          "name": "block14.layer0.layer",
+          "payload_bytes": 4194320,
+          "component": "ffn_expand"
+        },
+        {
+          "name": "block14.layer1.layer",
+          "payload_bytes": 4196352,
+          "component": "ffn_contract"
+        },
+        {
+          "name": "block14.layer2.layer",
+          "payload_bytes": 3145856,
+          "component": "qkv"
+        },
+        {
+          "name": "block14.layer3.layer",
+          "payload_bytes": 2,
+          "component": "attention"
+        },
+        {
+          "name": "block14.layer4.layer",
+          "payload_bytes": 1050624,
+          "component": "projection"
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "stage": "vit_1d",
+      "kind": "vit_1d",
+      "variant": "middle",
+      "inputs": [
+        {
+          "block": 14,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": null,
+      "shift_yx": null,
+      "records": [
+        {
+          "name": "block15.layer0.layer",
+          "payload_bytes": 4194320,
+          "component": "ffn_expand"
+        },
+        {
+          "name": "block15.layer1.layer",
+          "payload_bytes": 4196352,
+          "component": "ffn_contract"
+        },
+        {
+          "name": "block15.layer2.layer",
+          "payload_bytes": 3145856,
+          "component": "qkv"
+        },
+        {
+          "name": "block15.layer3.layer",
+          "payload_bytes": 2,
+          "component": "attention"
+        },
+        {
+          "name": "block15.layer4.layer",
+          "payload_bytes": 1050624,
+          "component": "projection"
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "stage": "vit_1d",
+      "kind": "vit_1d",
+      "variant": "middle",
+      "inputs": [
+        {
+          "block": 15,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": null,
+      "shift_yx": null,
+      "records": [
+        {
+          "name": "block16.layer0.layer",
+          "payload_bytes": 4194320,
+          "component": "ffn_expand"
+        },
+        {
+          "name": "block16.layer1.layer",
+          "payload_bytes": 4196352,
+          "component": "ffn_contract"
+        },
+        {
+          "name": "block16.layer2.layer",
+          "payload_bytes": 3145856,
+          "component": "qkv"
+        },
+        {
+          "name": "block16.layer3.layer",
+          "payload_bytes": 2,
+          "component": "attention"
+        },
+        {
+          "name": "block16.layer4.layer",
+          "payload_bytes": 1050624,
+          "component": "projection"
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "stage": "vit_1d",
+      "kind": "vit_1d",
+      "variant": "middle",
+      "inputs": [
+        {
+          "block": 16,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": null,
+      "shift_yx": null,
+      "records": [
+        {
+          "name": "block17.layer0.layer",
+          "payload_bytes": 4194320,
+          "component": "ffn_expand"
+        },
+        {
+          "name": "block17.layer1.layer",
+          "payload_bytes": 4196352,
+          "component": "ffn_contract"
+        },
+        {
+          "name": "block17.layer2.layer",
+          "payload_bytes": 3145856,
+          "component": "qkv"
+        },
+        {
+          "name": "block17.layer3.layer",
+          "payload_bytes": 2,
+          "component": "attention"
+        },
+        {
+          "name": "block17.layer4.layer",
+          "payload_bytes": 1050624,
+          "component": "projection"
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "stage": "vit_1d",
+      "kind": "vit_1d",
+      "variant": "repack_output",
+      "inputs": [
+        {
+          "block": 17,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": null,
+      "shift_yx": null,
+      "records": [
+        {
+          "name": "block18.layer0.layer",
+          "payload_bytes": 4194320,
+          "component": "ffn_expand"
+        },
+        {
+          "name": "block18.layer1.layer",
+          "payload_bytes": 4196352,
+          "component": "ffn_contract"
+        },
+        {
+          "name": "block18.layer2.layer",
+          "payload_bytes": 3145856,
+          "component": "qkv"
+        },
+        {
+          "name": "block18.layer3.layer",
+          "payload_bytes": 2,
+          "component": "attention"
+        },
+        {
+          "name": "block18.layer4.layer",
+          "payload_bytes": 1050624,
+          "component": "projection"
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "stage": "decoder_bridge",
+      "kind": "decoder_input_upsample",
+      "variant": "1024_to_512",
+      "inputs": [
+        {
+          "block": 18,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        },
+        {
+          "block": 10,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": null,
+      "shift_yx": null,
+      "records": [
+        {
+          "name": "block19.layer0.layer",
+          "payload_bytes": 525312,
+          "component": "decoder_input_upsample"
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "stage": "decoder_split16",
+      "kind": "split_swin_16h",
+      "variant": "standard",
+      "inputs": [
+        {
+          "block": 19,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        1,
+        0
+      ],
+      "shift_yx": [
+        0,
+        -4
+      ],
+      "records": [
+        {
+          "name": "block20.layer0.layer",
+          "payload_bytes": 524288,
+          "component": "ffwd"
+        },
+        {
+          "name": "block20.layer1.layer",
+          "payload_bytes": 263168,
+          "component": "ffwd_projection"
+        },
+        {
+          "name": "block20.layer2.layer",
+          "payload_bytes": 917568,
+          "component": "qkv_attention"
+        },
+        {
+          "name": "block20.layer3.layer",
+          "payload_bytes": 263168,
+          "component": "projection"
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "stage": "decoder_split16",
+      "kind": "split_swin_16h",
+      "variant": "outview",
+      "inputs": [
+        {
+          "block": 20,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        0,
+        1
+      ],
+      "shift_yx": [
+        -4,
+        0
+      ],
+      "records": [
+        {
+          "name": "block21.layer0.layer",
+          "payload_bytes": 524288,
+          "component": "ffwd"
+        },
+        {
+          "name": "block21.layer1.layer",
+          "payload_bytes": 263168,
+          "component": "ffwd_projection"
+        },
+        {
+          "name": "block21.layer2.layer",
+          "payload_bytes": 917568,
+          "component": "qkv_attention"
+        },
+        {
+          "name": "block21.layer3.layer",
+          "payload_bytes": 263168,
+          "component": "projection_outview"
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "stage": "decoder_8h",
+      "kind": "fused_swin_8h",
+      "variant": "upsample_skip",
+      "inputs": [
+        {
+          "block": 21,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        },
+        {
+          "block": 8,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        1,
+        0
+      ],
+      "shift_yx": [
+        0,
+        -4
+      ],
+      "records": [
+        {
+          "name": "block22.layer0.layer",
+          "payload_bytes": 820784,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "stage": "decoder_8h",
+      "kind": "fused_swin_8h",
+      "variant": "outview",
+      "inputs": [
+        {
+          "block": 22,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        0,
+        1
+      ],
+      "shift_yx": [
+        -4,
+        0
+      ],
+      "records": [
+        {
+          "name": "block23.layer0.layer",
+          "payload_bytes": 689232,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "stage": "decoder_4h",
+      "kind": "fused_swin_4h",
+      "variant": "upsample_skip",
+      "inputs": [
+        {
+          "block": 23,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        },
+        {
+          "block": 6,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        1,
+        0
+      ],
+      "shift_yx": [
+        0,
+        -4
+      ],
+      "records": [
+        {
+          "name": "block24.layer0.layer",
+          "payload_bytes": 230176,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "stage": "decoder_4h",
+      "kind": "fused_swin_4h",
+      "variant": "outview",
+      "inputs": [
+        {
+          "block": 24,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        0,
+        1
+      ],
+      "shift_yx": [
+        -4,
+        0
+      ],
+      "records": [
+        {
+          "name": "block25.layer0.layer",
+          "payload_bytes": 197184,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "stage": "decoder_2h",
+      "kind": "fused_swin_2h",
+      "variant": "upsample_skip",
+      "inputs": [
+        {
+          "block": 25,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        },
+        {
+          "block": 4,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        1,
+        0
+      ],
+      "shift_yx": [
+        0,
+        -4
+      ],
+      "records": [
+        {
+          "name": "block26.layer0.layer",
+          "payload_bytes": 70048,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "stage": "decoder_2h",
+      "kind": "fused_swin_2h",
+      "variant": "outview",
+      "inputs": [
+        {
+          "block": 26,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        0,
+        1
+      ],
+      "shift_yx": [
+        -4,
+        0
+      ],
+      "records": [
+        {
+          "name": "block27.layer0.layer",
+          "payload_bytes": 61760,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "stage": "decoder_1h",
+      "kind": "fused_swin_1h",
+      "variant": "upsample_skip",
+      "inputs": [
+        {
+          "block": 27,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        },
+        {
+          "block": 2,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        1,
+        0
+      ],
+      "shift_yx": [
+        0,
+        -4
+      ],
+      "records": [
+        {
+          "name": "block28.layer0.layer",
+          "payload_bytes": 22784,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "stage": "decoder_1h",
+      "kind": "fused_swin_1h",
+      "variant": "outview",
+      "inputs": [
+        {
+          "block": 28,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": [
+        0,
+        1
+      ],
+      "shift_yx": [
+        -4,
+        0
+      ],
+      "records": [
+        {
+          "name": "block29.layer0.layer",
+          "payload_bytes": 20672,
+          "component": "swin"
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "stage": "post",
+      "kind": "fused_post_swin_1h",
+      "variant": "image_output",
+      "inputs": [
+        {
+          "block": 29,
+          "output": 0,
+          "selection": "explicit_output_slot"
+        },
+        {
+          "block": 0,
+          "output": 1,
+          "selection": "explicit_output_slot"
+        }
+      ],
+      "window_phase_xy": null,
+      "shift_yx": null,
+      "records": [
+        {
+          "name": "block30.layer0.layer",
+          "payload_bytes": 21808,
+          "component": "post_with_swin"
+        },
+        {
+          "name": "block30.layer0.blend_scale",
+          "payload_bytes": 2,
+          "component": "blend_scale"
+        }
+      ]
+    }
+  ],
+  "routing_evidence": {
+    "window_phase_encoder": {
+      "va": "0x180059c80",
+      "bytes": 71,
+      "sha256": "67638ea0eb9895af4854f06940ab19beecf5dc090e1847b311714f12bc53ab12"
+    },
+    "window_phase_decoder": {
+      "va": "0x1800568f0",
+      "bytes": 72,
+      "sha256": "510b81b68c395f722e1594e645d0e7f322e370ebb92228f42d9f7f14b40d85c1"
+    },
+    "phase_semantics": "Pairs are raw signed x/y constructor flags. Encoder phase is i mod 4, decoder phase is (stage depth + i) mod 4. The corresponding pixel shift y/x convention is cross-checked against the earlier large graph.",
+    "range_chain_helper": {
+      "va": "0x180056940",
+      "bytes": 590,
+      "sha256": "030134bc161f864499390be076882a2e8642e11f40ed0383eed2413ca6598225"
+    },
+    "stage_range_rewrite_calls": {
+      "va": "0x18005e714",
+      "bytes": 294,
+      "sha256": "981db35aac6a8168215d04b2c3e490c55732ac291efa2f9dbfa8ac06669cd062"
+    },
+    "default_previous_and_explicit_lookup": {
+      "va": "0x18005f904",
+      "bytes": 235,
+      "sha256": "f93ecc35dbfd450ed21c628dd55f80e289c3a92ce910be44d21395c0281be026"
+    },
+    "record_prefix_builder": {
+      "va": "0x1800599f0",
+      "bytes": 647,
+      "sha256": "e71490b77ff76623d3f1e5160f35fc8e75c6f932b446a7acca253c5b76edc8cb"
+    },
+    "bridge_inputs": {
+      "va": "0x18005d7c1",
+      "bytes": 207,
+      "sha256": "1745a284f5f76454b0cabb0de8968cfbd52039597e4bb643b7aa1f154010d7ad"
+    },
+    "bridge_to_first_decoder_split_slot": {
+      "va": "0x18005e83a",
+      "bytes": 140,
+      "sha256": "4a27dc77d8aee4cc6ce2883b604a0aa09d297bb2798ed1170e5f006a258bf8c0"
+    },
+    "upsample_skip_sources": {
+      "block22": [
+        {
+          "va": "0x18005d5de",
+          "bytes": 34,
+          "sha256": "b9f975786d01df5631f398c49f9b785fe5e2f9ebac36ef400d9b9328629ef726"
+        },
+        {
+          "va": "0x18005db24",
+          "bytes": 99,
+          "sha256": "aa033eeba6186b0606a96908055bfb008a4d61ae2643d02cc32316331af85208"
+        }
+      ],
+      "block24": [
+        {
+          "va": "0x18005d3c0",
+          "bytes": 37,
+          "sha256": "c601ad5341c4ed4cfc14029a3be2b07fdeff46efddfcabd4ec404b54b5005c24"
+        },
+        {
+          "va": "0x18005dd85",
+          "bytes": 102,
+          "sha256": "df8563ada2b23d6d3506048867a1e6cb64040b164356bb203d5c9e07f2d6b15c"
+        }
+      ],
+      "block26": [
+        {
+          "va": "0x18005d1a8",
+          "bytes": 37,
+          "sha256": "cc3ee2c06c7d60bb80a704e5fd6fa4706ad35b947fca41200d6266bc8a6145a9"
+        },
+        {
+          "va": "0x18005dfe5",
+          "bytes": 95,
+          "sha256": "cbe6da3af3dcb71761ef686197f6c4999fbcfa3be8091fc120612f5e50d78471"
+        }
+      ],
+      "block28": [
+        {
+          "va": "0x18005cf83",
+          "bytes": 37,
+          "sha256": "c69237e5aa08727b6d1b1ff216cd818afdee0a0f894374f59968ff3186cf4211"
+        },
+        {
+          "va": "0x18005e244",
+          "bytes": 95,
+          "sha256": "2705c78aa44ceb640557ae2be4a7577117c41c59156b9c3fbd259c795640dc9c"
+        }
+      ],
+      "block30": [
+        {
+          "va": "0x18005e406",
+          "bytes": 29,
+          "sha256": "bee308a66dc23396b2e6e9c1f1a2f40323a93c2bbca5b7dc58a5c0c5fd0c2d79"
+        },
+        {
+          "va": "0x18005e47e",
+          "bytes": 91,
+          "sha256": "f9a66323ddad52975056901e7c4972177b89014fbe7e6279e40bf9c87e630ec1"
+        }
+      ]
+    },
+    "split_layer_constructors": [
+      {
+        "layer": 0,
+        "type": "ffwd",
+        "constructor_va": "0x180090060",
+        "factory_callsite": "0x180063b5f"
+      },
+      {
+        "layer": 1,
+        "type": "ffwd_projection",
+        "constructor_va": "0x1800906a0",
+        "factory_callsite": "0x180063bab"
+      },
+      {
+        "layer": 2,
+        "type": "qkv_attention",
+        "constructor_va": "0x180091430",
+        "factory_callsite": "0x180063eef"
+      },
+      {
+        "layer": 3,
+        "type": "projection_pool",
+        "constructor_va": "0x1800910f0",
+        "factory_callsite": "0x18006415e"
+      },
+      {
+        "layer": 3,
+        "type": "projection_or_outview",
+        "constructor_va": "0x180090ec0",
+        "factory_callsite": "0x180064178"
+      },
+      {
+        "layer": 4,
+        "type": "final_head",
+        "constructor_va": "0x180090b90",
+        "factory_callsite": "0x1800642e7"
+      }
+    ],
+    "record_correlation": "Factory composes each block prefix from its zero-based block index. Class layer order and serialized suffixes agree for all 31 blocks and all 77 records. The separate block30 layer0.blend_scale record is used by the fused post operation."
+  },
+  "boundary_repack_launches": [
+    {
+      "block": 11,
+      "when": "before FFN expand",
+      "parameter_bytes": 24,
+      "entry": {
+        "name": "cc_vit_1d_repack_2d_to_1d_fp8",
+        "extracted_file": "fatbin_06.1.sm_120.ptx",
+        "sha256": "3dc57ec3e2a68965129f831f889ddc451ba213cc8e0eb271af90668a25891ac7"
+      },
+      "first_flag_call": {
+        "va": "0x180066857",
+        "bytes": 16,
+        "sha256": "bed9a73bbd8f80a9a676e38919e05ac8a0796fdec1fc111c6ddab36c86b83dd8"
+      },
+      "constructor_name_selection": {
+        "va": "0x18009aec8",
+        "bytes": 46,
+        "sha256": "87b82b449901d825dc62bf06c2dae5a7e01c56611cacee11518e40373ad7982c"
+      },
+      "kernel_registration": {
+        "va": "0x18009cb06",
+        "bytes": 78,
+        "sha256": "e5cd93813c83246d034f4761aa17b161f131c29a2ee2334939f35553fd2cc9e6"
+      },
+      "launch_path": {
+        "va": "0x18009bb51",
+        "bytes": 358,
+        "sha256": "116ce11679c836844090a9eca079aa179a207abc8391f22238a050ef1e5e6eef"
+      }
+    },
+    {
+      "block": 18,
+      "when": "after projection",
+      "parameter_bytes": 24,
+      "entry": {
+        "name": "cc_vit_1d_repack_1d_to_2d_fp8",
+        "extracted_file": "fatbin_06.1.sm_120.ptx",
+        "sha256": "3dc57ec3e2a68965129f831f889ddc451ba213cc8e0eb271af90668a25891ac7"
+      },
+      "last_flag_call": {
+        "va": "0x1800670b9",
+        "bytes": 16,
+        "sha256": "e9f285142f15a1afb0df0f6d9dc13c0a8480dd50052ad649520ac3cfdd32deb9"
+      },
+      "constructor_name_selection": {
+        "va": "0x18009b205",
+        "bytes": 46,
+        "sha256": "9a59d1239d3a6c58b261020d533b033d91f41d889ca24c3de77be933dc2c60ac"
+      },
+      "kernel_registration": {
+        "va": "0x18009cca6",
+        "bytes": 78,
+        "sha256": "3d4ffcd980aad601196e7eaee2fa9a01fda6e7ba33a621c23f382c1a5cf72500"
+      },
+      "launch_path": {
+        "va": "0x18009c02f",
+        "bytes": 146,
+        "sha256": "c15cbe34123c565c3bf2a487f8ae5be8c3259acf07f1c96ceca671f20cf140ec"
+      }
+    }
+  ],
+  "mask_blend_binding": {
+    "key": "DLSSNR.MaskBlendMode",
+    "pre_entry": {
+      "name": "cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+      "extracted_file": "fatbin_01.1.sm_120.ptx",
+      "sha256": "cf24a2f92c2b398764de29474d66ee996bd54a07be0bdfee1239885f74fbefa4"
+    },
+    "parameter_bytes": 272,
+    "mode_parameter_byte_offset": 40,
+    "host_parameter_object_offset": 168,
+    "host_eval_struct_offset": 244,
+    "host_state_write": {
+      "va": "0x180083ee0",
+      "bytes": 23,
+      "sha256": "21d180e3e6eea70f096bab43abddf4996dd77016d0be8489f7359539c401815d"
+    },
+    "pre_prologue": {
+      "va": "0x1800834b0",
+      "bytes": 54,
+      "sha256": "4a38e462e80e5a01123792fcdc4477ad4534bc4431fced22591ef54afadde12c"
+    },
+    "pre_state_pointer_load": {
+      "va": "0x180083538",
+      "bytes": 7,
+      "sha256": "c7c6fb74a805e6ae0b10a59f77092275b950551cb92a339c21f1311c5f7101ab"
+    },
+    "pre_state_read_and_argument_store": {
+      "va": "0x18008360c",
+      "bytes": 10,
+      "sha256": "d50a148a74bb3ca52d35b17870ba1314fc9ebd55e9153774cf2a6ff31c7793ff"
+    },
+    "pre_dispatch": {
+      "va": "0x1800837a5",
+      "bytes": 91,
+      "sha256": "0230c7f0213fa0594d7393acba44280ecc85d1d130f9b9ae510991233be0d303"
+    },
+    "stack_accounting": {
+      "push_bytes": 40,
+      "local_allocation_bytes": 416,
+      "rbp_below_entry_rsp_bytes": 200,
+      "rbp_above_current_rsp_bytes": 256,
+      "mode_store_relative_to_rbp": -104,
+      "arguments_relative_to_rsp": 112,
+      "mode_relative_to_arguments": 40
+    },
+    "ptx_read_lines": [
+      14532,
+      14534
+    ],
+    "verified": "Previously traced Evaluate getter reaches the pre layer object. Its +0xa8 value is copied into byte +40 of the 272-byte argument block passed to dispatch. The same field is read by the original SM120 pre PTX. This closes the static binder."
+  },
+  "limits": [
+    "Logical block topology and deterministic class/routing flags are static. Grid sizes, synchronization variant choice, GPU ordering, and D3D12/Vulkan launch behavior still require captured execution.",
+    "The 31 logical blocks and 77 serialized records are different units from emitted CUDA launches. The two ViT repacks are unweighted, and the post blend scale shares its post operation.",
+    "No numeric tensor decode, cross-device result, throughput, or speed claim is established by this report."
+  ]
+}

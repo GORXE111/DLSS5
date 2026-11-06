@@ -8,6 +8,11 @@
 
 本地约束：不启动联网游戏，不访问 `E:\ZZZ`；NVIDIA 二进制、权重、提取/改写后的 PTX、cubin 与测试画面不进入 Git。此次研究使用 RTX 3060 12 GB、驱动 610.74。
 
+## 2026-11-06 第六批：十月小模型执行研究
+
+- 原版 310.9.16.0 预设 2 的主机构图和权重字段台账独立复算，31 块、77 条记录全部匹配。已追通 272 B pre 参数块中的遮罩模式 `+40` 和宿主 15 个模块引用。[执行研究及复算入口](research/october_nr_small_execution.md)
+- RTX 3060 隔离运行双向重排入口，16 例逐字节一致。跨 CTA 同步微测的两种栅栏合计检查 1,048,576 个值，错误对照有效。下一验收点是 RTX 50 原版预设 2 的实际资源和发射追踪，以及新版 sm_86 逐层对照。[实测结果](research/validation/october_nr_sm86_primitives.json)
+
 ## 2026-11-06 第五批：4K 同帧对照与十月版调查
 
 - 现有 310.8.0 移植已在离线 Godot Sponza 抓到真实 3840×2160 原画与最终合成，NR 工作分辨率为 1920×1080。两对数据分别比较同一次 Present 的全链与模型边界。滑块查看器和像素热图生成器纳入[源码](research/nr_viewer/README.md)，不提交截图。[捕获和验证结果](research/validation/batch5_sponza_capture.json)

@@ -1,8 +1,8 @@
 """Capture and compare versioned DLSS-NR reference cases; never infer universal equivalence.
 
 Uses the existing D3D12 laboratory executable. Captures contain outputs, logs,
-commands and hashes, but no NVIDIA DLLs. An official-sm120 label requires the
-known unmodified 310.8.0 DLL and a matching Blackwell GPU in the execution log.
+commands and hashes, but no NVIDIA DLLs. An official-sm120 label requires a
+pinned unmodified DLL and a matching Blackwell GPU in the execution log.
 """
 from __future__ import annotations
 
@@ -23,6 +23,10 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 ORIGINAL_SHA256 = "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e"
+OCTOBER_VERSION = "310.9.16.0"
+OCTOBER_SHA256 = "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f"
+NATIVE_SHA256 = {"310.8.0": ORIGINAL_SHA256, OCTOBER_VERSION: OCTOBER_SHA256}
+OCTOBER_PRESETS = {1: "WEIGHTS_HT", 2: "WEIGHTS_CC_SMALL_FP8"}
 SCHEMA = 1
 
 
@@ -207,9 +211,48 @@ def gpu_inventory():
              "driver": row[3].strip()} for row in csv.reader(io.StringIO(result.stdout)) if row]
 
 
-def verify_native(gpus, dll_hash, log=None):
-    if dll_hash != ORIGINAL_SHA256:
-        raise ValueError("official-sm120 requires the known unmodified 310.8.0 DLL SHA-256")
+def capture_profile(kind, version, model_preset):
+    if kind not in ("official-sm120", "port-sm86") or not isinstance(version, str) or version not in NATIVE_SHA256:
+        raise ValueError("unknown capture kind or NR version")
+    if version == OCTOBER_VERSION:
+        if kind != "official-sm120":
+            raise ValueError("310.9.16.0 supports only official capture; no validated sm86 port is registered")
+        if type(model_preset) is not int or model_preset not in OCTOBER_PRESETS:
+            raise ValueError("310.9.16.0 requires explicit --model-preset 1 (HT) or 2 (Small FP8)")
+        return {"nr_version": version, "requested_model_preset": model_preset,
+                "statically_mapped_weight_resource": OCTOBER_PRESETS[model_preset]}
+    if model_preset is not None:
+        raise ValueError("--model-preset is only for the 310.9.16.0 capture profile")
+    return {}
+
+
+def profiled_cases(suite, profile):
+    cases = suite_cases(suite)
+    if not profile:
+        return cases
+    return [{**case, "args": [*case["args"], "--model", str(profile["requested_model_preset"])]} for case in cases]
+
+
+def manifest_profile(manifest):
+    profile = manifest.get("capture_profile", {})
+    if not isinstance(profile, dict):
+        raise ValueError("invalid capture profile")
+    kind = manifest["reference_kind"]
+    version = profile.get("nr_version", "310.8.0")
+    expected = capture_profile(kind, version, profile.get("requested_model_preset"))
+    if expected != profile or manifest.get("target", f"DLSS-NR {version}") != f"DLSS-NR {version}":
+        raise ValueError("inconsistent capture profile or target")
+    dll_hash = manifest.get("runtime_sha256", {}).get("nvngx_dlssnr.dll")
+    if kind == "official-sm120" and dll_hash != NATIVE_SHA256[version]:
+        raise ValueError(f"official-sm120 requires the known unmodified {version} DLL SHA-256")
+    if version != OCTOBER_VERSION and dll_hash == OCTOBER_SHA256:
+        raise ValueError("the October DLL requires its explicit 310.9.16.0 profile")
+    return profile
+
+
+def verify_native(gpus, dll_hash, log=None, *, nr_version="310.8.0"):
+    if not isinstance(nr_version, str) or nr_version not in NATIVE_SHA256 or dll_hash != NATIVE_SHA256[nr_version]:
+        raise ValueError(f"official-sm120 requires the known unmodified {nr_version} DLL SHA-256")
     supported = [gpu for gpu in gpus if gpu["compute_capability"].startswith("12.")]
     if not supported:
         raise ValueError("official-sm120 requires a Blackwell compute capability 12.x GPU; this machine cannot supply that reference")
@@ -220,6 +263,8 @@ def verify_native(gpus, dll_hash, log=None):
 
 
 def capture(args):
+    version = getattr(args, "nr_version", "310.8.0")
+    profile = capture_profile(args.kind, version, getattr(args, "model_preset", None))
     files = {"nr-lab.exe": args.harness.resolve(), "nvngx.dll": args.bridge.resolve(),
              "nvngx_dlssnr.dll": args.dll.resolve(),
              "nvngx_dlss.dll": (args.support / "nvngx_dlss.dll").resolve(),
@@ -229,8 +274,10 @@ def capture(args):
             raise ValueError(f"missing capture dependency: {source}")
     gpus = gpu_inventory()
     hashes = {name: digest(path) for name, path in files.items()}
+    if version != OCTOBER_VERSION and hashes["nvngx_dlssnr.dll"] == OCTOBER_SHA256:
+        raise ValueError("the October DLL requires its explicit 310.9.16.0 profile")
     if args.kind == "official-sm120":
-        verify_native(gpus, hashes["nvngx_dlssnr.dll"])
+        verify_native(gpus, hashes["nvngx_dlssnr.dll"], nr_version=version)
     output = args.out.resolve()
     if output.exists():
         raise ValueError(f"capture output must be a new directory: {output}")
@@ -238,15 +285,18 @@ def capture(args):
     runtime = output / "_runtime"
     runtime.mkdir()
     manifest = {"schema": SCHEMA, "created_utc": datetime.now(timezone.utc).isoformat(),
-                "target": "DLSS-NR 310.8.0", "reference_kind": args.kind, "suite": args.suite,
+                "target": f"DLSS-NR {version}", "reference_kind": args.kind, "suite": args.suite,
                 "gpus": gpus, "runtime_sha256": hashes,
                 "scope": "finite synthetic D3D12 cases; not a universal fidelity or game certification",
                 "cases": [], "passed": False}
+    if profile:
+        manifest["capture_profile"] = profile
+        manifest["scope"] += "; preset is the verified requested option, not an observed weight-load or kernel trace"
     failed = False
     try:
         for name, source in files.items():
             shutil.copy2(source, runtime / name)
-        for case in suite_cases(args.suite):
+        for case in profiled_cases(args.suite, profile):
             destination = output / case["id"]
             destination.mkdir()
             for name in ("nr-lab-result.json", "nr-lab.log"):
@@ -269,7 +319,8 @@ def capture(args):
                 report = json.loads((destination / "nr-lab-result.json").read_text(encoding="utf-8"))
                 validate_temporal_log(case, (destination / "nr-lab.log").read_text(errors="replace"))
                 if args.kind == "official-sm120":
-                    verify_native(gpus, hashes["nvngx_dlssnr.dll"], (destination / "nr-lab.log").read_text(errors="replace"))
+                    verify_native(gpus, hashes["nvngx_dlssnr.dll"], (destination / "nr-lab.log").read_text(errors="replace"),
+                                  nr_version=version)
                 outputs = list(runtime.glob("nr-lab-output-*.ppm")) + list(runtime.glob("nr-lab-output-*-raw.f16"))
                 validate_report(case, report, [path.name for path in outputs])
                 for source in outputs:
@@ -303,7 +354,9 @@ def load_capture(folder):
     manifest = json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
     if manifest.get("schema") != SCHEMA or not manifest.get("passed"):
         raise ValueError(f"unsupported or incomplete capture: {folder}")
-    expected = suite_cases(manifest["suite"])
+    profile = manifest_profile(manifest)
+    version = profile.get("nr_version", "310.8.0")
+    expected = profiled_cases(manifest["suite"], profile)
     if [{"id": row["id"], "args": row["args"]} for row in manifest["cases"]] != expected:
         raise ValueError(f"capture case coverage or definitions changed: {folder}")
     for case in manifest["cases"]:
@@ -324,10 +377,10 @@ def load_capture(folder):
                 raise ValueError(f"capture output was modified: {path}")
             validate_pixels(path, report)
     if manifest["reference_kind"] == "official-sm120":
-        verify_native(manifest["gpus"], manifest["runtime_sha256"]["nvngx_dlssnr.dll"])
+        verify_native(manifest["gpus"], manifest["runtime_sha256"]["nvngx_dlssnr.dll"], nr_version=version)
         for case in manifest["cases"]:
             verify_native(manifest["gpus"], manifest["runtime_sha256"]["nvngx_dlssnr.dll"],
-                          (folder / case["id"] / "nr-lab.log").read_text(errors="replace"))
+                          (folder / case["id"] / "nr-lab.log").read_text(errors="replace"), nr_version=version)
     return manifest
 
 
@@ -341,6 +394,8 @@ def compare(args):
     reference, candidate = load_capture(args.reference), load_capture(args.candidate)
     if reference["suite"] != candidate["suite"]:
         raise ValueError("capture suites differ")
+    if reference.get("capture_profile", {}) != candidate.get("capture_profile", {}):
+        raise ValueError("capture versions or requested model presets differ")
     for name in ("nr-lab.exe", "nvngx.dll", "nvngx_dlss.dll", "nvngx_dlssg.dll"):
         if reference["runtime_sha256"][name] != candidate["runtime_sha256"][name]:
             raise ValueError(f"capture dependencies differ: {name}; use the same harness and support DLLs")
@@ -352,6 +407,8 @@ def compare(args):
     report = {"schema": SCHEMA, "criterion": args.criterion, "official_reference": reference["reference_kind"] == "official-sm120",
               "scope": "only the named synthetic cases and recorded runtime versions; correlation is not a restoration percentage",
               "reference": str(args.reference.resolve()), "candidate": str(args.candidate.resolve()), "cases": []}
+    if reference.get("capture_profile"):
+        report["capture_profile"] = reference["capture_profile"]
     passed = True
     for left, right in zip(reference["cases"], candidate["cases"]):
         if left["args"] != right["args"] or set(left["outputs"]) != set(right["outputs"]):
@@ -379,6 +436,9 @@ def main():
     cap.add_argument("--dll", type=Path, required=True)
     cap.add_argument("--out", type=Path, required=True)
     cap.add_argument("--kind", choices=("official-sm120", "port-sm86"), required=True)
+    cap.add_argument("--nr-version", choices=tuple(NATIVE_SHA256), default="310.8.0")
+    cap.add_argument("--model-preset", choices=(1, 2), type=int,
+                     help="required for 310.9.16.0: 1 uses HT, 2 requests Small FP8")
     cap.add_argument("--suite", choices=("smoke", "core", "full", "temporal", "motion2d"), default="core")
     cap.add_argument("--harness", type=Path, default=ROOT / "harness" / "nr-lab.exe")
     cap.add_argument("--bridge", type=Path, default=ROOT / "harness" / "nvngx.dll")
