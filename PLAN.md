@@ -8,6 +8,10 @@
 
 本地约束：不启动联网游戏，不访问 `E:\ZZZ`；NVIDIA 二进制、权重、提取/改写后的 PTX、cubin 与测试画面不进入 Git。此次研究使用 RTX 3060 12 GB、驱动 610.74。
 
+## 2026-11-06 第十一批 · 八块注意力独立重放
+
+- 确认 QK 和 PV 的连续 K16 顺序。RTX 3060 的两处独立矩阵指令重放复现了块 11–18 的全部 786,432 个 FP8 输出字节，PV、FP16 倒数和量化前值也逐位一致。四种对照分开测量了两处 CPU 矩阵乘近似的影响。[整张量报告与复现](research/october_nr_attention_tensor_replay.md)
+
 ## 2026-11-06 第十批 · 注意力指令与大档中间张量
 
 - 对十月小档普通 attention 隔离插桩，实测分母、倒数、八次 K16 和量化前半精度。已将一个 FP8 边界的差异追到 PV 第 3 次 MMA，并确认 96 个有效 key 的连续 K16 顺序。32 次独立 MMA 重放逐位一致。[逐指令实测](research/october_nr_attention_instruction_trace.md)
