@@ -43,4 +43,4 @@ python -B -m tools.ptx86.dump_october_attention_qk --capture "$lab/batch8/full_b
 python -B -m tools.ptx86.check_october_attention_reciprocal
 ```
 
-这些结果将移植版注意力的逐位验收扩展到 1080p 首帧与另一场景的时序帧。独立实现仍借助 RTX 3060 执行矩阵指令。4K 原尺寸的 NR 注意力和 RTX 50 原版逐层数值仍待验证。
+这些结果将移植版注意力的逐位验收扩展到 1080p 首帧与另一场景的时序帧。独立实现仍借助 RTX 3060 执行矩阵指令。后续批次已扩展到 4K 原尺寸 NR。RTX 50 原版逐层数值仍待验证。[4K 原尺寸实测](october_nr_attention_4k.md) · [本批源码版本](https://github.com/GORXE111/DLSS5/tree/bbc61ffc25a43526dbec731bfce69fb1b1e8233d/tools/ptx86)

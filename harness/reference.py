@@ -49,6 +49,8 @@ def suite_cases(suite):
     def case(name, frames=1, size="640x360", extra=()):
         return {"id": name, "args": ["--nr-only", "--input", size, "--output", size,
                                       "--frames", str(frames), *extra]}
+    if suite == "october-uhd":
+        return [case("resolution_3840x2160", size="3840x2160")]
     if suite == "october-mask":
         common = ("--profile", "scrgb", "--scene-variant", "0", "--local-tone", "0.75",
                   "--local-structure", "0.5", "--skin-structure", "0.25")
@@ -274,6 +276,9 @@ def capture_profile(kind, version, model_preset):
 def profiled_cases(suite, profile):
     if suite == "october-mask" and (not profile or profile.get("nr_version") != OCTOBER_VERSION):
         raise ValueError("october-mask requires the explicit 310.9.16.0 capture profile")
+    if suite == "october-uhd" and (not profile or profile.get("nr_version") != OCTOBER_VERSION
+                                  or profile.get("requested_model_preset") != 2):
+        raise ValueError("october-uhd requires the explicit 310.9.16.0 Small FP8 capture profile")
     cases = suite_cases(suite)
     if not profile:
         return cases

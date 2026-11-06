@@ -53,17 +53,44 @@ class Boundary:
     pointer_offset: int
     shape_hwc: tuple
     layout: str
+    storage_tokens: int | None = None
 
     @property
     def size(self):
+        if self.storage_tokens is not None:
+            return self.storage_tokens * self.shape_hwc[2]
         return math.prod(self.shape_hwc)
 
     def describe(self):
-        return {"role": self.role, "local_sequence": self.local_sequence, "trace_sequence": self.launch.sequence,
-                "kernel": self.launch.name, "parameter_offset": self.pointer_offset,
-                "parameter_sha256": sha256(self.launch.params).hexdigest(), "shape_hwc": self.shape_hwc,
-                "layout": self.layout, "dtype": "e4m3fn", "bytes": self.size,
-                "tap_request": f"{self.local_sequence}:p{self.pointer_offset // 8}:{self.size}"}
+        description = {"role": self.role, "local_sequence": self.local_sequence, "trace_sequence": self.launch.sequence,
+                       "kernel": self.launch.name, "parameter_offset": self.pointer_offset,
+                       "parameter_sha256": sha256(self.launch.params).hexdigest(), "shape_hwc": self.shape_hwc,
+                       "layout": self.layout, "dtype": "e4m3fn", "bytes": self.size,
+                       "tap_request": f"{self.local_sequence}:p{self.pointer_offset // 8}:{self.size}"}
+        if self.storage_tokens is not None:
+            description["storage_tokens"] = self.storage_tokens
+        return description
+
+
+def padded_vit_storage(launch, offset, tokens):
+    """Verify the launch of a ViT boundary whose token storage is padded to 32."""
+    padded = (tokens + 31) // 32 * 32
+    family = launch.name.removesuffix("_fp8").removesuffix("_chained").removesuffix("_wait")
+    if launch.name == REPACK_IN and offset == 8:
+        grid, block = (padded, 1, 1), (256, 1, 1)
+    elif launch.name == REPACK_OUT and offset == 0:
+        grid, block = (tokens, 1, 1), (256, 1, 1)
+    elif family == "cc_vit_1d_qkv" and offset == 0:
+        grid, block = (padded // 8, 1, 2), (32, 4, 1)
+    elif family == "cc_vit_1d_attention" and offset in (0, 8, 16, 24):
+        grid, block = (32, (tokens + 255) // 256, 1), (32, 4, 1)
+    elif family == "cc_vit_1d_projection" and offset == 16:
+        grid, block = (padded // 16, 1, 4), (32, 4, 1)
+    else:
+        raise ValueError(f"unsupported padded ViT storage at {launch.name}+{offset}")
+    if (launch.grid, launch.block, launch.shared_memory) != (grid, block, 0):
+        raise ValueError(f"padded ViT launch disagrees with storage geometry at {launch.name}+{offset}")
+    return padded
 
 
 def spatial_output(block, slot, launch):
@@ -95,11 +122,15 @@ def boundaries(frame, rows, graph):
 
     def add(role, launch, offset, dims_at, channels, layout):
         height, width = struct.unpack_from("<ii", launch.params, dims_at)
-        if (role in roles or height <= 0 or width <= 0 or height % 4 or width % 4
-                or (layout in {"tin1d", "vit1d_attention_storage"} and height * width % 32) or not launch.pointer(offset)
-                or height * width * channels > 256 * 1024 * 1024):
+        if role in roles or height <= 0 or width <= 0 or height % 4 or width % 4 or not launch.pointer(offset):
             raise ValueError(f"unsupported or invalid tensor boundary {role}")
-        roles[role] = Boundary(role, by_sequence[launch.sequence][0], launch, offset, (height, width, channels), layout)
+        tokens = height * width
+        storage = (padded_vit_storage(launch, offset, tokens)
+                   if tokens % 32 and layout in {"tin1d", "vit1d_attention_storage"} else None)
+        row = Boundary(role, by_sequence[launch.sequence][0], launch, offset, (height, width, channels), layout, storage)
+        if row.size > 256 * 1024 * 1024:
+            raise ValueError(f"unsupported or invalid tensor boundary {role}")
+        roles[role] = row
 
     for block, matched in zip(graph["blocks"], aligned["blocks"]):
         prefix = f"block{block['index']:02}"
@@ -113,14 +144,21 @@ def boundaries(frame, rows, graph):
             if launches[-1].name == REPACK_OUT:
                 add(f"{prefix}.repack.input", launches[-1], 0, 16, 1024, "tin1d")
             position, = (i for i, launch in enumerate(launches) if launch.name.startswith("cc_vit_1d_attention_"))
-            qkv, attention, projection = launches[position - 1:position + 2]
+            contract, qkv, attention, projection = launches[position - 2:position + 2]
             pointers = [attention.pointer(offset) for offset in (0, 8, 16, 24)]
             if (len(set(pointers)) != 4 or pointers[:3] != [qkv.pointer(offset) for offset in (8, 16, 24)]
                     or pointers[3] != projection.pointer(0)
-                    or not qkv.params[72:80] == attention.params[56:64] == projection.params[64:72]):
+                    or not contract.pointer(16) == qkv.pointer(0) == projection.pointer(8)
+                    or not contract.params[64:72] == qkv.params[72:80] == attention.params[56:64] == projection.params[64:72]):
                 raise ValueError(f"{prefix}: inconsistent ViT attention inputs, output or geometry")
+            add(f"{prefix}.qkv.input", qkv, 0, 72, 1024, "tin1d")
             for role, offset in (("in0", 0), ("in1", 8), ("in2", 16), ("out", 24)):
                 add(f"{prefix}.attention.{role}", attention, offset, 56, 1024, "vit1d_attention_storage")
+            storage = roles[f"{prefix}.attention.out"]
+            if storage.storage_tokens is not None:
+                ranges = sorted([*pointers, qkv.pointer(0)])
+                if any(second - first < storage.size for first, second in zip(ranges, ranges[1:])):
+                    raise ValueError(f"{prefix}: overlapping padded ViT activation ranges")
         if block["kind"] == "fused_post_swin_1h":
             # The two post inputs are read-only activation VAs. Post's image
             # output is a surface handle and is never interpreted as a VA.
@@ -333,8 +371,8 @@ def compare_captures(native, port, native_files, port_files, expected_roles, max
     comparisons = []
     for role in sorted(expected_roles):
         a, b = native["boundaries"][role], port["boundaries"][role]
-        for key in ("shape_hwc", "dtype", "layout", "bytes"):
-            if a[key] != b[key]:
+        for key in ("shape_hwc", "dtype", "layout", "bytes", "storage_tokens"):
+            if a.get(key) != b.get(key):
                 raise ValueError(f"{role}: activation {key} differs across captures")
         if native_files[role].samefile(port_files[role]):
             raise ValueError(f"{role}: both runs refer to the same physical tap file")

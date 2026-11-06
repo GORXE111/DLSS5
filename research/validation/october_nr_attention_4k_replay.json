@@ -1,0 +1,615 @@
+{
+  "schema": "october_attention_tensor_comparison_v1",
+  "source_sha256": {
+    "check_october_attention_tensor.py": "9a78e3667cd8f596660a799e2c521be31cba817a079ee4ec71eff2d117e0daf5",
+    "check_october_attention.py": "5053148f747b565ab7dcdb2e6ad87cc6fa77416dd56151912a5ec861a1129bbf",
+    "mma_sm86_tiles.py": "419bfbbe18ce8a15b716ca7e5aad000235c0c52eea4d4a9acda2ccc865f36b80"
+  },
+  "capture_seal_sha256": "a821a3e6a73aab88dc6353606881a36a6b826f24747c2399db2f43811bcb5a3a",
+  "full_dump_report_sha256": "9914a94cc480230658dbaa55eceacbaca3d5527b9a49fead21f3002067dbfdb9",
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "compute_capability": [
+    8,
+    6
+  ],
+  "cuda_driver_api_version": 13030,
+  "capture_frame": 0,
+  "shape_hwc": [
+    36,
+    60,
+    1024
+  ],
+  "tokens": 2160,
+  "storage_tokens": 2176,
+  "scope": "64-key streaming with Ampere split K16 MMA, host exponent, reduction and reciprocal.",
+  "cases": [
+    {
+      "block": 11,
+      "values_compared": 2228224,
+      "models": {
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "valid_query_output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 12,
+      "values_compared": 2228224,
+      "models": {
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "valid_query_output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 13,
+      "values_compared": 2228224,
+      "models": {
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "valid_query_output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 14,
+      "values_compared": 2228224,
+      "models": {
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "valid_query_output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 15,
+      "values_compared": 2228224,
+      "models": {
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "valid_query_output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 16,
+      "values_compared": 2228224,
+      "models": {
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "valid_query_output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 17,
+      "values_compared": 2228224,
+      "models": {
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "valid_query_output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 18,
+      "values_compared": 2228224,
+      "models": {
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "valid_query_output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    }
+  ],
+  "total_different_numeric_values": {
+    "gpu_qk_pv": 0
+  },
+  "bit_exact_gpu_mma": true
+}

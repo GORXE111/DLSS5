@@ -1,0 +1,376 @@
+{
+  "schema": "october_nr_attention_projection_replay_v1",
+  "capture_seal_sha256": "e8f441ea4675aac81b4a8ed8e23451368c9b1df19825922b50298477bfd9a316",
+  "frame": 0,
+  "trial_cubin_sha256": "61c9b4686e760369137608307641cff64c53e62960e26cbb2d5d916cca583183",
+  "original_dll_sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f",
+  "probe_source_sha256": "f7ee8077d0ca215db447d7a0d2e7cf1c77d54db8df37f5b8165b624daede04c4",
+  "weight_layout_sha256": "22ae030815b56994199d6ec3555e4eb552b40d8fdb0dbd4ff9936a31baad77cc",
+  "replay_source_sha256": {
+    "check_october_attention.py": "5053148f747b565ab7dcdb2e6ad87cc6fa77416dd56151912a5ec861a1129bbf",
+    "check_october_attention_tensor.py": "9a78e3667cd8f596660a799e2c521be31cba817a079ee4ec71eff2d117e0daf5",
+    "mma_sm86_tiles.py": "419bfbbe18ce8a15b716ca7e5aad000235c0c52eea4d4a9acda2ccc865f36b80"
+  },
+  "scope": "Isolated projection and independent matrix replay on sealed 96-token inputs, plus a CPU residual-only oracle.",
+  "entry": "cc_vit_1d_projection_fp8",
+  "shape_hwc": [
+    8,
+    12,
+    1024
+  ],
+  "grid_xyz": [
+    8,
+    1,
+    4
+  ],
+  "block_xyz": [
+    32,
+    4,
+    1
+  ],
+  "cases": [
+    {
+      "block": 11,
+      "trace_sequence": 24,
+      "live_entry": "cc_vit_1d_projection_chained_fp8",
+      "weight_sha256": "08b3072ec1ef176febfe445e95c13ab1f7ad15fc318fd2033853c0fb52dd938f",
+      "attention_input_sha256": "b5b4827152130ec44171afa3b2f23986d500af43dfc7430e5901ba8e430b852f",
+      "residual_input_sha256": "469f1f5265a9bd640a6ce90c2c547ad00659f17d70611d88a85a070001394088",
+      "full": {
+        "expected_sha256": "56b0833137d3e605d1598a62cdea26d0df7d3140e4a2e7aa620325ae741ca97f",
+        "actual_sha256": "56b0833137d3e605d1598a62cdea26d0df7d3140e4a2e7aa620325ae741ca97f",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "zero_attention": {
+        "expected_sha256": "102a85435f0b322df32116c3d23031b96b58833938cbaf4113ac43c32e50c12d",
+        "actual_sha256": "102a85435f0b322df32116c3d23031b96b58833938cbaf4113ac43c32e50c12d",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "independent_cpu": {
+        "different_byte_count": 3036,
+        "different_numeric_count": 3035,
+        "exact_numeric_fraction": 0.9691263834635416,
+        "mae": 0.0023042758305867514,
+        "max_abs": 1.0,
+        "within_one_e4m3_step_fraction": 0.9984537760416666,
+        "max_e4m3_steps": 6,
+        "output_sha256": "a7c2f78409ac31fa37203c0d694baf2d30576b47f5b5eafaa3c59e4ec67db794"
+      },
+      "independent_sm86": {
+        "different_byte_count": 0,
+        "different_numeric_count": 0,
+        "exact_numeric_fraction": 1.0,
+        "mae": 0.0,
+        "max_abs": 0.0,
+        "within_one_e4m3_step_fraction": 1.0,
+        "max_e4m3_steps": 0,
+        "output_sha256": "56b0833137d3e605d1598a62cdea26d0df7d3140e4a2e7aa620325ae741ca97f"
+      }
+    },
+    {
+      "block": 12,
+      "trace_sequence": 29,
+      "live_entry": "cc_vit_1d_projection_chained_fp8",
+      "weight_sha256": "a6076822b1fc76207c48ae79f4a6d81b3f813a29275e403cadf9b1c6f8dcc01d",
+      "attention_input_sha256": "d59fee7aad0fb5f88dcf2fb1727b46873edc7dfabc3c34bb5be7aecaaf92819d",
+      "residual_input_sha256": "e3d819ddb631825c7e43bc02d68c72387661fda6f10506acf857fc2bc8c9c8c4",
+      "full": {
+        "expected_sha256": "fccd97b7c63e573d5d173441a2773ca2f91bb1f598b2e501206ba4dcecb30d4f",
+        "actual_sha256": "fccd97b7c63e573d5d173441a2773ca2f91bb1f598b2e501206ba4dcecb30d4f",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "zero_attention": {
+        "expected_sha256": "8063342bd6b6553a52b055b0a9a0bfbeff07ccb88faaea99b4aae0ad45718e94",
+        "actual_sha256": "8063342bd6b6553a52b055b0a9a0bfbeff07ccb88faaea99b4aae0ad45718e94",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "independent_cpu": {
+        "different_byte_count": 3326,
+        "different_numeric_count": 3322,
+        "exact_numeric_fraction": 0.9662068684895834,
+        "mae": 0.0023458401362101236,
+        "max_abs": 1.0,
+        "within_one_e4m3_step_fraction": 0.99786376953125,
+        "max_e4m3_steps": 6,
+        "output_sha256": "51b7b61a4c7e6f52e4173c79847468f4b26a4c2f82d973a2ac00579fe614a0fa"
+      },
+      "independent_sm86": {
+        "different_byte_count": 0,
+        "different_numeric_count": 0,
+        "exact_numeric_fraction": 1.0,
+        "mae": 0.0,
+        "max_abs": 0.0,
+        "within_one_e4m3_step_fraction": 1.0,
+        "max_e4m3_steps": 0,
+        "output_sha256": "fccd97b7c63e573d5d173441a2773ca2f91bb1f598b2e501206ba4dcecb30d4f"
+      }
+    },
+    {
+      "block": 13,
+      "trace_sequence": 34,
+      "live_entry": "cc_vit_1d_projection_chained_fp8",
+      "weight_sha256": "b43a7f3942b2bc192429f3d7cedfffa8bea8fe24d44a536329c40cd64dcfb0e0",
+      "attention_input_sha256": "7a5975bdbf2388052c1bcba93ccca08b2bebe644d0b14f72562eebda008e7c50",
+      "residual_input_sha256": "e8bc15f04543872b70a292f6e90cee93fb73748cb48f607f17a48bff3054d733",
+      "full": {
+        "expected_sha256": "de2a554ee81a7d6ddbd1df333b31b006c7b55ed810bf8841d245944420e0fe22",
+        "actual_sha256": "de2a554ee81a7d6ddbd1df333b31b006c7b55ed810bf8841d245944420e0fe22",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "zero_attention": {
+        "expected_sha256": "305ca0712c7f77c21d135ee58f930ab3aec059635ae5e5de4666a1cd7a9c3fe0",
+        "actual_sha256": "305ca0712c7f77c21d135ee58f930ab3aec059635ae5e5de4666a1cd7a9c3fe0",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "independent_cpu": {
+        "different_byte_count": 2669,
+        "different_numeric_count": 2664,
+        "exact_numeric_fraction": 0.972900390625,
+        "mae": 0.001810292402903239,
+        "max_abs": 1.0,
+        "within_one_e4m3_step_fraction": 0.9987691243489584,
+        "max_e4m3_steps": 8,
+        "output_sha256": "78198483b52719f799596ce7bf9fe6e15a143e11c1934f971d9b80f66d443664"
+      },
+      "independent_sm86": {
+        "different_byte_count": 0,
+        "different_numeric_count": 0,
+        "exact_numeric_fraction": 1.0,
+        "mae": 0.0,
+        "max_abs": 0.0,
+        "within_one_e4m3_step_fraction": 1.0,
+        "max_e4m3_steps": 0,
+        "output_sha256": "de2a554ee81a7d6ddbd1df333b31b006c7b55ed810bf8841d245944420e0fe22"
+      }
+    },
+    {
+      "block": 14,
+      "trace_sequence": 39,
+      "live_entry": "cc_vit_1d_projection_chained_fp8",
+      "weight_sha256": "fdb3a7d8544554acde0541ebf360ac1c6e0674b9cfb977432066a2ab681898fe",
+      "attention_input_sha256": "74d1aaec716b009b996183984aedfd6cde3cc9046568c894ba535ca747afcf8a",
+      "residual_input_sha256": "3b8732b79f6a153d1395f2d7e835e966e3bad3e31cd358d60fe83ad70ac7b915",
+      "full": {
+        "expected_sha256": "4b5b4f9d29e21467a3fae8884ef5e298ab6a5f3135ee8fbf1ffe9e3e3d2b1f3d",
+        "actual_sha256": "4b5b4f9d29e21467a3fae8884ef5e298ab6a5f3135ee8fbf1ffe9e3e3d2b1f3d",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "zero_attention": {
+        "expected_sha256": "874a29b832f0958681a6a6f7b8737bcb597ddba18b81142449100949ed365f73",
+        "actual_sha256": "874a29b832f0958681a6a6f7b8737bcb597ddba18b81142449100949ed365f73",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "independent_cpu": {
+        "different_byte_count": 2396,
+        "different_numeric_count": 2393,
+        "exact_numeric_fraction": 0.9756571451822916,
+        "mae": 0.001674373944600423,
+        "max_abs": 1.0,
+        "within_one_e4m3_step_fraction": 0.9993082682291666,
+        "max_e4m3_steps": 4,
+        "output_sha256": "4f2e8410e51245b51d2839fd6d8dda5ae0a40919a8f39586f69f094c067c7577"
+      },
+      "independent_sm86": {
+        "different_byte_count": 0,
+        "different_numeric_count": 0,
+        "exact_numeric_fraction": 1.0,
+        "mae": 0.0,
+        "max_abs": 0.0,
+        "within_one_e4m3_step_fraction": 1.0,
+        "max_e4m3_steps": 0,
+        "output_sha256": "4b5b4f9d29e21467a3fae8884ef5e298ab6a5f3135ee8fbf1ffe9e3e3d2b1f3d"
+      }
+    },
+    {
+      "block": 15,
+      "trace_sequence": 44,
+      "live_entry": "cc_vit_1d_projection_chained_fp8",
+      "weight_sha256": "728fc4d11e2389fb0587dc998c51ffa8ffdab12cec3117de2f639eb7e6971e02",
+      "attention_input_sha256": "552cb061aa180fedebc95bc8154f62829ffad345b6511615bad2fe704c465623",
+      "residual_input_sha256": "4b0bc7992f95ad4f196cff1fc5020309045cf30f6e34ade6454e3e76add872d2",
+      "full": {
+        "expected_sha256": "d398659fb3e431e8192dace3f6e1fbf9f129d65ac6f04187e1d32b8ffb8d05b0",
+        "actual_sha256": "d398659fb3e431e8192dace3f6e1fbf9f129d65ac6f04187e1d32b8ffb8d05b0",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "zero_attention": {
+        "expected_sha256": "7bc53a257ce9c47918d1ae9214123f71cf5de9185d0cfe4a1a44e7ba6f5c76e4",
+        "actual_sha256": "7bc53a257ce9c47918d1ae9214123f71cf5de9185d0cfe4a1a44e7ba6f5c76e4",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "independent_cpu": {
+        "different_byte_count": 2322,
+        "different_numeric_count": 2320,
+        "exact_numeric_fraction": 0.9763997395833334,
+        "mae": 0.001263439655303955,
+        "max_abs": 1.0,
+        "within_one_e4m3_step_fraction": 0.99981689453125,
+        "max_e4m3_steps": 2,
+        "output_sha256": "3e389a9547ed242f73274ba4e63c8628ff3807a8717505aaa303bf7de545b668"
+      },
+      "independent_sm86": {
+        "different_byte_count": 0,
+        "different_numeric_count": 0,
+        "exact_numeric_fraction": 1.0,
+        "mae": 0.0,
+        "max_abs": 0.0,
+        "within_one_e4m3_step_fraction": 1.0,
+        "max_e4m3_steps": 0,
+        "output_sha256": "d398659fb3e431e8192dace3f6e1fbf9f129d65ac6f04187e1d32b8ffb8d05b0"
+      }
+    },
+    {
+      "block": 16,
+      "trace_sequence": 49,
+      "live_entry": "cc_vit_1d_projection_chained_fp8",
+      "weight_sha256": "dc69127166eeec6f670ee264e2a2d420f15607de52513aacb986933f75704547",
+      "attention_input_sha256": "8eb84b3afdb7527a1df0e9fadca442ae769ccd5a7051e4701f2fe0ca61d19a62",
+      "residual_input_sha256": "336219261f77fbbbb1af8bac27ee28e67d28a50fefdae566613a2d2e39e8f868",
+      "full": {
+        "expected_sha256": "2e87ec37b808098d85578a2d72f7e407b1a6a5b2821f8ed1f2e22274a3e55994",
+        "actual_sha256": "2e87ec37b808098d85578a2d72f7e407b1a6a5b2821f8ed1f2e22274a3e55994",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "zero_attention": {
+        "expected_sha256": "90bb9e588e7d8451300c4c3ed52cfc5cf287de8cbf58195d2d3ab2a67955e74b",
+        "actual_sha256": "90bb9e588e7d8451300c4c3ed52cfc5cf287de8cbf58195d2d3ab2a67955e74b",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "independent_cpu": {
+        "different_byte_count": 2347,
+        "different_numeric_count": 2334,
+        "exact_numeric_fraction": 0.97625732421875,
+        "mae": 0.0010281006495157878,
+        "max_abs": 1.0,
+        "within_one_e4m3_step_fraction": 0.999786376953125,
+        "max_e4m3_steps": 3,
+        "output_sha256": "e200acb1421b136b21dea23660738de22723721f04cdc2854f782778e74e2f13"
+      },
+      "independent_sm86": {
+        "different_byte_count": 0,
+        "different_numeric_count": 0,
+        "exact_numeric_fraction": 1.0,
+        "mae": 0.0,
+        "max_abs": 0.0,
+        "within_one_e4m3_step_fraction": 1.0,
+        "max_e4m3_steps": 0,
+        "output_sha256": "2e87ec37b808098d85578a2d72f7e407b1a6a5b2821f8ed1f2e22274a3e55994"
+      }
+    },
+    {
+      "block": 17,
+      "trace_sequence": 54,
+      "live_entry": "cc_vit_1d_projection_chained_fp8",
+      "weight_sha256": "cf30886e3f1b5652ddd5ae8b1db61351e5c115f167a8d1169a4f76d46fd78c0f",
+      "attention_input_sha256": "07de6b092b25d59cd13cba879a1b1633540908cb78a31ed5e6459f6f257ccade",
+      "residual_input_sha256": "333a60e2bda3ca1b9f4fa61c4c66d3576e45d40b3650f25151d1db0e582dafb5",
+      "full": {
+        "expected_sha256": "9bf0bbc4cc220ec8d30a72619a479ea2b1464d286849c0a5f30a6ceaa4cc3f34",
+        "actual_sha256": "9bf0bbc4cc220ec8d30a72619a479ea2b1464d286849c0a5f30a6ceaa4cc3f34",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "zero_attention": {
+        "expected_sha256": "b59b23c55c54afbb30e9dca12973d0da03c0a48d55272abe10a500a58520fce5",
+        "actual_sha256": "b59b23c55c54afbb30e9dca12973d0da03c0a48d55272abe10a500a58520fce5",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "independent_cpu": {
+        "different_byte_count": 3060,
+        "different_numeric_count": 3051,
+        "exact_numeric_fraction": 0.968963623046875,
+        "mae": 0.0011328260103861492,
+        "max_abs": 0.5,
+        "within_one_e4m3_step_fraction": 0.9997151692708334,
+        "max_e4m3_steps": 3,
+        "output_sha256": "cdc17e711719dcf1e0e03ca814e8683f6b5e8d3849b9aee2c84110b39bd2af7c"
+      },
+      "independent_sm86": {
+        "different_byte_count": 0,
+        "different_numeric_count": 0,
+        "exact_numeric_fraction": 1.0,
+        "mae": 0.0,
+        "max_abs": 0.0,
+        "within_one_e4m3_step_fraction": 1.0,
+        "max_e4m3_steps": 0,
+        "output_sha256": "9bf0bbc4cc220ec8d30a72619a479ea2b1464d286849c0a5f30a6ceaa4cc3f34"
+      }
+    },
+    {
+      "block": 18,
+      "trace_sequence": 59,
+      "live_entry": "cc_vit_1d_projection_wait_fp8",
+      "weight_sha256": "4084c1e6af924cfa54b0175907e72b59f651c63cdce5e31ea790ff07c6648dcf",
+      "attention_input_sha256": "27391983c878d73814730eb86b3dd6ab215c534e9ee48f5ad33cbda2690bc20a",
+      "residual_input_sha256": "6cc676bce52ab0aeefe8cc5a87e914ae7df1f2ae5cb6b753531e52993a82fc93",
+      "full": {
+        "expected_sha256": "326d308430ac1f8fdb80920091c5b242d563046f4372d69c501ea2d7ec5452f4",
+        "actual_sha256": "326d308430ac1f8fdb80920091c5b242d563046f4372d69c501ea2d7ec5452f4",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "zero_attention": {
+        "expected_sha256": "34537cd484d43331808c0b59a96e81a2cc37ad8e06391ad42f943704d84736d1",
+        "actual_sha256": "34537cd484d43331808c0b59a96e81a2cc37ad8e06391ad42f943704d84736d1",
+        "bytes": 98304,
+        "different_bytes": 0,
+        "passed": true
+      },
+      "independent_cpu": {
+        "different_byte_count": 2621,
+        "different_numeric_count": 2619,
+        "exact_numeric_fraction": 0.973358154296875,
+        "mae": 0.000728448232014974,
+        "max_abs": 0.25,
+        "within_one_e4m3_step_fraction": 0.9998881022135416,
+        "max_e4m3_steps": 2,
+        "output_sha256": "e0048d650c70965e7c3d247481f70098ca61e51b24d4e68307188fa7128044dc"
+      },
+      "independent_sm86": {
+        "different_byte_count": 0,
+        "different_numeric_count": 0,
+        "exact_numeric_fraction": 1.0,
+        "mae": 0.0,
+        "max_abs": 0.0,
+        "within_one_e4m3_step_fraction": 1.0,
+        "max_e4m3_steps": 0,
+        "output_sha256": "326d308430ac1f8fdb80920091c5b242d563046f4372d69c501ea2d7ec5452f4"
+      }
+    }
+  ],
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "compute_capability": [
+    8,
+    6
+  ],
+  "cuda_driver_api_version": 13030,
+  "passed": true
+}

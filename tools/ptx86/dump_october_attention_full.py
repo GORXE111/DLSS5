@@ -20,7 +20,7 @@ import numpy as np
 from ..align_nr_small_trace import GRAPH, GRAPH_SHA, kernel_inventory, pinned_bytes, read_trace
 from ..capture_october_taps import capture_path
 from ..compare_october_taps import PORT, seal_capture
-from .check_october_attention import encode_fp8
+from .check_october_attention import buffer_offsets, encode_fp8
 from .probe_october_attention_replay import ENTRIES, GUARD
 from .probe_october_attention_stages import Driver, ENTRY, PTX_SHA, PTXAS_SHA, replace_once, sha
 
@@ -131,9 +131,9 @@ def load_block(block, sealed, files):
     shape = tuple(boundaries[0]["shape_hwc"])
     h, w, channels = shape
     sequence = boundaries[0]["trace_sequence"]
-    elements = h * w * channels
-    if h <= 0 or w <= 0 or h * w % 32 or channels != CHANNELS:
-        raise ValueError(f"block {block}: expected positive 32-aligned tokens with {CHANNELS} channels")
+    elements = ((h * w + 31) // 32 * 32) * channels
+    if h <= 0 or w <= 0 or channels != CHANNELS:
+        raise ValueError(f"block {block}: expected positive tokens with {CHANNELS} channels")
     raw = [files[role].read_bytes() for role in roles]
     if any(tuple(row["shape_hwc"]) != shape or row["trace_sequence"] != sequence
            or len(data) != elements or sha(data) != row["sha256"]
@@ -148,7 +148,12 @@ def dump_block(device, function, block, raw, hashes, sequence, shape, grid, fold
     values = {name: np.frombuffer(data, "<f2") for name, data in planes.items()}
     if not all(np.isfinite(value).all() for value in values.values()):
         raise ValueError(f"block {block}: nonfinite captured half values")
-    encoded = encode_fp8(values["norm"].astype(np.float32)).tobytes()
+    encoded = encode_fp8(values["norm"].astype(np.float32))
+    tokens = shape[0] * shape[1]
+    storage_tokens = encoded.size // CHANNELS
+    if storage_tokens != tokens:
+        encoded[buffer_offsets(storage_tokens)[3][:, tokens:]] = 0
+    encoded = encoded.tobytes()
     if encoded != raw[3]:
         differing = np.count_nonzero(np.frombuffer(encoded, np.uint8) != np.frombuffer(raw[3], np.uint8))
         raise ValueError(f"block {block}: FP8 encoding of measured norm differs in {differing} packed bytes")
@@ -183,6 +188,7 @@ def run(capture, ptx, ptxas, work, blocks):
         raise ValueError("selected attention blocks must share one token shape")
     shape, = shapes
     tokens = shape[0] * shape[1]
+    storage_tokens = (tokens + 31) // 32 * 32
     grid = (32, (tokens + QUERIES_PER_CTA - 1) // QUERIES_PER_CTA, 1)
     trace = (capture / "nr-trace.tsv").read_bytes()
     if sha(trace) != sealed["artifact_sha256"]["nr-trace.tsv"]:
@@ -192,12 +198,13 @@ def run(capture, ptx, ptxas, work, blocks):
         launch = launches[sequence]
         if (launch.name, launch.grid, launch.block, launch.shared_memory) != (ENTRIES[1], grid, CUDA_BLOCK, 0):
             raise ValueError("sealed attention launch does not match the token shape")
-    transformed = instrument(ptx.read_bytes(), tokens)
+    transformed = instrument(ptx.read_bytes(), storage_tokens)
     folder.mkdir(parents=True, exist_ok=False)
     report = {"schema": "october_nr_attention_full_half_planes_v1", "passed": False,
               "source_sha256": sha(Path(__file__).read_bytes()), "capture_seal_sha256": sealed["capture_seal_sha256"],
               "rewritten_ptx_sha256": PTX_SHA, "ptxas_sha256": PTXAS_SHA, "instrumented_ptx_sha256": sha(transformed),
               "entry": ENTRY, "frame": sealed["frame"], "grid_xyz": grid, "block_xyz": CUDA_BLOCK, "shape_hwc": shape,
+              "storage_tokens": storage_tokens,
               "format": "Little-endian binary16 in packed live FP8 output element order", "cases": []}
     try:
         debug_ptx = folder / "module06.attention-full.ptx"

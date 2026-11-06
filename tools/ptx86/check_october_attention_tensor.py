@@ -11,7 +11,9 @@ import numpy as np
 from ..align_nr_small_trace import GRAPH, GRAPH_SHA, kernel_inventory, pinned_bytes
 from ..compare_october_taps import PORT, seal_capture
 from . import check_october_attention as model, mma_sm86_tiles
-from .check_october_attention import FP8, attention_stages, buffer_offsets, encode_fp8, metrics, probabilities, sha, split_mma
+from .check_october_attention import (
+    FP8, buffer_offsets, encode_fp8, f16, half_literal, half_sum, metrics, probabilities, sha, split_mma,
+)
 from .mma_sm86_tiles import Sm86Mma
 
 
@@ -42,24 +44,26 @@ def gpu_split(mma, a, b, acc=0):
     return mma(a[..., 16:], b[:, 16:, :], low).astype(np.float32)
 
 
-def evaluate(q, k, v, qk, pv):
-    tokens = q.shape[1]
-    if tokens % 64 == 0:
-        return attention_stages(q, k, v, qk=qk, pv=pv)
-
-    pad_p = FP8[encode_fp8(probabilities(np.array(0, dtype=np.float32)))]
-    pad_a, pad_b = np.full_like(q, pad_p), np.zeros_like(v[:, :32])
-    next_tile = 0
-
-    def padded_pv(a, b, acc):
-        nonlocal next_tile
-        next_tile += 1
-        acc = pv(a, b, acc)
-        if next_tile == tokens // 32:
-            acc = pv(pad_a, pad_b, acc)
-        return acc
-
-    return attention_stages(q, k, v, qk=qk, pv=padded_pv)
+def evaluate(q, k, v, qk, pv, *, tokens):
+    """Stream 64-key tiles in kernel order without allocating a token-square matrix."""
+    out = np.zeros_like(q)
+    denominator = 0
+    p_zero = probabilities(np.array(0, dtype=np.float32)).item()
+    padding = (-tokens) % 64
+    for start in range(0, tokens, 64):
+        stop = min(start + 64, tokens)
+        keys, values = k[:, start:stop], v[:, start:stop]
+        if stop - start < 64:
+            widths = ((0, 0), (0, padding), (0, 0))
+            keys, values = np.pad(keys, widths), np.pad(values, widths)
+        prob = probabilities(qk(q, keys.transpose(0, 2, 1)))
+        denominator = f16(denominator + half_sum(prob))
+        p8 = FP8[encode_fp8(prob)]
+        out = pv(p8[..., :32], values[:, :32], out)
+        out = pv(p8[..., 32:], values[:, 32:], out)
+    denominator = f16(denominator - f16(p_zero * padding))
+    reciprocal = 1.0 / np.maximum(denominator, half_literal(0x388205FF))
+    return {"pv": out, "reciprocal_f32": reciprocal, "pre_quantized": f16(out * f16(reciprocal))}
 
 
 def half_metrics(predicted, measured):
@@ -72,7 +76,14 @@ def half_metrics(predicted, measured):
             "mae": float(delta.mean(dtype=np.float64)), "max_abs": float(delta.max())}
 
 
-def read_dump(folder, row, expected, layout):
+def encode_output(values, tokens):
+    encoded = encode_fp8(values)
+    # Attention computes padded queries but clears their FP8 stores afterwards.
+    encoded[:, tokens:] = 0
+    return encoded
+
+
+def read_dump(folder, row, expected, layout, tokens):
     arrays = {}
     for role in ("pv", "inv", "norm"):
         artifact = row["planes"][role]
@@ -80,30 +91,31 @@ def read_dump(folder, row, expected, layout):
         if len(data) != expected.size * 2 or len(data) != artifact["bytes"] or sha(data) != artifact["sha256"]:
             raise ValueError("full stage dump failed its size or SHA-256 check")
         arrays[role] = np.frombuffer(data, "<f2")[layout]
-    if not np.array_equal(encode_fp8(arrays["norm"].astype(np.float32)), expected):
+    if not np.array_equal(encode_output(arrays["norm"].astype(np.float32), tokens), expected):
         raise ValueError("captured pre-quantization tensor does not encode to the sealed output")
     return arrays
 
 
-def diagnostic(stages, measured, observed):
+def diagnostic(stages, measured, observed, tokens):
     predicted_pv = stages["pv"].astype(np.float16)
     predicted_inv = np.broadcast_to(stages["reciprocal_f32"].astype(np.float16), predicted_pv.shape)
     return {"pv": half_metrics(predicted_pv, measured["pv"]), "reciprocal": half_metrics(predicted_inv, measured["inv"]),
             "pre_quantization": half_metrics(stages["pre_quantized"], measured["norm"]),
-            "with_measured_pv": metrics(encode_fp8((measured["pv"] * predicted_inv).astype(np.float32)), observed),
-            "with_measured_reciprocal": metrics(encode_fp8((predicted_pv * measured["inv"]).astype(np.float32)), observed),
-            "with_both_measured": metrics(encode_fp8((measured["pv"] * measured["inv"]).astype(np.float32)), observed)}
+            "with_measured_pv": metrics(encode_output((measured["pv"] * predicted_inv).astype(np.float32), tokens), observed),
+            "with_measured_reciprocal": metrics(encode_output((predicted_pv * measured["inv"]).astype(np.float32), tokens), observed),
+            "with_both_measured": metrics(encode_output((measured["pv"] * measured["inv"]).astype(np.float32), tokens), observed)}
 
 
-def run(capture, blocks, dump, device):
+def run(capture, blocks, dump, device, modes=MODES):
     sealed, files = seal_capture(capture, kernel_inventory(), json.loads(pinned_bytes(GRAPH, GRAPH_SHA)))
     if sealed["kind"] != PORT:
         raise ValueError("expected a sealed staged Ampere capture")
     shape = sealed["boundaries"][f"block{blocks[0]}.attention.in0"]["shape_hwc"]
     h, w, channels = shape
     tokens = h * w
-    if tokens <= 0 or tokens % 32 or channels != 1024:
-        raise ValueError("expected 32-aligned attention tokens and 1024 channels")
+    if tokens <= 0 or channels != 1024:
+        raise ValueError("expected positive attention tokens and 1024 channels")
+    storage_tokens = (tokens + 31) // 32 * 32
     seal = sealed["capture_seal_sha256"]
     dump_sha = None
     if dump:
@@ -116,34 +128,38 @@ def run(capture, blocks, dump, device):
         if len(dump_cases) != len(report["cases"]) or not set(blocks) <= dump_cases.keys():
             raise ValueError("full stage capture must include each selected block once")
         dump_sha = sha(raw)
-    layout = buffer_offsets(tokens)
+    layout = buffer_offsets(storage_tokens)
     cases = []
     with Sm86Mma(ordinal=device) as mma:
         hardware_info = mma.hardware_info
         hardware = partial(gpu_split, mma)
-        switches = ((CPU_SPLIT, CPU_SPLIT), (hardware, CPU_SPLIT), (CPU_SPLIT, hardware), (hardware, hardware))
+        switches = dict(zip(MODES, ((CPU_SPLIT, CPU_SPLIT), (hardware, CPU_SPLIT),
+                                    (CPU_SPLIT, hardware), (hardware, hardware))))
         for block in blocks:
             q, k, v, observed = load_case(block, sealed, files, shape, layout)
             q, k, v = FP8[q], FP8[k], FP8[v]
-            measured = read_dump(dump, dump_cases[block], observed, layout[3]) if dump else None
+            measured = read_dump(dump, dump_cases[block], observed, layout[3], tokens) if dump else None
             models = {}
-            for label, (qk, pv) in zip(MODES, switches):
-                stages = evaluate(q, k, v, qk, pv)
-                expected = encode_fp8(stages["pre_quantized"])
+            for label in modes:
+                qk, pv = switches[label]
+                stages = evaluate(q, k, v, qk, pv, tokens=tokens)
+                expected = encode_output(stages["pre_quantized"], tokens)
                 models[label] = {"output": metrics(expected, observed)}
+                if storage_tokens != tokens:
+                    models[label]["valid_query_output"] = metrics(expected[:, :tokens], observed[:, :tokens])
                 if measured is not None:
-                    models[label]["against_measured_stages"] = diagnostic(stages, measured, observed)
-                del stages
+                    models[label]["against_measured_stages"] = diagnostic(stages, measured, observed, tokens)
             cases.append({"block": block, "values_compared": observed.size, "models": models})
-    totals = {label: sum(row["models"][label]["output"]["different_numeric_count"] for row in cases) for label in MODES}
+    totals = {label: sum(row["models"][label]["output"]["different_numeric_count"] for row in cases) for label in modes}
     sources = {Path(path).name: sha(Path(path).read_bytes())
                for path in (__file__, model.__file__, mma_sm86_tiles.__file__)}
     return {"schema": "october_attention_tensor_comparison_v1", "source_sha256": sources,
             "capture_seal_sha256": seal, "full_dump_report_sha256": dump_sha, **hardware_info,
-            "capture_frame": sealed["frame"], "shape_hwc": shape, "tokens": tokens,
-            "scope": "Ampere split K16 MMA with host exponent, reduction and reciprocal; sealed inputs.",
+            "capture_frame": sealed["frame"], "shape_hwc": shape, "tokens": tokens, "storage_tokens": storage_tokens,
+            "scope": "64-key streaming with Ampere split K16 MMA, host exponent, reduction and reciprocal.",
             "cases": cases, "total_different_numeric_values": totals,
-            "bit_exact_gpu_mma": all(row["models"]["gpu_qk_pv"]["output"]["different_byte_count"] == 0 for row in cases)}
+            "bit_exact_gpu_mma": (all(row["models"]["gpu_qk_pv"]["output"]["different_byte_count"] == 0 for row in cases)
+                                  if "gpu_qk_pv" in modes else None)}
 
 
 def main():
@@ -152,11 +168,12 @@ def main():
     parser.add_argument("--blocks", type=int, nargs="+", choices=range(11, 19), default=list(range(11, 19)))
     parser.add_argument("--dump", type=Path)
     parser.add_argument("--device", type=int, default=0)
+    parser.add_argument("--modes", nargs="+", choices=MODES, default=MODES)
     args = parser.parse_args()
-    if len(set(args.blocks)) != len(args.blocks) or args.device < 0:
-        parser.error("use distinct block numbers and a nonnegative device")
+    if len(set(args.blocks)) != len(args.blocks) or len(set(args.modes)) != len(args.modes) or args.device < 0:
+        parser.error("use distinct block numbers and modes, and a nonnegative device")
     try:
-        report = run(args.capture, args.blocks, args.dump, args.device)
+        report = run(args.capture, args.blocks, args.dump, args.device, args.modes)
     except (OSError, ValueError, KeyError, RuntimeError) as error:
         print(json.dumps({"error": str(error)}, indent=2))
         return 1

@@ -271,7 +271,8 @@ def main(argv=None):
     parser.add_argument("--support", type=Path, default=ROOT / "dlss5")
     parser.add_argument("--tap-sha256", help="required for native; defaults to the pinned sm86 tap cubin on Ampere")
     parser.add_argument("--match-seal", type=Path, help="check case, roles, and support identity against a companion seal")
-    parser.add_argument("--suite", choices=("smoke", "october-mask", "temporal", "motion2d", "core", "full"), default="smoke")
+    parser.add_argument("--suite", choices=("smoke", "october-mask", "october-uhd", "temporal", "motion2d", "core", "full"),
+                        default="smoke")
     parser.add_argument("--case", default="reset")
     parser.add_argument("--frame", type=int, default=0)
     parser.add_argument("--timeout", type=finite_nonnegative, default=120)
