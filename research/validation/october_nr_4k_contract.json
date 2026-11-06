@@ -1,0 +1,649 @@
+{
+  "schema": 1,
+  "date": "2026-11-06",
+  "status": "verified_scoped_contract",
+  "scope": "Offline CPU audit of existing one-frame D3D12 RTX 3060 captures on staged 310.9.16, preset 2, sRGB, synthetic scene 0. No new GPU execution.",
+  "source_provenance": {
+    "official_original": {
+      "path": "_dl/october_nr_20261106/original/nvngx_dlssnr.dll",
+      "sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f"
+    },
+    "staged_nr_dll_sha256": "2d3e405535cfb574828a5940f62d14952044f4feb1013caf9e7b9240385506ed",
+    "staged_host_evidence": {
+      "path": "research/validation/october_nr_staged_host.json",
+      "sha256": "72d88471d4f87743a5ee719ec4494ef2f7d76a78d033eb4e586c0a7e162c868b"
+    },
+    "native_kernel_evidence": {
+      "path": "research/validation/october_nr_remix_kernels.json",
+      "sha256": "bbf13b4916193f94427021e016e08675fbdd6175016c187e812267dc4693e324"
+    },
+    "native_ptx_abi": {
+      "1": {
+        "path": "_dl/october_nr_20261106/candidate_extract/fatbin_01.1.sm_120.ptx",
+        "sha256": "cf24a2f92c2b398764de29474d66ee996bd54a07be0bdfee1239885f74fbefa4",
+        "entry": "cc_tinlayout_fused_post_block_swin_1h_32_fp8",
+        "parameter_bytes": 184,
+        "sampling_extent_wh_i32_offsets": [
+          172,
+          176
+        ],
+        "source_line_ranges": [
+          [
+            29963,
+            29980
+          ],
+          [
+            41920,
+            41929
+          ]
+        ]
+      },
+      "14": {
+        "path": "_dl/october_nr_20261106/candidate_extract/fatbin_14.1.sm_120.ptx",
+        "sha256": "13640f51aec2492f88dd2ad50e603beaaae63f56de2ae6c3764bca624ffaf65b",
+        "entry": "cg2r_post_process_kernel",
+        "parameter_bytes": 376,
+        "write_guard_wh_i32_offsets": [
+          292,
+          296
+        ],
+        "source_line_ranges": [
+          [
+            16,
+            43
+          ]
+        ],
+        "role": "Optional style/image post-processing entry, absent in both traced runs."
+      },
+      "15": {
+        "path": "_dl/october_nr_20261106/candidate_extract/fatbin_15.1.sm_120.ptx",
+        "sha256": "e3efb4f68797cad3bb9492431ca3c024b9eca70591cc39384d8c9f61c115c322",
+        "entry": "cg2r_copy_kernel",
+        "parameter_bytes": 72,
+        "write_guard_wh_i32_offsets": [
+          64,
+          68
+        ],
+        "output_origin_xy_f32_offsets": [
+          40,
+          44
+        ],
+        "source_line_ranges": [
+          [
+            15,
+            42
+          ],
+          [
+            58,
+            63
+          ]
+        ],
+        "role": "Guards each output thread on supplied extent and adds supplied destination origin; allocation size alone does not extend the launch."
+      }
+    },
+    "local_code_for_interpretation": [
+      {
+        "path": "harness/nr-lab.cpp",
+        "sha256": "427f6a0c91d685e92305f3e99f59384bd93493e3002a825a332f27efdcfc467d"
+      },
+      {
+        "path": "harness/nvprof.h",
+        "sha256": "d81c39354326a58103af386a847999a3c24318a0a34e464a4bf492ff4928dcc4"
+      }
+    ],
+    "original_scaling_callback": {
+      "function_rva": "0x12740",
+      "quality_switch_rva_range": [
+        "0x127c1",
+        "0x127f3"
+      ],
+      "accepted_perf_quality_to_ratio": {
+        "2": 1,
+        "4": 0.85,
+        "5": 1
+      },
+      "unsupported_quality_result": "0xBAD00010",
+      "ratio_uses_geometry": false
+    }
+  },
+  "batch8_runtime_sha256": {
+    "nr-lab.exe": "c53e1084e3c7368defa4b37d3fbf08d441ce64ab9019104f9418fc1a1f0a1414",
+    "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+    "nvngx_dlssnr.dll": "2d3e405535cfb574828a5940f62d14952044f4feb1013caf9e7b9240385506ed",
+    "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+    "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+  },
+  "cases": {
+    "raw_nr_4k": {
+      "arguments": [
+        "--nr-only",
+        "--input",
+        "1920x1080",
+        "--output",
+        "3840x2160",
+        "--frames",
+        "1",
+        "--model",
+        "2",
+        "--scene-variant",
+        "0"
+      ],
+      "process_exit_code": 5,
+      "manifest": {
+        "path": "_dl/october_nr_20261106/batch8/raw_nr_4k/run.json",
+        "sha256": "159a0be3a1c7413d5485cee5a79d0702053136c8c9afdcfd0363d9cd265b0bde"
+      },
+      "result": {
+        "path": "_dl/october_nr_20261106/batch8/raw_nr_4k/nr-lab-result.json",
+        "sha256": "347cb007dc82fa3f8b95305e242c5e7a4d7dd6d9d086d6f12181cc95aeefa6b5"
+      },
+      "provider_log": {
+        "path": "_dl/october_nr_20261106/batch8/raw_nr_4k/nr-lab.log",
+        "sha256": "810991b7d8ab84a90b085b03a2d2d5c42486c5879aa59a4a1c75b16ed0a90495"
+      },
+      "stdout": {
+        "path": "_dl/october_nr_20261106/batch8/raw_nr_4k/stdout.log",
+        "sha256": "afe36e41348ee3f63c3da6f123c4078d4d28c1f9b911d32a405ec44fffd2f074"
+      },
+      "rendered_ppm": {
+        "path": "_dl/october_nr_20261106/batch8/raw_nr_4k/nr-lab-output-model2-srgb.ppm",
+        "sha256": "f75f15915ba7e356cd3c75fdaa3a94e569e9845bf14967ab0a6679c77a5ebf77"
+      },
+      "feature18": {
+        "creation_and_frame0_evaluation_succeeded": true,
+        "color_subrect_wh": [
+          1920,
+          1080
+        ],
+        "output_subrect_wh": [
+          3840,
+          2160
+        ],
+        "scaling_callback": {
+          "quality": 0,
+          "result": "0xBAD00010",
+          "requested": 0.5,
+          "resolved": 1.0
+        }
+      },
+      "feature1": null,
+      "nr_cuda_trace": {
+        "file": {
+          "path": "_dl/october_nr_20261106/batch8/raw_nr_4k/nr-trace.tsv",
+          "sha256": "cb5657bd971ba4f174eceef5bc5507b98ca2429c0ce877b8896a26788e66f4b6"
+        },
+        "observed_rows": 81,
+        "last_nr_network_post": {
+          "trace_line": 79,
+          "frame": 0,
+          "sequence": 78,
+          "entry": "cc_tinlayout_fused_post_block_swin_1h_32_fp8",
+          "grid_xyz": [
+            241,
+            145,
+            1
+          ],
+          "block_xyz": [
+            32,
+            1,
+            1
+          ],
+          "parameter_bytes": 184,
+          "parameter_sha256": "2896e6259b135ecf305e01bb0601013de84d1c7545312ffe77245c606203a0e8",
+          "network_extent_hw_at_32_36": [
+            1152,
+            1920
+          ],
+          "sampling_extent_wh_at_172_176": [
+            1920,
+            1080
+          ]
+        },
+        "trailing_copy_dispatches": [
+          {
+            "trace_line": 80,
+            "frame": 0,
+            "sequence": 79,
+            "entry": "cg2r_copy_kernel",
+            "grid_xyz": [
+              120,
+              68,
+              1
+            ],
+            "block_xyz": [
+              16,
+              16,
+              1
+            ],
+            "parameter_bytes": 72,
+            "parameter_sha256": "d3670d55ee830234b82ce4aa39883352b3976e293c959ec27ba04786983c4c51",
+            "write_extent_wh_at_64_68": [
+              1920,
+              1080
+            ],
+            "output_origin_xy_at_40_44": [
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "trace_line": 81,
+            "frame": 0,
+            "sequence": 80,
+            "entry": "cg2r_copy_kernel",
+            "grid_xyz": [
+              120,
+              68,
+              1
+            ],
+            "block_xyz": [
+              16,
+              16,
+              1
+            ],
+            "parameter_bytes": 72,
+            "parameter_sha256": "3a5fb1fb48df8663e4ebd603a87c0ad6c0e0371a9ff38a8a3d4b25c644f0a42c",
+            "write_extent_wh_at_64_68": [
+              1920,
+              1080
+            ],
+            "output_origin_xy_at_40_44": [
+              0.0,
+              0.0
+            ]
+          }
+        ],
+        "optional_cg2r_post_process_dispatched": false
+      },
+      "rgba_coverage_percent": 25.0,
+      "rgba_quadrant_coverage_percent": {
+        "top_left": 100.0,
+        "top_right": 0.0,
+        "bottom_left": 0.0,
+        "bottom_right": 0.0
+      },
+      "rgba_fnv1a64": "D18517FCDDF26DC3",
+      "independent_rgb_coverage": {
+        "pixels": 8294400,
+        "non_sentinel_pixels": 2073600,
+        "non_sentinel_pixels_by_quadrant": {
+          "top_left": 2073600,
+          "top_right": 0,
+          "bottom_left": 0,
+          "bottom_right": 0
+        }
+      }
+    },
+    "compact_sr_i1": {
+      "arguments": [
+        "--compact-nr",
+        "--input",
+        "1920x1080",
+        "--output",
+        "3840x2160",
+        "--frames",
+        "1",
+        "--model",
+        "2",
+        "--scene-variant",
+        "0",
+        "--intensity",
+        "1"
+      ],
+      "process_exit_code": 0,
+      "manifest": {
+        "path": "_dl/october_nr_20261106/batch8/compact_sr_i1/run.json",
+        "sha256": "31c888f937b22c31aeebd971bcc6832b239d39d90df596441bd81d82dd8c93bd"
+      },
+      "result": {
+        "path": "_dl/october_nr_20261106/batch8/compact_sr_i1/nr-lab-result.json",
+        "sha256": "174955b884ec374577ab301f64187ad9ebbead322e1bc546d854e8043ecf47f7"
+      },
+      "provider_log": {
+        "path": "_dl/october_nr_20261106/batch8/compact_sr_i1/nr-lab.log",
+        "sha256": "d07952957862db41530c9e1fe036f9aa34423e76ebf69ead1a48826ceffab969"
+      },
+      "stdout": {
+        "path": "_dl/october_nr_20261106/batch8/compact_sr_i1/stdout.log",
+        "sha256": "03a098321dc52c6392653535126d2ce99d8b407111f28fa78ad94c0bbb472f49"
+      },
+      "rendered_ppm": {
+        "path": "_dl/october_nr_20261106/batch8/compact_sr_i1/nr-lab-output-model2-srgb.ppm",
+        "sha256": "c75b7352c32baf5f8f31cd6c4b95629f93bfef5860cc53d0c5347ca3b3653730"
+      },
+      "feature18": {
+        "creation_and_frame0_evaluation_succeeded": true,
+        "color_subrect_wh": [
+          1920,
+          1080
+        ],
+        "output_subrect_wh": [
+          1920,
+          1080
+        ],
+        "scaling_callback": {
+          "quality": 4,
+          "result": "0x00000001",
+          "requested": 1.0,
+          "resolved": 0.85
+        }
+      },
+      "feature1": {
+        "feature_id": 1,
+        "creation_and_frame0_evaluation_succeeded": true,
+        "quality": 0,
+        "input_wh": [
+          1920,
+          1080
+        ],
+        "render_subrect_wh": [
+          1920,
+          1080
+        ],
+        "output_wh": [
+          3840,
+          2160
+        ],
+        "nr_output_equals_sr_color_resource": true,
+        "sr_output_is_distinct_resource": true
+      },
+      "nr_cuda_trace": {
+        "file": {
+          "path": "_dl/october_nr_20261106/batch8/compact_sr_i1/nr-trace.tsv",
+          "sha256": "397be5d63cff5d888273fceb9b3493f525926eee206dfefb33324645e47cef0f"
+        },
+        "observed_rows": 80,
+        "last_nr_network_post": {
+          "trace_line": 79,
+          "frame": 0,
+          "sequence": 78,
+          "entry": "cc_tinlayout_fused_post_block_swin_1h_32_fp8",
+          "grid_xyz": [
+            241,
+            145,
+            1
+          ],
+          "block_xyz": [
+            32,
+            1,
+            1
+          ],
+          "parameter_bytes": 184,
+          "parameter_sha256": "2a1e1d8ff3174ab6e8e3673d89e365cf82f9fa10a597b245a1c7f61b86130aa2",
+          "network_extent_hw_at_32_36": [
+            1152,
+            1920
+          ],
+          "sampling_extent_wh_at_172_176": [
+            1920,
+            1080
+          ]
+        },
+        "trailing_copy_dispatches": [
+          {
+            "trace_line": 80,
+            "frame": 0,
+            "sequence": 79,
+            "entry": "cg2r_copy_kernel",
+            "grid_xyz": [
+              120,
+              68,
+              1
+            ],
+            "block_xyz": [
+              16,
+              16,
+              1
+            ],
+            "parameter_bytes": 72,
+            "parameter_sha256": "c905062df527fdf95c1c51ae249e31149ce5f36c295c6919a531f3d25692bedd",
+            "write_extent_wh_at_64_68": [
+              1920,
+              1080
+            ],
+            "output_origin_xy_at_40_44": [
+              0.0,
+              0.0
+            ]
+          }
+        ],
+        "optional_cg2r_post_process_dispatched": false
+      },
+      "rgba_coverage_percent": 100.0,
+      "rgba_quadrant_coverage_percent": {
+        "top_left": 100.0,
+        "top_right": 100.0,
+        "bottom_left": 100.0,
+        "bottom_right": 100.0
+      },
+      "rgba_fnv1a64": "2BF821DD56721628",
+      "independent_rgb_coverage": {
+        "pixels": 8294400,
+        "non_sentinel_pixels": 8294400,
+        "non_sentinel_pixels_by_quadrant": {
+          "top_left": 2073600,
+          "top_right": 2073600,
+          "bottom_left": 2073600,
+          "bottom_right": 2073600
+        }
+      }
+    },
+    "compact_sr_i0": {
+      "arguments": [
+        "--compact-nr",
+        "--input",
+        "1920x1080",
+        "--output",
+        "3840x2160",
+        "--frames",
+        "1",
+        "--model",
+        "2",
+        "--scene-variant",
+        "0",
+        "--intensity",
+        "0"
+      ],
+      "process_exit_code": 0,
+      "manifest": {
+        "path": "_dl/october_nr_20261106/batch8/compact_sr_i0/run.json",
+        "sha256": "c14d5add5d75e2a5b75d048fb5c2e790e535c20e343421e329f395f71b94fb6c"
+      },
+      "result": {
+        "path": "_dl/october_nr_20261106/batch8/compact_sr_i0/nr-lab-result.json",
+        "sha256": "d926f52e9a131e7ac5d4dcda9a21f2e3074e85c18141658ed506eb2d035c1888"
+      },
+      "provider_log": {
+        "path": "_dl/october_nr_20261106/batch8/compact_sr_i0/nr-lab.log",
+        "sha256": "52e23061403f7e598c49dc99305fe8ac4ffec6eb3b9015f83b9ff808d50dd323"
+      },
+      "stdout": {
+        "path": "_dl/october_nr_20261106/batch8/compact_sr_i0/stdout.log",
+        "sha256": "52e23061403f7e598c49dc99305fe8ac4ffec6eb3b9015f83b9ff808d50dd323"
+      },
+      "rendered_ppm": {
+        "path": "_dl/october_nr_20261106/batch8/compact_sr_i0/nr-lab-output-model2-srgb.ppm",
+        "sha256": "bd19d0b40124c8f503ec596e74fb23933686db39d5617b0e67203ba7648a63c4"
+      },
+      "feature18": {
+        "creation_and_frame0_evaluation_succeeded": true,
+        "color_subrect_wh": [
+          1920,
+          1080
+        ],
+        "output_subrect_wh": [
+          1920,
+          1080
+        ],
+        "scaling_callback": {
+          "quality": 4,
+          "result": "0x00000001",
+          "requested": 1.0,
+          "resolved": 0.85
+        }
+      },
+      "feature1": {
+        "feature_id": 1,
+        "creation_and_frame0_evaluation_succeeded": true,
+        "quality": 0,
+        "input_wh": [
+          1920,
+          1080
+        ],
+        "render_subrect_wh": [
+          1920,
+          1080
+        ],
+        "output_wh": [
+          3840,
+          2160
+        ],
+        "nr_output_equals_sr_color_resource": true,
+        "sr_output_is_distinct_resource": true
+      },
+      "nr_cuda_trace": null,
+      "rgba_coverage_percent": 100.0,
+      "rgba_quadrant_coverage_percent": {
+        "top_left": 100.0,
+        "top_right": 100.0,
+        "bottom_left": 100.0,
+        "bottom_right": 100.0
+      },
+      "rgba_fnv1a64": "819A28860050BCE4",
+      "independent_rgb_coverage": {
+        "pixels": 8294400,
+        "non_sentinel_pixels": 8294400,
+        "non_sentinel_pixels_by_quadrant": {
+          "top_left": 2073600,
+          "top_right": 2073600,
+          "bottom_left": 2073600,
+          "bottom_right": 2073600
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "raw_nr_4k_crop_vs_historical_1080p_nr": {
+      "crop_xywh": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "comparison": {
+        "compared_pixels": 2073600,
+        "changed_rgb_pixels": 176050,
+        "changed_rgb_percent": 8.490065586419753,
+        "different_channels": 179533,
+        "mae_rgb_8bit_levels": 0.02886011445473251,
+        "rmse_rgb_8bit_levels": 0.16988264906909273,
+        "max_abs_channel_8bit_levels": 1
+      },
+      "crop_rgb_bytes_sha256": "8d1723a0851cd5d4b3864bdba0d23816391a29555cb070915320297aaa8004c1",
+      "reference_rgb_bytes_sha256": "473b2fa7f19ccb498f5ac202194ca800594deb5f8b2ca17b72f5786a8668c09c",
+      "reference_manifest": {
+        "path": "_dl/october_nr_20261106/staged_highres/run.json",
+        "sha256": "2c5ec0b3eaf02f68e8db26a3d4bd551050896cabc7b52fd3cde70a01c0b6c478"
+      },
+      "reference_result": {
+        "path": "_dl/october_nr_20261106/staged_highres/nr_1080/nr-lab-result.json",
+        "sha256": "c3541aec0d95e468f8d3619f305617f62ced5c70f429ed1bf755cfef29d7dded"
+      },
+      "reference_log": {
+        "path": "_dl/october_nr_20261106/staged_highres/nr_1080/nr-lab.log",
+        "sha256": "bfeca85e84fda784c994a220599481eba3ad14a9316a88b044ee5b23fd1fc8c9"
+      },
+      "reference_ppm": {
+        "path": "_dl/october_nr_20261106/staged_highres/nr_1080/nr-lab-output-model2-srgb.ppm",
+        "sha256": "c00a34456b69f9bf0fd18cdbec6f12980c271faeaceb5ab3e101cb8bbde9c842"
+      },
+      "reference_runtime_sha256": {
+        "nr-lab.exe": "3579416d65e21209a2f8d95c174f08513f50832033dbb526d60a20104cd2d00b",
+        "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+        "nvngx_dlssnr.dll": "2d3e405535cfb574828a5940f62d14952044f4feb1013caf9e7b9240385506ed",
+        "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+        "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+      },
+      "reference_arguments": [
+        "--nr-only",
+        "--input",
+        "1920x1080",
+        "--output",
+        "1920x1080",
+        "--frames",
+        "1",
+        "--model",
+        "2",
+        "--intensity",
+        "1",
+        "--scene-variant",
+        "0"
+      ],
+      "same_nr_dll_different_harness_exe": true,
+      "reference_nr_scaling_ratio": 0.85,
+      "raw_nr_scaling_ratio": 1.0
+    },
+    "compact_sr_4k_intensity_0_vs_1": {
+      "paired_same_runtime_and_arguments_except_intensity": true,
+      "full_rgb": {
+        "compared_pixels": 8294400,
+        "changed_rgb_pixels": 8294384,
+        "changed_rgb_percent": 99.99980709876543,
+        "different_channels": 24727060,
+        "mae_rgb_8bit_levels": 10.982106159979423,
+        "rmse_rgb_8bit_levels": 11.76829232447011,
+        "max_abs_channel_8bit_levels": 82
+      },
+      "quadrant_rgb": {
+        "top_left": {
+          "compared_pixels": 2073600,
+          "changed_rgb_pixels": 2073598,
+          "changed_rgb_percent": 99.99990354938272,
+          "different_channels": 6180558,
+          "mae_rgb_8bit_levels": 10.980590117026749,
+          "rmse_rgb_8bit_levels": 11.76796270169163,
+          "max_abs_channel_8bit_levels": 76
+        },
+        "top_right": {
+          "compared_pixels": 2073600,
+          "changed_rgb_pixels": 2073595,
+          "changed_rgb_percent": 99.99975887345678,
+          "different_channels": 6180277,
+          "mae_rgb_8bit_levels": 10.96205279063786,
+          "rmse_rgb_8bit_levels": 11.77453235880383,
+          "max_abs_channel_8bit_levels": 72
+        },
+        "bottom_left": {
+          "compared_pixels": 2073600,
+          "changed_rgb_pixels": 2073597,
+          "changed_rgb_percent": 99.99985532407408,
+          "different_channels": 6183501,
+          "mae_rgb_8bit_levels": 10.99501334233539,
+          "rmse_rgb_8bit_levels": 11.757709518487943,
+          "max_abs_channel_8bit_levels": 82
+        },
+        "bottom_right": {
+          "compared_pixels": 2073600,
+          "changed_rgb_pixels": 2073594,
+          "changed_rgb_percent": 99.99971064814814,
+          "different_channels": 6182724,
+          "mae_rgb_8bit_levels": 10.990768389917696,
+          "rmse_rgb_8bit_levels": 11.772957376915222,
+          "max_abs_channel_8bit_levels": 75
+        }
+      }
+    },
+    "method": "Read P6 RGB8 pixels. Coverage counts pixels different from the SDR sentinel RGB (13,37,73), independently of the harness RGBA check. Difference statistics use per-channel absolute/squared code-value differences and any-channel pixel changes."
+  },
+  "findings": [
+    "Standalone feature 18 reads a 3840x2160 OutputSubrect, but both final NR copy dispatches have origin (0,0) and 1920x1080 write bounds. Only 2,073,600 of 8,294,400 output pixels change. Create/evaluate success does not establish target coverage.",
+    "Compact feature 18 uses 1920x1080 color and output rectangles and writes that extent. The downstream feature 1 reads the identical NR output resource as its 1920x1080 Color and writes a distinct 3840x2160 output resource. Both paired final images cover every quadrant.",
+    "Both traced runs end their NR network in fused post and explicit copy kernels; the optional cg2r_post_process_kernel is not dispatched. The fused post sampling extent remains 1920x1080 in both runs."
+  ],
+  "limits": [
+    "Input is a deterministic harness pattern bound by the exact runtime and recorded arguments; independent input-pixel dumps were not captured.",
+    "The intensity pair measures the effect through a common NR+SR chain; intensity zero is still feature 18 followed by feature 1.",
+    "The historical same-size reference uses another harness build and a different provider-resolved ratio, so the crop comparison is near agreement, not a bit-exact invariant.",
+    "This establishes the tested path and resolution contract. Native RTX 50 reference fidelity, temporal quality, real game compatibility and performance are outside this report."
+  ]
+}

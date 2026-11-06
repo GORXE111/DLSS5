@@ -1,0 +1,130 @@
+{
+  "schema": "october_nr_attention_cpu_v1",
+  "frame": 0,
+  "run_sha256": "01f1f4bc18843ac06f4b72f71aa094fa2083fcca3ad19e69e2ad0c9f1d11eeb5",
+  "pinned_staged_dll_sha256": "2d3e405535cfb574828a5940f62d14952044f4feb1013caf9e7b9240385506ed",
+  "trace_sha256": "83117a9b433be1795a65ced2dcc1863d36d61efab42778e8a6831506dd709f2f",
+  "tap_index_sha256": "20788704773028efa5fb9c9ae7b0869460d1f0e7efe3e498be303b19b8654fc7",
+  "tap_spec": "0;23:p0:98304;23:p1:98304;23:p2:98304;23:p3:98304;58:p0:98304;58:p1:98304;58:p2:98304;58:p3:98304",
+  "source_sha256": "ab1d10bcc0a1e31960b1f9d8bb3825733778e3b1fe70f58bc432ad7770f5f2bd",
+  "cases": [
+    {
+      "sequence": 23,
+      "chain": 23,
+      "kernel": "cc_vit_1d_attention_chained_fp8",
+      "grid": [
+        32,
+        1,
+        1
+      ],
+      "block": [
+        32,
+        4,
+        1
+      ],
+      "shared_memory": 0,
+      "parameter_bytes": 64,
+      "parameter_sha256": "27d490124646b8a264d4e0a649ccbae5630831d71d7ca019bc9066f4ada0b5f3",
+      "height": 8,
+      "width": 12,
+      "tokens": 96,
+      "heads": 32,
+      "head_dim": 32,
+      "payloads": [
+        {
+          "role": "q",
+          "address": "0x190ff000",
+          "bytes": 98304,
+          "sha256": "32fc9579f71cd9a46df74e4478a10e53c72645266f1c39631f1af46b64afcf46"
+        },
+        {
+          "role": "k",
+          "address": "0x190e7000",
+          "bytes": 98304,
+          "sha256": "505f202f8b6fc40bba130b560ac974e49289ca5522684c09af0317974ef068ec"
+        },
+        {
+          "role": "v",
+          "address": "0x190cf000",
+          "bytes": 98304,
+          "sha256": "ea475c5e469c9ffc72fd7f0b923ef9002b30f378522a5828506a02c193ed7da2"
+        },
+        {
+          "role": "out",
+          "address": "0x19117000",
+          "bytes": 98304,
+          "sha256": "4668a61ca71189b18ced85e80188cbbb1bb996c7cd0db975a72353754a13ec14"
+        }
+      ],
+      "expected_packed_output_sha256": "d458014af083b27bc8a36746f143f1e54f5c57cab1b76a6ec035b2a1301d34bc",
+      "values": 98304,
+      "different_byte_count": 731,
+      "different_numeric_count": 730,
+      "exact_numeric_fraction": 0.9925740559895834,
+      "mae": 0.0020895799001057944,
+      "max_abs": 2.0,
+      "within_one_e4m3_step_fraction": 1.0,
+      "max_e4m3_steps": 1
+    },
+    {
+      "sequence": 58,
+      "chain": 58,
+      "kernel": "cc_vit_1d_attention_chained_fp8",
+      "grid": [
+        32,
+        1,
+        1
+      ],
+      "block": [
+        32,
+        4,
+        1
+      ],
+      "shared_memory": 0,
+      "parameter_bytes": 64,
+      "parameter_sha256": "f48390c3842d90c2ec119e61630031c564da23980a0396ab5c4a048c55170d02",
+      "height": 8,
+      "width": 12,
+      "tokens": 96,
+      "heads": 32,
+      "head_dim": 32,
+      "payloads": [
+        {
+          "role": "q",
+          "address": "0x19177000",
+          "bytes": 98304,
+          "sha256": "35508ced41df48a345a24c9555ad058dbe249ea281455d67054020cd6a08d1a1"
+        },
+        {
+          "role": "k",
+          "address": "0x1915f000",
+          "bytes": 98304,
+          "sha256": "91c24cf53f730b4a8e3e7a8bc8208034e6b35b6301012c4e63c070dfb691fce2"
+        },
+        {
+          "role": "v",
+          "address": "0x19147000",
+          "bytes": 98304,
+          "sha256": "fb0be5948e386808e14d25086ffb2d8a1ae56d9a9a599e718165945ba0b494f0"
+        },
+        {
+          "role": "out",
+          "address": "0x19117000",
+          "bytes": 98304,
+          "sha256": "fa59a410e1fa2f46e0986f7ef12f59ad060baa14b8694801ac53f813fe6cc5ba"
+        }
+      ],
+      "expected_packed_output_sha256": "be5bbd5b5b4b89d12903e28be22faef3ff7a62cc80f1235edd1151cbd228c004",
+      "values": 98304,
+      "different_byte_count": 1866,
+      "different_numeric_count": 1828,
+      "exact_numeric_fraction": 0.9814046223958334,
+      "mae": 0.0014072457949320476,
+      "max_abs": 0.5,
+      "within_one_e4m3_step_fraction": 0.9999491373697916,
+      "max_e4m3_steps": 3
+    }
+  ],
+  "scope": "Offline arithmetic for the tapped staged sm86 attention only. CPU MMA internals and reciprocal are approximations. Capture run hashes its metadata and logs; individual tensor hashes are recorded by this checker.",
+  "bit_exact": false
+}

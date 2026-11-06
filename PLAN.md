@@ -8,6 +8,11 @@
 
 本地约束：不启动联网游戏，不访问 `E:\ZZZ`；NVIDIA 二进制、权重、提取/改写后的 PTX、cubin 与测试画面不进入 Git。此次研究使用 RTX 3060 12 GB、驱动 610.74。
 
+## 2026-11-06 第八批 · 4K 接入和逐层数值
+
+- 真实提交确认 standalone 的 copy 限于 1920×1080。紧凑 NR 串 DLSS SR 写满 3840×2160。DXGI 代理通过预设 2 在真实 Sponza 同帧将 1080p 模型改动合成回 4K。[4K 接入实测](research/october_nr_render_pipeline.md)
+- 首帧已抓取 73 个受支持的张量边界。首尾 attention 的独立 CPU 数值分别有 99.2574% 和 98.1405% 精确相同。RTX 50 逐层取样和同角色比对是下一项验收。[逐层实测](research/october_nr_render_pipeline.md)
+
 ## 2026-11-06 第七批 · 十月小模型整网
 
 - 310.9.16.0 预设 2 的独立 sm_86 实验版通过 13 个 D3D12 用例。四帧真实提交与静态图吻合，显存中的 77 条权重记录与原件逐条相符，首尾 ViT 重排和 CPU 独立计算逐字节一致。[整网实测](research/october_nr_ampere_runtime.md)

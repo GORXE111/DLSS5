@@ -1,6 +1,6 @@
 # DLSS-NR 310.8.0 逆向与 RTX 30 移植
 
-更新：2026-11-06。现有移植和独立参考主线锁定 NVIDIA `nvngx_dlssnr.dll` **310.8.0** 的 Neural Rendering（NR，feature 18）。官方 RTX Remix **310.9.16.0** Small FP8 隔离实验版已在 RTX 3060 上完成 D3D12 整网评估及 4K 同尺寸捕获。
+2026-11-06 更新。现有移植和独立参考主线锁定 NVIDIA `nvngx_dlssnr.dll` **310.8.0** 的 Neural Rendering（NR，feature 18）。官方 RTX Remix **310.9.16.0** Small FP8 隔离实验版已在 RTX 3060 上完成 D3D12 整网评估、1080p NR 串联 4K SR，以及真实 4K 场景回写。
 
 **状态：原始权重和完整主网络已经恢复，RTX 3060 移植可运行；独立 PyTorch 实现高度接近移植版。尚未完成与 RTX 50 原生输出的严格等价验收。**
 
@@ -14,6 +14,7 @@
 不得把整图相关系数当“还原百分比”。插件与 nr-lab 的逐字节一致，验证的是同一移植版经过不同接入路径的自洽性。
 
 - [十月版 Small FP8 整网实测](research/october_nr_ampere_runtime.md)。13 个合成用例通过，77 条 GPU 权重记录与原件相符，四帧提交和 ViT 边界张量已核对。RTX 50 原版数值对照仍待验收。[静态图](research/october_nr_small_execution.md) · [原件调查](research/october_nr_remix.md)
+- [十月版 4K 接入和注意力复核](research/october_nr_render_pipeline.md)。已定位独立 NR 的 1080p 写入范围，两条 4K 输出路径通过实测。首尾 ViT 有独立算术结果和可供原版捕获复用的张量角色。
 - [离线同帧查看器](research/nr_viewer/README.md)：从本地捕获生成可拖动的前后对照、热图和原尺寸局部。已用同一次 Present 的 3840×2160 画面及 1920×1080 NR 工作纹理验证；[测量报告](research/validation/batch5_sponza_capture.json)。
 
 ## 数据与来源

@@ -91,6 +91,7 @@
 |---|---|---|
 | Enabled | 1 | 0 = 原样放过 |
 | WorkingScale | 0.5 | 模型分辨率占画面的比例 (0.25~1) |
+| RenderPreset | 1 | 十月版隔离实验可选 `2` 以加载 Small FP8。切换预设时重建特征并重置历史。[十月版场景实测](../../research/october_nr_render_pipeline.md) |
 | Intensity / LocalTone / LocalStructure / SkinStructure / AutoMask / Style | 1 / 1 / 1 / -1 / 1 / 0 | DLSSNR 画面参数，含义见 `torch/README.md` |
 | Temporal | 1 | 1 = 历史帧 + 光流运动矢量；0 = 每帧重置 |
 | FlowPerf / FlowGrid / FlowRefine / FlowFilter | 5 / 2 / 2 / 1 | 光流质量 (5 最好、10 中、20 快)、每个矢量覆盖的像素、Lucas-Kanade 轮数、3x3 中值 |

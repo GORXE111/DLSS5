@@ -66,6 +66,7 @@ struct Config {
     float local_structure = 1.0f;
     float skin_structure = -1.0f;
     int auto_mask = 1;
+    int render_preset = 1;
     int style = 0;
     int temporal = 1;              // 1: keep NR history, motion vectors from optical flow (0: every frame is a reset frame)
     int flow_perf = NV_OF_PERF_LEVEL_SLOW;     // optical flow quality: 5 slow/best (+1 ms vs medium at 540p, half the shimmer), 10 medium, 20 fast
@@ -122,6 +123,9 @@ static Config ReadConfig()
     c.local_structure = IniFloat(L"LocalStructure", c.local_structure);
     c.skin_structure = IniFloat(L"SkinStructure", c.skin_structure);
     c.auto_mask = IniInt(L"AutoMask", c.auto_mask);
+    wchar_t preset[8];
+    GetPrivateProfileStringW(L"DLSS5", L"RenderPreset", L"1", preset, _countof(preset), IniPath().c_str());
+    if (preset[0] == L'2' && preset[1] == L'\0') c.render_preset = 2;
     c.style = IniInt(L"Style", c.style);
     c.temporal = IniInt(L"Temporal", c.temporal);
     c.flow_perf = IniInt(L"FlowPerf", c.flow_perf);
@@ -280,7 +284,7 @@ static bool InitNgx(ID3D12Device *device)
 static void SetControls(NVSDK_NGX_Parameter *p, const Config &c)
 {
     p->Set("DLSSNR.Enabled", 1u);
-    p->Set("DLSSNR.Hint.Render.Preset", 1);
+    p->Set("DLSSNR.Hint.Render.Preset", c.render_preset);
     p->Set("DLSSNR.Style", static_cast<unsigned int>(c.style));
     p->Set("DLSSNR.Intensity", c.intensity);
     p->Set("DLSSNR.LocalToneStrength", c.local_tone);
@@ -753,6 +757,7 @@ struct Chain {
     NVSDK_NGX_Handle *feature = nullptr;
     int feature_style = -1;
     int feature_linear = -1;
+    int feature_preset = -1;
 
     // D3D11 game: DLSS-NR has no D3D11 path (its Init_Ext returns "not supported"), so the pipeline runs on our own
     // D3D12 device and queue, on a texture shared with the game's device. Each frame: D3D11 copies the back buffer
@@ -1049,10 +1054,12 @@ static bool CreateFeature(Chain *c)
     NVSDK_NGX_Result r = SehCreate(c->list, &c->feature, &code);
     Submit(c, slot);
     WaitIdle(c);
-    Log("CreateFeature(18) %ux%u style=%d = 0x%08X seh=0x%08X handle=%p", c->w, c->h, c->cfg.style,
+    Log("CreateFeature(18) %ux%u style=%d preset=%d = 0x%08X seh=0x%08X handle=%p",
+        c->w, c->h, c->cfg.style, c->cfg.render_preset,
         static_cast<unsigned>(r), code, c->feature);
     c->feature_style = c->cfg.style;
     c->feature_linear = c->cfg.linear;
+    c->feature_preset = c->cfg.render_preset;
     return code == 0 && NVSDK_NGX_SUCCEED(r) && c->feature != nullptr;
 }
 
@@ -1152,7 +1159,8 @@ static int EnsureSized(Chain *c, const D3D12_RESOURCE_DESC &bb)
     UINT w = std::max(64u, static_cast<UINT>(std::lround(W * c->cfg.scale)));
     UINT h = std::max(64u, static_cast<UINT>(std::lround(H * c->cfg.scale)));
     if (c->W == W && c->H == H && c->w == w && c->h == h && c->format == bb.Format && c->feature &&
-        c->feature_style == c->cfg.style && c->feature_linear == c->cfg.linear)
+        c->feature_style == c->cfg.style && c->feature_linear == c->cfg.linear &&
+        c->feature_preset == c->cfg.render_preset)
         return 1;
     // creating the NR feature takes 0.3-1 s: while a window is being resized, pass frames through until
     // the size has stayed the same for 250 ms
@@ -1369,9 +1377,9 @@ static void ProcessFrame(Chain *c)
             bool first = c->ini_time.dwLowDateTime == 0 && c->ini_time.dwHighDateTime == 0;
             c->ini_time = t;
             c->cfg = ReadConfig();
-            Log("%s config: enabled=%d scale=%.3f intensity=%.2f tone=%.2f structure=%.2f skin=%.2f mask=%d style=%d temporal=%d ui=%d",
+            Log("%s config: enabled=%d scale=%.3f intensity=%.2f tone=%.2f structure=%.2f skin=%.2f mask=%d style=%d preset=%d temporal=%d ui=%d",
                 first ? "loaded" : "reloaded", c->cfg.enabled, c->cfg.scale, c->cfg.intensity, c->cfg.local_tone,
-                c->cfg.local_structure, c->cfg.skin_structure, c->cfg.auto_mask, c->cfg.style, c->cfg.temporal,
+                c->cfg.local_structure, c->cfg.skin_structure, c->cfg.auto_mask, c->cfg.style, c->cfg.render_preset, c->cfg.temporal,
                 c->cfg.ui_protect ? c->cfg.ui_frames : 0);
         }
     }
