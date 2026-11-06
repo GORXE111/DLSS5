@@ -1,0 +1,55 @@
+{
+  "schema": "october_nr_vit_repack_v1",
+  "capture_seal_sha256": "85623429287acdec0282d66f9beb88fedc1262f770dcb64b663cf39b2e24b2d4",
+  "frame": 0,
+  "source_sha256": "79d3d07be4b97abb89edca0285df82d9fa9ebcf836e0ace262818027a3d53502",
+  "cases": [
+    {
+      "entry": "cc_vit_1d_repack_2d_to_1d_fp8",
+      "trace_sequence": 19,
+      "grid_xyz": [
+        2176,
+        1,
+        1
+      ],
+      "shape_hwc": [
+        36,
+        60,
+        1024
+      ],
+      "logical_tokens": 2160,
+      "tin1d_storage_tokens": 2176,
+      "input_role": "block11.repack.input",
+      "input_sha256": "9a87e8d2110a9ba914fc8690cea5df5cb4b9c93f239e5eb195aad63f60091ffb",
+      "output_role": "block11.repack.output",
+      "output_sha256": "b5c50f634d502cf32ee225c122f896fc375b17922d5d4dea452a68f5d00b073a",
+      "sealed_output_sha256": "b5c50f634d502cf32ee225c122f896fc375b17922d5d4dea452a68f5d00b073a",
+      "bytes_compared": 2228224,
+      "different_bytes": 0
+    },
+    {
+      "entry": "cc_vit_1d_repack_1d_to_2d_fp8",
+      "trace_sequence": 60,
+      "grid_xyz": [
+        2160,
+        1,
+        1
+      ],
+      "shape_hwc": [
+        36,
+        60,
+        1024
+      ],
+      "logical_tokens": 2160,
+      "tin1d_storage_tokens": 2176,
+      "input_role": "block18.repack.input",
+      "input_sha256": "aa6cc6872a5958a36eb5c5a90e38a55aeaa54f9ab2690f1c3e76d665325f7a26",
+      "output_role": "block18.out0",
+      "output_sha256": "e1da498981512ed77e7db79163dfc1ec42443744cf4ad862d5a43a4b6705ba6e",
+      "sealed_output_sha256": "e1da498981512ed77e7db79163dfc1ec42443744cf4ad862d5a43a4b6705ba6e",
+      "bytes_compared": 2211840,
+      "different_bytes": 0
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "october_nr_vit_96_edges_v1",
+  "arguments": [
+    "--nr-only",
+    "--input",
+    "640x360",
+    "--output",
+    "640x360",
+    "--frames",
+    "1",
+    "--model",
+    "2"
+  ],
+  "encoder_capture_seal_sha256": "52dfbcff28d90893649ba8759dec6ba33b349211c5565250d83c9e14fe38853d",
+  "vit_capture_seal_sha256": "b55d01b1bc50fb1619a1af51dc89599eb900efcc334162e5d00a8a75987b15d6",
+  "decoder_capture_seal_sha256": "757ef22731c7eaf43ccdae74a2c0001a6a39897607af7fbdb0979e9ae7302db5",
+  "final_output_sha256": {
+    "nr-lab-output-model2-srgb.ppm": "d19fbb464fc9f09068e1004b3e720dbced2e9a83439e0611809bb130e420f499"
+  },
+  "repack_input_2d_sha256": "5cf281c1a11439eaa8f9283195db7dd1471de032d1f2b10b407dd28dff7393be",
+  "first_vit_1d_input_sha256": "7ed6849a177b7fd7d00ffd533f41a7518ad90816865a25ec30f667f14c29194f",
+  "last_vit_1d_output_sha256": "326d308430ac1f8fdb80920091c5b242d563046f4372d69c501ea2d7ec5452f4",
+  "decoder_low_2d_input_sha256": "4196af15f7c81fc8af578d3e6d0816618db6a9d168c090f93da72d36a88df542",
+  "decoder_skip_input_sha256": "8b54147fa6dfd0196e3044cb37397d2bf9d4ddc63627cd60f84393e72ae9cdcf"
+}

@@ -60,4 +60,4 @@ python -B -m tools.ptx86.check_october_vit_chain "$out/temporal/tap" --original-
 python -B -m tools.ptx86.check_october_ffn_4k_tiles "$lab/batch13/uhd2160_padded/tap" --original-dll $dll
 ```
 
-完整串联覆盖实验版 ViT 核心的两组 96-token 输入。4K 验证覆盖上一批的全注意力和本批的 FFN 抽样。4K 全 ViT 串联、整网独立数值对照及 RTX 50 原版逐层验收仍待完成。
+本批串联覆盖实验版 ViT 核心的两组 96-token 输入，4K 验证在本批覆盖全注意力与 FFN 抽样。后续已完成 4K 全 ViT 串联和两次 2D 重排。整网独立数值对照及 RTX 50 原版逐层验收仍待完成。[4K 全链实测](october_nr_vit_uhd_chain.md)

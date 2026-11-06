@@ -1,0 +1,121 @@
+{
+  "schema": "october_nr_decoder_input_replay_v1",
+  "capture_seal_sha256": "757ef22731c7eaf43ccdae74a2c0001a6a39897607af7fbdb0979e9ae7302db5",
+  "frame": 0,
+  "trace_sequence": 61,
+  "entry": "cc_dec_input_upsample_1024_512_fp8",
+  "captured_entry": "cc_dec_input_upsample_1024_512_tilesync_fp8",
+  "grid_xyz": [
+    6,
+    2,
+    4
+  ],
+  "block_xyz": [
+    32,
+    2,
+    1
+  ],
+  "low_shape_hwc": [
+    8,
+    12,
+    1024
+  ],
+  "skip_and_output_shape_hwc": [
+    12,
+    20,
+    512
+  ],
+  "occupancy_bound": {
+    "multiprocessors": 28,
+    "active_blocks_per_multiprocessor": 6,
+    "resident_capacity": 168,
+    "blocks_launched": 48
+  },
+  "trial_cubin_sha256": "44a6963cfc3c99ebc7ad83e28495af8659a1fd9e19013d5dc8838bf0db528e01",
+  "original_dll_sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f",
+  "weight_layout_sha256": "22ae030815b56994199d6ec3555e4eb552b40d8fdb0dbd4ff9936a31baad77cc",
+  "weight_record_sha256": "2504d7fbabf309ad4ecb1d516cc58bc8091e11b1cac17f370d1b79470a80d333",
+  "source_sha256": {
+    "probe_october_decoder_input.py": "d9f65afbd1cdfe3f7664d631ae232470c86e894da44c3aa482510fcd14f02628",
+    "probe_october_ffn_expand.py": "3443ffa4093e4d727fde1cfc89c4183ce72fdb0959b25019fae81b531c06e548",
+    "check_october_attention.py": "5053148f747b565ab7dcdb2e6ad87cc6fa77416dd56151912a5ec861a1129bbf",
+    "check_october_attention_tensor.py": "9a78e3667cd8f596660a799e2c521be31cba817a079ee4ec71eff2d117e0daf5",
+    "mma_sm86_tiles.py": "419bfbbe18ce8a15b716ca7e5aad000235c0c52eea4d4a9acda2ccc865f36b80"
+  },
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "compute_capability": [
+    8,
+    6
+  ],
+  "cuda_driver_api_version": 13030,
+  "input_roles": [
+    "block18.out0",
+    "block10.out1"
+  ],
+  "input_sha256": [
+    "4196af15f7c81fc8af578d3e6d0816618db6a9d168c090f93da72d36a88df542",
+    "8b54147fa6dfd0196e3044cb37397d2bf9d4ddc63627cd60f84393e72ae9cdcf"
+  ],
+  "output_role": "block19.out1",
+  "isolated": {
+    "predicted_sha256": "1147ff892ecc9a26133eaeee5cfed55b5e47ebcb2839bcbcd158fe781aabbfaf",
+    "observed_sha256": "1147ff892ecc9a26133eaeee5cfed55b5e47ebcb2839bcbcd158fe781aabbfaf",
+    "bytes_compared": 122880,
+    "different_byte_count": 0,
+    "different_numeric_count": 0,
+    "exact_numeric_fraction": 1.0,
+    "mae": 0.0,
+    "max_abs": 0.0,
+    "within_one_e4m3_step_fraction": 1.0,
+    "max_e4m3_steps": 0
+  },
+  "zero_low_cpu_residual": {
+    "predicted_sha256": "69bac5383efa79c2d89a9c7b807c07c97cd2ab05f1e5834faa796ba73a0299b4",
+    "observed_sha256": "69bac5383efa79c2d89a9c7b807c07c97cd2ab05f1e5834faa796ba73a0299b4",
+    "bytes_compared": 122880,
+    "different_byte_count": 0,
+    "different_numeric_count": 0,
+    "exact_numeric_fraction": 1.0,
+    "mae": 0.0,
+    "max_abs": 0.0,
+    "within_one_e4m3_step_fraction": 1.0,
+    "max_e4m3_steps": 0
+  },
+  "independent_sm86": {
+    "predicted_sha256": "1147ff892ecc9a26133eaeee5cfed55b5e47ebcb2839bcbcd158fe781aabbfaf",
+    "observed_sha256": "1147ff892ecc9a26133eaeee5cfed55b5e47ebcb2839bcbcd158fe781aabbfaf",
+    "bytes_compared": 122880,
+    "different_byte_count": 0,
+    "different_numeric_count": 0,
+    "exact_numeric_fraction": 1.0,
+    "mae": 0.0,
+    "max_abs": 0.0,
+    "within_one_e4m3_step_fraction": 1.0,
+    "max_e4m3_steps": 0
+  },
+  "independent_sm86_separate_skip_multiply_add": {
+    "predicted_sha256": "1b0f73fd20e76a3180b9563a565e42bb6906574bc1c9358162b86c659f83e89e",
+    "observed_sha256": "1147ff892ecc9a26133eaeee5cfed55b5e47ebcb2839bcbcd158fe781aabbfaf",
+    "bytes_compared": 122880,
+    "different_byte_count": 425,
+    "different_numeric_count": 422,
+    "exact_numeric_fraction": 0.9965657552083333,
+    "mae": 9.797414143880208e-05,
+    "max_abs": 0.25,
+    "within_one_e4m3_step_fraction": 1.0,
+    "max_e4m3_steps": 1
+  },
+  "independent_cpu": {
+    "predicted_sha256": "a7bb5c27a05b6e01430b8085f0d793df1f58d35c560a7a79b7613672429dac4a",
+    "observed_sha256": "1147ff892ecc9a26133eaeee5cfed55b5e47ebcb2839bcbcd158fe781aabbfaf",
+    "bytes_compared": 122880,
+    "different_byte_count": 3050,
+    "different_numeric_count": 3028,
+    "exact_numeric_fraction": 0.9753580729166667,
+    "mae": 0.0006704489390055338,
+    "max_abs": 0.25,
+    "within_one_e4m3_step_fraction": 0.9997802734375,
+    "max_e4m3_steps": 2
+  },
+  "passed": true
+}

@@ -80,6 +80,8 @@ def padded_vit_storage(launch, offset, tokens):
         grid, block = (padded, 1, 1), (256, 1, 1)
     elif launch.name == REPACK_OUT and offset == 0:
         grid, block = (tokens, 1, 1), (256, 1, 1)
+    elif family.removesuffix("_publish") == "cc_vit_1d_ffn_expand" and offset in (0, 16):
+        grid, block = (32 * ((tokens + 127) // 128), 1, 1), (32, 4, 1)
     elif family == "cc_vit_1d_qkv" and offset == 0:
         grid, block = (padded // 8, 1, 2), (32, 4, 1)
     elif family == "cc_vit_1d_attention" and offset in (0, 8, 16, 24):
@@ -137,6 +139,11 @@ def boundaries(frame, rows, graph):
         launches = [by_sequence[entry["sequence"]][1] for entry in matched["launches"]]
         for slot, (launch, offset) in output_slots(block, launches).items():
             add(f"{prefix}.out{slot}", launch, offset, *spatial_output(block, slot, launch))
+        if block["kind"] == "split_swin_16h" and block["variant"] == "projection_pool_and_final_head":
+            pool, head = launches[-2:]
+            if pool.pointer(24) != head.pointer(0) or pool.params[72:80] != head.params[32:40]:
+                raise ValueError(f"{prefix}: pooled output does not bind the final head input")
+            add(f"{prefix}.final_head.input", head, 0, 32, 512, "tin2d")
         if block["kind"] == "vit_1d":
             if launches[0].name == REPACK_IN:
                 add(f"{prefix}.repack.input", launches[0], 0, 16, 1024, "tin2d")
@@ -153,10 +160,8 @@ def boundaries(frame, rows, graph):
                     or not contract.pointer(16) == qkv.pointer(0) == projection.pointer(8)
                     or not contract.params[64:72] == qkv.params[72:80] == attention.params[56:64] == projection.params[64:72]):
                 raise ValueError(f"{prefix}: inconsistent ViT FFN or attention inputs, outputs or geometry")
-            h, w = struct.unpack_from("<ii", expand.params, 64)
-            if h * w % 32 == 0:
-                add(f"{prefix}.ffn.expand.input", expand, 0, 64, 1024, "tin1d")
-                add(f"{prefix}.ffn.expand.output", expand, 16, 64, 4096, "tin1d")
+            add(f"{prefix}.ffn.expand.input", expand, 0, 64, 1024, "tin1d")
+            add(f"{prefix}.ffn.expand.output", expand, 16, 64, 4096, "tin1d")
             add(f"{prefix}.qkv.input", qkv, 0, 72, 1024, "tin1d")
             for role, offset in (("in0", 0), ("in1", 8), ("in2", 16), ("out", 24)):
                 add(f"{prefix}.attention.{role}", attention, offset, 56, 1024, "vit1d_attention_storage")
@@ -165,6 +170,11 @@ def boundaries(frame, rows, graph):
                 ranges = sorted([*pointers, qkv.pointer(0)])
                 if any(second - first < storage.size for first, second in zip(ranges, ranges[1:])):
                     raise ValueError(f"{prefix}: overlapping padded ViT activation ranges")
+                expanded = expand.pointer(16)
+                expanded_end = expanded + roles[f"{prefix}.ffn.expand.output"].size
+                if any(address < expanded_end and address + storage.size > expanded
+                       for address in (*ranges, expand.pointer(0), projection.pointer(16))):
+                    raise ValueError(f"{prefix}: expanded FFN buffer overlaps another padded activation")
         if block["kind"] == "fused_post_swin_1h":
             # The two post inputs are read-only activation VAs. Post's image
             # output is a surface handle and is never interpreted as a VA.
