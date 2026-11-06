@@ -1,0 +1,1937 @@
+{
+  "schema": "october_attention_tensor_comparison_v1",
+  "source_sha256": {
+    "check_october_attention_tensor.py": "94cbb5161c80a63cd2816b4809556547f4121f74ba372333de5627bb806df2b4",
+    "check_october_attention.py": "5053148f747b565ab7dcdb2e6ad87cc6fa77416dd56151912a5ec861a1129bbf",
+    "mma_sm86_tiles.py": "419bfbbe18ce8a15b716ca7e5aad000235c0c52eea4d4a9acda2ccc865f36b80"
+  },
+  "capture_seal_sha256": "6a22c69f56e1127e8b1db5b10ec980858150e92bc5b1d86e38f6526ee10f3448",
+  "full_dump_report_sha256": "bfd7a6f1b2e9831695a8b7e4e9783c2492c27cca1e8b0194dbc2150f2dcd1cc1",
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "compute_capability": [
+    8,
+    6
+  ],
+  "cuda_driver_api_version": 13030,
+  "capture_frame": 3,
+  "shape_hwc": [
+    8,
+    12,
+    1024
+  ],
+  "tokens": 96,
+  "scope": "Ampere split K16 MMA with host exponent, reduction and reciprocal; sealed inputs.",
+  "cases": [
+    {
+      "block": 11,
+      "values_compared": 98304,
+      "models": {
+        "cpu": {
+          "output": {
+            "different_byte_count": 504,
+            "different_numeric_count": 504,
+            "exact_numeric_fraction": 0.994873046875,
+            "mae": 0.0006760358810424805,
+            "max_abs": 1.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 1
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 30330,
+              "different_half_words": 30330,
+              "mae": 0.010026577084014813,
+              "max_abs": 2.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 3744,
+              "different_half_words": 3744,
+              "mae": 5.036592483520508e-06,
+              "max_abs": 0.00048828125
+            },
+            "pre_quantization": {
+              "different_numeric_values": 31066,
+              "different_half_words": 31066,
+              "mae": 0.0006632918605949575,
+              "max_abs": 0.0546875
+            },
+            "with_measured_pv": {
+              "different_byte_count": 50,
+              "different_numeric_count": 50,
+              "exact_numeric_fraction": 0.9994913736979166,
+              "mae": 0.00011086463928222656,
+              "max_abs": 1.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 471,
+              "different_numeric_count": 471,
+              "exact_numeric_fraction": 0.995208740234375,
+              "mae": 0.0005826155344645182,
+              "max_abs": 1.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk": {
+          "output": {
+            "different_byte_count": 316,
+            "different_numeric_count": 316,
+            "exact_numeric_fraction": 0.9967854817708334,
+            "mae": 0.0004530946413675944,
+            "max_abs": 1.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 1
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 26586,
+              "different_half_words": 26586,
+              "mae": 0.0074887066924323635,
+              "max_abs": 1.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 25271,
+              "different_half_words": 25271,
+              "mae": 0.00045280160096202354,
+              "max_abs": 0.0234375
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 316,
+              "different_numeric_count": 316,
+              "exact_numeric_fraction": 0.9967854817708334,
+              "mae": 0.0004530946413675944,
+              "max_abs": 1.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_pv": {
+          "output": {
+            "different_byte_count": 202,
+            "different_numeric_count": 202,
+            "exact_numeric_fraction": 0.9979451497395834,
+            "mae": 0.0002241333325703939,
+            "max_abs": 1.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 1
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 5278,
+              "different_half_words": 5278,
+              "mae": 0.002883023194347819,
+              "max_abs": 2.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 3744,
+              "different_half_words": 3744,
+              "mae": 5.036592483520508e-06,
+              "max_abs": 0.00048828125
+            },
+            "pre_quantization": {
+              "different_numeric_values": 8269,
+              "different_half_words": 8269,
+              "mae": 0.0002521540955058299,
+              "max_abs": 0.0546875
+            },
+            "with_measured_pv": {
+              "different_byte_count": 50,
+              "different_numeric_count": 50,
+              "exact_numeric_fraction": 0.9994913736979166,
+              "mae": 0.00011086463928222656,
+              "max_abs": 1.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 163,
+              "different_numeric_count": 163,
+              "exact_numeric_fraction": 0.9983418782552084,
+              "mae": 0.00014442205429077148,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 12,
+      "values_compared": 98304,
+      "models": {
+        "cpu": {
+          "output": {
+            "different_byte_count": 1422,
+            "different_numeric_count": 1421,
+            "exact_numeric_fraction": 0.9855448404947916,
+            "mae": 0.0021608670552571616,
+            "max_abs": 1.0,
+            "within_one_e4m3_step_fraction": 0.99658203125,
+            "max_e4m3_steps": 31
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 36287,
+              "different_half_words": 36287,
+              "mae": 0.02218773029744625,
+              "max_abs": 3.375
+            },
+            "reciprocal": {
+              "different_numeric_values": 7392,
+              "different_half_words": 7392,
+              "mae": 3.386040528615316e-05,
+              "max_abs": 0.01171875
+            },
+            "pre_quantization": {
+              "different_numeric_values": 36108,
+              "different_half_words": 36108,
+              "mae": 0.0019506844388767302,
+              "max_abs": 0.24609375
+            },
+            "with_measured_pv": {
+              "different_byte_count": 155,
+              "different_numeric_count": 155,
+              "exact_numeric_fraction": 0.9984232584635416,
+              "mae": 0.00026420752207438153,
+              "max_abs": 1.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 1361,
+              "different_numeric_count": 1360,
+              "exact_numeric_fraction": 0.9861653645833334,
+              "mae": 0.0020555456479390464,
+              "max_abs": 1.0,
+              "within_one_e4m3_step_fraction": 0.9962056477864584,
+              "max_e4m3_steps": 31
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk": {
+          "output": {
+            "different_byte_count": 430,
+            "different_numeric_count": 428,
+            "exact_numeric_fraction": 0.9956461588541666,
+            "mae": 0.0007144014040629069,
+            "max_abs": 1.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 1
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 32533,
+              "different_half_words": 32533,
+              "mae": 0.01487338605026404,
+              "max_abs": 1.5
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 30390,
+              "different_half_words": 30390,
+              "mae": 0.0007228243084682617,
+              "max_abs": 0.0234375
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 430,
+              "different_numeric_count": 428,
+              "exact_numeric_fraction": 0.9956461588541666,
+              "mae": 0.0007144014040629069,
+              "max_abs": 1.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_pv": {
+          "output": {
+            "different_byte_count": 1064,
+            "different_numeric_count": 1064,
+            "exact_numeric_fraction": 0.9891764322916666,
+            "mae": 0.0016511281331380208,
+            "max_abs": 1.0,
+            "within_one_e4m3_step_fraction": 0.9966023763020834,
+            "max_e4m3_steps": 31
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 7556,
+              "different_half_words": 7556,
+              "mae": 0.00945539524157842,
+              "max_abs": 3.375
+            },
+            "reciprocal": {
+              "different_numeric_values": 7392,
+              "different_half_words": 7392,
+              "mae": 3.386040528615316e-05,
+              "max_abs": 0.01171875
+            },
+            "pre_quantization": {
+              "different_numeric_values": 11494,
+              "different_half_words": 11494,
+              "mae": 0.0013485217253522326,
+              "max_abs": 0.24609375
+            },
+            "with_measured_pv": {
+              "different_byte_count": 155,
+              "different_numeric_count": 155,
+              "exact_numeric_fraction": 0.9984232584635416,
+              "mae": 0.00026420752207438153,
+              "max_abs": 1.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 985,
+              "different_numeric_count": 985,
+              "exact_numeric_fraction": 0.9899800618489584,
+              "mae": 0.0014691750208536785,
+              "max_abs": 1.0,
+              "within_one_e4m3_step_fraction": 0.9965922037760416,
+              "max_e4m3_steps": 31
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 13,
+      "values_compared": 98304,
+      "models": {
+        "cpu": {
+          "output": {
+            "different_byte_count": 589,
+            "different_numeric_count": 588,
+            "exact_numeric_fraction": 0.9940185546875,
+            "mae": 0.0006087025006612142,
+            "max_abs": 0.5,
+            "within_one_e4m3_step_fraction": 0.9998067220052084,
+            "max_e4m3_steps": 11
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 30451,
+              "different_half_words": 30451,
+              "mae": 0.01552887943883737,
+              "max_abs": 2.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 6976,
+              "different_half_words": 6976,
+              "mae": 6.459653377532959e-05,
+              "max_abs": 0.0078125
+            },
+            "pre_quantization": {
+              "different_numeric_values": 31901,
+              "different_half_words": 31901,
+              "mae": 0.0008481304709372731,
+              "max_abs": 0.30859375
+            },
+            "with_measured_pv": {
+              "different_byte_count": 132,
+              "different_numeric_count": 132,
+              "exact_numeric_fraction": 0.9986572265625,
+              "mae": 0.00018143653869628906,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 498,
+              "different_numeric_count": 497,
+              "exact_numeric_fraction": 0.9949442545572916,
+              "mae": 0.00048273801803588867,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 0.9998067220052084,
+              "max_e4m3_steps": 11
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk": {
+          "output": {
+            "different_byte_count": 260,
+            "different_numeric_count": 260,
+            "exact_numeric_fraction": 0.9973551432291666,
+            "mae": 0.00032331546147664386,
+            "max_abs": 0.5,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 1
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 26701,
+              "different_half_words": 26701,
+              "mae": 0.014410276586810747,
+              "max_abs": 1.5
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 24434,
+              "different_half_words": 24434,
+              "mae": 0.0004840011679334566,
+              "max_abs": 0.01953125
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 260,
+              "different_numeric_count": 260,
+              "exact_numeric_fraction": 0.9973551432291666,
+              "mae": 0.00032331546147664386,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_pv": {
+          "output": {
+            "different_byte_count": 414,
+            "different_numeric_count": 413,
+            "exact_numeric_fraction": 0.9957987467447916,
+            "mae": 0.00032705068588256836,
+            "max_abs": 0.5,
+            "within_one_e4m3_step_fraction": 0.9998067220052084,
+            "max_e4m3_steps": 11
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 5715,
+              "different_half_words": 5715,
+              "mae": 0.0018742457032203674,
+              "max_abs": 1.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 6976,
+              "different_half_words": 6976,
+              "mae": 6.459653377532959e-05,
+              "max_abs": 0.0078125
+            },
+            "pre_quantization": {
+              "different_numeric_values": 11535,
+              "different_half_words": 11535,
+              "mae": 0.00043452278623590246,
+              "max_abs": 0.30859375
+            },
+            "with_measured_pv": {
+              "different_byte_count": 132,
+              "different_numeric_count": 132,
+              "exact_numeric_fraction": 0.9986572265625,
+              "mae": 0.00018143653869628906,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 304,
+              "different_numeric_count": 303,
+              "exact_numeric_fraction": 0.996917724609375,
+              "mae": 0.00017966826756795248,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 0.9998067220052084,
+              "max_e4m3_steps": 11
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 14,
+      "values_compared": 98304,
+      "models": {
+        "cpu": {
+          "output": {
+            "different_byte_count": 585,
+            "different_numeric_count": 584,
+            "exact_numeric_fraction": 0.9940592447916666,
+            "mae": 0.0005361636479695638,
+            "max_abs": 1.0,
+            "within_one_e4m3_step_fraction": 0.9998270670572916,
+            "max_e4m3_steps": 10
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 28306,
+              "different_half_words": 28306,
+              "mae": 0.007421113938714067,
+              "max_abs": 1.5
+            },
+            "reciprocal": {
+              "different_numeric_values": 6208,
+              "different_half_words": 6208,
+              "mae": 0.00011314451694488525,
+              "max_abs": 0.0068359375
+            },
+            "pre_quantization": {
+              "different_numeric_values": 29084,
+              "different_half_words": 29084,
+              "mae": 0.0005044362757568402,
+              "max_abs": 0.1103515625
+            },
+            "with_measured_pv": {
+              "different_byte_count": 158,
+              "different_numeric_count": 158,
+              "exact_numeric_fraction": 0.9983927408854166,
+              "mae": 0.00013703107833862305,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 492,
+              "different_numeric_count": 491,
+              "exact_numeric_fraction": 0.9950052897135416,
+              "mae": 0.0004533727963765462,
+              "max_abs": 1.0,
+              "within_one_e4m3_step_fraction": 0.9998270670572916,
+              "max_e4m3_steps": 10
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk": {
+          "output": {
+            "different_byte_count": 319,
+            "different_numeric_count": 318,
+            "exact_numeric_fraction": 0.99676513671875,
+            "mae": 0.00036730368932088214,
+            "max_abs": 1.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 1
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 25130,
+              "different_half_words": 25130,
+              "mae": 0.006969672084475557,
+              "max_abs": 1.5
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 23085,
+              "different_half_words": 23085,
+              "mae": 0.00028031536082077463,
+              "max_abs": 0.015625
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 319,
+              "different_numeric_count": 318,
+              "exact_numeric_fraction": 0.99676513671875,
+              "mae": 0.00036730368932088214,
+              "max_abs": 1.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_pv": {
+          "output": {
+            "different_byte_count": 314,
+            "different_numeric_count": 314,
+            "exact_numeric_fraction": 0.9968058268229166,
+            "mae": 0.00020680824915568033,
+            "max_abs": 0.5,
+            "within_one_e4m3_step_fraction": 0.9998372395833334,
+            "max_e4m3_steps": 10
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 5778,
+              "different_half_words": 5778,
+              "mae": 0.0007769772782921791,
+              "max_abs": 0.359375
+            },
+            "reciprocal": {
+              "different_numeric_values": 6208,
+              "different_half_words": 6208,
+              "mae": 0.00011314451694488525,
+              "max_abs": 0.0068359375
+            },
+            "pre_quantization": {
+              "different_numeric_values": 9682,
+              "different_half_words": 9682,
+              "mae": 0.0002625107202523698,
+              "max_abs": 0.1103515625
+            },
+            "with_measured_pv": {
+              "different_byte_count": 158,
+              "different_numeric_count": 158,
+              "exact_numeric_fraction": 0.9983927408854166,
+              "mae": 0.00013703107833862305,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 246,
+              "different_numeric_count": 246,
+              "exact_numeric_fraction": 0.99749755859375,
+              "mae": 0.00011130174001057942,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 0.9998372395833334,
+              "max_e4m3_steps": 10
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 15,
+      "values_compared": 98304,
+      "models": {
+        "cpu": {
+          "output": {
+            "different_byte_count": 776,
+            "different_numeric_count": 776,
+            "exact_numeric_fraction": 0.9921061197916666,
+            "mae": 0.0005123019218444824,
+            "max_abs": 0.5,
+            "within_one_e4m3_step_fraction": 0.9995625813802084,
+            "max_e4m3_steps": 41
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 28911,
+              "different_half_words": 28911,
+              "mae": 0.005649226096769174,
+              "max_abs": 11.25
+            },
+            "reciprocal": {
+              "different_numeric_values": 6624,
+              "different_half_words": 6624,
+              "mae": 0.00011546909809112549,
+              "max_abs": 0.037109375
+            },
+            "pre_quantization": {
+              "different_numeric_values": 31674,
+              "different_half_words": 31674,
+              "mae": 0.0006730349026232337,
+              "max_abs": 0.224609375
+            },
+            "with_measured_pv": {
+              "different_byte_count": 244,
+              "different_numeric_count": 244,
+              "exact_numeric_fraction": 0.9975179036458334,
+              "mae": 0.0001668532689412435,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 560,
+              "different_numeric_count": 560,
+              "exact_numeric_fraction": 0.9943033854166666,
+              "mae": 0.00037602583567301434,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 0.999542236328125,
+              "max_e4m3_steps": 41
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk": {
+          "output": {
+            "different_byte_count": 235,
+            "different_numeric_count": 235,
+            "exact_numeric_fraction": 0.9976094563802084,
+            "mae": 0.00024010737737019858,
+            "max_abs": 0.25,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 1
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 24771,
+              "different_half_words": 24771,
+              "mae": 0.0033898154894510904,
+              "max_abs": 0.25
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 22954,
+              "different_half_words": 22954,
+              "mae": 0.00023075393134301217,
+              "max_abs": 0.01171875
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 235,
+              "different_numeric_count": 235,
+              "exact_numeric_fraction": 0.9976094563802084,
+              "mae": 0.00024010737737019858,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_pv": {
+          "output": {
+            "different_byte_count": 644,
+            "different_numeric_count": 644,
+            "exact_numeric_fraction": 0.9934488932291666,
+            "mae": 0.0004279812177022298,
+            "max_abs": 0.25,
+            "within_one_e4m3_step_fraction": 0.9995625813802084,
+            "max_e4m3_steps": 41
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 6821,
+              "different_half_words": 6821,
+              "mae": 0.002409351368745168,
+              "max_abs": 11.25
+            },
+            "reciprocal": {
+              "different_numeric_values": 6624,
+              "different_half_words": 6624,
+              "mae": 0.00011546909809112549,
+              "max_abs": 0.037109375
+            },
+            "pre_quantization": {
+              "different_numeric_values": 12450,
+              "different_half_words": 12450,
+              "mae": 0.0004806342215791422,
+              "max_abs": 0.224609375
+            },
+            "with_measured_pv": {
+              "different_byte_count": 244,
+              "different_numeric_count": 244,
+              "exact_numeric_fraction": 0.9975179036458334,
+              "mae": 0.0001668532689412435,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 426,
+              "different_numeric_count": 426,
+              "exact_numeric_fraction": 0.99566650390625,
+              "mae": 0.00028898318608601886,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 0.999542236328125,
+              "max_e4m3_steps": 41
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 16,
+      "values_compared": 98304,
+      "models": {
+        "cpu": {
+          "output": {
+            "different_byte_count": 855,
+            "different_numeric_count": 855,
+            "exact_numeric_fraction": 0.991302490234375,
+            "mae": 0.0005002617835998535,
+            "max_abs": 0.5,
+            "within_one_e4m3_step_fraction": 0.9997965494791666,
+            "max_e4m3_steps": 15
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 31116,
+              "different_half_words": 31116,
+              "mae": 0.008203650979946056,
+              "max_abs": 9.125
+            },
+            "reciprocal": {
+              "different_numeric_values": 8704,
+              "different_half_words": 8704,
+              "mae": 5.851189295450846e-05,
+              "max_abs": 0.0126953125
+            },
+            "pre_quantization": {
+              "different_numeric_values": 34509,
+              "different_half_words": 34509,
+              "mae": 0.0004930898103339132,
+              "max_abs": 0.16796875
+            },
+            "with_measured_pv": {
+              "different_byte_count": 279,
+              "different_numeric_count": 279,
+              "exact_numeric_fraction": 0.997161865234375,
+              "mae": 0.00014032920201619467,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 642,
+              "different_numeric_count": 642,
+              "exact_numeric_fraction": 0.99346923828125,
+              "mae": 0.00039019187291463214,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 0.9997660319010416,
+              "max_e4m3_steps": 15
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk": {
+          "output": {
+            "different_byte_count": 299,
+            "different_numeric_count": 299,
+            "exact_numeric_fraction": 0.9969584147135416,
+            "mae": 0.00018956263860066733,
+            "max_abs": 0.5,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 1
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 26487,
+              "different_half_words": 26487,
+              "mae": 0.004904987911383311,
+              "max_abs": 0.5
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 24772,
+              "different_half_words": 24772,
+              "mae": 0.0002000357350577057,
+              "max_abs": 0.01171875
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 299,
+              "different_numeric_count": 299,
+              "exact_numeric_fraction": 0.9969584147135416,
+              "mae": 0.00018956263860066733,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_pv": {
+          "output": {
+            "different_byte_count": 586,
+            "different_numeric_count": 586,
+            "exact_numeric_fraction": 0.9940388997395834,
+            "mae": 0.000286718209584554,
+            "max_abs": 0.25,
+            "within_one_e4m3_step_fraction": 0.9997965494791666,
+            "max_e4m3_steps": 15
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 7786,
+              "different_half_words": 7786,
+              "mae": 0.0037468993104994297,
+              "max_abs": 9.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 8704,
+              "different_half_words": 8704,
+              "mae": 5.851189295450846e-05,
+              "max_abs": 0.0126953125
+            },
+            "pre_quantization": {
+              "different_numeric_values": 14938,
+              "different_half_words": 14938,
+              "mae": 0.00033128023278550245,
+              "max_abs": 0.16796875
+            },
+            "with_measured_pv": {
+              "different_byte_count": 279,
+              "different_numeric_count": 279,
+              "exact_numeric_fraction": 0.997161865234375,
+              "mae": 0.00014032920201619467,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 334,
+              "different_numeric_count": 334,
+              "exact_numeric_fraction": 0.9966023763020834,
+              "mae": 0.0001674493153889974,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 0.9997660319010416,
+              "max_e4m3_steps": 15
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 17,
+      "values_compared": 98304,
+      "models": {
+        "cpu": {
+          "output": {
+            "different_byte_count": 839,
+            "different_numeric_count": 837,
+            "exact_numeric_fraction": 0.991485595703125,
+            "mae": 0.0004869699478149414,
+            "max_abs": 0.5,
+            "within_one_e4m3_step_fraction": 0.9997762044270834,
+            "max_e4m3_steps": 22
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 38150,
+              "different_half_words": 38150,
+              "mae": 0.005586743510017793,
+              "max_abs": 1.828125
+            },
+            "reciprocal": {
+              "different_numeric_values": 7008,
+              "different_half_words": 7008,
+              "mae": 2.6797254880269367e-05,
+              "max_abs": 0.00390625
+            },
+            "pre_quantization": {
+              "different_numeric_values": 38593,
+              "different_half_words": 38593,
+              "mae": 0.00045266098095453344,
+              "max_abs": 0.14453125
+            },
+            "with_measured_pv": {
+              "different_byte_count": 142,
+              "different_numeric_count": 142,
+              "exact_numeric_fraction": 0.9985555013020834,
+              "mae": 8.316834767659505e-05,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 736,
+              "different_numeric_count": 734,
+              "exact_numeric_fraction": 0.9925333658854166,
+              "mae": 0.0004401206970214844,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 0.9997355143229166,
+              "max_e4m3_steps": 22
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk": {
+          "output": {
+            "different_byte_count": 461,
+            "different_numeric_count": 459,
+            "exact_numeric_fraction": 0.995330810546875,
+            "mae": 0.0003187855084737142,
+            "max_abs": 0.5,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 1
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 33864,
+              "different_half_words": 33864,
+              "mae": 0.003941636687765519,
+              "max_abs": 0.375
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 31451,
+              "different_half_words": 31451,
+              "mae": 0.00028522192405944224,
+              "max_abs": 0.01171875
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 461,
+              "different_numeric_count": 459,
+              "exact_numeric_fraction": 0.995330810546875,
+              "mae": 0.0003187855084737142,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_pv": {
+          "output": {
+            "different_byte_count": 410,
+            "different_numeric_count": 409,
+            "exact_numeric_fraction": 0.9958394368489584,
+            "mae": 0.00020269552866617838,
+            "max_abs": 0.5,
+            "within_one_e4m3_step_fraction": 0.9997762044270834,
+            "max_e4m3_steps": 22
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 7167,
+              "different_half_words": 7167,
+              "mae": 0.0020505565529068313,
+              "max_abs": 1.828125
+            },
+            "reciprocal": {
+              "different_numeric_values": 7008,
+              "different_half_words": 7008,
+              "mae": 2.6797254880269367e-05,
+              "max_abs": 0.00390625
+            },
+            "pre_quantization": {
+              "different_numeric_values": 12238,
+              "different_half_words": 12238,
+              "mae": 0.00020685739703670455,
+              "max_abs": 0.14453125
+            },
+            "with_measured_pv": {
+              "different_byte_count": 142,
+              "different_numeric_count": 142,
+              "exact_numeric_fraction": 0.9985555013020834,
+              "mae": 8.316834767659505e-05,
+              "max_abs": 0.5,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 296,
+              "different_numeric_count": 295,
+              "exact_numeric_fraction": 0.9969991048177084,
+              "mae": 0.00013840198516845703,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 0.9997355143229166,
+              "max_e4m3_steps": 22
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "block": 18,
+      "values_compared": 98304,
+      "models": {
+        "cpu": {
+          "output": {
+            "different_byte_count": 646,
+            "different_numeric_count": 643,
+            "exact_numeric_fraction": 0.9934590657552084,
+            "mae": 0.00042378902435302734,
+            "max_abs": 0.25,
+            "within_one_e4m3_step_fraction": 0.9998779296875,
+            "max_e4m3_steps": 11
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 35108,
+              "different_half_words": 35108,
+              "mae": 0.008803274482488632,
+              "max_abs": 15.75
+            },
+            "reciprocal": {
+              "different_numeric_values": 4736,
+              "different_half_words": 4736,
+              "mae": 1.9917885462443035e-05,
+              "max_abs": 0.005859375
+            },
+            "pre_quantization": {
+              "different_numeric_values": 34579,
+              "different_half_words": 34579,
+              "mae": 0.0003992834153905278,
+              "max_abs": 0.271484375
+            },
+            "with_measured_pv": {
+              "different_byte_count": 96,
+              "different_numeric_count": 96,
+              "exact_numeric_fraction": 0.9990234375,
+              "mae": 7.861852645874023e-05,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 597,
+              "different_numeric_count": 594,
+              "exact_numeric_fraction": 0.99395751953125,
+              "mae": 0.0003928343454996745,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 0.99981689453125,
+              "max_e4m3_steps": 11
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk": {
+          "output": {
+            "different_byte_count": 375,
+            "different_numeric_count": 373,
+            "exact_numeric_fraction": 0.9962056477864584,
+            "mae": 0.0002453327178955078,
+            "max_abs": 0.25,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 1
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 32749,
+              "different_half_words": 32749,
+              "mae": 0.0035849384342630706,
+              "max_abs": 0.75
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 30219,
+              "different_half_words": 30219,
+              "mae": 0.00023339355660330816,
+              "max_abs": 0.009765625
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 375,
+              "different_numeric_count": 373,
+              "exact_numeric_fraction": 0.9962056477864584,
+              "mae": 0.0002453327178955078,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_pv": {
+          "output": {
+            "different_byte_count": 306,
+            "different_numeric_count": 305,
+            "exact_numeric_fraction": 0.9968973795572916,
+            "mae": 0.0001992980639139811,
+            "max_abs": 0.25,
+            "within_one_e4m3_step_fraction": 0.9998779296875,
+            "max_e4m3_steps": 11
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 4158,
+              "different_half_words": 4158,
+              "mae": 0.0054047008355458575,
+              "max_abs": 15.75
+            },
+            "reciprocal": {
+              "different_numeric_values": 4736,
+              "different_half_words": 4736,
+              "mae": 1.9917885462443035e-05,
+              "max_abs": 0.005859375
+            },
+            "pre_quantization": {
+              "different_numeric_values": 8096,
+              "different_half_words": 8096,
+              "mae": 0.00018992334298673086,
+              "max_abs": 0.271484375
+            },
+            "with_measured_pv": {
+              "different_byte_count": 96,
+              "different_numeric_count": 96,
+              "exact_numeric_fraction": 0.9990234375,
+              "mae": 7.861852645874023e-05,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 1
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 238,
+              "different_numeric_count": 237,
+              "exact_numeric_fraction": 0.997589111328125,
+              "mae": 0.00015713771184285483,
+              "max_abs": 0.25,
+              "within_one_e4m3_step_fraction": 0.99981689453125,
+              "max_e4m3_steps": 11
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        },
+        "gpu_qk_pv": {
+          "output": {
+            "different_byte_count": 0,
+            "different_numeric_count": 0,
+            "exact_numeric_fraction": 1.0,
+            "mae": 0.0,
+            "max_abs": 0.0,
+            "within_one_e4m3_step_fraction": 1.0,
+            "max_e4m3_steps": 0
+          },
+          "against_measured_stages": {
+            "pv": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "reciprocal": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "pre_quantization": {
+              "different_numeric_values": 0,
+              "different_half_words": 0,
+              "mae": 0.0,
+              "max_abs": 0.0
+            },
+            "with_measured_pv": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_measured_reciprocal": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            },
+            "with_both_measured": {
+              "different_byte_count": 0,
+              "different_numeric_count": 0,
+              "exact_numeric_fraction": 1.0,
+              "mae": 0.0,
+              "max_abs": 0.0,
+              "within_one_e4m3_step_fraction": 1.0,
+              "max_e4m3_steps": 0
+            }
+          }
+        }
+      }
+    }
+  ],
+  "total_different_numeric_values": {
+    "cpu": 6208,
+    "gpu_qk": 2688,
+    "gpu_pv": 3937,
+    "gpu_qk_pv": 0
+  },
+  "bit_exact_gpu_mma": true
+}

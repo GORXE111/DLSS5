@@ -1,6 +1,6 @@
 """Dump packed PV, reciprocal and pre-quantization half values for October attention.
 
-Run the isolated ordinary sm86 entry on sealed frame-zero Q/K/V. No NR DLL is
+Run the isolated ordinary sm86 entry on sealed Q/K/V. No NR DLL is
 loaded. All compiled probe files, readbacks and report stay in a fresh _dl work
 directory. Select sealed ViT blocks with --blocks 11 18 or any subset of 11..18.
 """
@@ -25,18 +25,21 @@ from .probe_october_attention_replay import ENTRIES, GUARD
 from .probe_october_attention_stages import Driver, ENTRY, PTX_SHA, PTXAS_SHA, replace_once, sha
 
 
-SHAPE = (8, 12, 1024)
-ELEMENTS = 98304
-PLANE_BYTES = 2 * ELEMENTS
+CHANNELS = 1024
+QUERY_TILE = 16
+QUERIES_PER_CTA = 256
+CUDA_BLOCK = (32, 4, 1)
 PLANES = ("pv", "inv", "norm")
-SCRATCH_BYTES = (len(PLANES) + 1) * PLANE_BYTES
 PAIR_BASE = 983
 PAIRS = range(PAIR_BASE, PAIR_BASE + 32)
 
 
-def instrument(data):
+def instrument(data, tokens=96):
     if sha(data) != PTX_SHA:
         raise ValueError("not the pinned rewritten October module 6 PTX")
+    if tokens <= 0 or tokens % 32 or tokens * CHANNELS > 256 * 1024 * 1024:
+        raise ValueError("expected a positive 32-aligned sealed token count")
+    plane_bytes = 2 * tokens * CHANNELS
     source = data.decode("ascii")
     start = source.index(f".visible .entry {ENTRY}(")
     stop = source.index(".visible .entry ", start + 1)
@@ -46,13 +49,16 @@ def instrument(data):
         raise ValueError("ordinary attention already uses the scratch parameter slot")
     prologue = f"""
 .reg .pred %nr_full_write;
-.reg .b32 %nr_full_head, %nr_full_lane, %nr_full_warp, %nr_full_tile, %nr_full_element, %nr_full_one;
+.reg .b32 %nr_full_head, %nr_full_lane, %nr_full_warp, %nr_full_cta_y, %nr_full_base, %nr_full_tile, %nr_full_element, %nr_full_one;
 .reg .b64 %nr_full_raw, %nr_full_scratch, %nr_full_byte, %nr_full_addr;
 ld.param.b64 %nr_full_raw, [{args}+32];
 cvta.to.global.u64 %nr_full_scratch, %nr_full_raw;
 mov.u32 %nr_full_head, %ctaid.x;
 mov.u32 %nr_full_lane, %tid.x;
 mov.u32 %nr_full_warp, %tid.y;
+mov.u32 %nr_full_cta_y, %ctaid.y;
+mul.lo.u32 %nr_full_base, %nr_full_cta_y, {QUERIES_PER_CTA // QUERY_TILE};
+mad.lo.u32 %nr_full_base, %nr_full_warp, 4, %nr_full_base;
 mov.u32 %nr_full_one, 1;
 """
     body = replace_once(body, rf"^ld\.param\.b64 %rd1, \[{args}\];$", lambda m: prologue + m[0])
@@ -65,17 +71,17 @@ mov.u32 %nr_full_one, 1;
         seen.append(dst)
         group, pair = divmod(dst - PAIR_BASE, 8)
         return match[0] + f"""
-mad.lo.u32 %nr_full_tile, %nr_full_warp, 4, {group};
-setp.lt.u32 %nr_full_write, %nr_full_tile, 6;
+add.u32 %nr_full_tile, %nr_full_base, {group};
+setp.lt.u32 %nr_full_write, %nr_full_tile, {tokens // QUERY_TILE};
 mad.lo.u32 %nr_full_element, %nr_full_tile, 32, %nr_full_head;
 mad.lo.u32 %nr_full_element, %nr_full_element, 32, %nr_full_lane;
 mad.lo.u32 %nr_full_element, %nr_full_element, 16, {2 * pair};
 mul.wide.u32 %nr_full_byte, %nr_full_element, 2;
 add.u64 %nr_full_addr, %nr_full_scratch, %nr_full_byte;
 @%nr_full_write st.global.b32 [%nr_full_addr], {match[2]};
-@%nr_full_write st.global.b32 [%nr_full_addr+{PLANE_BYTES}], {match[3]};
-@%nr_full_write st.global.b32 [%nr_full_addr+{2 * PLANE_BYTES}], %r{dst};
-@%nr_full_write st.global.b32 [%nr_full_addr+{3 * PLANE_BYTES}], %nr_full_one;
+@%nr_full_write st.global.b32 [%nr_full_addr+{plane_bytes}], {match[3]};
+@%nr_full_write st.global.b32 [%nr_full_addr+{2 * plane_bytes}], %r{dst};
+@%nr_full_write st.global.b32 [%nr_full_addr+{3 * plane_bytes}], %nr_full_one;
 """
 
     body = re.sub(r"^\{mul\.f16x2 %r(\d+),(%r\d+),(%r\d+);\n\}\n", emit, body, flags=re.M)
@@ -84,9 +90,11 @@ add.u64 %nr_full_addr, %nr_full_scratch, %nr_full_byte;
     return (source[:start] + body + source[stop:]).encode("ascii")
 
 
-def execute(device, function, raw):
+def execute(device, function, raw, shape, grid):
     expected = raw[3]
-    payloads = [*raw[:3], bytes(np.frombuffer(expected, np.uint8) ^ np.uint8(255)), bytes(SCRATCH_BYTES)]
+    plane_bytes = 2 * len(expected)
+    scratch_bytes = (len(PLANES) + 1) * plane_bytes
+    payloads = [*raw[:3], bytes(np.frombuffer(expected, np.uint8) ^ np.uint8(255)), bytes(scratch_bytes)]
     with ExitStack() as cleanup:
         addresses = []
         for data in payloads:
@@ -97,9 +105,9 @@ def execute(device, function, raw):
             device.call("cuMemcpyHtoD_v2", address, C.create_string_buffer(wrapped), len(wrapped))
             addresses.append(address)
         active = [address.value + len(GUARD) for address in addresses]
-        abi = C.create_string_buffer(struct.pack("<QQQQQQQii", *active, 0, 0, *SHAPE[:2]))
+        abi = C.create_string_buffer(struct.pack("<QQQQQQQii", *active, 0, 0, *shape[:2]))
         params = (C.c_void_p * 1)(C.addressof(abi))
-        device.call("cuLaunchKernel", function, 32, 1, 1, 32, 4, 1, 0, None, params, None)
+        device.call("cuLaunchKernel", function, *grid, *CUDA_BLOCK, 0, None, params, None)
         device.call("cuCtxSynchronize")
         results = []
         for address, data in zip(addresses, payloads):
@@ -111,24 +119,32 @@ def execute(device, function, raw):
     if results[:3] != raw[:3] or results[3] != expected:
         raise ValueError("instrumented launch changed its inputs or differs from the live FP8 output")
     scratch = results[4]
-    markers = np.frombuffer(scratch[3 * PLANE_BYTES:], "<u4")
-    if markers.size != ELEMENTS // 2 or not np.all(markers == 1):
+    markers = np.frombuffer(scratch[len(PLANES) * plane_bytes:], "<u4")
+    if markers.size != len(expected) // 2 or not np.all(markers == 1):
         raise ValueError("missing packed half2 scratch writes")
-    return {name: scratch[index * PLANE_BYTES:(index + 1) * PLANE_BYTES] for index, name in enumerate(PLANES)}
+    return {name: scratch[index * plane_bytes:(index + 1) * plane_bytes] for index, name in enumerate(PLANES)}
 
 
 def load_block(block, sealed, files):
     roles = [f"block{block}.attention.{role}" for role in ("in0", "in1", "in2", "out")]
     boundaries = [sealed["boundaries"][role] for role in roles]
+    shape = tuple(boundaries[0]["shape_hwc"])
+    h, w, channels = shape
+    sequence = boundaries[0]["trace_sequence"]
+    elements = h * w * channels
+    if h <= 0 or w <= 0 or h * w % 32 or channels != CHANNELS:
+        raise ValueError(f"block {block}: expected positive 32-aligned tokens with {CHANNELS} channels")
     raw = [files[role].read_bytes() for role in roles]
-    if any(tuple(row["shape_hwc"]) != SHAPE or len(data) != ELEMENTS or sha(data) != row["sha256"]
+    if any(tuple(row["shape_hwc"]) != shape or row["trace_sequence"] != sequence
+           or len(data) != elements or sha(data) != row["sha256"]
            for row, data in zip(boundaries, raw)):
-        raise ValueError(f"block {block}: expected intact 96-token attention taps")
-    return raw, dict(zip(("q", "k", "v", "out"), (row["sha256"] for row in boundaries))), boundaries[0]["trace_sequence"]
+        raise ValueError(f"block {block}: expected intact attention taps from one launch")
+    hashes = dict(zip(("q", "k", "v", "out"), (row["sha256"] for row in boundaries)))
+    return raw, hashes, sequence, shape
 
 
-def dump_block(device, function, block, raw, hashes, sequence, folder):
-    planes = execute(device, function, raw)
+def dump_block(device, function, block, raw, hashes, sequence, shape, grid, folder):
+    planes = execute(device, function, raw, shape, grid)
     values = {name: np.frombuffer(data, "<f2") for name, data in planes.items()}
     if not all(np.isfinite(value).all() for value in values.values()):
         raise ValueError(f"block {block}: nonfinite captured half values")
@@ -142,8 +158,8 @@ def dump_block(device, function, block, raw, hashes, sequence, folder):
         with path.open("xb") as stream:
             stream.write(data)
         artifacts[name] = {"file": path.name, "bytes": len(data), "sha256": sha(data)}
-    return {"block": block, "trace_sequence": sequence, "tap_sha256": hashes, "packed_elements": ELEMENTS,
-            "scratch_half2_writes": ELEMENTS // 2, "instrumented_output_sha256": hashes["out"],
+    return {"block": block, "trace_sequence": sequence, "tap_sha256": hashes, "packed_elements": len(encoded),
+            "scratch_half2_writes": len(encoded) // 2, "instrumented_output_sha256": hashes["out"],
             "encoded_norm_sha256": sha(encoded), "planes": artifacts}
 
 
@@ -159,23 +175,29 @@ def run(capture, ptx, ptxas, work, blocks):
     graph = json.loads(pinned_bytes(GRAPH, GRAPH_SHA))
     inventory = kernel_inventory()
     sealed, files = seal_capture(capture, inventory, graph)
-    if sealed["kind"] != PORT or sealed["frame"] != 0:
-        raise ValueError("expected a sealed Ampere frame-zero capture")
+    if sealed["kind"] != PORT:
+        raise ValueError("expected a sealed Ampere capture")
     inputs = {block: load_block(block, sealed, files) for block in blocks}
+    shapes = {values[3] for values in inputs.values()}
+    if len(shapes) != 1:
+        raise ValueError("selected attention blocks must share one token shape")
+    shape, = shapes
+    tokens = shape[0] * shape[1]
+    grid = (32, (tokens + QUERIES_PER_CTA - 1) // QUERIES_PER_CTA, 1)
     trace = (capture / "nr-trace.tsv").read_bytes()
     if sha(trace) != sealed["artifact_sha256"]["nr-trace.tsv"]:
         raise ValueError("trace changed after sealing")
-    launches = {row.sequence: row for row in read_trace(trace, inventory)[0]}
-    for _, _, sequence in inputs.values():
+    launches = {row.sequence: row for row in read_trace(trace, inventory)[sealed["frame"]]}
+    for _, _, sequence, _ in inputs.values():
         launch = launches[sequence]
-        if (launch.name, launch.grid, launch.block, launch.shared_memory) != (ENTRIES[1], (32, 1, 1), (32, 4, 1), 0):
-            raise ValueError("sealed attention launch has different 96-token geometry")
-    transformed = instrument(ptx.read_bytes())
+        if (launch.name, launch.grid, launch.block, launch.shared_memory) != (ENTRIES[1], grid, CUDA_BLOCK, 0):
+            raise ValueError("sealed attention launch does not match the token shape")
+    transformed = instrument(ptx.read_bytes(), tokens)
     folder.mkdir(parents=True, exist_ok=False)
     report = {"schema": "october_nr_attention_full_half_planes_v1", "passed": False,
               "source_sha256": sha(Path(__file__).read_bytes()), "capture_seal_sha256": sealed["capture_seal_sha256"],
               "rewritten_ptx_sha256": PTX_SHA, "ptxas_sha256": PTXAS_SHA, "instrumented_ptx_sha256": sha(transformed),
-              "entry": ENTRY, "grid_xyz": [32, 1, 1], "block_xyz": [32, 4, 1], "shape_hwc": SHAPE,
+              "entry": ENTRY, "frame": sealed["frame"], "grid_xyz": grid, "block_xyz": CUDA_BLOCK, "shape_hwc": shape,
               "format": "Little-endian binary16 in packed live FP8 output element order", "cases": []}
     try:
         debug_ptx = folder / "module06.attention-full.ptx"
@@ -197,7 +219,7 @@ def run(capture, ptx, ptxas, work, blocks):
             function = device.function(module, ENTRY)
             report.update(gpu=device.label, compute_capability=device.capability, cuda_driver_api_version=device.version)
             for block, values in inputs.items():
-                report["cases"].append(dump_block(device, function, block, *values, folder))
+                report["cases"].append(dump_block(device, function, block, *values, grid, folder))
         report["passed"] = True
     except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
         report["error"] = str(error)

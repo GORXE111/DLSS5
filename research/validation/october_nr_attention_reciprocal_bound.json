@@ -1,0 +1,30 @@
+{
+  "schema": "october_attention_reciprocal_bound_v1",
+  "source_sha256": "45dd10eed8138d43a7577e2f3b504e72382df2d67f54635dd477da773e0cc061",
+  "ptx_spec": "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#floating-point-instructions-rcp",
+  "ptx_reciprocal_max_error_f32_ulp": 1,
+  "clamp_f32_bits": "0x388205ff",
+  "tested_f16_codes_inclusive": [
+    "0x0410",
+    "0x7bff"
+  ],
+  "tested_finite_denominators": 30704,
+  "ulp_definition": "Spacing in the reference reciprocal's FP32 binade; at a binade boundary use the upper-side spacing.",
+  "rounding": "Exact rational RNE for binary32 and binary16 including binary16 subnormals; monotone rounding bounds all values between the endpoints.",
+  "different_f16_values": {
+    "exact_reciprocal_plus_or_minus_one_ulp": 0,
+    "rounded_f32_plus_or_minus_one_ulp": 0,
+    "host_f32_then_f16": 0
+  },
+  "nearest_f16_midpoint_distance_f32_ulp": {
+    "numerator": 4096,
+    "denominator": 2047,
+    "value": 2.0009770395701025,
+    "input_f16_code": "0x07ff"
+  },
+  "positive_infinity": {
+    "ptx_expected_f16_code": "0x0000",
+    "host_f16_code": "0x0000"
+  },
+  "passed": true
+}

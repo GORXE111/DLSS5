@@ -1,0 +1,663 @@
+{
+  "schema": "october_nr_attention_qk_planes_v1",
+  "passed": true,
+  "frame": 3,
+  "source_sha256": "1bd9253372b58e54cddc8f6bd93d892f7fce8e27c73396244a88a3abee3e035e",
+  "capture_seal_sha256": "6a22c69f56e1127e8b1db5b10ec980858150e92bc5b1d86e38f6526ee10f3448",
+  "dependency_sha256": {
+    "check_october_attention.py": "5053148f747b565ab7dcdb2e6ad87cc6fa77416dd56151912a5ec861a1129bbf",
+    "check_october_attention_tensor.py": "94cbb5161c80a63cd2816b4809556547f4121f74ba372333de5627bb806df2b4",
+    "mma_sm86_tiles.py": "419bfbbe18ce8a15b716ca7e5aad000235c0c52eea4d4a9acda2ccc865f36b80"
+  },
+  "rewritten_ptx_sha256": "f6bd97ebc3db9d9c190e731144005ec2bda23b147325bcdbf77f784007a88f29",
+  "ptxas_sha256": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693",
+  "instrumented_ptx_sha256": "f6ca14cb67d728162237999e235e7a9c4775f0b1ef45fc16a016ee48ab750acf",
+  "entry": "cc_vit_1d_attention_fp8",
+  "block_xyz": [
+    32,
+    4,
+    1
+  ],
+  "format": "Little-endian binary16 in logical [head,query,key] order including padded keys",
+  "cases": [
+    {
+      "block": 11,
+      "trace_sequence": 263,
+      "tap_sha256": {
+        "q": "59dcd0248e87f2b5429092067c4ae5228e39f53f8fc50b7f15a7d9b8c211d08c",
+        "k": "021732bab0bae9f12590b4771b41d372782ef8c1ec31d6a5acbd45860b44fac9",
+        "v": "d70fb46640d0bb087da6cc8f95ea6c3e15538a7cb43910591bb0e6bb7577d751",
+        "out": "a26485e11ddb9cfd9f1d4b669dfa821f0b406db48fa3168ac46502d03f923c3f"
+      },
+      "instrumented_output_sha256": "a26485e11ddb9cfd9f1d4b669dfa821f0b406db48fa3168ac46502d03f923c3f",
+      "shape_hwc": [
+        8,
+        12,
+        1024
+      ],
+      "grid_xyz": [
+        32,
+        1,
+        1
+      ],
+      "tensor_shape_hqk": [
+        32,
+        96,
+        128
+      ],
+      "half2_writes_per_plane": 196608,
+      "host_probability_from_measured_logits": {
+        "different_numeric_values": 0,
+        "different_half_words": 0,
+        "mae": 0.0,
+        "max_abs": 0.0
+      },
+      "padding": {
+        "keys": 32,
+        "nonzero_logits": 0
+      },
+      "planes": {
+        "logits": {
+          "file": "block11-logits.f16",
+          "bytes": 786432,
+          "sha256": "85819f3ad6a2b4e1bec9b1696d82d6beeff37f421ac03caab6cc9fadf3fb8f63"
+        },
+        "prob": {
+          "file": "block11-prob.f16",
+          "bytes": 786432,
+          "sha256": "702d32406826e3790b9d55fac8aace025af8f141966b1214cc61df409ab48dde"
+        }
+      },
+      "cpu": {
+        "logits": {
+          "different_numeric_values": 30819,
+          "different_half_words": 30819,
+          "mae": 7.532507879659534e-05,
+          "max_abs": 0.00390625
+        },
+        "prob": {
+          "different_numeric_values": 2127,
+          "different_half_words": 2127,
+          "mae": 5.734618753194809e-06,
+          "max_abs": 0.015625
+        },
+        "derived_e4m3_prob_different_bytes": 186
+      },
+      "sm86": {
+        "logits": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "prob": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "derived_e4m3_prob_different_bytes": 0
+      }
+    },
+    {
+      "block": 12,
+      "trace_sequence": 268,
+      "tap_sha256": {
+        "q": "e55d23f968302acf7b602757a7110fa177a9e1e486b253fc0a3eacb24700b297",
+        "k": "22cc1fc419396113c44f77401e8717733cad3f8297ec36719bd047dc74940f29",
+        "v": "329e78f57e035ec0284224d816145226c3d5f059ef198ea8ad85b2fb61881030",
+        "out": "fb5239da07c50af199d8b26d0fb61accce26392903b90a405104290fa4415af9"
+      },
+      "instrumented_output_sha256": "fb5239da07c50af199d8b26d0fb61accce26392903b90a405104290fa4415af9",
+      "shape_hwc": [
+        8,
+        12,
+        1024
+      ],
+      "grid_xyz": [
+        32,
+        1,
+        1
+      ],
+      "tensor_shape_hqk": [
+        32,
+        96,
+        128
+      ],
+      "half2_writes_per_plane": 196608,
+      "host_probability_from_measured_logits": {
+        "different_numeric_values": 0,
+        "different_half_words": 0,
+        "mae": 0.0,
+        "max_abs": 0.0
+      },
+      "padding": {
+        "keys": 32,
+        "nonzero_logits": 0
+      },
+      "planes": {
+        "logits": {
+          "file": "block12-logits.f16",
+          "bytes": 786432,
+          "sha256": "5cb8894bd2567c07ba9d84f4b44cc65d280c92c9913820e762f8022a0e07a6c6"
+        },
+        "prob": {
+          "file": "block12-prob.f16",
+          "bytes": 786432,
+          "sha256": "bff5b4c2c272ab280f712123123ad5b6dab4318a6bbf0768efa075b874fc6448"
+        }
+      },
+      "cpu": {
+        "logits": {
+          "different_numeric_values": 88184,
+          "different_half_words": 88184,
+          "mae": 0.00023630173139584562,
+          "max_abs": 0.0078125
+        },
+        "prob": {
+          "different_numeric_values": 5215,
+          "different_half_words": 5215,
+          "mae": 2.4953546623388927e-05,
+          "max_abs": 0.015625
+        },
+        "derived_e4m3_prob_different_bytes": 1621
+      },
+      "sm86": {
+        "logits": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "prob": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "derived_e4m3_prob_different_bytes": 0
+      }
+    },
+    {
+      "block": 13,
+      "trace_sequence": 273,
+      "tap_sha256": {
+        "q": "93eea34d8392988d616418dbcf507df4b68927feca563e9d0222ad0299fd9fa1",
+        "k": "4a6a763ffd99c4094fb69a35f191e30020c0d42c8bef96b912d51e734f48c6b4",
+        "v": "1acac6906c541baeb2919abee4e7c119d67f0f85f6ca6cbcd2965d1072140ac8",
+        "out": "60d575500a4e3923b2be6aebb1d7fe8d1032e19e32ed811dc707e3b7ad64df0f"
+      },
+      "instrumented_output_sha256": "60d575500a4e3923b2be6aebb1d7fe8d1032e19e32ed811dc707e3b7ad64df0f",
+      "shape_hwc": [
+        8,
+        12,
+        1024
+      ],
+      "grid_xyz": [
+        32,
+        1,
+        1
+      ],
+      "tensor_shape_hqk": [
+        32,
+        96,
+        128
+      ],
+      "half2_writes_per_plane": 196608,
+      "host_probability_from_measured_logits": {
+        "different_numeric_values": 0,
+        "different_half_words": 0,
+        "mae": 0.0,
+        "max_abs": 0.0
+      },
+      "padding": {
+        "keys": 32,
+        "nonzero_logits": 0
+      },
+      "planes": {
+        "logits": {
+          "file": "block13-logits.f16",
+          "bytes": 786432,
+          "sha256": "a6538c852233c58db2c4eba5385e13c7c09d35ab7e52c2abba65be87daabc74b"
+        },
+        "prob": {
+          "file": "block13-prob.f16",
+          "bytes": 786432,
+          "sha256": "4a684fd7aa6d0d3e61356bcb608944774d67a923337a906065a9ca23eda8025f"
+        }
+      },
+      "cpu": {
+        "logits": {
+          "different_numeric_values": 72901,
+          "different_half_words": 72901,
+          "mae": 0.00024200794481051466,
+          "max_abs": 0.0078125
+        },
+        "prob": {
+          "different_numeric_values": 6471,
+          "different_half_words": 6471,
+          "mae": 1.666244740287463e-05,
+          "max_abs": 0.015625
+        },
+        "derived_e4m3_prob_different_bytes": 307
+      },
+      "sm86": {
+        "logits": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "prob": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "derived_e4m3_prob_different_bytes": 0
+      }
+    },
+    {
+      "block": 14,
+      "trace_sequence": 278,
+      "tap_sha256": {
+        "q": "24f5a7dbff8b3a39ec269205748036a1f2e89ed25771b12e0a5af6602bceb276",
+        "k": "3f612104abc7578768143f38391e83b9978cbb476e5010ac2907cedff75ffdf3",
+        "v": "4d84beb1b8a221a111b461b221d4f00af7385684efeaa99d8abeed9b4fe519e4",
+        "out": "2bb38720db0b87a3c810f414ca7fd49a3dec51a4e2ac3abbead51f704bcd0f2a"
+      },
+      "instrumented_output_sha256": "2bb38720db0b87a3c810f414ca7fd49a3dec51a4e2ac3abbead51f704bcd0f2a",
+      "shape_hwc": [
+        8,
+        12,
+        1024
+      ],
+      "grid_xyz": [
+        32,
+        1,
+        1
+      ],
+      "tensor_shape_hqk": [
+        32,
+        96,
+        128
+      ],
+      "half2_writes_per_plane": 196608,
+      "host_probability_from_measured_logits": {
+        "different_numeric_values": 0,
+        "different_half_words": 0,
+        "mae": 0.0,
+        "max_abs": 0.0
+      },
+      "padding": {
+        "keys": 32,
+        "nonzero_logits": 0
+      },
+      "planes": {
+        "logits": {
+          "file": "block14-logits.f16",
+          "bytes": 786432,
+          "sha256": "e5c8c5491609d76383ce1055b934ed5f8ccf8fc9fb400733542a84824e687070"
+        },
+        "prob": {
+          "file": "block14-prob.f16",
+          "bytes": 786432,
+          "sha256": "5c03553bd347830d33491e23c2b4a1c41b587825015e9ea0eb18c486eeef9db7"
+        }
+      },
+      "cpu": {
+        "logits": {
+          "different_numeric_values": 94062,
+          "different_half_words": 94062,
+          "mae": 0.0002597774922226866,
+          "max_abs": 0.00390625
+        },
+        "prob": {
+          "different_numeric_values": 5676,
+          "different_half_words": 5676,
+          "mae": 8.318418016036352e-06,
+          "max_abs": 0.015625
+        },
+        "derived_e4m3_prob_different_bytes": 333
+      },
+      "sm86": {
+        "logits": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "prob": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "derived_e4m3_prob_different_bytes": 0
+      }
+    },
+    {
+      "block": 15,
+      "trace_sequence": 283,
+      "tap_sha256": {
+        "q": "22154f48a801d291772155315e31d3b06fdfd5033512aa93ef06cf33a7a662a2",
+        "k": "65e286489df331abd2b33725047ccd622f90db6b1f2dd952aeb7fb69ea0dc197",
+        "v": "bfc78b6848227e65c6ff68e54b5c0e620563c162af953f56e95f66c48d1a6eb1",
+        "out": "001d7c12459a16fdde2ddb8513c0e2a2754c9afff0b2893fcc3cd7dceeb8700b"
+      },
+      "instrumented_output_sha256": "001d7c12459a16fdde2ddb8513c0e2a2754c9afff0b2893fcc3cd7dceeb8700b",
+      "shape_hwc": [
+        8,
+        12,
+        1024
+      ],
+      "grid_xyz": [
+        32,
+        1,
+        1
+      ],
+      "tensor_shape_hqk": [
+        32,
+        96,
+        128
+      ],
+      "half2_writes_per_plane": 196608,
+      "host_probability_from_measured_logits": {
+        "different_numeric_values": 0,
+        "different_half_words": 0,
+        "mae": 0.0,
+        "max_abs": 0.0
+      },
+      "padding": {
+        "keys": 32,
+        "nonzero_logits": 0
+      },
+      "planes": {
+        "logits": {
+          "file": "block15-logits.f16",
+          "bytes": 786432,
+          "sha256": "14793050ec2ac9881b0aafea2f7f95c840f109346084dc05cd9b5e065fe4ad70"
+        },
+        "prob": {
+          "file": "block15-prob.f16",
+          "bytes": 786432,
+          "sha256": "10d9360ca685c7bf01628bb4f74debc20bc7323d2538612e56e0ae35de394179"
+        }
+      },
+      "cpu": {
+        "logits": {
+          "different_numeric_values": 86400,
+          "different_half_words": 86400,
+          "mae": 0.0002823103277478367,
+          "max_abs": 0.00390625
+        },
+        "prob": {
+          "different_numeric_values": 6984,
+          "different_half_words": 6984,
+          "mae": 7.07699606815974e-05,
+          "max_abs": 0.015625
+        },
+        "derived_e4m3_prob_different_bytes": 443
+      },
+      "sm86": {
+        "logits": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "prob": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "derived_e4m3_prob_different_bytes": 0
+      }
+    },
+    {
+      "block": 16,
+      "trace_sequence": 288,
+      "tap_sha256": {
+        "q": "65d564395a4477a3d0bdb83f9fb11982a1fa6e73007e1bd42b2ee6ebd67a9d4c",
+        "k": "ae876b1493200e896f4abbce900fab97dbe286607672d483020cfe9e2ae8ffb9",
+        "v": "b360edcdb3dc2659a3eee3553d6655765e6788b2348d9832db5daf4e2d37fd6f",
+        "out": "59c5ea165c744b52fb89760a44832dd1ac98eb04d4d27e2f90b4a92407fee6e3"
+      },
+      "instrumented_output_sha256": "59c5ea165c744b52fb89760a44832dd1ac98eb04d4d27e2f90b4a92407fee6e3",
+      "shape_hwc": [
+        8,
+        12,
+        1024
+      ],
+      "grid_xyz": [
+        32,
+        1,
+        1
+      ],
+      "tensor_shape_hqk": [
+        32,
+        96,
+        128
+      ],
+      "half2_writes_per_plane": 196608,
+      "host_probability_from_measured_logits": {
+        "different_numeric_values": 0,
+        "different_half_words": 0,
+        "mae": 0.0,
+        "max_abs": 0.0
+      },
+      "padding": {
+        "keys": 32,
+        "nonzero_logits": 0
+      },
+      "planes": {
+        "logits": {
+          "file": "block16-logits.f16",
+          "bytes": 786432,
+          "sha256": "6da11790f40c08ef33e1920869a402529da2bbdc9bee4d70bee551d753650ca6"
+        },
+        "prob": {
+          "file": "block16-prob.f16",
+          "bytes": 786432,
+          "sha256": "6c5d8c3481f392c1efe39a2c0956ae8a240564415e1df3a699ea1ba374b32410"
+        }
+      },
+      "cpu": {
+        "logits": {
+          "different_numeric_values": 93156,
+          "different_half_words": 93156,
+          "mae": 0.00024955008605805534,
+          "max_abs": 0.0078125
+        },
+        "prob": {
+          "different_numeric_values": 6491,
+          "different_half_words": 6491,
+          "mae": 3.785174340009689e-05,
+          "max_abs": 0.015625
+        },
+        "derived_e4m3_prob_different_bytes": 513
+      },
+      "sm86": {
+        "logits": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "prob": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "derived_e4m3_prob_different_bytes": 0
+      }
+    },
+    {
+      "block": 17,
+      "trace_sequence": 293,
+      "tap_sha256": {
+        "q": "7d097b94862ba4b567b5a816b7e066473c93249e8a58a1056420b290ccef1d9e",
+        "k": "a4906dbe51a0a3693fa5d4cc199e167d860a1ce48aebd6eecbab196b8f752d90",
+        "v": "b1f1782c7b4fe8591792d635f4e3d315313e309db0a2c43806b3ce2ca963b4ae",
+        "out": "cad9d83356211d4ba19664c15a07d9650e8c9085bf3062c4e148ad8fe20907f0"
+      },
+      "instrumented_output_sha256": "cad9d83356211d4ba19664c15a07d9650e8c9085bf3062c4e148ad8fe20907f0",
+      "shape_hwc": [
+        8,
+        12,
+        1024
+      ],
+      "grid_xyz": [
+        32,
+        1,
+        1
+      ],
+      "tensor_shape_hqk": [
+        32,
+        96,
+        128
+      ],
+      "half2_writes_per_plane": 196608,
+      "host_probability_from_measured_logits": {
+        "different_numeric_values": 0,
+        "different_half_words": 0,
+        "mae": 0.0,
+        "max_abs": 0.0
+      },
+      "padding": {
+        "keys": 32,
+        "nonzero_logits": 0
+      },
+      "planes": {
+        "logits": {
+          "file": "block17-logits.f16",
+          "bytes": 786432,
+          "sha256": "c2c9253ead4df26e23c92ac2e9b6f35c7e622bbddf926b54aaff748fcc7b5680"
+        },
+        "prob": {
+          "file": "block17-prob.f16",
+          "bytes": 786432,
+          "sha256": "fdc04d5785b5d61073b4cc3240ff53e6ebb2410ba040b3452eeadf82f4df0e28"
+        }
+      },
+      "cpu": {
+        "logits": {
+          "different_numeric_values": 77181,
+          "different_half_words": 77181,
+          "mae": 0.00016091027646325529,
+          "max_abs": 0.00390625
+        },
+        "prob": {
+          "different_numeric_values": 3887,
+          "different_half_words": 3887,
+          "mae": 1.4149428655703863e-05,
+          "max_abs": 0.015625
+        },
+        "derived_e4m3_prob_different_bytes": 475
+      },
+      "sm86": {
+        "logits": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "prob": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "derived_e4m3_prob_different_bytes": 0
+      }
+    },
+    {
+      "block": 18,
+      "trace_sequence": 298,
+      "tap_sha256": {
+        "q": "c112e695028293388ebd4ba7a44002832e856fb9214f0f5b5846ee2bbbb1c2d6",
+        "k": "8cd0459455c410328911aca2d97bdd0a5667874c7e819315b3efa72ef85c5980",
+        "v": "1251c0765140e0f53eab0b61d1e2c7a66a20410299e57c46908641dd8445e171",
+        "out": "861df1aae82dcee34450ea52f3444aff7547270f64d7a195d631b5fdc792f407"
+      },
+      "instrumented_output_sha256": "861df1aae82dcee34450ea52f3444aff7547270f64d7a195d631b5fdc792f407",
+      "shape_hwc": [
+        8,
+        12,
+        1024
+      ],
+      "grid_xyz": [
+        32,
+        1,
+        1
+      ],
+      "tensor_shape_hqk": [
+        32,
+        96,
+        128
+      ],
+      "half2_writes_per_plane": 196608,
+      "host_probability_from_measured_logits": {
+        "different_numeric_values": 0,
+        "different_half_words": 0,
+        "mae": 0.0,
+        "max_abs": 0.0
+      },
+      "padding": {
+        "keys": 32,
+        "nonzero_logits": 0
+      },
+      "planes": {
+        "logits": {
+          "file": "block18-logits.f16",
+          "bytes": 786432,
+          "sha256": "8426467a7eb4dc642e5dab9c1958eaf07f3e78892b25b65256c497bb153efccd"
+        },
+        "prob": {
+          "file": "block18-prob.f16",
+          "bytes": 786432,
+          "sha256": "a6a9b7461a5bf554cf5e3c2adcb51213bc8e7d6d5d23326b181c47020fad6da0"
+        }
+      },
+      "cpu": {
+        "logits": {
+          "different_numeric_values": 78008,
+          "different_half_words": 78008,
+          "mae": 0.00014056432216117779,
+          "max_abs": 0.00390625
+        },
+        "prob": {
+          "different_numeric_values": 3503,
+          "different_half_words": 3503,
+          "mae": 1.3631613304217657e-05,
+          "max_abs": 0.015625
+        },
+        "derived_e4m3_prob_different_bytes": 347
+      },
+      "sm86": {
+        "logits": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "prob": {
+          "different_numeric_values": 0,
+          "different_half_words": 0,
+          "mae": 0.0,
+          "max_abs": 0.0
+        },
+        "derived_e4m3_prob_different_bytes": 0
+      }
+    }
+  ],
+  "instrumented_cubin_sha256": "eeb1c4dadb343542cd11a8c08c049f2d4b68e1e9790c72f202ea06433989924f",
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "compute_capability": [
+    8,
+    6
+  ],
+  "cuda_driver_api_version": 13030
+}

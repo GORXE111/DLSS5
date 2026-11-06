@@ -34,4 +34,4 @@ python -B -m tools.ptx86.dump_october_attention_full --capture $capture --ptx "$
 python -B -m tools.ptx86.check_october_attention_tensor $capture --dump $work
 ```
 
-结论覆盖这份 96-token 首帧捕获及 sm_86 移植算术。两条重放路径在同一 RTX 3060 上运行，前者保留改写内核，后者独立重建张量计算。完整 QK logits、量化前概率、其他输入几何及 RTX 50 原版的逐层算术仍待对照。全网原生等价验收仍需用同输入、同预设的 RTX 50 原版张量。
+这批报告覆盖 96-token 首帧捕获及 sm_86 移植算术。两条重放路径在同一 RTX 3060 上运行，前者保留改写内核，后者独立重建张量计算。后续已完成 QK logits、量化前概率、1080p 首帧和另一场景第 4 帧的对照。当前工具支持新的输入形状与帧，保留原报告时使用的源码版本可按提交复现。[后续验证](october_nr_attention_holdouts.md) · [本批源码版本](https://github.com/GORXE111/DLSS5/tree/9c01a8d1c327786cedf99bc6c52e33ea8d276072/tools/ptx86)

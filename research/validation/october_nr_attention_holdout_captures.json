@@ -1,0 +1,116 @@
+{
+  "schema": "october_nr_attention_holdout_captures_v1",
+  "baseline_capture_seal_sha256": "89d6d263da754003538d49ebba535448fa61407ceb02a5d7a8497751e67c7af0",
+  "cases": {
+    "hd1080": {
+      "case": {
+        "id": "resolution_1920x1080",
+        "args": [
+          "--nr-only",
+          "--input",
+          "1920x1080",
+          "--output",
+          "1920x1080",
+          "--frames",
+          "1",
+          "--model",
+          "2"
+        ]
+      },
+      "capture_profile": {
+        "nr_version": "310.9.16.0",
+        "requested_model_preset": 2,
+        "statically_mapped_weight_resource": "WEIGHTS_CC_SMALL_FP8"
+      },
+      "frame": 0,
+      "runtime_sha256": {
+        "nr-lab.exe": "c53e1084e3c7368defa4b37d3fbf08d441ce64ab9019104f9418fc1a1f0a1414",
+        "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+        "nvngx_dlssnr.dll": "2d3e405535cfb574828a5940f62d14952044f4feb1013caf9e7b9240385506ed",
+        "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+        "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+      },
+      "tap_cubin_sha256": "080642fe9576c32924b4bf9746e350aa51b1a139c7a3adcc3294ffec985eada4",
+      "graph_sha256": "01e3c597d638592da877d5c66b9bce019353bf79e453ff4785459b9050f3733f",
+      "tool_sha256": "21290f8c18785e8948f453ed84c3ba960457408abcdbc87de108f3b3f61374fd",
+      "passed": true,
+      "trace_only_sha256": "032caa34692861ef5f9265e25f97ceac975ab694f04657831e52cb4472976fcc",
+      "outputs_equal_to_plain": true,
+      "boundaries_sealed": 32,
+      "capture_seal_sha256": "7a83fe7b58104fd2f740dba8f392fa7509ff2ce81d01f9a51275b040d9c9bb20",
+      "tap_trace_sha256": "0e6e8758be0a475e7d235d33e4b250d5cb39f8dbd7ca855172f2a651bc67e671",
+      "gpu": {
+        "name": "NVIDIA GeForce RTX 3060",
+        "compute_capability": "8.6",
+        "driver": "610.74"
+      },
+      "shape_hwc": [
+        20,
+        32,
+        1024
+      ],
+      "grid_xyz": [
+        32,
+        3,
+        1
+      ],
+      "tap_hashes_different_from_batch11": 32
+    },
+    "temporal_f3": {
+      "case": {
+        "id": "history_b_f3",
+        "args": [
+          "--nr-only",
+          "--input",
+          "640x360",
+          "--output",
+          "640x360",
+          "--frames",
+          "4",
+          "--scene-variant",
+          "1",
+          "--model",
+          "2"
+        ]
+      },
+      "capture_profile": {
+        "nr_version": "310.9.16.0",
+        "requested_model_preset": 2,
+        "statically_mapped_weight_resource": "WEIGHTS_CC_SMALL_FP8"
+      },
+      "frame": 3,
+      "runtime_sha256": {
+        "nr-lab.exe": "c53e1084e3c7368defa4b37d3fbf08d441ce64ab9019104f9418fc1a1f0a1414",
+        "nvngx.dll": "a738c8de7f4cc40978679deb95515ad173a62451318a9826f79bbbef0ff39182",
+        "nvngx_dlssnr.dll": "2d3e405535cfb574828a5940f62d14952044f4feb1013caf9e7b9240385506ed",
+        "nvngx_dlss.dll": "c85f971ce023c9f3492fc7455f0b01a24ba18ea39636407a846902c4360b0b7e",
+        "nvngx_dlssg.dll": "5d5cbf14d2727d47f93fd10bf77bd91708ae122482a6f86fd564971641ebd47b"
+      },
+      "tap_cubin_sha256": "080642fe9576c32924b4bf9746e350aa51b1a139c7a3adcc3294ffec985eada4",
+      "graph_sha256": "01e3c597d638592da877d5c66b9bce019353bf79e453ff4785459b9050f3733f",
+      "tool_sha256": "21290f8c18785e8948f453ed84c3ba960457408abcdbc87de108f3b3f61374fd",
+      "passed": true,
+      "trace_only_sha256": "c0d87dd7db5f390341d2272636c1b3a543bac660475740e842d18f3ec2a5a390",
+      "outputs_equal_to_plain": true,
+      "boundaries_sealed": 32,
+      "capture_seal_sha256": "6a22c69f56e1127e8b1db5b10ec980858150e92bc5b1d86e38f6526ee10f3448",
+      "tap_trace_sha256": "2c13179aa54180fe38b54554945229cd85d80c02d7d281f77540082d03cf4668",
+      "gpu": {
+        "name": "NVIDIA GeForce RTX 3060",
+        "compute_capability": "8.6",
+        "driver": "610.74"
+      },
+      "shape_hwc": [
+        8,
+        12,
+        1024
+      ],
+      "grid_xyz": [
+        32,
+        1,
+        1
+      ],
+      "tap_hashes_different_from_batch11": 32
+    }
+  }
+}

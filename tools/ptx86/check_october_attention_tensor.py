@@ -15,21 +15,20 @@ from .check_october_attention import FP8, attention_stages, buffer_offsets, enco
 from .mma_sm86_tiles import Sm86Mma
 
 
-TOKENS = 96
 K16 = (np.arange(16), np.arange(16, 32))
 CPU_SPLIT = partial(split_mma, groups=K16)
 ROLES = ("in0", "in1", "in2", "out")
 MODES = ("cpu", "gpu_qk", "gpu_pv", "gpu_qk_pv")
 
 
-def load_case(block, sealed, files, layout):
+def load_case(block, sealed, files, shape, layout):
     tensors = []
     for suffix, indices in zip(ROLES, layout):
         role = f"block{block}.attention.{suffix}"
         boundary = sealed["boundaries"][role]
         data = files[role].read_bytes()
-        if boundary["shape_hwc"] != (8, 12, 1024) or sha(data) != boundary["sha256"]:
-            raise ValueError(f"{role} requires an intact 96-token tap")
+        if boundary["shape_hwc"] != shape or len(data) != indices.size or sha(data) != boundary["sha256"]:
+            raise ValueError(f"{role} requires an intact tap with the selected attention geometry")
         codes = np.frombuffer(data, np.uint8)[indices]
         if np.any((codes & 127) == 127):
             raise ValueError(f"{role} contains a non-finite E4M3 value")
@@ -44,6 +43,10 @@ def gpu_split(mma, a, b, acc=0):
 
 
 def evaluate(q, k, v, qk, pv):
+    tokens = q.shape[1]
+    if tokens % 64 == 0:
+        return attention_stages(q, k, v, qk=qk, pv=pv)
+
     pad_p = FP8[encode_fp8(probabilities(np.array(0, dtype=np.float32)))]
     pad_a, pad_b = np.full_like(q, pad_p), np.zeros_like(v[:, :32])
     next_tile = 0
@@ -52,7 +55,7 @@ def evaluate(q, k, v, qk, pv):
         nonlocal next_tile
         next_tile += 1
         acc = pv(a, b, acc)
-        if next_tile == TOKENS // 32:
+        if next_tile == tokens // 32:
             acc = pv(pad_a, pad_b, acc)
         return acc
 
@@ -94,8 +97,13 @@ def diagnostic(stages, measured, observed):
 
 def run(capture, blocks, dump, device):
     sealed, files = seal_capture(capture, kernel_inventory(), json.loads(pinned_bytes(GRAPH, GRAPH_SHA)))
-    if sealed["kind"] != PORT or sealed["frame"] != 0:
-        raise ValueError("expected a sealed staged Ampere frame-zero capture")
+    if sealed["kind"] != PORT:
+        raise ValueError("expected a sealed staged Ampere capture")
+    shape = sealed["boundaries"][f"block{blocks[0]}.attention.in0"]["shape_hwc"]
+    h, w, channels = shape
+    tokens = h * w
+    if tokens <= 0 or tokens % 32 or channels != 1024:
+        raise ValueError("expected 32-aligned attention tokens and 1024 channels")
     seal = sealed["capture_seal_sha256"]
     dump_sha = None
     if dump:
@@ -108,29 +116,32 @@ def run(capture, blocks, dump, device):
         if len(dump_cases) != len(report["cases"]) or not set(blocks) <= dump_cases.keys():
             raise ValueError("full stage capture must include each selected block once")
         dump_sha = sha(raw)
-    layout = buffer_offsets(TOKENS)
+    layout = buffer_offsets(tokens)
     cases = []
     with Sm86Mma(ordinal=device) as mma:
         hardware_info = mma.hardware_info
         hardware = partial(gpu_split, mma)
         switches = ((CPU_SPLIT, CPU_SPLIT), (hardware, CPU_SPLIT), (CPU_SPLIT, hardware), (hardware, hardware))
         for block in blocks:
-            q, k, v, observed = load_case(block, sealed, files, layout)
+            q, k, v, observed = load_case(block, sealed, files, shape, layout)
+            q, k, v = FP8[q], FP8[k], FP8[v]
             measured = read_dump(dump, dump_cases[block], observed, layout[3]) if dump else None
             models = {}
             for label, (qk, pv) in zip(MODES, switches):
-                stages = evaluate(FP8[q], FP8[k], FP8[v], qk, pv)
+                stages = evaluate(q, k, v, qk, pv)
                 expected = encode_fp8(stages["pre_quantized"])
                 models[label] = {"output": metrics(expected, observed)}
                 if measured is not None:
                     models[label]["against_measured_stages"] = diagnostic(stages, measured, observed)
+                del stages
             cases.append({"block": block, "values_compared": observed.size, "models": models})
     totals = {label: sum(row["models"][label]["output"]["different_numeric_count"] for row in cases) for label in MODES}
     sources = {Path(path).name: sha(Path(path).read_bytes())
                for path in (__file__, model.__file__, mma_sm86_tiles.__file__)}
     return {"schema": "october_attention_tensor_comparison_v1", "source_sha256": sources,
             "capture_seal_sha256": seal, "full_dump_report_sha256": dump_sha, **hardware_info,
-            "scope": "Ampere split K16 MMA with host exponent, reduction and reciprocal; sealed 96-token inputs.",
+            "capture_frame": sealed["frame"], "shape_hwc": shape, "tokens": tokens,
+            "scope": "Ampere split K16 MMA with host exponent, reduction and reciprocal; sealed inputs.",
             "cases": cases, "total_different_numeric_values": totals,
             "bit_exact_gpu_mma": all(row["models"]["gpu_qk_pv"]["output"]["different_byte_count"] == 0 for row in cases)}
 
