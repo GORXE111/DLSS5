@@ -1,0 +1,259 @@
+{
+  "date": "2026-11-06",
+  "scope": "Local offline Godot Sponza on RTX 3060 D3D12; 310.8.0 f454 port. Same-Present comparison; no native or commercial game parity claim.",
+  "renderer": "Godot 4.7.2 D3D12 Forward+",
+  "attempts": [
+    {
+      "requested_size_wh": [
+        3840,
+        2160
+      ],
+      "actual_size_wh": [
+        3840,
+        1421
+      ],
+      "scope": "Decorated window was constrained; excluded from viewer"
+    },
+    {
+      "requested_size_wh": [
+        3840,
+        2160
+      ],
+      "actual_size_wh": [
+        3840,
+        2160
+      ],
+      "model_size_wh": [
+        1920,
+        1080
+      ],
+      "scope": "Borderless owned project copy; retained same Present 56"
+    }
+  ],
+  "datasets": [
+    {
+      "dataset_id": "move720",
+      "present": 141,
+      "dump_slot": 1,
+      "size_wh": [
+        1280,
+        720
+      ],
+      "model_size_wh": [
+        640,
+        360
+      ],
+      "exit_code": 0,
+      "released_frames": 1098,
+      "source_ppm_sha256": {
+        "moving/dlss5fb_in_1.ppm": "3474e63993e5860835888d58dc01f2536531e41f6bdddf16e71302831149790a",
+        "moving/dlss5fb_out_1.ppm": "2323f57de7dace3a88e086eec56ab6f23465e573e99c940e1de7a643b191ab20"
+      },
+      "runtime_sha256": {
+        "process.json": "b8cb27f5b928bb6a492e697d010ff03b852ec7864f9367b49cbb940aa495f0f9",
+        "godot.log": "8de88982856d62900f8ca5325420d079e2c5376bb577d98aa0c2e43cbf340758",
+        "dlss5fb.log": "7a8a2fba4ae86a068554ab9b69a22531dd67937002319d6e2895d508f4552a9e",
+        "dlss5fb.ini": "2c9f3ba2250cb669ad9d3babc69b2cfaee31091e4c5f5fb37f45faf1e58d6356",
+        "dxgi.dll": "77f3016f127af55ecfed2bd2f540f8e7099ef80c4475761f453f8857a4963a53",
+        "dlss5_nvngx.dll": "aa5ce89a61a41b4edd494f5fea24f94d4c91ab79ed0280dbb98f10c9a70d61d4"
+      },
+      "model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "mae": 12.414697265625,
+      "p95": 28.666666666666668,
+      "luma": -1.365742201171875,
+      "capture_run": "moving"
+    },
+    {
+      "dataset_id": "move_nr640",
+      "present": 141,
+      "dump_slot": 1,
+      "size_wh": [
+        640,
+        360
+      ],
+      "model_size_wh": [
+        640,
+        360
+      ],
+      "exit_code": 0,
+      "released_frames": 1098,
+      "source_ppm_sha256": {
+        "moving/dlss5fb_lo_1.ppm": "4aee8c012c0df52933bdfe646477b402254fd967dcfa522fbaf01cf70b580fe3",
+        "moving/dlss5fb_nr_1.ppm": "fe2bbed16b42c47292a972e59855e96eb3f7d28154bb5929f8ecb8f3b8c1fed3"
+      },
+      "runtime_sha256": {
+        "process.json": "b8cb27f5b928bb6a492e697d010ff03b852ec7864f9367b49cbb940aa495f0f9",
+        "godot.log": "8de88982856d62900f8ca5325420d079e2c5376bb577d98aa0c2e43cbf340758",
+        "dlss5fb.log": "7a8a2fba4ae86a068554ab9b69a22531dd67937002319d6e2895d508f4552a9e",
+        "dlss5fb.ini": "2c9f3ba2250cb669ad9d3babc69b2cfaee31091e4c5f5fb37f45faf1e58d6356",
+        "dxgi.dll": "77f3016f127af55ecfed2bd2f540f8e7099ef80c4475761f453f8857a4963a53",
+        "dlss5_nvngx.dll": "aa5ce89a61a41b4edd494f5fea24f94d4c91ab79ed0280dbb98f10c9a70d61d4"
+      },
+      "model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "mae": 12.539861111111112,
+      "p95": 29.0,
+      "luma": -1.341122894097222,
+      "capture_run": "moving"
+    },
+    {
+      "dataset_id": "still720",
+      "present": 120,
+      "dump_slot": 0,
+      "size_wh": [
+        1280,
+        720
+      ],
+      "model_size_wh": [
+        640,
+        360
+      ],
+      "exit_code": 0,
+      "released_frames": 1219,
+      "source_ppm_sha256": {
+        "stationary/dlss5fb_in.ppm": "925030311503842a9c4f3b88a16f77bcb379e44786e482171e59815e1de4c426",
+        "stationary/dlss5fb_out.ppm": "58c01422b701d7bcb74b9ed8bf3c9ed6e1227865281a653c7bd4784658cc70e6"
+      },
+      "runtime_sha256": {
+        "process.json": "3818c639a00ced15b470a753ae00b49e4fde947ae49c1156d6913d1eb1e97be8",
+        "godot.log": "b43432f19ab665f7b31161c38862f033b978263ae9535c7aa82e2c137274f0cb",
+        "dlss5fb.log": "72e6fcf1268fe194864a48c43fa65f4ab782b0ac0632cffa4677edaa794090e0",
+        "dlss5fb.ini": "22f5e40a58b527a03f8fcabef0a9b090b02ec68d1fbebc9eb20b55a4cc7a1f5d",
+        "dxgi.dll": "77f3016f127af55ecfed2bd2f540f8e7099ef80c4475761f453f8857a4963a53",
+        "dlss5_nvngx.dll": "aa5ce89a61a41b4edd494f5fea24f94d4c91ab79ed0280dbb98f10c9a70d61d4"
+      },
+      "model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "mae": 12.912735460069445,
+      "p95": 28.333333333333332,
+      "luma": -1.6780719902343746,
+      "capture_run": "stationary"
+    },
+    {
+      "dataset_id": "still4k",
+      "present": 56,
+      "dump_slot": 1,
+      "size_wh": [
+        3840,
+        2160
+      ],
+      "model_size_wh": [
+        1920,
+        1080
+      ],
+      "exit_code": 0,
+      "released_frames": 246,
+      "source_ppm_sha256": {
+        "borderless_4k/dlss5fb_in_1.ppm": "5f5aa43c734f22b09429f1bed8e5e6618b05295c76ab97897f21b6457287eae1",
+        "borderless_4k/dlss5fb_out_1.ppm": "cc7350df635c02127c448c8d7f3bf1f97b5e8409a298a41e9ba2a806ead2e1e3"
+      },
+      "runtime_sha256": {
+        "process.json": "fb405bdd4779739f1f84ddf0911b08ab5b68a24cfdee73602c1a70a5d30d66d9",
+        "godot.log": "2ddbf46041bfad6b32d1fda3a35bc0f5eeac034eaf4d3cbb25f6439e59d50f8a",
+        "dlss5fb.log": "4a376d8af1a876b34fdb595fa6a08f442e6133f1dc792ccfd304824ab84ddbf7",
+        "dlss5fb.ini": "981b9d0ebbb5755f0fef893430de501b207f5cdc4680f341a845f8fd3dff59c1",
+        "dxgi.dll": "77f3016f127af55ecfed2bd2f540f8e7099ef80c4475761f453f8857a4963a53",
+        "dlss5_nvngx.dll": "aa5ce89a61a41b4edd494f5fea24f94d4c91ab79ed0280dbb98f10c9a70d61d4"
+      },
+      "model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "mae": 11.057094867219648,
+      "p95": 24.0,
+      "luma": -1.2264084299527387,
+      "capture_run": "borderless_4k"
+    },
+    {
+      "dataset_id": "still_nr1080",
+      "present": 56,
+      "dump_slot": 1,
+      "size_wh": [
+        1920,
+        1080
+      ],
+      "model_size_wh": [
+        1920,
+        1080
+      ],
+      "exit_code": 0,
+      "released_frames": 246,
+      "source_ppm_sha256": {
+        "borderless_4k/dlss5fb_lo_1.ppm": "b97fe24a0ccba431004a9b93c62f90c46d683d1f3c89a9e26776de9517b02e39",
+        "borderless_4k/dlss5fb_nr_1.ppm": "7bfe6d8c16177e68ba42ac06ed0982e6d1cc21dad251b0a142b2d88dab7dd005"
+      },
+      "runtime_sha256": {
+        "process.json": "fb405bdd4779739f1f84ddf0911b08ab5b68a24cfdee73602c1a70a5d30d66d9",
+        "godot.log": "2ddbf46041bfad6b32d1fda3a35bc0f5eeac034eaf4d3cbb25f6439e59d50f8a",
+        "dlss5fb.log": "4a376d8af1a876b34fdb595fa6a08f442e6133f1dc792ccfd304824ab84ddbf7",
+        "dlss5fb.ini": "981b9d0ebbb5755f0fef893430de501b207f5cdc4680f341a845f8fd3dff59c1",
+        "dxgi.dll": "77f3016f127af55ecfed2bd2f540f8e7099ef80c4475761f453f8857a4963a53",
+        "dlss5_nvngx.dll": "aa5ce89a61a41b4edd494f5fea24f94d4c91ab79ed0280dbb98f10c9a70d61d4"
+      },
+      "model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+      "mae": 11.231348540380658,
+      "p95": 24.666666666666668,
+      "luma": -1.157851827642747,
+      "capture_run": "borderless_4k"
+    }
+  ],
+  "difference_units": "RGB and encoded luma Y-prime on 0..255 code values, not ground-truth error",
+  "viewer_verification": {
+    "decoded_pngs_matching_local_viewer": 20,
+    "cpu_unit_tests_passed": 4,
+    "chromium_offline_checks": [
+      {
+        "name": "file:// opens true UHD without a server",
+        "detail": {
+          "actual": [
+            3840,
+            2160,
+            3840,
+            2160
+          ],
+          "datasets": 5
+        }
+      },
+      {
+        "name": "keyboard and pointer move aligned crop",
+        "detail": {
+          "home": 0,
+          "end": 100,
+          "drag": 72
+        }
+      },
+      {
+        "name": "separate 4K heatmaps and physical source pixel widths",
+        "detail": {
+          "zoom100": 3840,
+          "zoom200": 7680
+        }
+      },
+      {
+        "name": "all datasets load; model texture has distinct labels and ROI jump",
+        "detail": [
+          "move720",
+          "move_nr640",
+          "still720",
+          "still4k",
+          "still_nr1080"
+        ]
+      },
+      {
+        "name": "no runtime errors or HTTP(S) requests",
+        "detail": null
+      },
+      {
+        "name": "mobile touch and narrow layout",
+        "detail": {
+          "dimensions": [
+            390,
+            390
+          ]
+        }
+      }
+    ],
+    "all_passed": true
+  },
+  "viewer_source_sha256": {
+    "index.html": "8c0a7953a3f000bd17090f67f517f5585463b230085b24937c17b13eb0c1f05a",
+    "generate_assets.py": "bcc225bb690585df96d44b690213deb9d9022f552e8d6a22f5af0e8996ffb0a8",
+    "test_generate_assets.py": "60f9f52accef136d3323f3ae2c34cfd71bbf7e9d603fae67a53e9fad299046de"
+  },
+  "excluded_from_git": "raw captures, PNGs, ZIP, logs and vendor binaries"
+}

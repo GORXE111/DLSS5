@@ -1,6 +1,6 @@
 # DLSS-NR 310.8.0 逆向与 RTX 30 移植
 
-更新：2026-10-23。当前范围是 NVIDIA `nvngx_dlssnr.dll` **310.8.0** 的 Neural Rendering（NR，feature 18），不是整个 DLSS 产品套件，也不代表后续版本。
+更新：2026-11-06。可运行移植与独立参考仍锁定 NVIDIA `nvngx_dlssnr.dll` **310.8.0** 的 Neural Rendering（NR，feature 18）。另有官方 RTX Remix **310.9.16** 的独立静态调查，尚未纳入运行路径。
 
 **状态：原始权重和完整主网络已经恢复，RTX 3060 移植可运行；独立 PyTorch 实现高度接近移植版。尚未完成与 RTX 50 原生输出的严格等价验收。**
 
@@ -12,6 +12,9 @@
 | `torch/dlss5/` 独立参考 | 解码原权重，执行 71 步网络、历史重投影、控制参数及已验证后处理 | 在已记录用例中按相关 ≥0.999、MAE ≤3/255 验收；逐例误差见报告，尚非逐值相同或实时替代后端 |
 
 不得把整图相关系数当“还原百分比”。插件与 nr-lab 的逐字节一致，验证的是同一移植版经过不同接入路径的自洽性。
+
+- [十月版 310.9.16 调查](research/october_nr_remix.md)：已核验官方原件、两套权重及预设选择，对照 CUDA 变化并完成隔离编译探针。
+- [离线同帧查看器](research/nr_viewer/README.md)：从本地捕获生成可拖动的前后对照、热图和原尺寸局部。已用同一次 Present 的 3840×2160 画面及 1920×1080 NR 工作纹理验证；[测量报告](research/validation/batch5_sponza_capture.json)。
 
 ## 数据与来源
 

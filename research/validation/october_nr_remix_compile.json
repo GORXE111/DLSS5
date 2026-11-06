@@ -1,0 +1,118 @@
+{
+  "scope": "CPU-only compilation probe; does not patch/load the DLL, bind parameters, or verify outputs",
+  "source_model_sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f",
+  "ptxas_sha256": "86b2ff48655c55f1547edc59b503d39a62aa5c71745b7ecf6be526c29af0b693",
+  "rewriter_sha256": "acca39bfcbb6b5644e26defe82815e17d11e2a2f0f7e92df08df33bb1d4274fa",
+  "fuse_sha256": "4c4fc4b32970e9b269c874630f1b3c9f204222677f9db4fe814745dbbcdd87a8",
+  "modules": [
+    {
+      "module": 1,
+      "ptxas_exit": 0,
+      "elapsed_seconds": 31.547,
+      "input_ptx_sha256": "cf24a2f92c2b398764de29474d66ee996bd54a07be0bdfee1239885f74fbefa4",
+      "rewritten_ptx_sha256": "0745e256618fd9a8224dbfd48a82c3cc91010c6ef36a43af4225849cbe57f352",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiled_cubin_sha256": "8e0ed696ddf8ecf32043d561d190aa6e91fb6c78ac94f0a0d7f5d316cfb90cfe",
+      "compiled_cubin_bytes": 3164320,
+      "original_entry_count": 19,
+      "compiled_code_sections": 19
+    },
+    {
+      "module": 2,
+      "ptxas_exit": 0,
+      "elapsed_seconds": 33.718,
+      "input_ptx_sha256": "8ff29833157421a8b6b677e66860d9ed9764cc10e3e2c796148de78ae8bd9de7",
+      "rewritten_ptx_sha256": "bddbaaeecac0ef58ef87f3bc631b245118708e58a21bcb1e7e399e5a223c2676",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiled_cubin_sha256": "99772481b64b18afd9fa3fecd245d92dad2bd612c7e90be9240a172ed78046c7",
+      "compiled_cubin_bytes": 2398560,
+      "original_entry_count": 12,
+      "compiled_code_sections": 12
+    },
+    {
+      "module": 3,
+      "ptxas_exit": 0,
+      "elapsed_seconds": 34.562,
+      "input_ptx_sha256": "5716f47bafdf13aba1abe92c42f6949cbd45f42bb4bc05b99da6f262c63f9eae",
+      "rewritten_ptx_sha256": "6f6e1118b28377afeb6345710017fd4e13986e2a7d5b4e82f79b1d3f0fecad96",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiled_cubin_sha256": "322bd0be73b477ca67414bfe64f0ade19e0b5f271f02e951819a23279f4300b5",
+      "compiled_cubin_bytes": 2430944,
+      "original_entry_count": 12,
+      "compiled_code_sections": 12
+    },
+    {
+      "module": 4,
+      "ptxas_exit": 0,
+      "elapsed_seconds": 40.75,
+      "input_ptx_sha256": "69009b90a72ee2a409522c6b9054bd64433f1be80197f3af0938094ca00c8d68",
+      "rewritten_ptx_sha256": "2ff3412ba6fb03525c9f0e6b5fb4d40231fc4b25ed39a4fcb8d17c3f22ef6d5f",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiled_cubin_sha256": "ed711acbf4e1a451f46d38e5384b1888c07fae60a31c33820021389851abcfdd",
+      "compiled_cubin_bytes": 2498784,
+      "original_entry_count": 12,
+      "compiled_code_sections": 12
+    },
+    {
+      "module": 5,
+      "ptxas_exit": 0,
+      "elapsed_seconds": 11.453,
+      "input_ptx_sha256": "ac1a907567e6983f3674b679440e3ee552b76f0db82d9209f76035ecfb317125",
+      "rewritten_ptx_sha256": "dea5cee7b1aef0e0cc534814f6f0126340de600f23a9a053957972d58b916e25",
+      "log_sha256": "11d66cb81c8a36d60c0172bba64cc637033cc29f533b2e31079a40a06cba9cc6",
+      "compiled_cubin_sha256": "8334158563e86ad6146a19105746eece2a26495967741518fb1b08b280fc838c",
+      "compiled_cubin_bytes": 1726304,
+      "original_entry_count": 23,
+      "compiled_code_sections": 23
+    },
+    {
+      "module": 6,
+      "ptxas_exit": 4294967295,
+      "elapsed_seconds": 9.344,
+      "input_ptx_sha256": "3dc57ec3e2a68965129f831f889ddc451ba213cc8e0eb271af90668a25891ac7",
+      "rewritten_ptx_sha256": "bf184bd34608a67997d2fd426de5b59f88e9bf84e96e928ff9d9e7fba9b71aae",
+      "log_sha256": "f1a69cf08e807b764fe3db78b096348ad8a55ecd072f68d8073286c0ba140e5d"
+    },
+    {
+      "module": 7,
+      "ptxas_exit": 0,
+      "elapsed_seconds": 1.953,
+      "input_ptx_sha256": "5b2d086b9797e9a7dca0bc1d098c0860bf86b0d75bed7db40d792ab6dbd09bb5",
+      "rewritten_ptx_sha256": "8800bc98182a7f0a87d7a977bbeb8b82fd6633207de68627f92c7060045e14c4",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiled_cubin_sha256": "44a6963cfc3c99ebc7ad83e28495af8659a1fd9e19013d5dc8838bf0db528e01",
+      "compiled_cubin_bytes": 245536,
+      "original_entry_count": 3,
+      "compiled_code_sections": 3
+    }
+  ],
+  "initial_failure": {
+    "module": 6,
+    "diagnostic": "ptxas rejects acquire modifier on fence below sm_90",
+    "sites": 21
+  },
+  "initial_rewriter_success_count": 6,
+  "experimental_fence_trial": {
+    "scope": "Experimental isolated same-scope acquire-release fence substitution; compiler acceptance only; no GPU behavior or ordering validation; production rewriter unchanged",
+    "module": 6,
+    "sites_changed": 21,
+    "ptxas_exit": 0,
+    "elapsed_seconds": 9.609,
+    "source_rewritten_ptx_sha256": "bf184bd34608a67997d2fd426de5b59f88e9bf84e96e928ff9d9e7fba9b71aae",
+    "trial_ptx_sha256": "f6bd97ebc3db9d9c190e731144005ec2bda23b147325bcdbf77f784007a88f29",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cubin_sha256": "61c9b4686e760369137608307641cff64c53e62960e26cbb2d5d916cca583183",
+    "compiled_code_sections": 31,
+    "cubin_bytes": 2180832
+  },
+  "unmodified_fatbin_modules_not_recompiled_in_this_probe": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ]
+}

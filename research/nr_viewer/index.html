@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>NR 图像对照</title>
+<style>
+  :root {color-scheme:dark;--bg:#101317;--panel:#171c22;--line:#313a45;--ink:#f3f4f2;--muted:#b6c2d0;--gold:#ffd69c;--accent:#ffe6bb}
+  * {box-sizing:border-box}
+  body {margin:0;background:radial-gradient(ellipse at 16% 0%,#232021 0,transparent 37rem),var(--bg);color:var(--ink);font:15px/1.55 system-ui,"Microsoft YaHei",sans-serif}
+  main {width:min(1520px,100%);margin:auto;padding:28px clamp(12px,3vw,44px) 44px}
+  h1,h2,p,figure {margin:0}
+  header {display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;padding-bottom:21px}
+  .eyebrow {font-size:.79rem;letter-spacing:.14em;color:var(--gold);font-weight:650}
+  h1 {font-size:clamp(1.9rem,4vw,3.1rem);line-height:1.12;letter-spacing:-.025em;margin:6px 0 9px}
+  .intro,.small,.hint {color:var(--muted)}
+  .meta {font-size:.86rem;color:var(--muted);border:1px solid var(--line);border-radius:100px;padding:6px 12px}
+  .workspace {border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+  .toolbar {display:flex;flex-wrap:wrap;gap:13px 22px;align-items:end;padding:13px 15px;border-bottom:1px solid var(--line)}
+  .field {display:grid;gap:5px;min-width:0}
+  .field > span,.toolbar-label {font-size:.77rem;color:var(--muted)}
+  select,button {font:inherit;color:var(--ink);background:#202731;border:1px solid #414d5b;border-radius:7px;padding:6px 10px;min-height:38px}
+  select {max-width:100%}
+  button {cursor:pointer;white-space:nowrap}
+  button:hover:not(:disabled):not([aria-pressed="true"]) {background:#2c3541}
+  button[aria-pressed="true"] {color:#211508;background:var(--accent);border-color:var(--accent);font-weight:650}
+  button:disabled {opacity:.46;cursor:default}
+  :is(button,select,input,a,.viewport):focus-visible {outline:2px solid var(--gold);outline-offset:3px}
+  .group {display:flex;flex-wrap:wrap;gap:5px}
+  .spacer {flex:1}
+  .viewport {overflow:auto;max-height:clamp(260px,70vh,1000px);background:#0a0b0d;scrollbar-color:#596679 #181e26;overscroll-behavior:contain}
+  .stage {position:relative;width:100%;aspect-ratio:16/9;isolation:isolate;--split:50%;--ratio:1.7777778;overflow:hidden;background:#101317;margin-inline:auto}
+  .stage.fit {max-width:calc(clamp(260px,70vh,1000px) * var(--ratio))}
+  .stage img {position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none}
+  .stage img[hidden], [hidden] {display:none!important}
+  .stage.zoomed img {image-rendering:pixelated}
+  .stage.fit.split {cursor:ew-resize;touch-action:pan-y}
+  #after {clip-path:inset(0 0 0 var(--split))}
+  .divider {pointer-events:none;position:absolute;inset-block:0;left:var(--split);width:2px;transform:translateX(-50%);background:#fff3dc;box-shadow:0 0 4px #000d;z-index:2}
+  .knob {position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#171716;border:1.5px solid #fff3dc;border-radius:30px;padding:7px 11px;color:#fff3dc;white-space:nowrap;font-weight:700;box-shadow:0 2px 10px #0009}
+  .badge {position:absolute;z-index:3;top:12px;padding:5px 10px;border-radius:6px;color:white;background:#111b;backdrop-filter:blur(3px);pointer-events:none;white-space:nowrap;font-size:.83rem}
+  .badge.left {left:12px}
+  .badge.right {right:12px}
+  .badge.map {left:12px}
+  .notice {position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:20px;background:#131923;z-index:4;color:var(--muted)}
+  .controls {padding:12px 15px;border-top:1px solid var(--line)}
+  .splitbar {display:grid;grid-template-columns:auto minmax(80px,1fr) auto;gap:14px;align-items:center}
+  .splitbar label,.splitbar output {font-size:.86rem}
+  output {font-variant-numeric:tabular-nums}
+  input[type="range"] {width:100%;height:30px;margin:0;accent-color:var(--accent);cursor:ew-resize}
+  .hint {font-size:.83rem;margin-top:4px}
+  .legend {display:grid;gap:4px;max-width:570px}
+  .swatch {height:11px;border-radius:20px;background:linear-gradient(90deg,#0c0f19,#372269,#752a83,#c0386f,#ee6646,#fda83a,#fcef9f)}
+  .swatch.signed {background:linear-gradient(90deg,#62c2ff,#1c77c4,#233c62,#1c1f29,#6d3523,#d65f30,#ffc773)}
+  .ticks {display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .under {display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px;padding:13px 15px;border-top:1px solid var(--line)}
+  .under .group {gap:8px 15px}
+  .desc {flex:1;min-width:min(100%,340px)}
+  .desc strong {display:block;font-size:.93rem}
+  .small {font-size:.84rem}
+  a {color:var(--gold);text-underline-offset:3px}
+  .metrics {display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:16px 0;border-block:1px solid var(--line)}
+  .metrics > div {padding:12px 15px;min-width:0}
+  .metrics > div + div {border-left:1px solid var(--line)}
+  .metrics dt {color:var(--muted);font-size:.81rem}
+  .metrics dd {margin:2px 0 0;font-size:clamp(1.1rem,2.2vw,1.6rem);font-variant-numeric:tabular-nums}
+  .unit {color:var(--muted);font-size:.78rem;margin-left:2px}
+  details {padding:9px 0;color:var(--muted)}
+  summary {cursor:pointer;color:var(--ink);width:fit-content}
+  details p {margin-top:7px;max-width:100ch}
+  @media(max-width:700px) {
+    main {padding-top:17px}
+    header {gap:10px;padding-bottom:14px}
+    .toolbar {gap:10px;padding:10px}
+    .field.dataset {width:100%}
+    .spacer {display:none}
+    .badge {top:6px;padding:3px 6px;font-size:.72rem}
+    .badge.left,.badge.map {left:6px}
+    .badge.right {right:6px}
+    .splitbar {gap:9px}
+    .under,.controls {padding:10px}
+    .metrics > div {padding:8px}
+  }
+  @media(pointer:coarse) {select,button,input[type="range"] {min-height:44px}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <p class="eyebrow">DLSS-NR / 图像实验</p>
+      <h1 id="title">NR 图像对照</h1>
+      <p class="intro">拖动分界查看原画和处理结果，再用热图定位改动。</p>
+    </div>
+    <div class="meta" id="meta" hidden></div>
+  </header>
+
+  <section class="workspace" aria-label="同帧图像查看器">
+    <div class="toolbar">
+      <label class="field dataset" for="capture"><span>捕获样本</span><select id="capture"><option>正在读取…</option></select></label>
+      <div class="field">
+        <span id="layer-title">显示方式</span>
+        <div class="group" role="group" aria-labelledby="layer-title">
+          <button type="button" data-view="split" aria-pressed="true">滑块对照</button>
+          <button type="button" data-view="absolute" aria-pressed="false">改动幅度</button>
+          <button type="button" data-view="signed" aria-pressed="false">亮度方向</button>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="field">
+        <span id="zoom-title">缩放</span>
+        <div class="group" role="group" aria-labelledby="zoom-title">
+          <button type="button" data-zoom="fit" aria-pressed="true">适应窗口</button>
+          <button type="button" data-zoom="100" aria-pressed="false">原尺寸</button>
+          <button type="button" data-zoom="200" aria-pressed="false">200%</button>
+        </div>
+      </div>
+      <label class="field" for="region" id="region-field" hidden><span>查看局部</span><select id="region"></select></label>
+    </div>
+    <figure>
+      <div class="viewport" id="viewport" tabindex="0" aria-label="图像区域；放大后可滚动查看">
+        <div class="stage fit split" id="stage">
+          <img id="before" alt="处理前画面" draggable="false">
+          <img id="after" alt="处理后画面" draggable="false">
+          <img id="heat" alt="" draggable="false" hidden>
+          <div class="divider" id="divider" aria-hidden="true"><span class="knob">‹ ›</span></div>
+          <span class="badge left" id="before-tag" aria-hidden="true">处理前</span>
+          <span class="badge right" id="after-tag" aria-hidden="true">处理后</span>
+          <span class="badge map" id="heat-tag" aria-hidden="true" hidden></span>
+          <div class="notice" id="notice" role="status">正在载入图片…</div>
+        </div>
+      </div>
+      <div class="controls">
+        <div id="split-controls">
+          <div class="splitbar">
+            <label for="split">分界位置</label>
+            <input type="range" id="split" min="0" max="100" value="50" step="1">
+            <output id="ratio" for="split">50%</output>
+          </div>
+          <p class="hint" id="split-hint">也可直接在图上拖动；键盘用方向键，Home / End 查看完整单侧。</p>
+        </div>
+        <div class="legend" id="legend" hidden>
+          <p id="legend-text"></p>
+          <div id="legend-swatch" class="swatch" aria-hidden="true"></div>
+          <div class="ticks" id="legend-ticks" aria-label="单位为每 255 级显示值"></div>
+        </div>
+      </div>
+      <figcaption class="under">
+        <div class="desc"><strong id="capture-meta"></strong><span class="small" id="capture-desc"></span></div>
+        <div class="group small"><a id="link-before" target="_blank" rel="noopener">打开原始 PNG</a><a id="link-after" target="_blank" rel="noopener">打开处理后 PNG</a></div>
+      </figcaption>
+    </figure>
+  </section>
+
+  <dl class="metrics" aria-label="当前样本的像素改动">
+    <div><dt>RGB 平均改动</dt><dd><span id="mae">–</span><span class="unit">/255</span></dd></div>
+    <div><dt>95% 像素改动不超过</dt><dd><span id="p95">–</span><span class="unit">/255</span></dd></div>
+    <div><dt>亮度平均变化</dt><dd><span id="luma">–</span><span class="unit">/255</span></dd></div>
+  </dl>
+  <details>
+    <summary>样本与指标说明</summary>
+    <p>带 Present 编号的样本使用本地代理转储：全链是原后缓冲与最终合成，模型纹理是送入 NR 的 Color 与其输出。自备配对图与合成示例没有同帧来源验证。</p>
+    <p>幅度图计算每像素三个 RGB 通道的平均绝对差，色标为 0–40/255；方向图计算输出减输入的 Rec.709 编码亮度 Y′，色标为 −40 到 +40/255。超出色标的值取端色，统计使用未截断的值。它们衡量改动，不衡量真实度或官方原生等价性。</p>
+    <p><a href="./assets/evidence.json" target="_blank" rel="noopener">查看素材来源、图像尺寸和哈希</a>。离线使用时，保留本页、数据文件和 assets 目录的相对位置。</p>
+  </details>
+  <noscript><p class="notice" style="position:static">浏览器需启用 JavaScript 才能拖动滑块。</p></noscript>
+</main>
+<script src="./datasets.js"></script>
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const stage = $("stage"), viewport = $("viewport"), slider = $("split");
+  const capture = $("capture"), region = $("region");
+  const viewButtons = [...document.querySelectorAll("[data-view]")];
+  const zoomButtons = [...document.querySelectorAll("[data-zoom]")];
+  const images = {before:$("before"), after:$("after"), heat:$("heat")};
+  const bundle = window.NR_DATA;
+  const data = bundle?.datasets ?? [];
+  if (bundle?.title) document.title = $("title").textContent = bundle.title;
+  $("meta").textContent = bundle?.meta ?? "";
+  $("meta").hidden = !bundle?.meta;
+  let current, view = "split", zoom = "fit", generation = 0, dragging = null;
+  const numbers = v => Number.isFinite(v) ? v.toFixed(2) : "–";
+  function notice(message) {
+    $("notice").textContent = message;
+    $("notice").hidden = !message;
+  }
+  function updateSplit(value) {
+    const v = Math.round(Math.max(0, Math.min(100, Number(value))));
+    slider.value = v;
+    stage.style.setProperty("--split", v + "%");
+    $("ratio").value = v + "%";
+    slider.setAttribute("aria-valuetext", "左侧处理前画面占 " + v + "%");
+    $("divider").hidden = view !== "split" || v === 0 || v === 100;
+    $("before-tag").hidden = view !== "split" || v < 10;
+    $("after-tag").hidden = view !== "split" || v > 90;
+  }
+  function moveTo(x, y) {
+    viewport.scrollLeft = x * stage.offsetWidth - viewport.clientWidth / 2;
+    viewport.scrollTop = y * stage.offsetHeight - viewport.clientHeight / 2;
+  }
+  function setZoom(next, focus) {
+    if (!current) return;
+    const previous = zoom === "fit" ? [.5,.5] : [
+      Math.min(1, (viewport.scrollLeft + viewport.clientWidth / 2) / stage.offsetWidth),
+      Math.min(1, (viewport.scrollTop + viewport.clientHeight / 2) / stage.offsetHeight)
+    ];
+    zoom = next;
+    stage.classList.toggle("fit", zoom === "fit");
+    stage.classList.toggle("zoomed", zoom === "200");
+    stage.style.width = zoom === "fit" ? "100%" : (current.width * Number(zoom) / 100) + "px";
+    zoomButtons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.zoom === zoom)));
+    if (zoom === "fit") {
+      viewport.scrollLeft = viewport.scrollTop = 0;
+    } else {
+      moveTo(...(focus || previous));
+    }
+    $("split-hint").textContent = zoom === "fit" ?
+      "也可直接在图上拖动；键盘用方向键，Home / End 查看完整单侧。" :
+      "放大后滚动查看局部，用下方滑块移动分界。原尺寸按每图像像素 1 个 CSS 像素显示。";
+  }
+  function preload(path, width, height) {
+    return new Promise((resolve,reject) => {
+      const image = new Image();
+      image.onload = () => {
+        if (image.naturalWidth === width && image.naturalHeight === height) resolve();
+        else reject(new Error("图片尺寸和采集记录不符：" + path));
+      };
+      image.onerror = () => reject(new Error("找不到图片：" + path));
+      image.src = path;
+    });
+  }
+  async function render(nextView) {
+    if (!current) return;
+    const d = current, my = ++generation;
+    view = nextView;
+    const split = view === "split", signed = view === "signed";
+    stage.classList.toggle("split",split);
+    viewButtons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.view === view)));
+    $("split-controls").hidden = !split;
+    $("legend").hidden = split;
+    $("heat-tag").hidden = split;
+    $("heat-tag").textContent = signed ? "编码亮度变化 Y′" : "RGB 平均绝对差";
+    images.heat.alt = signed ? "亮度方向热图：蓝色变暗，橙色变亮" : "改动幅度热图：颜色越亮，改动越大";
+    $("legend-text").textContent = signed ? "蓝色压暗 · 橙色提亮（/255）" : "颜色越亮，改动越大（/255）";
+    $("legend-swatch").classList.toggle("signed",signed);
+    $("legend-ticks").replaceChildren(...(signed ? ["−40","−20","0","+20","+40"] : ["0","10","20","30","40"]).map(value => {
+      const tick = document.createElement("span"); tick.textContent = value; return tick;
+    }));
+    updateSplit(slider.value);
+    const keys = split ? ["before","after"] : ["heat"];
+    const paths = split ? [d.before,d.after] : [d[view]];
+    for (const image of Object.values(images)) image.hidden = true;
+    notice("正在载入图片…");
+    try {
+      await Promise.all(paths.map(path => preload(path,d.width,d.height)));
+      if (my !== generation) return;
+      keys.forEach((k,i) => { images[k].src = paths[i]; images[k].hidden = false; });
+      notice("");
+    } catch (error) {
+      if (my === generation) notice(error.message + "。请保持 HTML 与 assets 在同一个文件夹内。");
+    }
+  }
+  function choose(id) {
+    current = data.find(d => d.id === id);
+    if (!current) return;
+    const d = current;
+    stage.style.aspectRatio = d.width + " / " + d.height;
+    stage.style.setProperty("--ratio", d.width / d.height);
+    $("capture-meta").textContent = d.width + " × " + d.height + (Number.isInteger(d.present) ? " · 第 " + d.present + " 次 Present" : " · 图像配对");
+    $("capture-desc").textContent = d.description || "";
+    $("mae").textContent = numbers(d.mae);
+    $("p95").textContent = numbers(d.p95);
+    $("luma").textContent = (d.luma > 0 ? "+" : "") + numbers(d.luma);
+    $("link-before").href = d.before;
+    $("link-after").href = d.after;
+    $("before-tag").textContent = d.stage === "model" ? "NR 输入" : d.stage === "present" ? "原画" : "输入";
+    $("after-tag").textContent = d.stage === "model" ? "NR 输出" : d.stage === "present" ? "接入后" : "输出";
+    region.replaceChildren(new Option("选择局部",""), ...(d.regions || []).map((r,i) => new Option(r.label,String(i))));
+    $("region-field").hidden = !d.regions?.length;
+    setZoom("fit");
+    render(view);
+  }
+  function pointToSplit(event) {
+    const r = stage.getBoundingClientRect();
+    updateSplit((event.clientX-r.left) / r.width * 100);
+  }
+  slider.addEventListener("input",() => updateSplit(slider.value));
+  stage.addEventListener("pointerdown", event => {
+    if (view !== "split" || zoom !== "fit" || !current || !event.isPrimary || event.button !== 0) return;
+    dragging = event.pointerId;
+    stage.setPointerCapture(dragging);
+    pointToSplit(event);
+  });
+  stage.addEventListener("pointermove", event => { if (dragging === event.pointerId) pointToSplit(event); });
+  ["pointerup","pointercancel","lostpointercapture"].forEach(name => stage.addEventListener(name, () => { dragging = null; }));
+  capture.addEventListener("change",() => choose(capture.value));
+  region.addEventListener("change",() => {
+    if (region.value === "") return;
+    const r = current?.regions?.[Number(region.value)];
+    if (r) setZoom(zoom === "fit" ? "100" : zoom, [r.x,r.y]);
+    region.value = "";
+  });
+  viewButtons.forEach(b => b.addEventListener("click",() => render(b.dataset.view)));
+  zoomButtons.forEach(b => b.addEventListener("click",() => setZoom(b.dataset.zoom)));
+  if (!data.length) {
+    capture.disabled = true;
+    [...viewButtons,...zoomButtons,slider].forEach(control => { control.disabled = true; });
+    notice("未找到生成的数据。请按 README 生成查看器，再打开生成目录中的 index.html。");
+    return;
+  }
+  capture.replaceChildren(...data.map(d => new Option(d.label,d.id)));
+  const initial = data.find(d => d.id === bundle.default_dataset) || data[0];
+  capture.value = initial.id;
+  choose(initial.id);
+})();
+</script>
+</body>
+</html>

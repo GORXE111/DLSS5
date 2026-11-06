@@ -1,12 +1,17 @@
 # 推进与验收记录
 
-更新：2026-10-23。本文件区分“已实现”“本机验证”和“仍待外部条件”，不把相关系数、权重命名覆盖率或接口成功率换算为整体完成百分比。
+更新：2026-11-06。本文件区分“已实现”“本机验证”和“仍待外部条件”，不把相关系数、权重命名覆盖率或接口成功率换算为整体完成百分比。
 
 ## 当前结论
 
-范围固定为 `nvngx_dlssnr.dll` 310.8.0，原始 SHA-256 为 `e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e`。原权重和 71 步主网络已恢复，3060 移植已运行，独立参考高度吻合该移植版。严格 RTX 50 原生数值等价及最新版 DLSS 5 均未完成。
+现有运行路径固定为 `nvngx_dlssnr.dll` 310.8.0，原始 SHA-256 为 `e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e`。原权重和 71 步主网络已恢复，3060 移植已运行，独立参考高度吻合该移植版。严格 RTX 50 原生数值等价及新模型运行移植均未完成。
 
 本地约束：不启动联网游戏，不访问 `E:\ZZZ`；NVIDIA 二进制、权重、提取/改写后的 PTX、cubin 与测试画面不进入 Git。此次研究使用 RTX 3060 12 GB、驱动 610.74。
+
+## 2026-11-06 第五批：4K 同帧对照与十月版调查
+
+- 现有 310.8.0 移植已在离线 Godot Sponza 抓到真实 3840×2160 原画与最终合成，NR 工作分辨率为 1920×1080。两对数据分别比较同一次 Present 的全链与模型边界。滑块查看器和像素热图生成器纳入[源码](research/nr_viewer/README.md)，不提交截图。[捕获和验证结果](research/validation/batch5_sponza_capture.json)
+- 官方 RTX Remix 1.6.1 包中的 NR DLL 已下载、验签和比对。310.9.16 同时保留逐字节相同的大档权重和新增小档；确认轻量预设 2、样式分离、内核删减及 pre 参数扩容。已隔离探测 sm_86 编译，尚未加载或移植新版 DLL。[十月版调查](research/october_nr_remix.md)
 
 ## 2026-10-23 第四批推进
 
@@ -150,7 +155,7 @@
 2. **官方指令依据。** [NVIDIA PTX ISA 的 mma 说明](https://docs.nvidia.com/cuda/parallel-thread-execution/#warp-level-matrix-instructions-mma)规定 FP8 运算的中间累加至少单精度，但没有指定累加顺序、舍入和次正规数处理。因此 FP32 变体有更强规范依据，仍不自动保证 Blackwell 逐位相同。本轮保留现有快速默认值，避免未经评估的性能回归。
 3. **误差归因。** FP8 舍入、rcp/rsqrt 近似、矩阵累加次序是有证据支持的来源，但尚未严格排除所有结构或边界差异。旧 README 中“不是结构差异”不再作为定论。
 4. **兜底接入。** 后缓冲 + 图像光流 + 降分辨率改动回加 + 自制 HUD/HDR 处理是兼容路径。缺少深度本身不是否定官方等价的充分理由；真正需要对照的是实际输入、运动、历史、遮罩及最终合成。
-5. **新版范围。** [NVIDIA 2026-10-13 更新公告](https://www.nvidia.com/en-us/geforce/news/dlss-5-faster-ai-model-hogwarts-legacy-rtx-spark-laptops/)说明 10 月 16 日引入约 1.18 亿参数的新模型。本项目尚未准备并逆向该版本，不能把旧版成果外推为当前所有 DLSS 5。
+5. **新版范围。** [NVIDIA 2026-10-13 更新公告](https://www.nvidia.com/en-us/geforce/news/dlss-5-faster-ai-model-hogwarts-legacy-rtx-spark-laptops/)说明 10 月 16 日引入约 1.18 亿参数的新模型。已取得 RTX Remix 中的 310.9.16 原件并完成[独立静态调查](research/october_nr_remix.md)；旧版成果不代表新版已能运行或数值等价。
 
 ## OKLab 迁移分支的研究结果
 

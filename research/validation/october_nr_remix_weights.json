@@ -1,0 +1,4178 @@
+{
+  "baseline": {
+    "size": 165840496,
+    "sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e",
+    "resources": [
+      {
+        "name": "WEIGHTS_HT",
+        "language": "1033",
+        "file_offset": 18129248,
+        "size": 147695410,
+        "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4",
+        "record_count": 153,
+        "payload_bytes": 147683778,
+        "envelope_bytes": 11632,
+        "records_with_trailer_count_times_two_equal_payload_bytes": 153,
+        "blocks": [
+          {
+            "index": 0,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 21696
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 4,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 22720
+              }
+            ]
+          },
+          {
+            "index": 5,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 6,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 7,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 8,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 69936
+              }
+            ]
+          },
+          {
+            "index": 9,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 10,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 11,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 12,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 13,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 14,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 229936
+              }
+            ]
+          },
+          {
+            "index": 15,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 16,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 17,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 18,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 19,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 20,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 21,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 22,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 820288
+              }
+            ]
+          },
+          {
+            "index": 23,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 24,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 25,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 26,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 27,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 28,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 29,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 30,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 524304
+              }
+            ]
+          },
+          {
+            "index": 31,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 32,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 33,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 34,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 35,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 36,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 37,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 38,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 39,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 525312
+              }
+            ]
+          },
+          {
+            "index": 40,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 41,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 42,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 43,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 44,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 45,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 46,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 47,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 48,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 820784
+              }
+            ]
+          },
+          {
+            "index": 49,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 50,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 51,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 52,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 53,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 54,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 55,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 56,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 230176
+              }
+            ]
+          },
+          {
+            "index": 57,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 58,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 59,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 60,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 61,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 62,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 70048
+              }
+            ]
+          },
+          {
+            "index": 63,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 64,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 65,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 66,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 22784
+              }
+            ]
+          },
+          {
+            "index": 67,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 68,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 69,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 70,
+            "records": [
+              {
+                "suffix": "layer0.blend_scale",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 21808
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "asset": "Locally retained original 310.8.0 nvngx_dlssnr.dll"
+  },
+  "candidate": {
+    "size": 266424944,
+    "sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f",
+    "resources": [
+      {
+        "name": "WEIGHTS_CC_SMALL_FP8",
+        "language": "1033",
+        "file_offset": 152515824,
+        "size": 113893343,
+        "sha256": "f743e8eb320f42bc9bdc992ee2bf51f7bb7c8688ced4ecf5ce6807ec4eef7962",
+        "record_count": 77,
+        "payload_bytes": 113887490,
+        "envelope_bytes": 5853,
+        "records_with_trailer_count_times_two_equal_payload_bytes": 77,
+        "blocks": [
+          {
+            "index": 0,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 21696
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 22720
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 4,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 69936
+              }
+            ]
+          },
+          {
+            "index": 5,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 6,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 229936
+              }
+            ]
+          },
+          {
+            "index": 7,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 8,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 820288
+              }
+            ]
+          },
+          {
+            "index": 9,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 10,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 524304
+              }
+            ]
+          },
+          {
+            "index": 11,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 12,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 13,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 14,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 15,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 16,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 17,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 18,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 19,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 525312
+              }
+            ]
+          },
+          {
+            "index": 20,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 21,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 22,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 820784
+              }
+            ]
+          },
+          {
+            "index": 23,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 24,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 230176
+              }
+            ]
+          },
+          {
+            "index": 25,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 26,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 70048
+              }
+            ]
+          },
+          {
+            "index": 27,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 28,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 22784
+              }
+            ]
+          },
+          {
+            "index": 29,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 30,
+            "records": [
+              {
+                "suffix": "layer0.blend_scale",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 21808
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "WEIGHTS_HT",
+        "language": "1033",
+        "file_offset": 4820408,
+        "size": 147695410,
+        "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4",
+        "record_count": 153,
+        "payload_bytes": 147683778,
+        "envelope_bytes": 11632,
+        "records_with_trailer_count_times_two_equal_payload_bytes": 153,
+        "blocks": [
+          {
+            "index": 0,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 21696
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 4,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 22720
+              }
+            ]
+          },
+          {
+            "index": 5,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 6,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 7,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 8,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 69936
+              }
+            ]
+          },
+          {
+            "index": 9,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 10,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 11,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 12,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 13,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 14,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 229936
+              }
+            ]
+          },
+          {
+            "index": 15,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 16,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 17,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 18,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 19,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 20,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 21,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 22,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 820288
+              }
+            ]
+          },
+          {
+            "index": 23,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 24,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 25,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 26,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 27,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 28,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 29,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 30,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 524304
+              }
+            ]
+          },
+          {
+            "index": 31,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 32,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 33,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 34,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 35,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 36,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 37,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 38,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 4194320
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 4196352
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 3145856
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer4.layer",
+                "payload_bytes": 1050624
+              }
+            ]
+          },
+          {
+            "index": 39,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 525312
+              }
+            ]
+          },
+          {
+            "index": 40,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 41,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 42,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 43,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 44,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 45,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 46,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 47,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 524288
+              },
+              {
+                "suffix": "layer1.layer",
+                "payload_bytes": 263168
+              },
+              {
+                "suffix": "layer2.layer",
+                "payload_bytes": 917568
+              },
+              {
+                "suffix": "layer3.layer",
+                "payload_bytes": 263168
+              }
+            ]
+          },
+          {
+            "index": 48,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 820784
+              }
+            ]
+          },
+          {
+            "index": 49,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 50,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 51,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 52,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 53,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 54,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 55,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 689232
+              }
+            ]
+          },
+          {
+            "index": 56,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 230176
+              }
+            ]
+          },
+          {
+            "index": 57,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 58,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 59,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 60,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 61,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 197184
+              }
+            ]
+          },
+          {
+            "index": 62,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 70048
+              }
+            ]
+          },
+          {
+            "index": 63,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 64,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 65,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 61760
+              }
+            ]
+          },
+          {
+            "index": 66,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 22784
+              }
+            ]
+          },
+          {
+            "index": 67,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 68,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 69,
+            "records": [
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 20672
+              }
+            ]
+          },
+          {
+            "index": 70,
+            "records": [
+              {
+                "suffix": "layer0.blend_scale",
+                "payload_bytes": 2
+              },
+              {
+                "suffix": "layer0.layer",
+                "payload_bytes": 21808
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "asset": "RTX Remix remix-1.6.1 Windows x64 release, archive member nvngx_dlssnr.dll"
+  },
+  "comparisons": [
+    {
+      "baseline_resource": [
+        "WEIGHTS_HT",
+        "1033"
+      ],
+      "candidate_resource": [
+        "WEIGHTS_CC_SMALL_FP8",
+        "1033"
+      ],
+      "resource_byte_identical": false,
+      "same_record_name_count": 31,
+      "same_name_and_size_count": 2,
+      "same_name_and_size": [
+        "block0.layer0.layer",
+        "block1.layer0.layer"
+      ],
+      "same_name_and_payload_byte_identical_count": 0,
+      "same_name_and_payload_byte_identical": [],
+      "matching_payload_digests_regardless_of_name_count": 0,
+      "candidate_blocks_with_baseline_storage_signature_count": 31,
+      "block_storage_signature_matches": [
+        {
+          "candidate_block": 0,
+          "baseline_blocks": [
+            0
+          ]
+        },
+        {
+          "candidate_block": 1,
+          "baseline_blocks": [
+            1,
+            2,
+            3,
+            67,
+            68,
+            69
+          ]
+        },
+        {
+          "candidate_block": 2,
+          "baseline_blocks": [
+            4
+          ]
+        },
+        {
+          "candidate_block": 3,
+          "baseline_blocks": [
+            5,
+            6,
+            7,
+            63,
+            64,
+            65
+          ]
+        },
+        {
+          "candidate_block": 4,
+          "baseline_blocks": [
+            8
+          ]
+        },
+        {
+          "candidate_block": 5,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 6,
+          "baseline_blocks": [
+            14
+          ]
+        },
+        {
+          "candidate_block": 7,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 8,
+          "baseline_blocks": [
+            22
+          ]
+        },
+        {
+          "candidate_block": 9,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 10,
+          "baseline_blocks": [
+            30
+          ]
+        },
+        {
+          "candidate_block": 11,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 12,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 13,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 14,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 15,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 16,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 17,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 18,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 19,
+          "baseline_blocks": [
+            39
+          ]
+        },
+        {
+          "candidate_block": 20,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 21,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 22,
+          "baseline_blocks": [
+            48
+          ]
+        },
+        {
+          "candidate_block": 23,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 24,
+          "baseline_blocks": [
+            56
+          ]
+        },
+        {
+          "candidate_block": 25,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 26,
+          "baseline_blocks": [
+            62
+          ]
+        },
+        {
+          "candidate_block": 27,
+          "baseline_blocks": [
+            5,
+            6,
+            7,
+            63,
+            64,
+            65
+          ]
+        },
+        {
+          "candidate_block": 28,
+          "baseline_blocks": [
+            66
+          ]
+        },
+        {
+          "candidate_block": 29,
+          "baseline_blocks": [
+            1,
+            2,
+            3,
+            67,
+            68,
+            69
+          ]
+        },
+        {
+          "candidate_block": 30,
+          "baseline_blocks": [
+            70
+          ]
+        }
+      ]
+    },
+    {
+      "baseline_resource": [
+        "WEIGHTS_HT",
+        "1033"
+      ],
+      "candidate_resource": [
+        "WEIGHTS_HT",
+        "1033"
+      ],
+      "resource_byte_identical": true,
+      "same_record_name_count": 153,
+      "same_name_and_size_count": 153,
+      "same_name_and_size": [
+        "block0.layer0.layer",
+        "block1.layer0.layer",
+        "block10.layer0.layer",
+        "block11.layer0.layer",
+        "block12.layer0.layer",
+        "block13.layer0.layer",
+        "block14.layer0.layer",
+        "block15.layer0.layer",
+        "block16.layer0.layer",
+        "block17.layer0.layer",
+        "block18.layer0.layer",
+        "block19.layer0.layer",
+        "block2.layer0.layer",
+        "block20.layer0.layer",
+        "block21.layer0.layer",
+        "block22.layer0.layer",
+        "block23.layer0.layer",
+        "block23.layer1.layer",
+        "block23.layer2.layer",
+        "block23.layer3.layer",
+        "block24.layer0.layer",
+        "block24.layer1.layer",
+        "block24.layer2.layer",
+        "block24.layer3.layer",
+        "block25.layer0.layer",
+        "block25.layer1.layer",
+        "block25.layer2.layer",
+        "block25.layer3.layer",
+        "block26.layer0.layer",
+        "block26.layer1.layer",
+        "block26.layer2.layer",
+        "block26.layer3.layer",
+        "block27.layer0.layer",
+        "block27.layer1.layer",
+        "block27.layer2.layer",
+        "block27.layer3.layer",
+        "block28.layer0.layer",
+        "block28.layer1.layer",
+        "block28.layer2.layer",
+        "block28.layer3.layer",
+        "block29.layer0.layer",
+        "block29.layer1.layer",
+        "block29.layer2.layer",
+        "block29.layer3.layer",
+        "block3.layer0.layer",
+        "block30.layer0.layer",
+        "block30.layer1.layer",
+        "block30.layer2.layer",
+        "block30.layer3.layer",
+        "block30.layer4.layer",
+        "block31.layer0.layer",
+        "block31.layer1.layer",
+        "block31.layer2.layer",
+        "block31.layer3.layer",
+        "block31.layer4.layer",
+        "block32.layer0.layer",
+        "block32.layer1.layer",
+        "block32.layer2.layer",
+        "block32.layer3.layer",
+        "block32.layer4.layer",
+        "block33.layer0.layer",
+        "block33.layer1.layer",
+        "block33.layer2.layer",
+        "block33.layer3.layer",
+        "block33.layer4.layer",
+        "block34.layer0.layer",
+        "block34.layer1.layer",
+        "block34.layer2.layer",
+        "block34.layer3.layer",
+        "block34.layer4.layer",
+        "block35.layer0.layer",
+        "block35.layer1.layer",
+        "block35.layer2.layer",
+        "block35.layer3.layer",
+        "block35.layer4.layer",
+        "block36.layer0.layer",
+        "block36.layer1.layer",
+        "block36.layer2.layer",
+        "block36.layer3.layer",
+        "block36.layer4.layer",
+        "block37.layer0.layer",
+        "block37.layer1.layer",
+        "block37.layer2.layer",
+        "block37.layer3.layer",
+        "block37.layer4.layer",
+        "block38.layer0.layer",
+        "block38.layer1.layer",
+        "block38.layer2.layer",
+        "block38.layer3.layer",
+        "block38.layer4.layer",
+        "block39.layer0.layer",
+        "block4.layer0.layer",
+        "block40.layer0.layer",
+        "block40.layer1.layer",
+        "block40.layer2.layer",
+        "block40.layer3.layer",
+        "block41.layer0.layer",
+        "block41.layer1.layer",
+        "block41.layer2.layer",
+        "block41.layer3.layer",
+        "block42.layer0.layer",
+        "block42.layer1.layer",
+        "block42.layer2.layer",
+        "block42.layer3.layer",
+        "block43.layer0.layer",
+        "block43.layer1.layer",
+        "block43.layer2.layer",
+        "block43.layer3.layer",
+        "block44.layer0.layer",
+        "block44.layer1.layer",
+        "block44.layer2.layer",
+        "block44.layer3.layer",
+        "block45.layer0.layer",
+        "block45.layer1.layer",
+        "block45.layer2.layer",
+        "block45.layer3.layer",
+        "block46.layer0.layer",
+        "block46.layer1.layer",
+        "block46.layer2.layer",
+        "block46.layer3.layer",
+        "block47.layer0.layer",
+        "block47.layer1.layer",
+        "block47.layer2.layer",
+        "block47.layer3.layer",
+        "block48.layer0.layer",
+        "block49.layer0.layer",
+        "block5.layer0.layer",
+        "block50.layer0.layer",
+        "block51.layer0.layer",
+        "block52.layer0.layer",
+        "block53.layer0.layer",
+        "block54.layer0.layer",
+        "block55.layer0.layer",
+        "block56.layer0.layer",
+        "block57.layer0.layer",
+        "block58.layer0.layer",
+        "block59.layer0.layer",
+        "block6.layer0.layer",
+        "block60.layer0.layer",
+        "block61.layer0.layer",
+        "block62.layer0.layer",
+        "block63.layer0.layer",
+        "block64.layer0.layer",
+        "block65.layer0.layer",
+        "block66.layer0.layer",
+        "block67.layer0.layer",
+        "block68.layer0.layer",
+        "block69.layer0.layer",
+        "block7.layer0.layer",
+        "block70.layer0.blend_scale",
+        "block70.layer0.layer",
+        "block8.layer0.layer",
+        "block9.layer0.layer"
+      ],
+      "same_name_and_payload_byte_identical_count": 153,
+      "same_name_and_payload_byte_identical": [
+        "block0.layer0.layer",
+        "block1.layer0.layer",
+        "block10.layer0.layer",
+        "block11.layer0.layer",
+        "block12.layer0.layer",
+        "block13.layer0.layer",
+        "block14.layer0.layer",
+        "block15.layer0.layer",
+        "block16.layer0.layer",
+        "block17.layer0.layer",
+        "block18.layer0.layer",
+        "block19.layer0.layer",
+        "block2.layer0.layer",
+        "block20.layer0.layer",
+        "block21.layer0.layer",
+        "block22.layer0.layer",
+        "block23.layer0.layer",
+        "block23.layer1.layer",
+        "block23.layer2.layer",
+        "block23.layer3.layer",
+        "block24.layer0.layer",
+        "block24.layer1.layer",
+        "block24.layer2.layer",
+        "block24.layer3.layer",
+        "block25.layer0.layer",
+        "block25.layer1.layer",
+        "block25.layer2.layer",
+        "block25.layer3.layer",
+        "block26.layer0.layer",
+        "block26.layer1.layer",
+        "block26.layer2.layer",
+        "block26.layer3.layer",
+        "block27.layer0.layer",
+        "block27.layer1.layer",
+        "block27.layer2.layer",
+        "block27.layer3.layer",
+        "block28.layer0.layer",
+        "block28.layer1.layer",
+        "block28.layer2.layer",
+        "block28.layer3.layer",
+        "block29.layer0.layer",
+        "block29.layer1.layer",
+        "block29.layer2.layer",
+        "block29.layer3.layer",
+        "block3.layer0.layer",
+        "block30.layer0.layer",
+        "block30.layer1.layer",
+        "block30.layer2.layer",
+        "block30.layer3.layer",
+        "block30.layer4.layer",
+        "block31.layer0.layer",
+        "block31.layer1.layer",
+        "block31.layer2.layer",
+        "block31.layer3.layer",
+        "block31.layer4.layer",
+        "block32.layer0.layer",
+        "block32.layer1.layer",
+        "block32.layer2.layer",
+        "block32.layer3.layer",
+        "block32.layer4.layer",
+        "block33.layer0.layer",
+        "block33.layer1.layer",
+        "block33.layer2.layer",
+        "block33.layer3.layer",
+        "block33.layer4.layer",
+        "block34.layer0.layer",
+        "block34.layer1.layer",
+        "block34.layer2.layer",
+        "block34.layer3.layer",
+        "block34.layer4.layer",
+        "block35.layer0.layer",
+        "block35.layer1.layer",
+        "block35.layer2.layer",
+        "block35.layer3.layer",
+        "block35.layer4.layer",
+        "block36.layer0.layer",
+        "block36.layer1.layer",
+        "block36.layer2.layer",
+        "block36.layer3.layer",
+        "block36.layer4.layer",
+        "block37.layer0.layer",
+        "block37.layer1.layer",
+        "block37.layer2.layer",
+        "block37.layer3.layer",
+        "block37.layer4.layer",
+        "block38.layer0.layer",
+        "block38.layer1.layer",
+        "block38.layer2.layer",
+        "block38.layer3.layer",
+        "block38.layer4.layer",
+        "block39.layer0.layer",
+        "block4.layer0.layer",
+        "block40.layer0.layer",
+        "block40.layer1.layer",
+        "block40.layer2.layer",
+        "block40.layer3.layer",
+        "block41.layer0.layer",
+        "block41.layer1.layer",
+        "block41.layer2.layer",
+        "block41.layer3.layer",
+        "block42.layer0.layer",
+        "block42.layer1.layer",
+        "block42.layer2.layer",
+        "block42.layer3.layer",
+        "block43.layer0.layer",
+        "block43.layer1.layer",
+        "block43.layer2.layer",
+        "block43.layer3.layer",
+        "block44.layer0.layer",
+        "block44.layer1.layer",
+        "block44.layer2.layer",
+        "block44.layer3.layer",
+        "block45.layer0.layer",
+        "block45.layer1.layer",
+        "block45.layer2.layer",
+        "block45.layer3.layer",
+        "block46.layer0.layer",
+        "block46.layer1.layer",
+        "block46.layer2.layer",
+        "block46.layer3.layer",
+        "block47.layer0.layer",
+        "block47.layer1.layer",
+        "block47.layer2.layer",
+        "block47.layer3.layer",
+        "block48.layer0.layer",
+        "block49.layer0.layer",
+        "block5.layer0.layer",
+        "block50.layer0.layer",
+        "block51.layer0.layer",
+        "block52.layer0.layer",
+        "block53.layer0.layer",
+        "block54.layer0.layer",
+        "block55.layer0.layer",
+        "block56.layer0.layer",
+        "block57.layer0.layer",
+        "block58.layer0.layer",
+        "block59.layer0.layer",
+        "block6.layer0.layer",
+        "block60.layer0.layer",
+        "block61.layer0.layer",
+        "block62.layer0.layer",
+        "block63.layer0.layer",
+        "block64.layer0.layer",
+        "block65.layer0.layer",
+        "block66.layer0.layer",
+        "block67.layer0.layer",
+        "block68.layer0.layer",
+        "block69.layer0.layer",
+        "block7.layer0.layer",
+        "block70.layer0.blend_scale",
+        "block70.layer0.layer",
+        "block8.layer0.layer",
+        "block9.layer0.layer"
+      ],
+      "matching_payload_digests_regardless_of_name_count": 153,
+      "candidate_blocks_with_baseline_storage_signature_count": 71,
+      "block_storage_signature_matches": [
+        {
+          "candidate_block": 0,
+          "baseline_blocks": [
+            0
+          ]
+        },
+        {
+          "candidate_block": 1,
+          "baseline_blocks": [
+            1,
+            2,
+            3,
+            67,
+            68,
+            69
+          ]
+        },
+        {
+          "candidate_block": 2,
+          "baseline_blocks": [
+            1,
+            2,
+            3,
+            67,
+            68,
+            69
+          ]
+        },
+        {
+          "candidate_block": 3,
+          "baseline_blocks": [
+            1,
+            2,
+            3,
+            67,
+            68,
+            69
+          ]
+        },
+        {
+          "candidate_block": 4,
+          "baseline_blocks": [
+            4
+          ]
+        },
+        {
+          "candidate_block": 5,
+          "baseline_blocks": [
+            5,
+            6,
+            7,
+            63,
+            64,
+            65
+          ]
+        },
+        {
+          "candidate_block": 6,
+          "baseline_blocks": [
+            5,
+            6,
+            7,
+            63,
+            64,
+            65
+          ]
+        },
+        {
+          "candidate_block": 7,
+          "baseline_blocks": [
+            5,
+            6,
+            7,
+            63,
+            64,
+            65
+          ]
+        },
+        {
+          "candidate_block": 8,
+          "baseline_blocks": [
+            8
+          ]
+        },
+        {
+          "candidate_block": 9,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 10,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 11,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 12,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 13,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 14,
+          "baseline_blocks": [
+            14
+          ]
+        },
+        {
+          "candidate_block": 15,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 16,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 17,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 18,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 19,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 20,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 21,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 22,
+          "baseline_blocks": [
+            22
+          ]
+        },
+        {
+          "candidate_block": 23,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 24,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 25,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 26,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 27,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 28,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 29,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 30,
+          "baseline_blocks": [
+            30
+          ]
+        },
+        {
+          "candidate_block": 31,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 32,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 33,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 34,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 35,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 36,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 37,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 38,
+          "baseline_blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38
+          ]
+        },
+        {
+          "candidate_block": 39,
+          "baseline_blocks": [
+            39
+          ]
+        },
+        {
+          "candidate_block": 40,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 41,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 42,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 43,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 44,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 45,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 46,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 47,
+          "baseline_blocks": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47
+          ]
+        },
+        {
+          "candidate_block": 48,
+          "baseline_blocks": [
+            48
+          ]
+        },
+        {
+          "candidate_block": 49,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 50,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 51,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 52,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 53,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 54,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 55,
+          "baseline_blocks": [
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "candidate_block": 56,
+          "baseline_blocks": [
+            56
+          ]
+        },
+        {
+          "candidate_block": 57,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 58,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 59,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 60,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 61,
+          "baseline_blocks": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            57,
+            58,
+            59,
+            60,
+            61
+          ]
+        },
+        {
+          "candidate_block": 62,
+          "baseline_blocks": [
+            62
+          ]
+        },
+        {
+          "candidate_block": 63,
+          "baseline_blocks": [
+            5,
+            6,
+            7,
+            63,
+            64,
+            65
+          ]
+        },
+        {
+          "candidate_block": 64,
+          "baseline_blocks": [
+            5,
+            6,
+            7,
+            63,
+            64,
+            65
+          ]
+        },
+        {
+          "candidate_block": 65,
+          "baseline_blocks": [
+            5,
+            6,
+            7,
+            63,
+            64,
+            65
+          ]
+        },
+        {
+          "candidate_block": 66,
+          "baseline_blocks": [
+            66
+          ]
+        },
+        {
+          "candidate_block": 67,
+          "baseline_blocks": [
+            1,
+            2,
+            3,
+            67,
+            68,
+            69
+          ]
+        },
+        {
+          "candidate_block": 68,
+          "baseline_blocks": [
+            1,
+            2,
+            3,
+            67,
+            68,
+            69
+          ]
+        },
+        {
+          "candidate_block": 69,
+          "baseline_blocks": [
+            1,
+            2,
+            3,
+            67,
+            68,
+            69
+          ]
+        },
+        {
+          "candidate_block": 70,
+          "baseline_blocks": [
+            70
+          ]
+        }
+      ]
+    }
+  ],
+  "scope": "PE resource and record storage; trailer counts are not learned parameter counts"
+}

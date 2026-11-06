@@ -1,0 +1,282 @@
+{
+  "schema": "dlssnr_october_host_static_evidence_v1",
+  "scope": "Read-only PE, host x86-64 and extracted PTX inspection. No DLL loading, GPU execution, or rendered equivalence measurement.",
+  "inputs": {
+    "old": {
+      "version": "310.8.0",
+      "path": "dlss5/nvngx_dlssnr.dll",
+      "sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e"
+    },
+    "october": {
+      "version": "310.9.16.0",
+      "path": "_dl/october_nr_20261106/original/nvngx_dlssnr.dll",
+      "bytes": 266424944,
+      "sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f",
+      "releaseArchiveMember": "nvngx_dlssnr.dll",
+      "officialCrcManifest": "https://github.com/NVIDIAGameWorks/rtx-remix/releases/download/remix-1.6.1/rtx-remix-for-x64-games-release-remix-1.6.1-crc.txt",
+      "officialCrcManifestMember": "runtime/nvngx_dlssnr.dll"
+    },
+    "prePtx": {
+      "path": "_dl/october_nr_20261106/candidate_extract/fatbin_01.1.sm_120.ptx",
+      "sha256": "cf24a2f92c2b398764de29474d66ee996bd54a07be0bdfee1239885f74fbefa4"
+    },
+    "harness": {
+      "path": "harness/nr-lab.cpp",
+      "sha256": "70af633ecd8bbbb4984b45baba345e5769800ed1632a9740da287f8c56a31a87",
+      "defaultPreset": 1,
+      "defaultPresetLine": 49,
+      "createSetterLine": 1427,
+      "evaluateSetterLine": 1628
+    }
+  },
+  "resources": {
+    "peType": 10,
+    "language": 1033,
+    "items": [
+      {
+        "name": "WEIGHTS_HT",
+        "bytes": 147695410,
+        "sha256": "836f445d06ecd2e59bb9f17b84b91c143396fd76ccda1c9dc7fe81d5edd548f4",
+        "oldAndOctoberByteIdentical": true
+      },
+      {
+        "name": "WEIGHTS_CC_SMALL_FP8",
+        "bytes": 113893343,
+        "sha256": "f743e8eb320f42bc9bdc992ee2bf51f7bb7c8688ced4ecf5ce6807ec4eef7962",
+        "presentInOctober": true
+      }
+    ]
+  },
+  "selector": {
+    "key": "DLSSNR.Hint.Render.Preset",
+    "literalVA": "0x1800da580",
+    "createGetI32CallsiteVA": "0x180017cfd",
+    "createCalleeVA": "0x180021000",
+    "selectorVA": "0x180023c20",
+    "descriptorStride": 656,
+    "descriptorPresetOffset": 8,
+    "descriptorResourcePointerOffset": 16,
+    "descriptorModelNamePointerOffset": 24,
+    "exactPresets": [
+      {
+        "id": 1,
+        "descriptorVA": "0x1800dbe30",
+        "resource": "WEIGHTS_HT",
+        "model": "CC_SILVER_AARDWOLD"
+      },
+      {
+        "id": 2,
+        "descriptorVA": "0x1800dc0c0",
+        "resource": "WEIGHTS_CC_SMALL_FP8",
+        "model": "CC_SMALL_FP8",
+        "internalName": "hnet-crazy-cuckoo-small-fp8"
+      }
+    ],
+    "fallbackPreset": 2,
+    "fallbackCondition": "Selector exact preset match not found, including 0 and 3.",
+    "style": {
+      "key": "DLSSNR.Style",
+      "literalVA": "0x1800d9a58",
+      "evaluateGetU32CallsiteVA": "0x18001ac0d",
+      "evaluateStructOffset": 236,
+      "remixAppearanceOptions": {
+        "A": 0,
+        "B": 1,
+        "C": 2
+      }
+    },
+    "qualification": "The current harness default 1 selects WEIGHTS_HT in the October DLL. Explicit --model 2 is required to intentionally exercise the new preset in that harness. Resource byte identity alone does not imply computational equivalence of preset 1 across versions."
+  },
+  "keys": {
+    "pattern": "DLSSNR.[A-Za-z0-9_.]+ in .rdata",
+    "oldUnique": 61,
+    "octoberUnique": 62,
+    "added": [
+      "DLSSNR.MaskBlendMode"
+    ],
+    "removed": [],
+    "scalingRatio": {
+      "literalVA": "0x1800d9830",
+      "observedReferenceVA": "0x180012826",
+      "observedAccess": "Host float setter, not an observed Evaluate getter."
+    }
+  },
+  "maskBlendMode": {
+    "key": "DLSSNR.MaskBlendMode",
+    "literalVA": "0x1800da3b0",
+    "evaluateGetI32CallsiteVA": "0x18001ab37",
+    "evaluateStructOffset": 244,
+    "validValues": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "invalidOrMissingNormalizedTo": 0,
+    "modeZeroHostPolicy": "Explicit ControlMask disables UseAutoMask when mode is zero. Nonzero valid modes preserve both inputs.",
+    "controlStateComparisonVA": "0x1800177ec",
+    "hostChain": [
+      {
+        "va": "0x18002280a",
+        "role": "Read Evaluate offset +0xf4."
+      },
+      {
+        "va": "0x180022870",
+        "role": "Forward as arg17."
+      },
+      {
+        "va": "0x1800228f7",
+        "role": "Invoke host dispatcher at 0x1800620c0."
+      },
+      {
+        "va": "0x1800622a6",
+        "role": "Read arg17."
+      },
+      {
+        "va": "0x1800622ad",
+        "role": "Forward as arg7."
+      },
+      {
+        "va": "0x1800622cb",
+        "role": "Invoke leaf at 0x180083ee0."
+      },
+      {
+        "va": "0x180083ef1",
+        "role": "Write arg7 to internal parameter object at +0xa8."
+      }
+    ],
+    "prePtx": {
+      "entry": "cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+      "paramBytes": 272,
+      "previousParamBytes": 264,
+      "controlMaskHandleOffset": 32,
+      "modeOffset": 40,
+      "modeReadLines": [
+        14532,
+        14534
+      ],
+      "mergePredicateLines": [
+        14552,
+        14576
+      ],
+      "mergeLines": [
+        [
+          14588,
+          14609
+        ],
+        [
+          15021,
+          15065
+        ]
+      ],
+      "nonzeroModes": {
+        "1": "average",
+        "2": "minimum",
+        "3": "maximum"
+      },
+      "operandSummary": "Combines explicit mask tone and structure contributions with corresponding effective automatic-mask scalars when the merge predicates are satisfied."
+    },
+    "unverified": [
+      "The final launch parameter binder from internal host object +0xa8 to pre-kernel parameter +40 was not traced.",
+      "No run validated D3D12 propagation, GPU results, or per-mode visual behavior.",
+      "The role of the control-state comparison in history invalidation was not established."
+    ]
+  },
+  "officialSource": {
+    "announcement": "https://www.nvidia.com/en-gb/geforce/news/dlss-5-faster-ai-model-hogwarts-legacy-rtx-spark-laptops/",
+    "release": "https://github.com/NVIDIAGameWorks/rtx-remix/releases/tag/remix-1.6.1",
+    "releaseTagCommitDisplayedPrefix": "a63740a",
+    "releaseSubmodules": "https://raw.githubusercontent.com/NVIDIAGameWorks/rtx-remix/remix-1.6.1/.gitmodules",
+    "releaseDxvkGitlinkCommit": null,
+    "callerBranch": "main",
+    "createPresetB": "https://github.com/NVIDIAGameWorks/dxvk-remix/blob/main/src/dxvk/rtx_render/rtx_ngx_wrapper.cpp#L1004-L1014",
+    "evaluateControls": "https://github.com/NVIDIAGameWorks/dxvk-remix/blob/main/src/dxvk/rtx_render/rtx_ngx_wrapper.cpp#L1065-L1073",
+    "appearanceOptions": "https://github.com/NVIDIAGameWorks/dxvk-remix/blob/main/src/dxvk/rtx_render/rtx_dlss_neural_rendering.cpp#L201-L208",
+    "observations": [
+      "Public caller sets Hint_Render_Preset_B at create, separately from appearance Style in Evaluate.",
+      "Caller sets MaskBlendMode Min when automatic mask is enabled and None otherwise.",
+      "The inspected caller uses Vulkan. The exact release DXVK gitlink was not available through the consulted tag view."
+    ]
+  },
+  "imageBaseVA": "0x180000000",
+  "octoberHostByteRanges": [
+    {
+      "label": "preset_read",
+      "va": "0x180017cfd",
+      "bytes": 36,
+      "sha256": "73c588156f018da1294fd64ee7a31caae4b339484a0cec8c2f6116b90e5fffe1"
+    },
+    {
+      "label": "preset_create_call",
+      "va": "0x180017eef",
+      "bytes": 63,
+      "sha256": "d99052bb91e724603159de560eecc1b40d84e0c4e465d65eb852a9cbc89b0097"
+    },
+    {
+      "label": "preset_select",
+      "va": "0x180023c20",
+      "bytes": 128,
+      "sha256": "16367058cb8d6b8a6db35652a1e9438ebcc1d04e92e6e709885b00210b5d16f1"
+    },
+    {
+      "label": "preset_call",
+      "va": "0x18002184a",
+      "bytes": 18,
+      "sha256": "264f8eb94cfa350164a2bbb6be8ed8ce572b44d43d4f7b75d05d300479d3b20e"
+    },
+    {
+      "label": "descriptor1",
+      "va": "0x1800dbe30",
+      "bytes": 656,
+      "sha256": "fdae78cf19aefd8392ba23c498876cbe8bb65a23c6110535ac671022f0efe463"
+    },
+    {
+      "label": "descriptor2",
+      "va": "0x1800dc0c0",
+      "bytes": 656,
+      "sha256": "1738cd00ccef88cd2bce953a529f9ddbd3e091c03fe923aeed2a2ef86037a66d"
+    },
+    {
+      "label": "mask_mode_read",
+      "va": "0x18001ab30",
+      "bytes": 62,
+      "sha256": "2600f44a42527357ff22cc7d499f24c2f3f8ac4e5bcb6225a06e0d55b3b508a9"
+    },
+    {
+      "label": "mask_exclusion",
+      "va": "0x18001aba2",
+      "bytes": 23,
+      "sha256": "e7464964200d526400f3f37e74c2394376e20fdf57666520e83ef2751e45ba11"
+    },
+    {
+      "label": "style_read",
+      "va": "0x18001ac0d",
+      "bytes": 64,
+      "sha256": "a5ce73d02fa311e40a7b6e5e033c55f032a40944ea3d6b82fbab5640f249859a"
+    },
+    {
+      "label": "mask_forward",
+      "va": "0x18002280a",
+      "bytes": 242,
+      "sha256": "0f66cef83bdcdf52e111f925b2980213c94be5414d76b084aad966ca81db28df"
+    },
+    {
+      "label": "mask_to_network",
+      "va": "0x1800622a6",
+      "bytes": 42,
+      "sha256": "f065778867f8a195fa66dcfe13cee3b3fb0166cd1d8f00a4bc5fed8457d15360"
+    },
+    {
+      "label": "network_mask_store",
+      "va": "0x180083ee0",
+      "bytes": 23,
+      "sha256": "21d180e3e6eea70f096bab43abddf4996dd77016d0be8489f7359539c401815d"
+    },
+    {
+      "label": "scaling_ratio_setter",
+      "va": "0x180012822",
+      "bytes": 20,
+      "sha256": "064643a71ed4f5170a60abdb6a8c6c229a405e98ea20e3dd7333876c6ecf9fcc"
+    }
+  ]
+}

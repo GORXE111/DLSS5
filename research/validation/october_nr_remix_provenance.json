@@ -1,0 +1,46 @@
+{
+  "date": "2026-11-06",
+  "scope": "Verified official archive, read-only analysis, and isolated CPU compilation. Candidate never loaded or installed.",
+  "release": "https://github.com/NVIDIAGameWorks/rtx-remix/releases/tag/remix-1.6.1",
+  "announcement": "https://www.nvidia.com/en-us/geforce/news/dlss-5-faster-ai-model-hogwarts-legacy-rtx-spark-laptops/",
+  "archive": {
+    "url": "https://github.com/NVIDIAGameWorks/rtx-remix/releases/download/remix-1.6.1/rtx-remix-for-x64-games-release-remix-1.6.1.zip",
+    "bytes": 557087446,
+    "sha256": "7dd1d44492a609050e44b0e3581cec31135d1ed88b4a91123b4faae91955716a"
+  },
+  "manifest": {
+    "url": "https://github.com/NVIDIAGameWorks/rtx-remix/releases/download/remix-1.6.1/rtx-remix-for-x64-games-release-remix-1.6.1-crc.txt",
+    "bytes": 12489,
+    "sha256": "a6511078f8744951c8c03c4120182ab0f76c5e8c42e4dcc04944beac34382350",
+    "entry": "runtime/nvngx_dlssnr.dll"
+  },
+  "candidate": {
+    "zip_entry": "nvngx_dlssnr.dll",
+    "bytes": 266424944,
+    "sha256": "2bc19bc09a7b89dd44f73e2ac0108fcc586e2154bdd0830f242f4f040e28789f",
+    "zip_entry_crc32": "820ff100",
+    "file_version": "310.9.16.0",
+    "product_version": "310.9.16.0",
+    "file_description": "NVIDIA DLSSNR - DVS PRODUCTION",
+    "original_filename": "CL 39025366",
+    "windows_authenticode": "Valid",
+    "publisher": "NVIDIA Corporation"
+  },
+  "baseline": {
+    "file_version": "310.8.0",
+    "sha256": "e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e"
+  },
+  "active_3108_port_and_packaged_model_sha256": "f454090a97d18e2eb8e6008d42a5fa4e37c8e4bd251a86aedfff8901fef23382",
+  "official_model_parameter_count_independently_verified": false,
+  "candidate_runtime_or_gpu_validated": false,
+  "reports_sha256": {
+    "october_nr_remix_compile.json": "2d7e31c87669a0e728721fe8214257d3548e0f46b9fa29560ba75006d2acad89",
+    "october_nr_remix_host.json": "d468afb134d9b0b623e8aed691a051556bff4437247a6afe6e8f63a4ec4d4448",
+    "october_nr_remix_kernels.json": "bbf13b4916193f94427021e016e08675fbdd6175016c187e812267dc4693e324",
+    "october_nr_remix_weights.json": "077e136a0c18e1dffe965fb64f6dba27cd04ba61f71bb8fa7bd3a6a92c668ffa"
+  },
+  "source_sha256": {
+    "tools/inspect_nr_weights.py": "0db97d6bd37e35ad8fdd69d7b8dfeb29eb9297fdee84a4907a85a976264cb8bb",
+    "tools/compare_nr_kernels.py": "faaf4ea770e883123fb6bd689684e12c69a231528f2a7f056e2b380d79acb015"
+  }
+}
