@@ -1,0 +1,229 @@
+{
+  "schema": "october_nr_mma_fragment_replay_v1",
+  "scope": "independent_sm86_one_warp_per_captured_step",
+  "source_sha256": "d091be3bfc3f71d0ee50c7df9bf4dff81da44c51f5f043e8f76e707aac4f880d",
+  "stage_report_sha256": "d8d51b9c9e624a6eed2a8794189f1e9950a41cd4d741e2d9e710ab8a121eccb8",
+  "stage_source_sha256": "8102b79709f92bfc1c74a7df1df8e676eb3962c9c6fc08b1c04e54a5e22dd329",
+  "capture_seal_sha256": "ddea46226463a9384849289219d5c78c9e6226441635f48eb42b69572c9ecc52",
+  "instrumented_ptx_sha256": "7593bb86531a9ead5804b1a1c6288137dd75f368cf621ee764c67a8d45734971",
+  "instrumented_cubin_sha256": "2ca399d05d22492163eb08ad47b15e06a888e5e6b5ac501388ca235c1462fe49",
+  "authored_ptx_sha256": "da79e5a7350847d424a8cc17acc52fe4739a9cf0af0fa0593d80074138599981",
+  "cases": [
+    {
+      "block": 11,
+      "fragment_sha256": "8a4c1d6adfd3c6634b4fd55b90dd3088a15fb56e3a3c41ca3bd4ab523ccf5f9f",
+      "replay_input_sha256": "09e6f079fa3ff4999abdf22cc0e91220b7ac215f217f2962b41d16c0b530da41",
+      "expected_d_sha256": "b2d92356951e20245a4c32ee2d5c6119346180cf2413f748b7cc1b23e1637b15",
+      "replayed_d_sha256": "b2d92356951e20245a4c32ee2d5c6119346180cf2413f748b7cc1b23e1637b15",
+      "points": [
+        {
+          "head": 7,
+          "token": 10,
+          "channel": 1,
+          "steps": [
+            {
+              "step": 1,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 2,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 3,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 4,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 5,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 6,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 7,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 8,
+              "differing_words": 0,
+              "differing_lanes": []
+            }
+          ]
+        },
+        {
+          "head": 28,
+          "token": 10,
+          "channel": 29,
+          "steps": [
+            {
+              "step": 1,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 2,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 3,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 4,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 5,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 6,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 7,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 8,
+              "differing_words": 0,
+              "differing_lanes": []
+            }
+          ]
+        }
+      ],
+      "passed": true
+    },
+    {
+      "block": 18,
+      "fragment_sha256": "565dbfed4437920d5a7d855e49ba529a3bce34c783d3b7267f1e7e6dcd6396d8",
+      "replay_input_sha256": "38fed838ac22adfb4438d4d5a618304e4ec923936759b800ae45faa95262e48f",
+      "expected_d_sha256": "690a48974373ff773a8f08b2d5259158d55704fe5066cb19052252b9bdef7d7e",
+      "replayed_d_sha256": "690a48974373ff773a8f08b2d5259158d55704fe5066cb19052252b9bdef7d7e",
+      "points": [
+        {
+          "head": 7,
+          "token": 10,
+          "channel": 1,
+          "steps": [
+            {
+              "step": 1,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 2,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 3,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 4,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 5,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 6,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 7,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 8,
+              "differing_words": 0,
+              "differing_lanes": []
+            }
+          ]
+        },
+        {
+          "head": 28,
+          "token": 10,
+          "channel": 29,
+          "steps": [
+            {
+              "step": 1,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 2,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 3,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 4,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 5,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 6,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 7,
+              "differing_words": 0,
+              "differing_lanes": []
+            },
+            {
+              "step": 8,
+              "differing_words": 0,
+              "differing_lanes": []
+            }
+          ]
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "compared_d_words": 2048,
+  "passed": true,
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "capability": [
+    8,
+    6
+  ],
+  "driver_version": 13030
+}

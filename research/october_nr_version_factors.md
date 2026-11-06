@@ -25,6 +25,8 @@
 
 第二个全零 Q 点仍有残差。单 warp 探针归一化得到 1.9375，量化为 2.0，完整内核输出为 1.875。下一次应在普通入口分别记录该点的实际分母、PV 半精度累加值和量化前值，以区分差异从哪个阶段开始。CPU 诊断可复算误差坐标及分组、规约、倒数敏感性。[数值诊断汇总](validation/october_nr_version_factor_experiment.json)
 
+后续已完成完整内核的分阶段取样，并将该点的首个差异定位到 PV 第 3 次 MMA。[逐指令实测](october_nr_attention_instruction_trace.md)
+
 ```powershell
 python -B -m tools.ptx86.check_october_attention _dl/october_nr_20261106/batch8/attention_tap --diagnose
 python -B -m tools.ptx86.probe_october_pv_order _dl/october_nr_20261106/batch8/attention_tap

@@ -8,6 +8,11 @@
 
 本地约束：不启动联网游戏，不访问 `E:\ZZZ`；NVIDIA 二进制、权重、提取/改写后的 PTX、cubin 与测试画面不进入 Git。此次研究使用 RTX 3060 12 GB、驱动 610.74。
 
+## 2026-11-06 第十批 · 注意力指令与大档中间张量
+
+- 对十月小档普通 attention 隔离插桩，实测分母、倒数、八次 K16 和量化前半精度。已将一个 FP8 边界的差异追到 PV 第 3 次 MMA，并确认 96 个有效 key 的连续 K16 顺序。32 次独立 MMA 重放逐位一致。[逐指令实测](research/october_nr_attention_instruction_trace.md)
+- 同一个 scRGB 运动用例的旧版和十月版 HT 大档通过 12 份中间张量逐字节对照，共 20,447,232 B。[配对报告](research/validation/october_nr_ht_activation_taps.json)
+
 ## 2026-11-06 第九批 · 版本因子和自动采集
 
 - 两版大档的同源 4K 静止、平移及三组 scRGB 输出逐字节一致。固定十月运行时后，小档的 4K 合成 MAE 分别为 5.624/255 和 5.460/255。[版本因子实测](research/october_nr_version_factors.md)

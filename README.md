@@ -16,6 +16,7 @@
 - [十月版 Small FP8 整网实测](research/october_nr_ampere_runtime.md)。13 个合成用例通过，77 条 GPU 权重记录与原件相符，四帧提交和 ViT 边界张量已核对。RTX 50 原版数值对照仍待验收。[静态图](research/october_nr_small_execution.md) · [原件调查](research/october_nr_remix.md)
 - [十月版 4K 接入和注意力复核](research/october_nr_render_pipeline.md)。已定位独立 NR 的 1080p 写入范围，两条 4K 输出路径通过实测。首尾 ViT 有独立算术结果和可供原版捕获复用的张量角色。
 - [十月版运行时与预设拆分](research/october_nr_version_factors.md)。同权重的大档在两次 4K 场景和三组 scRGB 用例中逐字节一致。小档的画面差异已单独测量，73 个张量角色可自动捕获。
+- [十月版注意力逐指令实测](research/october_nr_attention_instruction_trace.md)。已核对 PV 的真实 K16 取数顺序和量化边界。大档两版的 12 份同条件张量也已逐字节对照。
 - [离线同帧查看器](research/nr_viewer/README.md)：从本地捕获生成可拖动的前后对照、热图和原尺寸局部。已用同一次 Present 的 3840×2160 画面及 1920×1080 NR 工作纹理验证；[测量报告](research/validation/batch5_sponza_capture.json)。
 
 ## 数据与来源
